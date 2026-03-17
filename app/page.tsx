@@ -6,33 +6,32 @@ import NewsletterPreview from "@/components/NewsletterPreview";
 import WaitlistForm from "@/components/WaitlistForm";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 
-// SVG icons for feature cards
 const IconBolt = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
   </svg>
 );
 const IconUser = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 const IconSparkles = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
     <path d="M5 3l.75 2.25L8 6l-2.25.75L5 9l-.75-2.25L2 6l2.25-.75z" />
     <path d="M19 15l.75 2.25L22 18l-2.25.75L19 21l-.75-2.25L16 18l2.25-.75z" />
   </svg>
 );
 const IconEye = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
     <circle cx="12" cy="12" r="3" />
   </svg>
 );
 const IconChart = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="20" x2="18" y2="10" />
     <line x1="12" y1="20" x2="12" y2="4" />
     <line x1="6" y1="20" x2="6" y2="14" />
@@ -40,7 +39,7 @@ const IconChart = () => (
   </svg>
 );
 const IconShield = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
@@ -96,326 +95,172 @@ const steps = [
   },
 ];
 
+const pricingPlans = [
+  {
+    name: "Starter",
+    price: "49€",
+    desc: "Pour les petites équipes",
+    features: ["Jusqu'à 10 utilisateurs", "1 thématique de veille", "Envoi hebdomadaire", "Support email"],
+    popular: false,
+  },
+  {
+    name: "Business",
+    price: "199€",
+    desc: "Pour les PME ambitieuses",
+    features: ["Jusqu'à 50 utilisateurs", "Thématiques illimitées", "2 envois par semaine", "Analytics + White-label"],
+    popular: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Sur devis",
+    desc: "Pour les grandes organisations",
+    features: ["Utilisateurs illimités", "API & intégration CRM", "CSM dédié", "SLA 99,9%"],
+    popular: false,
+  },
+];
+
 export default function HomePage() {
   return (
-    <main>
+    <main style={{ background: "var(--bg)" }}>
       <Navbar />
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
-        className="hero-bg"
         style={{
-          paddingTop: "8rem",
-          paddingBottom: "6rem",
-          padding: "8rem 1.5rem 6rem",
+          paddingTop: "140px",
+          paddingBottom: "120px",
+          padding: "140px 1.5rem 120px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           textAlign: "center",
-          minHeight: "90vh",
+          background: "var(--bg)",
         }}
       >
-        <div style={{ maxWidth: 680, width: "100%" }}>
-          {/* Badge */}
-          <div className="badge" style={{ marginBottom: 32, display: "inline-flex" }}>
-            <span className="dot-live" />
-            Newsletter IA pour entreprises
-          </div>
-
-          {/* H1 */}
+        <div style={{ maxWidth: 720, width: "100%" }}>
           <h1
             style={{
-              fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
-              fontSize: "clamp(2.75rem, 7vw, 4.5rem)",
-              fontWeight: 600,
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "clamp(2.5rem, 5vw, 4rem)",
+              fontWeight: 700,
               lineHeight: 1.1,
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.03em",
               color: "var(--text)",
               marginBottom: 24,
             }}
           >
-            Vos équipes méritent
-            <br />
-            une newsletter{" "}
-            <em
-              style={{
-                color: "var(--accent)",
-                fontStyle: "italic",
-              }}
-            >
-              intelligente
-            </em>
+            La newsletter IA que vos équipes vont vraiment lire
           </h1>
 
-          {/* Subtitle */}
           <p
             style={{
-              fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
-              fontSize: "clamp(1rem, 2.5vw, 1.125rem)",
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "1.125rem",
+              fontWeight: 400,
               color: "var(--text-secondary)",
               lineHeight: 1.7,
-              marginBottom: 36,
-              maxWidth: 540,
-              margin: "0 auto 36px",
+              marginBottom: 40,
+              maxWidth: 560,
+              margin: "0 auto 40px",
             }}
           >
-            Sorell génère automatiquement une newsletter personnalisée pour chaque collaborateur.
-            Actualités sectorielles, concurrents, tendances —{" "}
-            <span style={{ color: "var(--text)", fontWeight: 500 }}>livrée chaque semaine.</span>
+            Sorell génère chaque semaine une newsletter personnalisée pour chaque collaborateur. Veille sectorielle, concurrents, tendances — automatiquement.
           </p>
 
-          {/* Waitlist form */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <WaitlistForm buttonText="Rejoindre la waitlist" />
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-              Gratuit · Pas de carte bancaire · Offre fondateur −50%
-            </p>
-          </div>
-
-          {/* Mini email preview */}
-          <div
-            style={{
-              marginTop: 48,
-              display: "inline-block",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              boxShadow: "var(--shadow-md)",
-              padding: "14px 16px",
-              maxWidth: 380,
-              width: "100%",
-              textAlign: "left",
-            }}
-          >
-            {/* Top row */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 8,
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "50%",
-                    background: "var(--accent)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: "var(--font-display, Georgia, serif)",
-                    fontStyle: "italic",
-                    fontWeight: 600,
-                    fontSize: "0.6875rem",
-                    color: "white",
-                    flexShrink: 0,
-                  }}
-                >
-                  S
-                </div>
-                <span
-                  style={{
-                    fontFamily: "var(--font-display, Georgia, serif)",
-                    fontStyle: "italic",
-                    fontSize: "0.875rem",
-                    fontWeight: 600,
-                    color: "var(--text)",
-                  }}
-                >
-                  Sorell
-                </span>
-              </div>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>NovaTech</span>
-            </div>
-
-            {/* Subject line */}
-            <p
-              style={{
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                fontStyle: "italic",
-                color: "var(--text)",
-                marginBottom: 10,
-                lineHeight: 1.3,
-              }}
-            >
-              Votre briefing de la semaine
-            </p>
-
-            {/* Bullets */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              {["Claude 4.6 · Réglementation IA", "Mistral levée 600M€", "IA Act : conformité août"].map((item) => (
-                <div key={item} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <div
-                    style={{
-                      width: 5,
-                      height: 5,
-                      borderRadius: "50%",
-                      background: "var(--accent)",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Footer */}
-            <div
-              style={{
-                marginTop: 10,
-                paddingTop: 8,
-                borderTop: "1px solid var(--border-subtle)",
-                fontSize: "0.625rem",
-                color: "var(--text-muted)",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              Généré automatiquement · Sorell
-            </div>
-          </div>
-
-          {/* Proof points */}
           <div
             style={{
               display: "flex",
               flexWrap: "wrap",
+              gap: 12,
               justifyContent: "center",
-              gap: "8px 28px",
-              marginTop: 28,
+              alignItems: "center",
+              marginBottom: 16,
             }}
           >
-            {["Contenu généré par IA", "Personnalisé par collaborateur", "RGPD compliant"].map((p) => (
-              <div
-                key={p}
-                style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.8125rem", color: "var(--text-secondary)" }}
-              >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" stroke="var(--success)" strokeWidth="1.3" opacity="0.5" />
-                  <path d="M5 8l2 2 4-4" stroke="var(--success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                {p}
-              </div>
-            ))}
+            <a
+              href="#waitlist"
+              className="btn-primary"
+              style={{ padding: "14px 28px", fontSize: "0.9375rem", fontWeight: 500 }}
+            >
+              Commencer gratuitement
+            </a>
+            <Link
+              href="/demo"
+              className="btn-ghost"
+              style={{ padding: "14px 28px", fontSize: "0.9375rem", fontWeight: 500 }}
+            >
+              Voir la démo
+            </Link>
           </div>
+
+          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+            Pas de carte bancaire · Annulable à tout moment
+          </p>
         </div>
       </section>
 
-      {/* ─── APERÇU PRODUIT ───────────────────────────────────── */}
+      {/* ─── APERÇU NEWSLETTER ────────────────────────────────── */}
       <section
-        id="features"
         style={{
           background: "var(--surface-alt)",
-          padding: "5rem 1.5rem",
+          padding: "120px 1.5rem",
         }}
       >
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 440px), 1fr))",
-              gap: "4rem",
-              alignItems: "center",
-            }}
-          >
-            {/* Text */}
-            <AnimateOnScroll>
-              <p className="section-label" style={{ marginBottom: 14 }}>Aperçu produit</p>
+          <AnimateOnScroll>
+            <div style={{ textAlign: "center", marginBottom: 56 }}>
               <h2
                 style={{
-                  fontFamily: "var(--font-display, Georgia, serif)",
-                  fontSize: "clamp(1.875rem, 4vw, 3rem)",
-                  fontWeight: 600,
-                  lineHeight: 1.15,
-                  letterSpacing: "-0.01em",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
                   color: "var(--text)",
-                  marginBottom: 20,
+                  marginBottom: 16,
                 }}
               >
-                Une newsletter que vos équipes{" "}
-                <em style={{ color: "var(--accent)", fontStyle: "italic" }}>
-                  attendent avec impatience
-                </em>
+                Chaque email est personnalisé et pertinent
               </h2>
               <p
                 style={{
-                  fontSize: "0.9375rem",
+                  fontSize: "1rem",
                   color: "var(--text-secondary)",
+                  maxWidth: 520,
+                  margin: "0 auto",
                   lineHeight: 1.7,
-                  marginBottom: 28,
                 }}
               >
-                Fini les newsletters génériques que personne ne lit. Sorell analyse les sources
-                les plus pertinentes pour chaque profil et génère un briefing synthétique —
-                l&apos;essentiel et rien que l&apos;essentiel.
+                L'IA analyse vos sources, filtre le bruit, et livre l'essentiel — adapté au rôle de chaque destinataire.
               </p>
+            </div>
+          </AnimateOnScroll>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
-                {[
-                  "Livraison chaque lundi matin à 8h00",
-                  "Synthèses en 3 phrases maximum par article",
-                  "Sources vérifiées avec lien vers l'article original",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: "50%",
-                        background: "var(--accent)",
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <Link
-                href="/demo"
-                className="btn-primary"
-                style={{ padding: "11px 24px", fontSize: "0.9375rem", fontWeight: 600, gap: 6 }}
-              >
-                Essayer la démo en live
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
-            </AnimateOnScroll>
-
-            {/* Email preview */}
-            <AnimateOnScroll delay={100}>
-              <NewsletterPreview />
-            </AnimateOnScroll>
-          </div>
+          <AnimateOnScroll delay={100}>
+            <NewsletterPreview />
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* ─── FONCTIONNALITÉS ──────────────────────────────────── */}
-      <section style={{ padding: "5rem 1.5rem" }}>
+      <section id="features" style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <p className="section-label" style={{ marginBottom: 14 }}>Fonctionnalités</p>
+            <div style={{ textAlign: "center", marginBottom: 56 }}>
               <h2
                 style={{
-                  fontFamily: "var(--font-display, Georgia, serif)",
-                  fontSize: "clamp(1.875rem, 4vw, 3rem)",
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
                   color: "var(--text)",
-                  marginBottom: 14,
+                  marginBottom: 16,
                 }}
               >
-                Tout ce dont votre équipe a besoin
+                Tout ce qu'il faut, rien de superflu
               </h2>
-              <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", maxWidth: 520, margin: "0 auto" }}>
-                De la collecte à la livraison, Sorell gère l&apos;intégralité du processus de veille pour vous.
+              <p style={{ fontSize: "1rem", color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
+                De la collecte à la livraison, Sorell gère l'intégralité du processus de veille pour vous.
               </p>
             </div>
           </AnimateOnScroll>
@@ -423,7 +268,7 @@ export default function HomePage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 290px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
               gap: 16,
             }}
           >
@@ -437,100 +282,21 @@ export default function HomePage() {
       </section>
 
       {/* ─── COMMENT ÇA MARCHE ────────────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "5rem 1.5rem" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+      <section style={{ background: "var(--surface-alt)", padding: "120px 1.5rem" }}>
+        <div style={{ maxWidth: 840, margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <p className="section-label" style={{ marginBottom: 14 }}>Comment ça marche</p>
+            <div style={{ textAlign: "center", marginBottom: 64 }}>
               <h2
                 style={{
-                  fontFamily: "var(--font-display, Georgia, serif)",
-                  fontSize: "clamp(1.875rem, 4vw, 3rem)",
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
                   color: "var(--text)",
                 }}
               >
-                Configuré en{" "}
-                <em style={{ color: "var(--accent)", fontStyle: "italic" }}>10 minutes</em>
+                En ligne en 10 minutes
               </h2>
-            </div>
-          </AnimateOnScroll>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {steps.map((step, i) => (
-              <AnimateOnScroll key={step.num} delay={i * 80}>
-                <div
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
-                    boxShadow: "var(--shadow-sm)",
-                    padding: "24px 28px",
-                    display: "flex",
-                    gap: 20,
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display, Georgia, serif)",
-                      fontSize: "1.5rem",
-                      fontWeight: 700,
-                      fontStyle: "italic",
-                      color: "var(--accent)",
-                      flexShrink: 0,
-                      lineHeight: 1,
-                      opacity: 0.7,
-                      minWidth: 36,
-                    }}
-                  >
-                    {step.num}
-                  </div>
-                  <div>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-body, sans-serif)",
-                        fontSize: "0.9375rem",
-                        fontWeight: 600,
-                        color: "var(--text)",
-                        marginBottom: 6,
-                      }}
-                    >
-                      {step.title}
-                    </h3>
-                    <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              </AnimateOnScroll>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── TARIFS (teaser) ──────────────────────────────────── */}
-      <section style={{ padding: "5rem 1.5rem" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <p className="section-label" style={{ marginBottom: 14 }}>Tarifs</p>
-              <h2
-                style={{
-                  fontFamily: "var(--font-display, Georgia, serif)",
-                  fontSize: "clamp(1.875rem, 4vw, 3rem)",
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                  color: "var(--text)",
-                  marginBottom: 12,
-                }}
-              >
-                Simple et transparent
-              </h2>
-              <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)" }}>
-                Sans engagement. Changez ou annulez à tout moment.
-              </p>
             </div>
           </AnimateOnScroll>
 
@@ -538,33 +304,82 @@ export default function HomePage() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 240px), 1fr))",
+              gap: 32,
+            }}
+          >
+            {steps.map((step, i) => (
+              <AnimateOnScroll key={step.num} delay={i * 80}>
+                <div>
+                  <div
+                    style={{
+                      height: 1,
+                      background: "var(--border)",
+                      marginBottom: 24,
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--text-muted)",
+                      marginBottom: 10,
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {step.num}
+                  </p>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      color: "var(--text)",
+                      marginBottom: 8,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                    {step.description}
+                  </p>
+                </div>
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PRICING TEASER ───────────────────────────────────── */}
+      <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <AnimateOnScroll>
+            <div style={{ textAlign: "center", marginBottom: 48 }}>
+              <h2
+                style={{
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
+                  color: "var(--text)",
+                  marginBottom: 16,
+                }}
+              >
+                Tarifs simples, sans engagement
+              </h2>
+            </div>
+          </AnimateOnScroll>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 250px), 1fr))",
               gap: 16,
               marginBottom: 32,
             }}
           >
-            {[
-              {
-                name: "Starter",
-                price: "49€",
-                desc: "Pour les petites équipes",
-                features: ["Jusqu'à 10 utilisateurs", "1 thématique de veille", "Envoi hebdomadaire", "Support email"],
-                popular: false,
-              },
-              {
-                name: "Business",
-                price: "199€",
-                desc: "Pour les PME ambitieuses",
-                features: ["Jusqu'à 50 utilisateurs", "Thématiques illimitées", "2 envois par semaine", "Analytics + White-label"],
-                popular: true,
-              },
-              {
-                name: "Enterprise",
-                price: "Sur devis",
-                desc: "Pour les grandes organisations",
-                features: ["Utilisateurs illimités", "API & intégration CRM", "CSM dédié", "SLA 99,9%"],
-                popular: false,
-              },
-            ].map((plan) => (
+            {pricingPlans.map((plan) => (
               <AnimateOnScroll key={plan.name}>
                 <div
                   style={{
@@ -572,7 +387,6 @@ export default function HomePage() {
                     borderRadius: 12,
                     background: "var(--surface)",
                     border: plan.popular ? "1.5px solid var(--accent)" : "1px solid var(--border)",
-                    boxShadow: plan.popular ? "var(--shadow-md)" : "var(--shadow-sm)",
                     position: "relative",
                   }}
                 >
@@ -584,47 +398,39 @@ export default function HomePage() {
                         left: 16,
                         padding: "2px 10px",
                         borderRadius: 999,
-                        fontFamily: "var(--font-body, sans-serif)",
                         fontSize: "0.6875rem",
                         fontWeight: 600,
                         background: "var(--accent)",
                         color: "white",
                       }}
                     >
-                      Recommandé
+                      Populaire
                     </span>
                   )}
                   <div
                     style={{
-                      fontFamily: "var(--font-display, Georgia, serif)",
+                      fontFamily: "var(--font-inter, 'Inter', sans-serif)",
                       fontSize: "1.5rem",
                       fontWeight: 700,
                       color: "var(--text)",
+                      letterSpacing: "-0.03em",
                       marginBottom: 2,
                     }}
                   >
                     {plan.price}
                     {plan.price !== "Sur devis" && (
-                      <span
-                        style={{
-                          fontFamily: "var(--font-body, sans-serif)",
-                          fontSize: "0.875rem",
-                          fontWeight: 400,
-                          color: "var(--text-secondary)",
-                          marginLeft: 3,
-                        }}
-                      >
+                      <span style={{ fontSize: "0.875rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: 3 }}>
                         /mois
                       </span>
                     )}
                   </div>
                   <div
                     style={{
-                      fontFamily: "var(--font-display, Georgia, serif)",
-                      fontSize: "1rem",
+                      fontSize: "0.9375rem",
                       fontWeight: 600,
                       color: "var(--text)",
                       marginBottom: 3,
+                      letterSpacing: "-0.01em",
                     }}
                   >
                     {plan.name}
@@ -639,19 +445,14 @@ export default function HomePage() {
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          gap: 7,
+                          gap: 8,
                           fontSize: "0.8125rem",
                           color: "var(--text-secondary)",
                         }}
                       >
-                        <span
-                          style={{
-                            color: plan.popular ? "var(--accent)" : "var(--success)",
-                            fontWeight: 700,
-                          }}
-                        >
-                          ✓
-                        </span>
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, color: plan.popular ? "var(--accent)" : "var(--success)" }}>
+                          <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                         {f}
                       </li>
                     ))}
@@ -664,58 +465,48 @@ export default function HomePage() {
           <div style={{ textAlign: "center" }}>
             <Link
               href="/pricing"
-              className="btn-ghost"
-              style={{ padding: "10px 24px", fontSize: "0.875rem", gap: 6 }}
+              style={{
+                fontSize: "0.9375rem",
+                color: "var(--accent)",
+                textDecoration: "none",
+                fontWeight: 500,
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.textDecoration = "underline")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.textDecoration = "none")}
             >
-              Voir tous les détails et options
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              Voir tous les détails →
             </Link>
           </div>
         </div>
       </section>
 
       {/* ─── CTA FINAL ────────────────────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "5rem 1.5rem" }}>
+      <section
+        id="waitlist"
+        style={{ background: "var(--surface-alt)", padding: "100px 1.5rem" }}
+      >
         <AnimateOnScroll>
-          <div
-            style={{
-              maxWidth: 600,
-              margin: "0 auto",
-              textAlign: "center",
-              padding: "52px 40px",
-              borderRadius: 20,
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              boxShadow: "var(--shadow-lg)",
-            }}
-          >
-            <div className="badge" style={{ marginBottom: 24, display: "inline-flex" }}>
-              Offre fondateur — 50 places
-            </div>
+          <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
             <h2
               style={{
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontSize: "clamp(1.625rem, 3.5vw, 2.375rem)",
-                fontWeight: 600,
-                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "clamp(1.75rem, 3vw, 2.25rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.03em",
                 color: "var(--text)",
-                marginBottom: 14,
-                lineHeight: 1.2,
+                marginBottom: 16,
               }}
             >
-              Recevez votre premier briefing gratuitement
+              Prêt à transformer la veille de vos équipes ?
             </h2>
-            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: 6 }}>
-              Offre fondateur :{" "}
-              <strong style={{ color: "var(--text)" }}>−50% à vie</strong> pour les 50 premiers inscrits.
+            <p style={{ fontSize: "1rem", color: "var(--text-secondary)", marginBottom: 8, lineHeight: 1.7 }}>
+              Commencez gratuitement. Votre premier briefing en 48h.
             </p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 32 }}>
-              Gratuit · Pas de carte bancaire · Pas de spam.
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 36 }}>
+              Offre fondateur : −50% à vie pour les 50 premiers inscrits
             </p>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <WaitlistForm buttonText="Rejoindre maintenant →" />
+              <WaitlistForm buttonText="Commencer gratuitement" />
             </div>
           </div>
         </AnimateOnScroll>

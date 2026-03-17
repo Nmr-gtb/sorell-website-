@@ -10,7 +10,7 @@ interface WaitlistFormProps {
 
 export default function WaitlistForm({
   placeholder = "votre@email.com",
-  buttonText = "Rejoindre la waitlist",
+  buttonText = "Commencer gratuitement",
   compact = false,
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
@@ -34,17 +34,17 @@ export default function WaitlistForm({
           alignItems: "center",
           gap: 10,
           padding: "12px 18px",
-          borderRadius: 10,
+          borderRadius: 8,
           background: "var(--success-bg)",
-          border: "1px solid rgba(107,142,78,0.25)",
+          border: "1px solid rgba(5, 150, 105, 0.2)",
         }}
       >
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
           <circle cx="10" cy="10" r="9" stroke="var(--success)" strokeWidth="1.5" />
           <path d="M6.5 10l2.5 2.5 4-4" stroke="var(--success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--success)" }}>
-          Vous êtes sur la liste&nbsp;! Attendez-vous à un email de confirmation.
+          Vous êtes sur la liste ! Email de confirmation envoyé.
         </p>
       </div>
     );
@@ -79,7 +79,7 @@ export default function WaitlistForm({
         disabled={loading}
         className="btn-primary"
         style={{
-          padding: "0.75rem 1.5rem",
+          padding: "0.75rem 1.375rem",
           fontSize: "0.9375rem",
           flexShrink: 0,
           opacity: loading ? 0.75 : 1,

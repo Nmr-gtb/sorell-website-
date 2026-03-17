@@ -16,9 +16,9 @@ export default function LoginPage() {
 
   return (
     <div
-      className="hero-bg"
       style={{
         minHeight: "100vh",
+        background: "var(--bg)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -33,15 +33,15 @@ export default function LoginPage() {
           </div>
           <h1
             style={{
-              fontFamily: "var(--font-display, Georgia, serif)",
-              fontSize: "1.75rem",
-              fontWeight: 600,
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "1.5rem",
+              fontWeight: 700,
               color: "var(--text)",
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.02em",
               marginBottom: 6,
             }}
           >
-            Connexion
+            Connectez-vous
           </h1>
           <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
             Accédez à votre espace Sorell
@@ -54,7 +54,6 @@ export default function LoginPage() {
             background: "var(--surface)",
             border: "1px solid var(--border)",
             borderRadius: 12,
-            boxShadow: "var(--shadow-sm)",
             padding: "28px",
           }}
         >
@@ -108,9 +107,10 @@ export default function LoginPage() {
                     border: "none",
                     cursor: "pointer",
                     padding: 0,
+                    fontWeight: 400,
                   }}
                 >
-                  Mot de passe oublié&nbsp;?
+                  Mot de passe oublié ?
                 </button>
               </div>
               <input
@@ -129,7 +129,7 @@ export default function LoginPage() {
               style={{
                 padding: "12px",
                 fontSize: "0.9375rem",
-                fontWeight: 600,
+                fontWeight: 500,
                 marginTop: 4,
                 justifyContent: "center",
               }}
@@ -142,18 +142,18 @@ export default function LoginPage() {
             style={{
               marginTop: 20,
               paddingTop: 20,
-              borderTop: "1px solid var(--border-subtle)",
+              borderTop: "1px solid var(--border)",
               textAlign: "center",
               fontSize: "0.875rem",
               color: "var(--text-secondary)",
             }}
           >
-            Pas encore de compte&nbsp;?{" "}
+            Pas encore de compte ?{" "}
             <Link
-              href="/"
+              href="/#waitlist"
               style={{ color: "var(--accent)", fontWeight: 500, textDecoration: "none" }}
             >
-              Rejoindre la waitlist
+              Commencer gratuitement
             </Link>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function LoginPage() {
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
           >
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
               <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Retour à l&apos;accueil
@@ -193,8 +193,8 @@ export default function LoginPage() {
             alignItems: "center",
             justifyContent: "center",
             padding: "1.5rem",
-            background: "rgba(28,25,21,0.60)",
-            backdropFilter: "blur(12px)",
+            background: "rgba(0,0,0,0.4)",
+            backdropFilter: "blur(8px)",
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowOverlay(false);
@@ -203,42 +203,40 @@ export default function LoginPage() {
           <div
             style={{
               width: "100%",
-              maxWidth: 420,
-              padding: "44px 40px",
-              borderRadius: 20,
-              background: "var(--surface)",
+              maxWidth: 400,
+              padding: "40px 36px",
+              borderRadius: 16,
+              background: "var(--bg)",
               border: "1px solid var(--border)",
-              boxShadow: "var(--shadow-xl)",
               textAlign: "center",
             }}
           >
-            {/* Icon */}
             <div
               style={{
-                width: 60,
-                height: 60,
-                borderRadius: 16,
+                width: 52,
+                height: 52,
+                borderRadius: 12,
                 background: "var(--accent-subtle)",
                 border: "1px solid var(--accent-border)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 24px",
+                margin: "0 auto 20px",
               }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
             </div>
 
             <h2
               style={{
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontSize: "1.625rem",
-                fontWeight: 600,
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "1.375rem",
+                fontWeight: 700,
                 color: "var(--text)",
-                letterSpacing: "-0.01em",
-                marginBottom: 12,
+                letterSpacing: "-0.02em",
+                marginBottom: 10,
               }}
             >
               Bientôt disponible
@@ -248,34 +246,21 @@ export default function LoginPage() {
                 fontSize: "0.875rem",
                 color: "var(--text-secondary)",
                 lineHeight: 1.7,
-                marginBottom: 8,
+                marginBottom: 24,
               }}
             >
-              Sorell est en cours de développement. Rejoignez la waitlist pour être parmi les
-              premiers à y accéder.
-            </p>
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--text-secondary)",
-                lineHeight: 1.7,
-                marginBottom: 28,
-              }}
-            >
-              Offre fondateur :{" "}
-              <span style={{ color: "var(--text)", fontWeight: 600 }}>−50% à vie</span> pour
-              les 50 premiers inscrits.
+              Sorell est en cours de développement. Rejoignez la waitlist pour être parmi les premiers à y accéder.{" "}
+              <span style={{ color: "var(--text)", fontWeight: 500 }}>Offre fondateur : −50% à vie</span> pour les 50 premiers inscrits.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <Link
-                href="/"
+                href="/#waitlist"
                 className="btn-primary"
                 onClick={() => setShowOverlay(false)}
                 style={{
                   padding: "12px",
                   fontSize: "0.9375rem",
-                  fontWeight: 600,
                   justifyContent: "center",
                 }}
               >
@@ -292,8 +277,6 @@ export default function LoginPage() {
                   padding: "6px",
                   transition: "color 0.15s ease",
                 }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
               >
                 Fermer
               </button>

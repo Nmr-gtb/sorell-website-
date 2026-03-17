@@ -40,15 +40,11 @@ export default function PricingCard({
         padding: "28px",
         display: "flex",
         flexDirection: "column",
-        gap: "22px",
+        gap: "20px",
         background: "var(--surface)",
         border: popular
           ? "1.5px solid var(--accent)"
           : "1px solid var(--border)",
-        boxShadow: popular
-          ? "var(--shadow-lg), 0 0 0 1px var(--accent)"
-          : "var(--shadow-sm)",
-        transition: "box-shadow 0.2s ease",
       }}
     >
       {/* Badge */}
@@ -56,7 +52,7 @@ export default function PricingCard({
         <div
           style={{
             position: "absolute",
-            top: -13,
+            top: -12,
             left: "50%",
             transform: "translateX(-50%)",
           }}
@@ -64,19 +60,18 @@ export default function PricingCard({
           <span
             style={{
               display: "inline-block",
-              padding: "3px 14px",
+              padding: "2px 12px",
               borderRadius: 999,
-              fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
               fontSize: "0.6875rem",
               fontWeight: 600,
-              letterSpacing: "0.04em",
+              letterSpacing: "0.03em",
               background: "var(--accent)",
-              color: "var(--accent-text)",
-              boxShadow: "0 4px 12px rgba(184,134,11,0.3)",
+              color: "white",
               whiteSpace: "nowrap",
             }}
           >
-            {badge || "Recommandé"}
+            {badge || "Populaire"}
           </span>
         </div>
       )}
@@ -85,11 +80,12 @@ export default function PricingCard({
       <div>
         <h3
           style={{
-            fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
-            fontSize: "1.25rem",
+            fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+            fontSize: "1rem",
             fontWeight: 600,
             color: "var(--text)",
             marginBottom: 4,
+            letterSpacing: "-0.01em",
           }}
         >
           {name}
@@ -100,14 +96,15 @@ export default function PricingCard({
       </div>
 
       {/* Price */}
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 4 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
         {enterprise ? (
           <span
             style={{
-              fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
               fontSize: "1.75rem",
-              fontWeight: 600,
+              fontWeight: 700,
               color: "var(--text)",
+              letterSpacing: "-0.02em",
             }}
           >
             Sur devis
@@ -116,29 +113,23 @@ export default function PricingCard({
           <>
             <span
               style={{
-                fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
-                fontSize: "2.5rem",
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "2.25rem",
                 fontWeight: 700,
                 color: "var(--text)",
                 lineHeight: 1,
+                letterSpacing: "-0.03em",
               }}
             >
               {displayPrice}€
             </span>
-            <div style={{ display: "flex", flexDirection: "column", marginBottom: 4, gap: 2 }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
-                  fontSize: "0.8125rem",
-                  color: "var(--text-secondary)",
-                }}
-              >
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
                 /mois
               </span>
               {period === "annual" && (
                 <span
                   style={{
-                    fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
                     fontSize: "0.6875rem",
                     fontWeight: 600,
                     padding: "1px 6px",
@@ -167,18 +158,21 @@ export default function PricingCard({
               fontSize: "0.875rem",
             }}
           >
-            <span
-              style={{
-                color: popular ? "var(--accent)" : "var(--success)",
-                fontWeight: 700,
-                flexShrink: 0,
-                marginTop: 1,
-                fontSize: "0.9375rem",
-                lineHeight: 1,
-              }}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              style={{ flexShrink: 0, marginTop: 2, color: popular ? "var(--accent)" : "var(--success)" }}
             >
-              ✓
-            </span>
+              <path
+                d="M3 8l3.5 3.5 6.5-7"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             <span style={{ color: "var(--text-secondary)" }}>{feature}</span>
           </li>
         ))}
@@ -190,9 +184,8 @@ export default function PricingCard({
         className={popular ? "btn-primary" : "btn-ghost"}
         style={{
           textAlign: "center",
-          padding: "11px 20px",
+          padding: "10px 20px",
           fontSize: "0.875rem",
-          fontWeight: 600,
           justifyContent: "center",
         }}
       >

@@ -10,52 +10,47 @@ export const metadata = {
 
 export default function DemoPage() {
   return (
-    <div>
+    <div style={{ background: "var(--bg)" }}>
       <Navbar />
 
       {/* Hero */}
       <section
-        className="hero-bg"
         style={{
-          paddingTop: "7rem",
-          padding: "7rem 1.5rem 4rem",
+          paddingTop: "120px",
+          padding: "120px 1.5rem 64px",
           textAlign: "center",
+          background: "var(--bg)",
         }}
       >
         <div style={{ maxWidth: 620, margin: "0 auto" }}>
-          <div className="badge" style={{ marginBottom: 24, display: "inline-flex" }}>
-            <span className="dot-live" />
-            Live — Aucun compte requis
-          </div>
           <h1
             style={{
-              fontFamily: "var(--font-display, Georgia, serif)",
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-              lineHeight: 1.12,
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
               color: "var(--text)",
               marginBottom: 16,
             }}
           >
-            Générez votre briefing{" "}
-            <em style={{ color: "var(--accent)", fontStyle: "italic" }}>en direct</em>
+            Essayez Sorell en 30 secondes
           </h1>
           <p
             style={{
               fontSize: "1rem",
               color: "var(--text-secondary)",
-              lineHeight: 1.65,
+              lineHeight: 1.7,
             }}
           >
             Choisissez votre secteur et voyez ce que Sorell génère pour vous.{" "}
-            <span style={{ color: "var(--text-muted)" }}>Aucun compte requis. Gratuit.</span>
+            <span style={{ color: "var(--text-muted)" }}>Aucun compte requis.</span>
           </p>
         </div>
       </section>
 
       {/* Generator */}
-      <section style={{ padding: "0 1.5rem 5rem" }}>
+      <section style={{ padding: "0 1.5rem 120px", background: "var(--bg)" }}>
         <DemoGenerator />
       </section>
 

@@ -33,21 +33,21 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-ai",
         tagLabel: "IA",
         title: "OpenAI lance GPT-5 en accès anticipé pour les entreprises",
-        summary: "Capacités multimodales renforcées et fenêtre de contexte de 256K tokens. Les premiers retours d'entreprises pilotes sont très positifs.",
+        summary: "Capacités multimodales renforcées et fenêtre de contexte de 256K tokens.",
         source: "The Verge",
       },
       {
         tagClass: "email-tag-ai",
         tagLabel: "Modèles",
         title: "Anthropic dévoile Claude 4.6 Opus : record sur les benchmarks de raisonnement",
-        summary: "Le nouveau modèle surpasse GPT-4o et Gemini Ultra 2.0 sur 12 benchmarks indépendants. Disponible via API dès maintenant.",
+        summary: "Le nouveau modèle surpasse GPT-4o et Gemini Ultra 2.0 sur 12 benchmarks indépendants.",
         source: "MIT Technology Review",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Concurrent",
         title: "Mistral AI lève 600M€ et annonce une expansion en Asie",
-        summary: "La licorne française valorisée à 6 milliards accélère son déploiement B2B et ouvre des bureaux à Tokyo et Singapour.",
+        summary: "La licorne française valorisée à 6 milliards accélère son déploiement B2B.",
         source: "Les Echos",
       },
     ],
@@ -60,21 +60,21 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-featured",
         tagLabel: "BCE",
         title: "Les taux BCE et leur impact sur les fintechs : analyse du T1 2026",
-        summary: "Maintien des taux à 2,5% avec signal d'une possible baisse au T3. Les néobanques revoient leur modèle de revenus face à un environnement de taux plus bas.",
+        summary: "Maintien des taux à 2,5% avec signal d'une possible baisse au T3. Les néobanques revoient leur modèle de revenus.",
         source: "BCE",
       },
       {
         tagClass: "email-tag-reg",
         tagLabel: "Crypto",
         title: "MiCA pleinement opérationnel : les exchanges s'adaptent",
-        summary: "Binance et Coinbase ont soumis leurs dossiers PSAN+. Le cadre réglementaire européen renforce la confiance des institutionnels.",
+        summary: "Binance et Coinbase ont soumis leurs dossiers PSAN+. Le cadre réglementaire européen renforce la confiance.",
         source: "AMF",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Néobanques",
         title: "Revolut dépasse 3M de clients en France après obtention de sa licence",
-        summary: "La fintech britannique peut désormais proposer des crédits immobiliers. Les banques traditionnelles accélèrent leur transformation digitale.",
+        summary: "La fintech britannique peut désormais proposer des crédits immobiliers.",
         source: "Les Echos",
       },
       {
@@ -94,28 +94,28 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-featured",
         tagLabel: "IA médicale",
         title: "L'IA diagnostique les cancers du sein avec 94% de précision : premiers essais cliniques",
-        summary: "Une étude publiée dans The Lancet valide l'utilisation clinique de l'outil DeepMind. Douze hôpitaux français participent au programme pilote.",
+        summary: "Une étude publiée dans The Lancet valide l'utilisation clinique de l'outil DeepMind. Douze hôpitaux français participent.",
         source: "The Lancet",
       },
       {
         tagClass: "email-tag-ai",
         tagLabel: "Télémédecine",
         title: "Déserts médicaux : les téléconsultations augmentent de 62% en zone rurale",
-        summary: "Le gouvernement annonce 2 000 postes de médecins salariés. Les plateformes de télémédecine affichent une croissance à deux chiffres.",
+        summary: "Le gouvernement annonce 2 000 postes de médecins salariés. Les plateformes de télémédecine affichent une forte croissance.",
         source: "DREES",
       },
       {
         tagClass: "email-tag-reg",
         tagLabel: "Réglementation",
         title: "Réforme du remboursement des dispositifs médicaux connectés",
-        summary: "La HAS publie une nouvelle grille d'évaluation. Les startups healthtech disposent de 6 mois pour mettre leurs dossiers à jour.",
+        summary: "La HAS publie une nouvelle grille d'évaluation. Les startups healthtech ont 6 mois pour se mettre à jour.",
         source: "HAS",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Biotech",
         title: "Alzheimer : nouvelle molécule réduit la progression de 35% en phase 2",
-        summary: "Résultats préliminaires encourageants du laboratoire BioArctic. La phase 3 impliquera 8 000 patients sur 3 continents.",
+        summary: "Résultats préliminaires encourageants du laboratoire BioArctic. La phase 3 impliquera 8 000 patients.",
         source: "NEJM",
       },
     ],
@@ -128,28 +128,28 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-featured",
         tagLabel: "Commerce unifié",
         title: "Le commerce unifié redéfinit l'expérience client en 2026",
-        summary: "Magasin physique, e-commerce et réseaux sociaux s'intègrent dans un parcours client sans couture. Les marques qui ont adopté cette approche affichent +28% de conversion.",
+        summary: "Magasin physique, e-commerce et réseaux sociaux s'intègrent dans un parcours client sans couture. +28% de conversion.",
         source: "FEVAD",
       },
       {
         tagClass: "email-tag-ai",
         tagLabel: "IA retail",
         title: "TikTok Shop capte 28% des achats impulsifs chez les 18-34 ans",
-        summary: "Le social commerce dépasse Amazon sur ce segment. Les marques réallouent leurs budgets digitaux en conséquence.",
+        summary: "Le social commerce dépasse Amazon sur ce segment. Les marques réallouent leurs budgets digitaux.",
         source: "FEVAD",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Logistique",
         title: "Crise du dernier kilomètre : les coûts logistiques en hausse de 22%",
-        summary: "Nouvelles ZFE et hausse du carburant complexifient les livraisons urbaines. La mutualisation entre retailers s'accélère.",
+        summary: "Nouvelles ZFE et hausse du carburant complexifient les livraisons urbaines.",
         source: "L'Usine Nouvelle",
       },
       {
         tagClass: "email-tag-reg",
         tagLabel: "Tendances",
         title: "67% des Français intègrent l'impact environnemental dans leurs achats",
-        summary: "La durabilité dépasse le prix comme critère d'achat sur le segment supérieur à 50€. Les certifications B Corp et Ecodesign gagnent en visibilité.",
+        summary: "La durabilité dépasse le prix comme critère d'achat sur le segment supérieur à 50€.",
         source: "OpinionWay",
       },
     ],
@@ -162,21 +162,21 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-featured",
         tagLabel: "Industrie 4.0",
         title: "L'industrie 4.0 accélère dans les PME françaises : ROI en 8 mois",
-        summary: "Les jumeaux numériques réduisent les arrêts de production de 25%. Un rapport Siemens sur 150 usines confirme un retour sur investissement moyen en moins d'un an.",
+        summary: "Les jumeaux numériques réduisent les arrêts de production de 25%. Retour sur investissement moyen en moins d'un an.",
         source: "Siemens",
       },
       {
         tagClass: "email-tag-ai",
         tagLabel: "Robotique",
         title: "Airbus accélère : 3 000 robots supplémentaires dans ses lignes d'assemblage",
-        summary: "Investissement de 2Md€. La reconversion de 1 800 opérateurs vers la maintenance robotique est déjà amorcée.",
+        summary: "Investissement de 2Md€. La reconversion de 1 800 opérateurs vers la maintenance robotique est amorcée.",
         source: "Airbus IR",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Supply chain",
         title: "Semi-conducteurs : 12 mois d'attente pour certaines puces spécialisées",
-        summary: "Les constructeurs automobiles ajustent leurs plans de production. L'UE accélère le Chips Act et annonce 43Md€ d'investissements.",
+        summary: "Les constructeurs automobiles ajustent leurs plans. L'UE accélère le Chips Act avec 43Md€ d'investissements.",
         source: "Bloomberg",
       },
       {
@@ -196,28 +196,28 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
         tagClass: "email-tag-featured",
         tagLabel: "IA",
         title: "Les 5 tendances IA qui vont transformer les entreprises françaises en 2026",
-        summary: "Agents autonomes, IA multimodale, edge computing, souveraineté et gouvernance des données — analyse complète McKinsey.",
+        summary: "Agents autonomes, IA multimodale, edge computing, souveraineté et gouvernance des données — analyse McKinsey.",
         source: "McKinsey",
       },
       {
         tagClass: "email-tag-ai",
         tagLabel: "Travail",
         title: "3 jours bureau / 2 jours remote devient la norme dans les grandes entreprises",
-        summary: "74% des cadres en mode hybride selon le baromètre Malakoff Humanis 2026. Les espaces de coworking enregistrent une forte croissance.",
+        summary: "74% des cadres en mode hybride selon le baromètre Malakoff Humanis 2026.",
         source: "Malakoff Humanis",
       },
       {
         tagClass: "email-tag-comp",
         tagLabel: "Cybersécurité",
         title: "Ransomware : +45% d'attaques sur les PME françaises",
-        summary: "12% seulement sont assurées. L'ANSSI publie un guide de résilience et recommande la mise en place d'un plan de continuité d'activité.",
+        summary: "12% seulement sont assurées. L'ANSSI publie un guide de résilience.",
         source: "ANSSI",
       },
       {
         tagClass: "email-tag-reg",
         tagLabel: "Écosystème",
         title: "Record : 8,3Md€ levés par les start-up françaises au T1 2026",
-        summary: "La French Tech résiste malgré le contexte macro. IA, deeptech et greentech captent 60% des montants levés.",
+        summary: "La French Tech résiste malgré le contexte macro. IA, deeptech et greentech captent 60% des montants.",
         source: "France Digitale",
       },
     ],
@@ -257,10 +257,9 @@ function DemoNewsletterResult({
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border)",
-        borderRadius: 16,
+        borderRadius: 12,
         overflow: "hidden",
-        boxShadow: "var(--shadow-xl)",
-        fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+        fontFamily: "var(--font-inter, 'Inter', sans-serif)",
         fontSize: "0.8125rem",
       }}
     >
@@ -269,7 +268,7 @@ function DemoNewsletterResult({
         style={{
           background: "var(--surface-alt)",
           borderBottom: "1px solid var(--border)",
-          padding: "12px 18px",
+          padding: "12px 20px",
         }}
       >
         <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
@@ -288,87 +287,45 @@ function DemoNewsletterResult({
         </div>
       </div>
 
-      <div style={{ padding: "20px 22px" }}>
+      <div style={{ padding: "24px 24px" }}>
         {/* Sender row */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: 12,
+            marginBottom: 14,
             flexWrap: "wrap",
             gap: 8,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                background: "var(--accent)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontWeight: 600,
-                fontStyle: "italic",
-                fontSize: "0.875rem",
-                color: "white",
-                flexShrink: 0,
-              }}
-            >
-              S
-            </div>
-            <div>
-              <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)", lineHeight: 1.2 }}>
-                Sorell
-              </div>
-              <div style={{ fontSize: "0.625rem", color: "var(--text-muted)" }}>
-                17 mars 2026 · 8h00
-              </div>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
+              Sorel<span style={{ color: "var(--accent)" }}>l</span>
+            </span>
           </div>
-          <span className="email-tag email-tag-ai" style={{ fontSize: "0.6875rem" }}>
-            {data.tag}
-          </span>
+          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>17 mars 2026 · 8h00</span>
         </div>
 
-        <p
-          style={{
-            fontFamily: "var(--font-display, Georgia, serif)",
-            fontSize: "0.9375rem",
-            fontStyle: "italic",
-            color: "var(--text)",
-            marginBottom: 4,
-          }}
-        >
+        <p style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text)", marginBottom: 4, letterSpacing: "-0.01em" }}>
           Bonjour,
         </p>
-        <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 14, lineHeight: 1.5 }}>
+        <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 16, lineHeight: 1.55 }}>
           <span style={{ fontWeight: 600, color: "var(--text)" }}>{data.articles.length} actualités clés</span>{" "}
           sélectionnées cette semaine pour {displayCompany}.
         </p>
 
-        <div style={{ height: 1, background: "var(--border)", marginBottom: 14 }} />
+        <div style={{ height: 1, background: "var(--border)", marginBottom: 16 }} />
 
         {/* Articles */}
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
           {data.articles.map((article, i) => (
             <div key={i}>
               {i > 0 && (
-                <div style={{ height: 1, background: "var(--border-subtle)", margin: "12px 0" }} />
+                <div style={{ height: 1, background: "var(--border)", margin: "14px 0" }} />
               )}
               {article.featured ? (
-                <div
-                  style={{
-                    padding: "12px 14px",
-                    background: "var(--surface-alt)",
-                    borderRadius: 10,
-                    border: "1px solid var(--accent-border)",
-                    marginBottom: 12,
-                  }}
-                >
+                <div style={{ marginBottom: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
                     <span
                       style={{
@@ -379,64 +336,34 @@ function DemoNewsletterResult({
                         color: "var(--accent)",
                       }}
                     >
-                      ★ Article phare
+                      ARTICLE PHARE
                     </span>
                     <span className={`email-tag ${article.tagClass}`}>{article.tagLabel}</span>
                   </div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-display, Georgia, serif)",
-                      fontSize: "0.9375rem",
-                      fontWeight: 700,
-                      color: "var(--text)",
-                      lineHeight: 1.35,
-                      marginBottom: 6,
-                    }}
-                  >
+                  <p style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text)", lineHeight: 1.35, marginBottom: 6, letterSpacing: "-0.01em" }}>
                     {article.title}
                   </p>
-                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.55, marginBottom: 8 }}>
+                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.55, marginBottom: 6 }}>
                     {article.summary}
                   </p>
-                  <span
-                    style={{
-                      fontSize: "0.625rem",
-                      color: "var(--text-muted)",
-                      fontFamily: "var(--font-mono, monospace)",
-                    }}
-                  >
+                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
                     Source : {article.source} ↗
                   </span>
                 </div>
               ) : (
-                <div style={{ display: "flex", gap: 10 }}>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono, monospace)",
-                      fontSize: "0.625rem",
-                      fontWeight: 600,
-                      color: "var(--accent)",
-                      flexShrink: 0,
-                      width: 18,
-                      marginTop: 2,
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ marginBottom: 4 }}>
-                      <span className={`email-tag ${article.tagClass}`}>{article.tagLabel}</span>
-                    </div>
-                    <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)", lineHeight: 1.35, marginBottom: 4 }}>
-                      {article.title}
-                    </p>
-                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 4 }}>
-                      {article.summary}
-                    </p>
-                    <span style={{ fontSize: "0.625rem", color: "var(--text-muted)", fontFamily: "var(--font-mono, monospace)" }}>
-                      Source : {article.source} ↗
-                    </span>
+                <div>
+                  <div style={{ marginBottom: 5 }}>
+                    <span className={`email-tag ${article.tagClass}`}>{article.tagLabel}</span>
                   </div>
+                  <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)", lineHeight: 1.35, marginBottom: 4, letterSpacing: "-0.01em" }}>
+                    {article.title}
+                  </p>
+                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 4 }}>
+                    {article.summary}
+                  </p>
+                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+                    Source : {article.source} ↗
+                  </span>
                 </div>
               )}
             </div>
@@ -447,32 +374,14 @@ function DemoNewsletterResult({
         <div
           style={{
             marginTop: 16,
-            paddingTop: 12,
-            borderTop: "1px solid var(--border-subtle)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 8,
+            paddingTop: 14,
+            borderTop: "1px solid var(--border)",
+            textAlign: "center",
           }}
         >
-          <span style={{ fontSize: "0.625rem", color: "var(--text-muted)", fontFamily: "var(--font-mono, monospace)" }}>
-            Généré par Sorell · Désinscription · Voir en ligne
+          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+            Généré automatiquement par Sorell
           </span>
-          <button
-            style={{
-              fontSize: "0.6875rem",
-              padding: "5px 12px",
-              borderRadius: 6,
-              background: "var(--accent)",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            Lire tous les articles →
-          </button>
         </div>
       </div>
     </div>
@@ -508,19 +417,25 @@ export default function DemoGenerator() {
   };
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto" }}>
+    <div style={{ maxWidth: 680, margin: "0 auto" }}>
       {/* Config form */}
       <div
-        className="card"
-        style={{ padding: "32px", marginBottom: 28 }}
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          padding: "32px",
+          marginBottom: 24,
+        }}
       >
         <h2
           style={{
-            fontFamily: "var(--font-display, Georgia, serif)",
-            fontSize: "1.375rem",
+            fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+            fontSize: "1.125rem",
             fontWeight: 600,
             color: "var(--text)",
             marginBottom: 6,
+            letterSpacing: "-0.02em",
           }}
         >
           Configurez votre briefing
@@ -564,7 +479,7 @@ export default function DemoGenerator() {
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="ex : Acme Corp, NovaTech, votre startup..."
+              placeholder="ex : Acme Corp, NovaTech..."
               className="input-field"
             />
           </div>
@@ -576,7 +491,7 @@ export default function DemoGenerator() {
             style={{
               padding: "13px",
               fontSize: "0.9375rem",
-              fontWeight: 600,
+              fontWeight: 500,
               opacity: !sector ? 0.5 : 1,
               cursor: !sector ? "not-allowed" : "pointer",
               justifyContent: "center",
@@ -592,7 +507,7 @@ export default function DemoGenerator() {
                 Génération en cours...
               </span>
             ) : (
-              "Générer mon briefing →"
+              "Générer ma newsletter →"
             )}
           </button>
         </form>
@@ -606,27 +521,20 @@ export default function DemoGenerator() {
             textAlign: "center",
             background: "var(--surface)",
             border: "1px solid var(--border)",
-            borderRadius: 16,
-            marginBottom: 28,
+            borderRadius: 12,
+            marginBottom: 24,
           }}
         >
           <div
             style={{
-              width: 52,
-              height: 52,
+              width: 48,
+              height: 48,
               borderRadius: "50%",
               margin: "0 auto 20px",
               position: "relative",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                borderRadius: "50%",
-                border: "2px solid var(--border)",
-              }}
-            />
+            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid var(--border)" }} />
             <div
               className="animate-spin"
               style={{
@@ -637,40 +545,14 @@ export default function DemoGenerator() {
                 borderTopColor: "var(--accent)",
               }}
             />
-            <div
-              style={{
-                position: "absolute",
-                inset: "10px",
-                borderRadius: "50%",
-                background: "var(--accent-subtle)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontStyle: "italic",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                color: "var(--accent)",
-              }}
-            >
-              S
-            </div>
           </div>
-          <p
-            style={{
-              fontFamily: "var(--font-body, sans-serif)",
-              fontWeight: 600,
-              color: "var(--text)",
-              fontSize: "0.9375rem",
-              marginBottom: 6,
-            }}
-          >
+          <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.9375rem", marginBottom: 6, letterSpacing: "-0.01em" }}>
             {LOADING_MESSAGES[msgIdx]}
           </p>
           <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 20 }}>
             Analyse de centaines de sources en temps réel
           </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: 5 }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
             {LOADING_MESSAGES.map((_, i) => (
               <div
                 key={i}
@@ -689,39 +571,24 @@ export default function DemoGenerator() {
 
       {/* Result */}
       {result && !loading && (
-        <div
-          style={{
-            opacity: 1,
-            transform: "translateY(0)",
-            transition: "opacity 0.5s ease, transform 0.5s ease",
-          }}
-        >
+        <div>
           <DemoNewsletterResult data={result} sector={currentSector} companyName={companyName} />
 
           {/* Post-result CTA */}
           <div
             style={{
-              marginTop: 24,
+              marginTop: 20,
               padding: "28px 32px",
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: 16,
+              borderRadius: 12,
               textAlign: "center",
             }}
           >
             {!showWaitlist ? (
               <>
-                <p
-                  style={{
-                    fontFamily: "var(--font-display, Georgia, serif)",
-                    fontSize: "1.25rem",
-                    fontWeight: 600,
-                    fontStyle: "italic",
-                    color: "var(--text)",
-                    marginBottom: 6,
-                  }}
-                >
-                  Vous aimez ce que vous voyez&nbsp;?
+                <p style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text)", marginBottom: 6, letterSpacing: "-0.01em" }}>
+                  Vous aimez ce que vous voyez ?
                 </p>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
                   Recevez ce briefing chaque semaine, personnalisé pour votre équipe.
@@ -729,15 +596,15 @@ export default function DemoGenerator() {
                 <button
                   onClick={() => setShowWaitlist(true)}
                   className="btn-primary"
-                  style={{ padding: "11px 28px", fontSize: "0.9375rem", fontWeight: 600 }}
+                  style={{ padding: "11px 28px", fontSize: "0.9375rem" }}
                 >
                   Recevoir cette newsletter chaque semaine →
                 </button>
               </>
             ) : (
               <>
-                <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "1rem", marginBottom: 4 }}>
-                  Rejoignez la waitlist
+                <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "1rem", marginBottom: 6, letterSpacing: "-0.01em" }}>
+                  Rejoindre la waitlist
                 </p>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
                   Gratuit. Pas de spam. Recevez un échantillon dès votre inscription.

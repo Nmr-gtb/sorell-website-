@@ -9,11 +9,11 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 const FAQ = [
   {
     q: "Comment fonctionne la génération de contenu ?",
-    a: "Sorell utilise des modèles de langage de dernière génération pour analyser des centaines de sources d'actualité chaque semaine. L'IA sélectionne, synthétise et formate les contenus les plus pertinents selon les thématiques et profils configurés. Chaque synthèse est relue par nos algorithmes de fiabilité avant envoi.",
+    a: "Sorell utilise des modèles de langage de dernière génération pour analyser des centaines de sources d'actualité chaque semaine. L'IA sélectionne, synthétise et formate les contenus les plus pertinents selon les thématiques et profils configurés.",
   },
   {
     q: "Mes données sont-elles sécurisées ?",
-    a: "Absolument. Sorell est 100% conforme au RGPD. Vos données sont hébergées exclusivement sur des serveurs européens, chiffrées en transit et au repos (AES-256). Nous ne revendons jamais vos données et votre liste de collaborateurs reste strictement privée.",
+    a: "Absolument. Sorell est 100% conforme au RGPD. Vos données sont hébergées exclusivement sur des serveurs européens, chiffrées en transit et au repos (AES-256). Nous ne revendons jamais vos données.",
   },
   {
     q: "Puis-je annuler à tout moment ?",
@@ -21,11 +21,11 @@ const FAQ = [
   },
   {
     q: "L'IA peut-elle se tromper ?",
-    a: "Nos algorithmes sélectionnent uniquement des sources vérifiées (presse reconnue, sites officiels, publications académiques). Chaque article inclut un lien vers la source originale. Sur les plans Business et Enterprise, vous pouvez activer une étape de relecture manuelle avant l'envoi.",
+    a: "Nos algorithmes sélectionnent uniquement des sources vérifiées (presse reconnue, sites officiels, publications académiques). Chaque article inclut un lien vers la source originale.",
   },
   {
     q: "Proposez-vous une période d'essai ?",
-    a: "Oui, 14 jours d'essai gratuit sur tous les plans, sans carte bancaire requise. Vous recevez un échantillon de newsletter dès votre inscription. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
+    a: "Oui, 14 jours d'essai gratuit sur tous les plans, sans carte bancaire requise. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
   },
 ];
 
@@ -65,32 +65,33 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div>
+    <div style={{ background: "var(--bg)" }}>
       <Navbar />
 
       {/* Header */}
       <section
-        className="hero-bg"
-        style={{ paddingTop: "7rem", padding: "7rem 1.5rem 4rem", textAlign: "center" }}
+        style={{
+          paddingTop: "120px",
+          padding: "120px 1.5rem 80px",
+          textAlign: "center",
+          background: "var(--bg)",
+        }}
       >
         <div style={{ maxWidth: 600, margin: "0 auto" }}>
-          <p className="section-label" style={{ marginBottom: 16 }}>Tarifs</p>
           <h1
             style={{
-              fontFamily: "var(--font-display, Georgia, serif)",
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-              lineHeight: 1.12,
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "clamp(2rem, 4vw, 3rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
               color: "var(--text)",
               marginBottom: 16,
             }}
           >
-            Tarification simple
-            <br />
-            <em style={{ color: "var(--accent)", fontStyle: "italic" }}>et transparente</em>
+            Tarifs simples, sans engagement
           </h1>
-          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
+          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
             Choisissez le plan adapté à votre équipe. Changez ou annulez à tout moment.
           </p>
 
@@ -100,10 +101,10 @@ export default function PricingPage() {
               display: "inline-flex",
               alignItems: "center",
               gap: 4,
-              marginTop: 28,
+              marginTop: 32,
               padding: "4px",
               borderRadius: 999,
-              background: "var(--surface)",
+              background: "var(--surface-alt)",
               border: "1px solid var(--border)",
             }}
           >
@@ -112,13 +113,14 @@ export default function PricingPage() {
               style={{
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                padding: "6px 16px",
+                padding: "6px 18px",
                 borderRadius: 999,
                 border: "none",
                 cursor: "pointer",
-                background: period === "monthly" ? "var(--surface-alt)" : "transparent",
+                background: period === "monthly" ? "var(--bg)" : "transparent",
                 color: period === "monthly" ? "var(--text)" : "var(--text-secondary)",
-                transition: "all 0.18s ease",
+                transition: "all 0.15s ease",
+                boxShadow: period === "monthly" ? "var(--shadow-sm)" : "none",
               }}
             >
               Mensuel
@@ -128,13 +130,13 @@ export default function PricingPage() {
               style={{
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                padding: "6px 16px",
+                padding: "6px 18px",
                 borderRadius: 999,
                 border: "none",
                 cursor: "pointer",
                 background: period === "annual" ? "var(--accent)" : "transparent",
                 color: period === "annual" ? "white" : "var(--text-secondary)",
-                transition: "all 0.18s ease",
+                transition: "all 0.15s ease",
                 display: "flex",
                 alignItems: "center",
                 gap: 6,
@@ -159,12 +161,12 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing cards */}
-      <section style={{ padding: "3rem 1.5rem" }}>
+      <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 265px), 1fr))",
               gap: 20,
             }}
           >
@@ -176,7 +178,7 @@ export default function PricingPage() {
               tagline="Pour les petites équipes"
               features={starterFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/"
+              ctaHref="/#waitlist"
             />
             <PricingCard
               name="Business"
@@ -186,7 +188,7 @@ export default function PricingPage() {
               tagline="Pour les PME ambitieuses"
               features={businessFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/"
+              ctaHref="/#waitlist"
               popular
             />
             <PricingCard
@@ -205,62 +207,35 @@ export default function PricingPage() {
       </section>
 
       {/* Included note */}
-      <section style={{ padding: "0 1.5rem 3.5rem" }}>
+      <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>
           <div
             style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 14,
-              padding: "18px 22px",
-              borderRadius: 12,
+              padding: "16px 20px",
+              borderRadius: 8,
               background: "var(--surface-alt)",
-              border: "1px solid var(--border-subtle)",
+              border: "1px solid var(--border)",
+              fontSize: "0.875rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.65,
             }}
           >
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                background: "var(--accent-subtle)",
-                border: "1px solid var(--accent-border)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                marginTop: 1,
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-            </div>
-            <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>
-                Tous les plans incluent
-              </p>
-              <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant ·
-                Mises à jour automatiques · Onboarding guidé · 14 jours d&apos;essai gratuit
-              </p>
-            </div>
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>Tous les plans incluent :</span>{" "}
+            Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant · Mises à jour automatiques · Onboarding guidé · 14 jours d&apos;essai gratuit
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section style={{ background: "var(--surface-alt)", padding: "4.5rem 1.5rem" }}>
+      <section style={{ background: "var(--surface-alt)", padding: "80px 1.5rem" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <AnimateOnScroll>
             <h2
               style={{
-                fontFamily: "var(--font-display, Georgia, serif)",
-                fontSize: "clamp(1.625rem, 3.5vw, 2.5rem)",
-                fontWeight: 600,
-                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "clamp(1.5rem, 3vw, 2rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.02em",
                 color: "var(--text)",
                 textAlign: "center",
                 marginBottom: "2.5rem",
@@ -275,12 +250,11 @@ export default function PricingPage() {
               <AnimateOnScroll key={i} delay={i * 50}>
                 <div
                   style={{
-                    borderRadius: 12,
-                    border: "1px solid",
-                    borderColor: openFaq === i ? "var(--accent-border)" : "var(--border)",
-                    background: "var(--surface)",
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    background: "var(--bg)",
                     overflow: "hidden",
-                    transition: "border-color 0.2s ease",
+                    transition: "border-color 0.15s ease",
                   }}
                 >
                   <button
@@ -300,11 +274,11 @@ export default function PricingPage() {
                   >
                     <span
                       style={{
-                        fontFamily: "var(--font-body, sans-serif)",
                         fontSize: "0.9375rem",
                         fontWeight: 500,
                         color: "var(--text)",
                         flex: 1,
+                        letterSpacing: "-0.01em",
                       }}
                     >
                       {item.q}
@@ -345,21 +319,22 @@ export default function PricingPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section style={{ padding: "4.5rem 1.5rem", textAlign: "center" }}>
+      <section style={{ padding: "80px 1.5rem", textAlign: "center", background: "var(--bg)" }}>
         <AnimateOnScroll>
           <h2
             style={{
-              fontFamily: "var(--font-display, Georgia, serif)",
-              fontSize: "clamp(1.625rem, 3vw, 2.25rem)",
-              fontWeight: 600,
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "clamp(1.5rem, 3vw, 2rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
               color: "var(--text)",
               marginBottom: 12,
             }}
           >
-            Toujours des questions&nbsp;?
+            Toujours des questions ?
           </h2>
           <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: 28 }}>
-            Notre équipe répond sous 24h. Ou testez directement avec une démo gratuite.
+            Notre équipe répond sous 24h.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
             <a href="mailto:contact@sorell.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
