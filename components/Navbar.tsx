@@ -200,7 +200,6 @@ export default function Navbar() {
           style={{ display: "flex", alignItems: "center", gap: 8 }}
           className="md:hidden flex"
         >
-          <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
@@ -293,6 +292,9 @@ export default function Navbar() {
             >
               Commencer
             </Link>
+            <div style={{ display: "flex", justifyContent: "center", paddingTop: 4 }}>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       )}
