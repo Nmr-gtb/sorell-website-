@@ -465,14 +465,8 @@ export default function HomePage() {
           <div style={{ textAlign: "center" }}>
             <Link
               href="/pricing"
-              style={{
-                fontSize: "0.9375rem",
-                color: "var(--accent)",
-                textDecoration: "none",
-                fontWeight: 500,
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.textDecoration = "underline")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.textDecoration = "none")}
+              className="link-accent"
+              style={{ fontSize: "0.9375rem" }}
             >
               Voir tous les détails →
             </Link>
