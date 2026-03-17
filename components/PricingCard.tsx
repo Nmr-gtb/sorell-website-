@@ -13,6 +13,7 @@ interface PricingCardProps {
   ctaHref: string;
   popular?: boolean;
   enterprise?: boolean;
+  badge?: string;
 }
 
 export default function PricingCard({
@@ -26,6 +27,7 @@ export default function PricingCard({
   ctaHref,
   popular,
   enterprise,
+  badge,
 }: PricingCardProps) {
   const displayPrice =
     period === "annual" && annualPrice !== null ? annualPrice : price;
@@ -34,20 +36,23 @@ export default function PricingCard({
     <div
       style={{
         position: "relative",
-        borderRadius: 16,
+        borderRadius: 12,
         padding: "28px",
         display: "flex",
         flexDirection: "column",
-        gap: "24px",
-        background: popular ? "var(--surface)" : "var(--surface)",
+        gap: "22px",
+        background: "var(--surface)",
         border: popular
           ? "1.5px solid var(--accent)"
           : "1px solid var(--border)",
-        boxShadow: popular ? "var(--shadow-lg)" : "var(--shadow-sm)",
+        boxShadow: popular
+          ? "var(--shadow-lg), 0 0 0 1px var(--accent)"
+          : "var(--shadow-sm)",
         transition: "box-shadow 0.2s ease",
       }}
     >
-      {popular && (
+      {/* Badge */}
+      {(popular || badge) && (
         <div
           style={{
             position: "absolute",
@@ -57,21 +62,21 @@ export default function PricingCard({
           }}
         >
           <span
-            className="font-mono"
             style={{
               display: "inline-block",
-              padding: "4px 14px",
+              padding: "3px 14px",
               borderRadius: 999,
+              fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
               fontSize: "0.6875rem",
               fontWeight: 600,
               letterSpacing: "0.04em",
               background: "var(--accent)",
-              color: "white",
-              boxShadow: "0 4px 12px rgba(193, 95, 60, 0.3)",
+              color: "var(--accent-text)",
+              boxShadow: "0 4px 12px rgba(184,134,11,0.3)",
               whiteSpace: "nowrap",
             }}
           >
-            Recommandé
+            {badge || "Recommandé"}
           </span>
         </div>
       )}
@@ -79,9 +84,9 @@ export default function PricingCard({
       {/* Plan info */}
       <div>
         <h3
-          className="font-display"
           style={{
-            fontSize: "1.125rem",
+            fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
+            fontSize: "1.25rem",
             fontWeight: 600,
             color: "var(--text)",
             marginBottom: 4,
@@ -98,34 +103,42 @@ export default function PricingCard({
       <div style={{ display: "flex", alignItems: "flex-end", gap: 4 }}>
         {enterprise ? (
           <span
-            className="font-display"
-            style={{ fontSize: "1.75rem", fontWeight: 600, color: "var(--text)" }}
+            style={{
+              fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
+              fontSize: "1.75rem",
+              fontWeight: 600,
+              color: "var(--text)",
+            }}
           >
             Sur devis
           </span>
         ) : (
           <>
             <span
-              className="font-display"
-              style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--text)", lineHeight: 1 }}
+              style={{
+                fontFamily: "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
+                fontSize: "2.5rem",
+                fontWeight: 700,
+                color: "var(--text)",
+                lineHeight: 1,
+              }}
             >
               {displayPrice}€
             </span>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginBottom: 4,
-                gap: 2,
-              }}
-            >
-              <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+            <div style={{ display: "flex", flexDirection: "column", marginBottom: 4, gap: 2 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+                  fontSize: "0.8125rem",
+                  color: "var(--text-secondary)",
+                }}
+              >
                 /mois
               </span>
               {period === "annual" && (
                 <span
-                  className="font-mono"
                   style={{
+                    fontFamily: "var(--font-mono, 'JetBrains Mono', monospace)",
                     fontSize: "0.6875rem",
                     fontWeight: 600,
                     padding: "1px 6px",
@@ -154,22 +167,18 @@ export default function PricingCard({
               fontSize: "0.875rem",
             }}
           >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 16 16"
-              fill="none"
-              style={{ color: popular ? "var(--accent)" : "var(--success)", flexShrink: 0, marginTop: 1 }}
+            <span
+              style={{
+                color: popular ? "var(--accent)" : "var(--success)",
+                fontWeight: 700,
+                flexShrink: 0,
+                marginTop: 1,
+                fontSize: "0.9375rem",
+                lineHeight: 1,
+              }}
             >
-              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.3" opacity="0.35" />
-              <path
-                d="M5 8l2 2 4-4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+              ✓
+            </span>
             <span style={{ color: "var(--text-secondary)" }}>{feature}</span>
           </li>
         ))}
@@ -178,12 +187,13 @@ export default function PricingCard({
       {/* CTA */}
       <Link
         href={ctaHref}
-        className={popular ? "btn-accent" : "btn-ghost"}
+        className={popular ? "btn-primary" : "btn-ghost"}
         style={{
           textAlign: "center",
           padding: "11px 20px",
           fontSize: "0.875rem",
           fontWeight: 600,
+          justifyContent: "center",
         }}
       >
         {cta}

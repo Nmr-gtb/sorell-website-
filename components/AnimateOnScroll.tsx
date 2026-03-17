@@ -38,8 +38,8 @@ export default function AnimateOnScroll({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(18px)",
-        transition: `opacity 0.55s ease ${delay}ms, transform 0.55s ease ${delay}ms`,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
       }}
     >
       {children}

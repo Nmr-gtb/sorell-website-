@@ -27,21 +27,21 @@ export default function LoginPage() {
     >
       <div style={{ width: "100%", maxWidth: 380 }}>
         {/* Logo + heading */}
-        <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
             <SorellLogo size="lg" />
           </div>
           <h1
-            className="font-display"
             style={{
-              fontSize: "1.625rem",
-              fontWeight: 700,
+              fontFamily: "var(--font-display, Georgia, serif)",
+              fontSize: "1.75rem",
+              fontWeight: 600,
               color: "var(--text)",
-              letterSpacing: "-0.02em",
-              marginBottom: 5,
+              letterSpacing: "-0.01em",
+              marginBottom: 6,
             }}
           >
-            Connectez-vous
+            Connexion
           </h1>
           <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
             Accédez à votre espace Sorell
@@ -50,13 +50,27 @@ export default function LoginPage() {
 
         {/* Form card */}
         <div
-          className="card"
-          style={{ padding: "28px" }}
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            boxShadow: "var(--shadow-sm)",
+            padding: "28px",
+          }}
         >
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: "flex", flexDirection: "column", gap: 18 }}
+          >
             <div>
               <label
-                style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "var(--text)", marginBottom: 7 }}
+                style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  color: "var(--text)",
+                  marginBottom: 7,
+                }}
               >
                 Adresse email
               </label>
@@ -67,13 +81,21 @@ export default function LoginPage() {
                 placeholder="vous@entreprise.fr"
                 required
                 className="input-field"
-                style={{ padding: "10px 14px", fontSize: "0.875rem" }}
               />
             </div>
 
             <div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
-                <label style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 7,
+                }}
+              >
+                <label
+                  style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text)" }}
+                >
                   Mot de passe
                 </label>
                 <button
@@ -88,7 +110,7 @@ export default function LoginPage() {
                     padding: 0,
                   }}
                 >
-                  Mot de passe oublié ?
+                  Mot de passe oublié&nbsp;?
                 </button>
               </div>
               <input
@@ -98,14 +120,19 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 className="input-field"
-                style={{ padding: "10px 14px", fontSize: "0.875rem" }}
               />
             </div>
 
             <button
               type="submit"
-              className="btn-accent"
-              style={{ padding: "11px", fontSize: "0.9375rem", fontWeight: 600, marginTop: 4 }}
+              className="btn-primary"
+              style={{
+                padding: "12px",
+                fontSize: "0.9375rem",
+                fontWeight: 600,
+                marginTop: 4,
+                justifyContent: "center",
+              }}
             >
               Se connecter
             </button>
@@ -113,15 +140,15 @@ export default function LoginPage() {
 
           <div
             style={{
-              marginTop: 18,
-              paddingTop: 18,
+              marginTop: 20,
+              paddingTop: 20,
               borderTop: "1px solid var(--border-subtle)",
               textAlign: "center",
               fontSize: "0.875rem",
               color: "var(--text-secondary)",
             }}
           >
-            Pas encore de compte ?{" "}
+            Pas encore de compte&nbsp;?{" "}
             <Link
               href="/"
               style={{ color: "var(--accent)", fontWeight: 500, textDecoration: "none" }}
@@ -132,7 +159,7 @@ export default function LoginPage() {
         </div>
 
         {/* Back link */}
-        <div style={{ textAlign: "center", marginTop: 18 }}>
+        <div style={{ textAlign: "center", marginTop: 20 }}>
           <Link
             href="/"
             style={{
@@ -155,22 +182,29 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Overlay "bientôt disponible" */}
+      {/* "Bientôt disponible" overlay */}
       {showOverlay && (
         <div
           style={{
-            position: "fixed", inset: 0, zIndex: 100,
-            display: "flex", alignItems: "center", justifyContent: "center",
+            position: "fixed",
+            inset: 0,
+            zIndex: 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             padding: "1.5rem",
-            background: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(10px)",
+            background: "rgba(28,25,21,0.60)",
+            backdropFilter: "blur(12px)",
           }}
-          onClick={(e) => { if (e.target === e.currentTarget) setShowOverlay(false); }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowOverlay(false);
+          }}
         >
           <div
             style={{
-              width: "100%", maxWidth: 420,
-              padding: "40px 36px",
+              width: "100%",
+              maxWidth: 420,
+              padding: "44px 40px",
               borderRadius: 20,
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -178,37 +212,72 @@ export default function LoginPage() {
               textAlign: "center",
             }}
           >
+            {/* Icon */}
             <div
               style={{
-                width: 56, height: 56, borderRadius: 14,
-                background: "var(--accent-subtle)", border: "1px solid var(--accent-border)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "1.5rem", margin: "0 auto 20px",
+                width: 60,
+                height: 60,
+                borderRadius: 16,
+                background: "var(--accent-subtle)",
+                border: "1px solid var(--accent-border)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 24px",
               }}
             >
-              🚀
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
             </div>
+
             <h2
-              className="font-display"
               style={{
-                fontSize: "1.5rem", fontWeight: 700,
-                color: "var(--text)", letterSpacing: "-0.02em",
-                marginBottom: 10,
+                fontFamily: "var(--font-display, Georgia, serif)",
+                fontSize: "1.625rem",
+                fontWeight: 600,
+                color: "var(--text)",
+                letterSpacing: "-0.01em",
+                marginBottom: 12,
               }}
             >
               Bientôt disponible
             </h2>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 24 }}>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.7,
+                marginBottom: 8,
+              }}
+            >
               Sorell est en cours de développement. Rejoignez la waitlist pour être parmi les
-              premiers à y accéder et bénéficier de l&apos;offre fondateur{" "}
-              <span style={{ color: "var(--text)", fontWeight: 600 }}>−50% à vie</span>.
+              premiers à y accéder.
             </p>
+            <p
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.7,
+                marginBottom: 28,
+              }}
+            >
+              Offre fondateur :{" "}
+              <span style={{ color: "var(--text)", fontWeight: 600 }}>−50% à vie</span> pour
+              les 50 premiers inscrits.
+            </p>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <Link
                 href="/"
-                className="btn-accent"
+                className="btn-primary"
                 onClick={() => setShowOverlay(false)}
-                style={{ padding: "12px", fontSize: "0.9375rem", fontWeight: 600 }}
+                style={{
+                  padding: "12px",
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  justifyContent: "center",
+                }}
               >
                 Rejoindre la waitlist →
               </Link>

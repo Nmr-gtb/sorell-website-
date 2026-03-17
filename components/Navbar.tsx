@@ -43,18 +43,20 @@ function ThemeToggle() {
         flexShrink: 0,
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-border)";
-        (e.currentTarget as HTMLElement).style.color = "var(--accent)";
-        (e.currentTarget as HTMLElement).style.background = "var(--accent-subtle)";
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "var(--accent-border)";
+        el.style.color = "var(--accent)";
+        el.style.background = "var(--accent-subtle)";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-        (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-        (e.currentTarget as HTMLElement).style.background = "transparent";
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "var(--border)";
+        el.style.color = "var(--text-secondary)";
+        el.style.background = "transparent";
       }}
     >
       {isDark ? (
-        // Sun icon
+        // Sun icon — click to go light
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="5"/>
           <line x1="12" y1="1" x2="12" y2="3"/>
@@ -67,7 +69,7 @@ function ThemeToggle() {
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
         </svg>
       ) : (
-        // Moon icon
+        // Moon icon — click to go dark
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
@@ -98,28 +100,48 @@ export default function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: scrolled ? "rgba(250, 250, 247, 0.88)" : "transparent",
-        backdropFilter: scrolled ? "blur(20px) saturate(1.4)" : "none",
-        borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        background: scrolled ? "rgba(254,252,248,0.92)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px) saturate(1.3)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border-subtle)" : "1px solid transparent",
         transition: "background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
       }}
     >
+      {/* Dark mode override via CSS-in-JS */}
       <style>{`
-        [data-theme="dark"] header {
-          background: ${scrolled ? "rgba(26, 26, 31, 0.88)" : "transparent"} !important;
+        [data-theme="dark"] header[style] {
+          background: ${scrolled ? "rgba(26,25,21,0.92)" : "transparent"} !important;
         }
       `}</style>
+
       <nav
-        className="max-w-6xl mx-auto px-6"
-        style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}
+        style={{
+          maxWidth: "72rem",
+          margin: "0 auto",
+          padding: "0 1.5rem",
+          height: 64,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
       >
         {/* Logo */}
         <SorellLogo />
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center" style={{ gap: 2 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+          }}
+          className="hidden md:flex"
+        >
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
@@ -136,14 +158,16 @@ export default function Navbar() {
               }}
               onMouseEnter={(e) => {
                 if (!isActive(href)) {
-                  (e.currentTarget as HTMLElement).style.color = "var(--text)";
-                  (e.currentTarget as HTMLElement).style.background = "var(--surface-alt)";
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.color = "var(--text)";
+                  el.style.background = "var(--surface-alt)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive(href)) {
-                  (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.color = "var(--text-secondary)";
+                  el.style.background = "transparent";
                 }
               }}
             >
@@ -152,20 +176,26 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right side */}
-        <div className="hidden md:flex items-center" style={{ gap: 8 }}>
+        {/* Right side — desktop */}
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+          className="hidden md:flex"
+        >
           <ThemeToggle />
           <Link
             href="/login"
-            className="btn-accent"
+            className="btn-ghost"
             style={{ padding: "7px 18px", fontSize: "0.875rem" }}
           >
             Se connecter
           </Link>
         </div>
 
-        {/* Mobile: theme toggle + hamburger */}
-        <div className="md:hidden flex items-center" style={{ gap: 8 }}>
+        {/* Mobile: theme + hamburger */}
+        <div
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+          className="md:hidden flex"
+        >
           <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -185,39 +215,33 @@ export default function Navbar() {
               padding: "8px",
             }}
           >
-            <span
-              style={{
-                display: "block",
-                width: 16,
-                height: 1.5,
-                borderRadius: 1,
-                background: "var(--text)",
-                transform: mobileOpen ? "rotate(45deg) translate(4.5px, 4.5px)" : "none",
-                transition: "transform 0.2s ease",
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: 16,
-                height: 1.5,
-                borderRadius: 1,
-                background: "var(--text)",
-                opacity: mobileOpen ? 0 : 1,
-                transition: "opacity 0.2s ease",
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: 16,
-                height: 1.5,
-                borderRadius: 1,
-                background: "var(--text)",
-                transform: mobileOpen ? "rotate(-45deg) translate(4.5px, -4.5px)" : "none",
-                transition: "transform 0.2s ease",
-              }}
-            />
+            <span style={{
+              display: "block",
+              width: 16,
+              height: 1.5,
+              borderRadius: 1,
+              background: "var(--text)",
+              transform: mobileOpen ? "rotate(45deg) translate(4.5px, 4.5px)" : "none",
+              transition: "transform 0.2s ease",
+            }} />
+            <span style={{
+              display: "block",
+              width: 16,
+              height: 1.5,
+              borderRadius: 1,
+              background: "var(--text)",
+              opacity: mobileOpen ? 0 : 1,
+              transition: "opacity 0.2s ease",
+            }} />
+            <span style={{
+              display: "block",
+              width: 16,
+              height: 1.5,
+              borderRadius: 1,
+              background: "var(--text)",
+              transform: mobileOpen ? "rotate(-45deg) translate(4.5px, -4.5px)" : "none",
+              transition: "transform 0.2s ease",
+            }} />
           </button>
         </div>
       </nav>
@@ -252,8 +276,8 @@ export default function Navbar() {
           <Link
             href="/login"
             onClick={() => setMobileOpen(false)}
-            className="btn-accent"
-            style={{ width: "100%", marginTop: 8, padding: "10px" }}
+            className="btn-ghost"
+            style={{ width: "100%", marginTop: 8, padding: "10px", justifyContent: "center" }}
           >
             Se connecter
           </Link>

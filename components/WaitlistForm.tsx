@@ -3,15 +3,15 @@
 import { useState } from "react";
 
 interface WaitlistFormProps {
-  size?: "default" | "large";
   placeholder?: string;
   buttonText?: string;
+  compact?: boolean;
 }
 
 export default function WaitlistForm({
-  size = "default",
   placeholder = "votre@email.com",
   buttonText = "Rejoindre la waitlist",
+  compact = false,
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -21,8 +21,7 @@ export default function WaitlistForm({
     e.preventDefault();
     if (!email.includes("@")) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 650));
-    console.log("[Waitlist] Email enregistré:", email);
+    await new Promise((r) => setTimeout(r, 800));
     setSubmitted(true);
     setLoading(false);
   };
@@ -37,42 +36,29 @@ export default function WaitlistForm({
           padding: "12px 18px",
           borderRadius: 10,
           background: "var(--success-bg)",
-          border: "1px solid rgba(5, 150, 105, 0.2)",
+          border: "1px solid rgba(107,142,78,0.25)",
         }}
       >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 20 20"
-          fill="none"
-          style={{ flexShrink: 0 }}
-        >
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
           <circle cx="10" cy="10" r="9" stroke="var(--success)" strokeWidth="1.5" />
-          <path
-            d="M6.5 10l2.5 2.5 4-4"
-            stroke="var(--success)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M6.5 10l2.5 2.5 4-4" stroke="var(--success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--success)" }}>
-          Parfait ! Vous recevrez un échantillon sous peu.
+          Vous êtes sur la liste&nbsp;! Attendez-vous à un email de confirmation.
         </p>
       </div>
     );
   }
-
-  const isLarge = size === "large";
 
   return (
     <form
       onSubmit={handleSubmit}
       style={{
         display: "flex",
-        gap: 8,
+        flexDirection: compact ? "column" : "row",
+        gap: compact ? 10 : 8,
         width: "100%",
-        maxWidth: isLarge ? 480 : 400,
+        maxWidth: compact ? 320 : 480,
       }}
     >
       <input
@@ -84,37 +70,26 @@ export default function WaitlistForm({
         className="input-field"
         style={{
           flex: 1,
-          padding: isLarge ? "12px 16px" : "10px 14px",
-          fontSize: isLarge ? "0.9375rem" : "0.875rem",
+          padding: "0.75rem 1rem",
+          fontSize: "0.9375rem",
         }}
       />
       <button
         type="submit"
         disabled={loading}
-        className="btn-accent"
+        className="btn-primary"
         style={{
-          padding: isLarge ? "12px 20px" : "10px 18px",
-          fontSize: isLarge ? "0.9375rem" : "0.875rem",
+          padding: "0.75rem 1.5rem",
+          fontSize: "0.9375rem",
           flexShrink: 0,
           opacity: loading ? 0.75 : 1,
         }}
       >
         {loading ? (
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <svg
-              className="animate-spin"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
+            <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-              <path
-                d="M12 2a10 10 0 0 1 10 10"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             Envoi...
           </span>

@@ -1,60 +1,107 @@
 "use client";
 
 import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import PricingCard from "@/components/PricingCard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 
 const FAQ = [
-  { q: "Puis-je changer de plan à tout moment ?", a: "Oui, sans engagement. Passez d'un plan à l'autre en un clic depuis votre dashboard. Le changement prend effet immédiatement et est proratisé." },
-  { q: "Comment fonctionne l'essai gratuit ?", a: "Recevez un échantillon de newsletter généré par IA gratuitement, sans carte bancaire. Vous pouvez ensuite décider de souscrire à un plan payant." },
-  { q: "Combien de temps pour configurer ?", a: "10 minutes maximum. Notre wizard de configuration vous guide étape par étape. Pas besoin de compétences techniques." },
-  { q: "Mes données sont-elles sécurisées ?", a: "Absolument. Sorell est 100% RGPD compliant. Vos données sont chiffrées en AES-256, hébergées en Europe, et ne sont jamais revendues à des tiers." },
-  { q: "Puis-je personnaliser le design de la newsletter ?", a: "Oui, le white-label complet est disponible sur le plan Enterprise : vos couleurs, votre logo, votre domaine d'envoi personnalisé." },
+  {
+    q: "Comment fonctionne la génération de contenu ?",
+    a: "Sorell utilise des modèles de langage de dernière génération pour analyser des centaines de sources d'actualité chaque semaine. L'IA sélectionne, synthétise et formate les contenus les plus pertinents selon les thématiques et profils configurés. Chaque synthèse est relue par nos algorithmes de fiabilité avant envoi.",
+  },
+  {
+    q: "Mes données sont-elles sécurisées ?",
+    a: "Absolument. Sorell est 100% conforme au RGPD. Vos données sont hébergées exclusivement sur des serveurs européens, chiffrées en transit et au repos (AES-256). Nous ne revendons jamais vos données et votre liste de collaborateurs reste strictement privée.",
+  },
+  {
+    q: "Puis-je annuler à tout moment ?",
+    a: "Oui, sans engagement et sans frais de résiliation. Vous pouvez annuler votre abonnement en un clic depuis votre dashboard. L'accès reste actif jusqu'à la fin de la période payée.",
+  },
+  {
+    q: "L'IA peut-elle se tromper ?",
+    a: "Nos algorithmes sélectionnent uniquement des sources vérifiées (presse reconnue, sites officiels, publications académiques). Chaque article inclut un lien vers la source originale. Sur les plans Business et Enterprise, vous pouvez activer une étape de relecture manuelle avant l'envoi.",
+  },
+  {
+    q: "Proposez-vous une période d'essai ?",
+    a: "Oui, 14 jours d'essai gratuit sur tous les plans, sans carte bancaire requise. Vous recevez un échantillon de newsletter dès votre inscription. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
+  },
 ];
 
-const starterFeatures = ["1 newsletter par semaine", "1 thématique de veille", "Jusqu'à 500 destinataires", "Synthèses IA", "Templates responsive", "Support email"];
-const businessFeatures = ["2 newsletters par semaine", "3 thématiques de veille", "Jusqu'à 2 000 destinataires", "Personnalisation par rôle", "Veille concurrentielle", "Dashboard analytics complet", "Support prioritaire 24/7", "Intégrations Slack & Teams"];
-const enterpriseFeatures = ["Newsletters illimitées", "Thématiques illimitées", "Destinataires illimités", "White-label complet", "API & intégration CRM", "Analytics avancés & export", "SSO / SAML", "Account manager dédié", "SLA 99,9%"];
+const starterFeatures = [
+  "Jusqu'à 10 utilisateurs",
+  "1 thématique de veille",
+  "Envoi hebdomadaire",
+  "Synthèses IA incluses",
+  "Templates responsive",
+  "Support email",
+];
+
+const businessFeatures = [
+  "Jusqu'à 50 utilisateurs",
+  "Thématiques illimitées",
+  "2 envois par semaine",
+  "Personnalisation par rôle",
+  "Veille concurrentielle",
+  "Dashboard analytics complet",
+  "White-label inclus",
+  "Support prioritaire 24/7",
+];
+
+const enterpriseFeatures = [
+  "Utilisateurs illimités",
+  "Thématiques illimitées",
+  "Fréquence personnalisée",
+  "API & intégration CRM",
+  "Analytics avancés & export",
+  "SSO / SAML",
+  "CSM dédié",
+  "SLA 99,9%",
+];
 
 export default function PricingPage() {
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div style={{ paddingTop: "5rem" }}>
+    <div>
+      <Navbar />
+
       {/* Header */}
       <section
         className="hero-bg"
-        style={{ padding: "4rem 1.5rem", textAlign: "center" }}
+        style={{ paddingTop: "7rem", padding: "7rem 1.5rem 4rem", textAlign: "center" }}
       >
         <div style={{ maxWidth: 600, margin: "0 auto" }}>
-          <p className="section-label" style={{ marginBottom: 14 }}>Tarifs</p>
+          <p className="section-label" style={{ marginBottom: 16 }}>Tarifs</p>
           <h1
-            className="font-display"
             style={{
-              fontSize: "clamp(2rem, 5vw, 3.25rem)",
-              fontWeight: 700,
-              letterSpacing: "-0.025em",
-              lineHeight: 1.15,
+              fontFamily: "var(--font-display, Georgia, serif)",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
+              fontWeight: 600,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.12,
               color: "var(--text)",
-              marginBottom: 14,
+              marginBottom: 16,
             }}
           >
-            Simple, transparent,{" "}
-            <span className="text-accent-italic font-display">sans engagement</span>
+            Tarification simple
+            <br />
+            <em style={{ color: "var(--accent)", fontStyle: "italic" }}>et transparente</em>
           </h1>
-          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
             Choisissez le plan adapté à votre équipe. Changez ou annulez à tout moment.
           </p>
 
-          {/* Toggle */}
+          {/* Toggle mensuel / annuel */}
           <div
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 10,
+              gap: 4,
               marginTop: 28,
-              padding: "6px 6px 6px 14px",
+              padding: "4px",
               borderRadius: 999,
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -65,7 +112,7 @@ export default function PricingPage() {
               style={{
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                padding: "4px 10px",
+                padding: "6px 16px",
                 borderRadius: 999,
                 border: "none",
                 cursor: "pointer",
@@ -81,7 +128,7 @@ export default function PricingPage() {
               style={{
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                padding: "4px 10px",
+                padding: "6px 16px",
                 borderRadius: 999,
                 border: "none",
                 cursor: "pointer",
@@ -95,10 +142,9 @@ export default function PricingPage() {
             >
               Annuel
               <span
-                className="font-mono"
                 style={{
                   fontSize: "0.6875rem",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   padding: "1px 6px",
                   borderRadius: 4,
                   background: period === "annual" ? "rgba(255,255,255,0.2)" : "var(--success-bg)",
@@ -112,11 +158,9 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Cards */}
-      <section style={{ padding: "3.5rem 1.5rem" }}>
-        <div
-          style={{ maxWidth: 900, margin: "0 auto" }}
-        >
+      {/* Pricing cards */}
+      <section style={{ padding: "3rem 1.5rem" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <div
             style={{
               display: "grid",
@@ -124,15 +168,44 @@ export default function PricingPage() {
               gap: 20,
             }}
           >
-            <PricingCard name="Starter" price={49} annualPrice={39} period={period} tagline="Pour les petites équipes" features={starterFeatures} cta="Commencer" ctaHref="/" />
-            <PricingCard name="Business" price={199} annualPrice={159} period={period} tagline="Pour les PME ambitieuses" features={businessFeatures} cta="Commencer" ctaHref="/" popular />
-            <PricingCard name="Enterprise" price={499} annualPrice={399} period={period} tagline="Pour les grandes organisations" features={enterpriseFeatures} cta="Nous contacter" ctaHref="mailto:contact@sorell.fr" enterprise />
+            <PricingCard
+              name="Starter"
+              price={49}
+              annualPrice={39}
+              period={period}
+              tagline="Pour les petites équipes"
+              features={starterFeatures}
+              cta="Commencer gratuitement"
+              ctaHref="/"
+            />
+            <PricingCard
+              name="Business"
+              price={199}
+              annualPrice={159}
+              period={period}
+              tagline="Pour les PME ambitieuses"
+              features={businessFeatures}
+              cta="Commencer gratuitement"
+              ctaHref="/"
+              popular
+            />
+            <PricingCard
+              name="Enterprise"
+              price={null}
+              annualPrice={null}
+              period={period}
+              tagline="Pour les grandes organisations"
+              features={enterpriseFeatures}
+              cta="Nous contacter"
+              ctaHref="mailto:contact@sorell.fr"
+              enterprise
+            />
           </div>
         </div>
       </section>
 
       {/* Included note */}
-      <section style={{ padding: "0 1.5rem 3rem" }}>
+      <section style={{ padding: "0 1.5rem 3.5rem" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>
           <div
             style={{
@@ -140,17 +213,38 @@ export default function PricingPage() {
               alignItems: "flex-start",
               gap: 14,
               padding: "18px 22px",
-              borderRadius: 14,
+              borderRadius: 12,
               background: "var(--surface-alt)",
               border: "1px solid var(--border-subtle)",
             }}
           >
-            <span style={{ fontSize: "1.125rem", flexShrink: 0, marginTop: 1 }}>💡</span>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: "var(--accent-subtle)",
+                border: "1px solid var(--accent-border)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                marginTop: 1,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
             <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>Tous les plans incluent</p>
-              <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>
+                Tous les plans incluent
+              </p>
+              <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
                 Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant ·
-                Mises à jour automatiques · Onboarding guidé
+                Mises à jour automatiques · Onboarding guidé · 14 jours d&apos;essai gratuit
               </p>
             </div>
           </div>
@@ -158,15 +252,15 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="section-alt" style={{ padding: "4rem 1.5rem" }}>
+      <section style={{ background: "var(--surface-alt)", padding: "4.5rem 1.5rem" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <AnimateOnScroll>
             <h2
-              className="font-display"
               style={{
-                fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)",
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
+                fontFamily: "var(--font-display, Georgia, serif)",
+                fontSize: "clamp(1.625rem, 3.5vw, 2.5rem)",
+                fontWeight: 600,
+                letterSpacing: "-0.01em",
                 color: "var(--text)",
                 textAlign: "center",
                 marginBottom: "2.5rem",
@@ -184,7 +278,7 @@ export default function PricingPage() {
                     borderRadius: 12,
                     border: "1px solid",
                     borderColor: openFaq === i ? "var(--accent-border)" : "var(--border)",
-                    background: openFaq === i ? "var(--surface)" : "var(--surface)",
+                    background: "var(--surface)",
                     overflow: "hidden",
                     transition: "border-color 0.2s ease",
                   }}
@@ -204,13 +298,25 @@ export default function PricingPage() {
                       gap: 12,
                     }}
                   >
-                    <span style={{ fontSize: "0.9375rem", fontWeight: 500, color: "var(--text)", flex: 1 }}>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-body, sans-serif)",
+                        fontSize: "0.9375rem",
+                        fontWeight: 500,
+                        color: "var(--text)",
+                        flex: 1,
+                      }}
+                    >
                       {item.q}
                     </span>
                     <svg
-                      width="14" height="14" viewBox="0 0 16 16" fill="none"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
                       style={{
-                        color: "var(--text-muted)", flexShrink: 0,
+                        color: "var(--text-muted)",
+                        flexShrink: 0,
                         transform: openFaq === i ? "rotate(180deg)" : "none",
                         transition: "transform 0.2s ease",
                       }}
@@ -219,8 +325,14 @@ export default function PricingPage() {
                     </svg>
                   </button>
                   {openFaq === i && (
-                    <div style={{ padding: "0 20px 16px" }}>
-                      <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                    <div style={{ padding: "0 20px 18px" }}>
+                      <p
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "var(--text-secondary)",
+                          lineHeight: 1.7,
+                        }}
+                      >
                         {item.a}
                       </p>
                     </div>
@@ -233,24 +345,34 @@ export default function PricingPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
+      <section style={{ padding: "4.5rem 1.5rem", textAlign: "center" }}>
         <AnimateOnScroll>
-          <h2 className="font-display" style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", marginBottom: 10 }}>
-            Toujours des questions ?
+          <h2
+            style={{
+              fontFamily: "var(--font-display, Georgia, serif)",
+              fontSize: "clamp(1.625rem, 3vw, 2.25rem)",
+              fontWeight: 600,
+              color: "var(--text)",
+              marginBottom: 12,
+            }}
+          >
+            Toujours des questions&nbsp;?
           </h2>
-          <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: 24 }}>
+          <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: 28 }}>
             Notre équipe répond sous 24h. Ou testez directement avec une démo gratuite.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-            <a href="mailto:contact@sorell.fr" className="btn-ghost" style={{ padding: "10px 20px", fontSize: "0.875rem" }}>
+            <a href="mailto:contact@sorell.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
               Nous contacter
             </a>
-            <a href="/demo" className="btn-accent" style={{ padding: "10px 20px", fontSize: "0.875rem" }}>
+            <a href="/demo" className="btn-primary" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
               Essayer la démo →
             </a>
           </div>
         </AnimateOnScroll>
       </section>
+
+      <Footer />
     </div>
   );
 }
