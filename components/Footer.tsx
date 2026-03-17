@@ -1,53 +1,97 @@
 import Link from "next/link";
+import SorellLogo from "./SorellLogo";
 
 export default function Footer() {
   return (
     <footer
-      className="mt-24 border-t"
-      style={{ borderColor: "#1e1e2a", background: "#0a0a0f" }}
+      style={{
+        borderTop: "1px solid var(--border)",
+        background: "var(--surface-alt)",
+        marginTop: "6rem",
+      }}
     >
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-sm"
-              style={{ background: "#7c3aed", fontFamily: "Georgia, serif" }}
-            >
-              S
+      <div
+        className="max-w-6xl mx-auto px-6"
+        style={{ paddingTop: "3rem", paddingBottom: "3rem" }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {/* Top row */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: "2rem",
+            }}
+          >
+            {/* Brand */}
+            <div style={{ maxWidth: 280 }}>
+              <SorellLogo size="md" />
+              <p
+                style={{
+                  marginTop: "0.75rem",
+                  fontSize: "0.8125rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.65,
+                }}
+              >
+                Newsletter IA personnalisée pour vos équipes. Veille sectorielle, concurrents, tendances —
+                livrée chaque semaine.
+              </p>
             </div>
-            <span className="text-sm font-semibold" style={{ color: "#f0f0f5" }}>
-              Sorell
-            </span>
+
+            {/* Links */}
+            <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}>
+              <div>
+                <p
+                  className="section-label"
+                  style={{ marginBottom: "0.75rem", display: "block" }}
+                >
+                  Produit
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <Link href="/#features" className="footer-link">Fonctionnalités</Link>
+                  <Link href="/pricing" className="footer-link">Tarifs</Link>
+                  <Link href="/demo" className="footer-link">Démo</Link>
+                </div>
+              </div>
+
+              <div>
+                <p
+                  className="section-label"
+                  style={{ marginBottom: "0.75rem", display: "block" }}
+                >
+                  Légal
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  <Link href="#" className="footer-link">Mentions légales</Link>
+                  <Link href="#" className="footer-link">Confidentialité</Link>
+                  <Link href="mailto:contact@sorell.fr" className="footer-link">Contact</Link>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Nav links */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm" style={{ color: "#5a5a72" }}>
-            <Link href="/pricing" className="hover:text-[#9090aa] transition-colors">
-              Tarifs
-            </Link>
-            <Link href="/demo" className="hover:text-[#9090aa] transition-colors">
-              Démo
-            </Link>
-            <Link href="/login" className="hover:text-[#9090aa] transition-colors">
-              Connexion
-            </Link>
-            <span style={{ color: "#2a2a3a" }}>•</span>
-            <Link href="#" className="hover:text-[#9090aa] transition-colors">
-              Mentions légales
-            </Link>
-            <Link href="#" className="hover:text-[#9090aa] transition-colors">
-              Confidentialité
-            </Link>
-            <Link href="mailto:contact@sorell.fr" className="hover:text-[#9090aa] transition-colors">
-              Contact
-            </Link>
+          {/* Bottom row */}
+          <div
+            style={{
+              paddingTop: "1.5rem",
+              borderTop: "1px solid var(--border-subtle)",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "0.75rem",
+            }}
+          >
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+              © 2026 Sorell. Tous droits réservés.
+            </p>
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+              Hébergé en Europe · RGPD compliant
+            </p>
           </div>
-
-          {/* Copyright */}
-          <p className="text-sm" style={{ color: "#5a5a72" }}>
-            © 2026 Sorell. Tous droits réservés.
-          </p>
         </div>
       </div>
     </footer>

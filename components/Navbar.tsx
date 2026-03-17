@@ -3,6 +3,78 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import SorellLogo from "./SorellLogo";
+
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.getAttribute("data-theme") === "dark");
+  }, []);
+
+  const toggle = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("sorell-theme", "dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.setItem("sorell-theme", "light");
+    }
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Basculer le thème"
+      style={{
+        width: 34,
+        height: 34,
+        borderRadius: 8,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent",
+        border: "1px solid var(--border)",
+        cursor: "pointer",
+        color: "var(--text-secondary)",
+        transition: "all 0.18s ease",
+        flexShrink: 0,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-border)";
+        (e.currentTarget as HTMLElement).style.color = "var(--accent)";
+        (e.currentTarget as HTMLElement).style.background = "var(--accent-subtle)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+        (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+        (e.currentTarget as HTMLElement).style.background = "transparent";
+      }}
+    >
+      {isDark ? (
+        // Sun icon
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      ) : (
+        // Moon icon
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      )}
+    </button>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -10,167 +82,178 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const navLinks = [
+    { href: "/#features", label: "Fonctionnalités" },
+    { href: "/pricing", label: "Tarifs" },
+    { href: "/demo", label: "Démo" },
+  ];
+
+  const isActive = (href: string) =>
+    href.startsWith("/#") ? false : pathname === href;
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: scrolled
-          ? "rgba(10, 10, 15, 0.85)"
-          : "rgba(10, 10, 15, 0.0)",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid #1e1e2a" : "1px solid transparent",
+        background: scrolled ? "rgba(250, 250, 247, 0.88)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px) saturate(1.4)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+        transition: "background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
       }}
     >
-      <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <style>{`
+        [data-theme="dark"] header {
+          background: ${scrolled ? "rgba(26, 26, 31, 0.88)" : "transparent"} !important;
+        }
+      `}</style>
+      <nav
+        className="max-w-6xl mx-auto px-6"
+        style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-base transition-all duration-200 group-hover:scale-105"
-            style={{ background: "#7c3aed", fontFamily: "Georgia, serif" }}
-          >
-            S
-          </div>
-          <span className="text-base font-semibold tracking-tight" style={{ color: "#f0f0f5" }}>
-            Sorell
-          </span>
-        </Link>
+        <SorellLogo />
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
-          <Link
-            href="/#features"
-            className="px-4 py-2 text-sm rounded-lg transition-all duration-200"
-            style={{
-              color: "#9090aa",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.color = "#f0f0f5";
-              (e.target as HTMLElement).style.background = "#16161f";
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.color = "#9090aa";
-              (e.target as HTMLElement).style.background = "transparent";
-            }}
-          >
-            Fonctionnalités
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-4 py-2 text-sm rounded-lg transition-all duration-200"
-            style={{
-              color: pathname === "/pricing" ? "#f0f0f5" : "#9090aa",
-              background: pathname === "/pricing" ? "#16161f" : "transparent",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.color = "#f0f0f5";
-              (e.target as HTMLElement).style.background = "#16161f";
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.color = pathname === "/pricing" ? "#f0f0f5" : "#9090aa";
-              (e.target as HTMLElement).style.background = pathname === "/pricing" ? "#16161f" : "transparent";
-            }}
-          >
-            Tarifs
-          </Link>
-          <Link
-            href="/demo"
-            className="px-4 py-2 text-sm rounded-lg transition-all duration-200"
-            style={{
-              color: pathname === "/demo" ? "#f0f0f5" : "#9090aa",
-              background: pathname === "/demo" ? "#16161f" : "transparent",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.color = "#f0f0f5";
-              (e.target as HTMLElement).style.background = "#16161f";
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.color = pathname === "/demo" ? "#f0f0f5" : "#9090aa";
-              (e.target as HTMLElement).style.background = pathname === "/demo" ? "#16161f" : "transparent";
-            }}
-          >
-            Démo
-          </Link>
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center" style={{ gap: 2 }}>
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 8,
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: isActive(href) ? "var(--text)" : "var(--text-secondary)",
+                background: isActive(href) ? "var(--surface-alt)" : "transparent",
+                transition: "all 0.18s ease",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive(href)) {
+                  (e.currentTarget as HTMLElement).style.color = "var(--text)";
+                  (e.currentTarget as HTMLElement).style.background = "var(--surface-alt)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive(href)) {
+                  (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                }
+              }}
+            >
+              {label}
+            </Link>
+          ))}
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right side */}
+        <div className="hidden md:flex items-center" style={{ gap: 8 }}>
+          <ThemeToggle />
           <Link
             href="/login"
-            className="btn-accent px-4 py-2 text-sm"
+            className="btn-accent"
+            style={{ padding: "7px 18px", fontSize: "0.875rem" }}
           >
             Se connecter
           </Link>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          <span
-            className="block w-5 h-0.5 rounded transition-all duration-200"
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="md:hidden flex items-center" style={{ gap: 8 }}>
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Menu"
             style={{
-              background: "#f0f0f5",
-              transform: mobileOpen ? "rotate(45deg) translate(4px, 4px)" : "none",
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 5,
+              background: "transparent",
+              border: "1px solid var(--border)",
+              cursor: "pointer",
+              padding: "8px",
             }}
-          />
-          <span
-            className="block w-5 h-0.5 rounded transition-all duration-200"
-            style={{
-              background: "#f0f0f5",
-              opacity: mobileOpen ? 0 : 1,
-            }}
-          />
-          <span
-            className="block w-5 h-0.5 rounded transition-all duration-200"
-            style={{
-              background: "#f0f0f5",
-              transform: mobileOpen ? "rotate(-45deg) translate(4px, -4px)" : "none",
-            }}
-          />
-        </button>
+          >
+            <span
+              style={{
+                display: "block",
+                width: 16,
+                height: 1.5,
+                borderRadius: 1,
+                background: "var(--text)",
+                transform: mobileOpen ? "rotate(45deg) translate(4.5px, 4.5px)" : "none",
+                transition: "transform 0.2s ease",
+              }}
+            />
+            <span
+              style={{
+                display: "block",
+                width: 16,
+                height: 1.5,
+                borderRadius: 1,
+                background: "var(--text)",
+                opacity: mobileOpen ? 0 : 1,
+                transition: "opacity 0.2s ease",
+              }}
+            />
+            <span
+              style={{
+                display: "block",
+                width: 16,
+                height: 1.5,
+                borderRadius: 1,
+                background: "var(--text)",
+                transform: mobileOpen ? "rotate(-45deg) translate(4.5px, -4.5px)" : "none",
+                transition: "transform 0.2s ease",
+              }}
+            />
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}
       {mobileOpen && (
         <div
-          className="md:hidden px-6 pb-4 flex flex-col gap-1"
-          style={{ background: "rgba(10, 10, 15, 0.95)", borderBottom: "1px solid #1e1e2a" }}
+          style={{
+            background: "var(--surface)",
+            borderBottom: "1px solid var(--border)",
+            padding: "8px 16px 16px",
+          }}
         >
-          <Link
-            href="/#features"
-            className="px-3 py-2.5 text-sm rounded-lg"
-            style={{ color: "#9090aa" }}
-            onClick={() => setMobileOpen(false)}
-          >
-            Fonctionnalités
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-3 py-2.5 text-sm rounded-lg"
-            style={{ color: "#9090aa" }}
-            onClick={() => setMobileOpen(false)}
-          >
-            Tarifs
-          </Link>
-          <Link
-            href="/demo"
-            className="px-3 py-2.5 text-sm rounded-lg"
-            style={{ color: "#9090aa" }}
-            onClick={() => setMobileOpen(false)}
-          >
-            Démo
-          </Link>
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              style={{
+                display: "block",
+                padding: "10px 12px",
+                borderRadius: 8,
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "var(--text-secondary)",
+                textDecoration: "none",
+              }}
+            >
+              {label}
+            </Link>
+          ))}
           <Link
             href="/login"
-            className="btn-accent px-4 py-2.5 text-sm text-center mt-2"
             onClick={() => setMobileOpen(false)}
+            className="btn-accent"
+            style={{ width: "100%", marginTop: 8, padding: "10px" }}
           >
             Se connecter
           </Link>

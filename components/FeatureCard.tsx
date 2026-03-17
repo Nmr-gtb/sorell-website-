@@ -7,25 +7,44 @@ interface FeatureCardProps {
 export default function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
     <div
-      className="card p-6 group cursor-default"
-      style={{ transition: "all 0.25s ease" }}
+      className="card"
+      style={{ padding: "24px", cursor: "default" }}
     >
       <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-4 transition-all duration-200 group-hover:scale-110"
         style={{
-          background: "rgba(124, 58, 237, 0.1)",
-          border: "1px solid rgba(124, 58, 237, 0.2)",
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "1.125rem",
+          marginBottom: 14,
+          background: "var(--surface-alt)",
+          border: "1px solid var(--border)",
+          flexShrink: 0,
         }}
       >
         {icon}
       </div>
       <h3
-        className="text-base font-semibold mb-2"
-        style={{ color: "#f0f0f5" }}
+        style={{
+          fontSize: "0.9375rem",
+          fontWeight: 600,
+          color: "var(--text)",
+          marginBottom: 6,
+          lineHeight: 1.3,
+        }}
       >
         {title}
       </h3>
-      <p className="text-sm leading-relaxed" style={{ color: "#9090aa" }}>
+      <p
+        style={{
+          fontSize: "0.875rem",
+          color: "var(--text-secondary)",
+          lineHeight: 1.6,
+        }}
+      >
         {description}
       </p>
     </div>

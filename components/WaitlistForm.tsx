@@ -21,7 +21,7 @@ export default function WaitlistForm({
     e.preventDefault();
     if (!email.includes("@")) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
+    await new Promise((r) => setTimeout(r, 650));
     console.log("[Waitlist] Email enregistré:", email);
     setSubmitted(true);
     setLoading(false);
@@ -30,43 +30,91 @@ export default function WaitlistForm({
   if (submitted) {
     return (
       <div
-        className="flex items-center gap-3 px-5 py-3.5 rounded-xl border"
         style={{
-          background: "rgba(16, 185, 129, 0.08)",
-          borderColor: "rgba(16, 185, 129, 0.25)",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "12px 18px",
+          borderRadius: 10,
+          background: "var(--success-bg)",
+          border: "1px solid rgba(5, 150, 105, 0.2)",
         }}
       >
-        <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="9" stroke="#10b981" strokeWidth="1.5" />
-          <path d="M6.5 10l2.5 2.5 4-4" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 20 20"
+          fill="none"
+          style={{ flexShrink: 0 }}
+        >
+          <circle cx="10" cy="10" r="9" stroke="var(--success)" strokeWidth="1.5" />
+          <path
+            d="M6.5 10l2.5 2.5 4-4"
+            stroke="var(--success)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
-        <p className="text-sm font-medium" style={{ color: "#10b981" }}>
+        <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--success)" }}>
           Parfait ! Vous recevrez un échantillon sous peu.
         </p>
       </div>
     );
   }
 
+  const isLarge = size === "large";
+
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 w-full max-w-md">
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        display: "flex",
+        gap: 8,
+        width: "100%",
+        maxWidth: isLarge ? 480 : 400,
+      }}
+    >
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder={placeholder}
         required
-        className={`input-field flex-1 ${size === "large" ? "px-5 py-4 text-base" : "px-4 py-3 text-sm"}`}
+        className="input-field"
+        style={{
+          flex: 1,
+          padding: isLarge ? "12px 16px" : "10px 14px",
+          fontSize: isLarge ? "0.9375rem" : "0.875rem",
+        }}
       />
       <button
         type="submit"
         disabled={loading}
-        className={`btn-accent whitespace-nowrap flex-shrink-0 ${size === "large" ? "px-6 py-4 text-base" : "px-5 py-3 text-sm"}`}
+        className="btn-accent"
+        style={{
+          padding: isLarge ? "12px 20px" : "10px 18px",
+          fontSize: isLarge ? "0.9375rem" : "0.875rem",
+          flexShrink: 0,
+          opacity: loading ? 0.75 : 1,
+        }}
       >
         {loading ? (
-          <span className="flex items-center gap-2">
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <svg
+              className="animate-spin"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-              <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path
+                d="M12 2a10 10 0 0 1 10 10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
             Envoi...
           </span>

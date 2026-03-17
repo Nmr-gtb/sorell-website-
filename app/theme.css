@@ -1,0 +1,420 @@
+/* ============================================================
+   SORELL DESIGN SYSTEM — theme.css
+   Light mode by default, dark via [data-theme="dark"]
+   ============================================================ */
+
+/* ---------- Light mode (default) ---------- */
+:root {
+  /* Backgrounds */
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-alt: #F4F4F0;
+  --surface-hover: #EFEFEA;
+
+  /* Text */
+  --text: #1A1714;
+  --text-secondary: #6B6560;
+  --text-muted: #9E9892;
+
+  /* Accent — Terracotta */
+  --accent: #C15F3C;
+  --accent-hover: #A84E2E;
+  --accent-subtle: #FDF2EE;
+  --accent-border: #ECC4B0;
+  --accent-text: #FFFFFF;
+
+  /* Borders */
+  --border: #E2DED8;
+  --border-subtle: #EEEBE6;
+
+  /* Status */
+  --success: #2D6A4F;
+  --success-bg: #D8F3DC;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-xl: 0 24px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+
+  /* Email tag colors */
+  --tag-ai-bg: #FDF2EE;
+  --tag-ai-text: #C15F3C;
+  --tag-ai-border: #ECC4B0;
+
+  --tag-reg-bg: #EEF2FF;
+  --tag-reg-text: #3730A3;
+  --tag-reg-border: #C7D2FE;
+
+  --tag-fund-bg: #F0FDF4;
+  --tag-fund-text: #166534;
+  --tag-fund-border: #BBF7D0;
+
+  --tag-comp-bg: #FFFBEB;
+  --tag-comp-text: #92400E;
+  --tag-comp-border: #FDE68A;
+
+  --tag-agents-bg: #FAF5FF;
+  --tag-agents-text: #6B21A8;
+  --tag-agents-border: #E9D5FF;
+}
+
+/* ---------- Dark mode ---------- */
+[data-theme="dark"] {
+  --bg: #141210;
+  --surface: #1E1B18;
+  --surface-alt: #252220;
+  --surface-hover: #2E2A26;
+
+  --text: #F2EDE8;
+  --text-secondary: #A8A09A;
+  --text-muted: #6E6560;
+
+  --accent: #D4845C;
+  --accent-hover: #E0916B;
+  --accent-subtle: #2A1A12;
+  --accent-border: #5C3020;
+  --accent-text: #FFFFFF;
+
+  --border: #2E2A26;
+  --border-subtle: #252220;
+
+  --success: #4ADE80;
+  --success-bg: #14532D;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.30), 0 1px 2px rgba(0,0,0,0.20);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.40), 0 2px 4px rgba(0,0,0,0.20);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.50), 0 4px 8px rgba(0,0,0,0.20);
+  --shadow-xl: 0 24px 48px rgba(0,0,0,0.60), 0 8px 16px rgba(0,0,0,0.30);
+
+  --tag-ai-bg: #2A1A12;
+  --tag-ai-text: #D4845C;
+  --tag-ai-border: #5C3020;
+
+  --tag-reg-bg: #1E1B3A;
+  --tag-reg-text: #818CF8;
+  --tag-reg-border: #312E81;
+
+  --tag-fund-bg: #14291E;
+  --tag-fund-text: #4ADE80;
+  --tag-fund-border: #14532D;
+
+  --tag-comp-bg: #2A200A;
+  --tag-comp-text: #FCD34D;
+  --tag-comp-border: #78350F;
+
+  --tag-agents-bg: #200A2A;
+  --tag-agents-text: #C084FC;
+  --tag-agents-border: #581C87;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+.hero-bg {
+  background: var(--bg);
+}
+
+.section-alt {
+  background: var(--surface-alt);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-accent:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--surface-hover);
+  border-color: var(--text-muted);
+}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.input-field {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+  appearance: none;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.select-field {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.select-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.75rem;
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   TYPOGRAPHY HELPERS
+   ============================================================ */
+.text-accent-italic {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   LOGO WORDMARK
+   ============================================================ */
+.logo-wordmark {
+  font-family: var(--font-playfair, serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.logo-wordmark:hover {
+  color: var(--text);
+}
+
+.logo-rell {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-rell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1.5px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ============================================================
+   DOT LIVE (animated)
+   ============================================================ */
+.dot-live {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ============================================================
+   SCROLL ANIMATIONS
+   ============================================================ */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.animate-fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================================
+   FOOTER LINKS
+   ============================================================ */
+.footer-link {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  display: block;
+}
+
+.footer-link:hover {
+  color: var(--text);
+}
+
+/* ============================================================
+   EMAIL TAGS
+   ============================================================ */
+.email-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.email-tag-ai {
+  background: var(--tag-ai-bg);
+  color: var(--tag-ai-text);
+  border-color: var(--tag-ai-border);
+}
+
+.email-tag-reg {
+  background: var(--tag-reg-bg);
+  color: var(--tag-reg-text);
+  border-color: var(--tag-reg-border);
+}
+
+.email-tag-fund {
+  background: var(--tag-fund-bg);
+  color: var(--tag-fund-text);
+  border-color: var(--tag-fund-border);
+}
+
+.email-tag-comp {
+  background: var(--tag-comp-bg);
+  color: var(--tag-comp-text);
+  border-color: var(--tag-comp-border);
+}
+
+.email-tag-agents {
+  background: var(--tag-agents-bg);
+  color: var(--tag-agents-text);
+  border-color: var(--tag-agents-border);
+}

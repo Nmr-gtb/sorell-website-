@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import SorellLogo from "@/components/SorellLogo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,43 +16,47 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ paddingTop: "80px" }}
+      className="hero-bg"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "5rem 1.5rem 2rem",
+      }}
     >
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl font-bold mb-4"
-            style={{
-              background: "linear-gradient(135deg, #7c3aed, #8b5cf6)",
-              fontFamily: "Georgia, serif",
-              boxShadow: "0 8px 24px rgba(124,58,237,0.3)",
-            }}
-          >
-            S
+      <div style={{ width: "100%", maxWidth: 380 }}>
+        {/* Logo + heading */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <SorellLogo size="lg" />
           </div>
           <h1
-            className="text-2xl font-semibold mb-1"
-            style={{ color: "#f0f0f5", letterSpacing: "-0.01em" }}
+            className="font-display"
+            style={{
+              fontSize: "1.625rem",
+              fontWeight: 700,
+              color: "var(--text)",
+              letterSpacing: "-0.02em",
+              marginBottom: 5,
+            }}
           >
             Connectez-vous
           </h1>
-          <p className="text-sm text-center" style={{ color: "#9090aa" }}>
+          <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
             Accédez à votre espace Sorell
           </p>
         </div>
 
         {/* Form card */}
         <div
-          className="rounded-2xl p-7 border"
-          style={{ background: "#16161f", borderColor: "#1e1e2a" }}
+          className="card"
+          style={{ padding: "28px" }}
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <label
-                className="block text-sm font-medium mb-2"
-                style={{ color: "#9090aa" }}
+                style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "var(--text)", marginBottom: 7 }}
               >
                 Adresse email
               </label>
@@ -61,20 +66,27 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="vous@entreprise.fr"
                 required
-                className="input-field w-full px-4 py-3 text-sm"
+                className="input-field"
+                style={{ padding: "10px 14px", fontSize: "0.875rem" }}
               />
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium" style={{ color: "#9090aa" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
+                <label style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text)" }}>
                   Mot de passe
                 </label>
                 <button
                   type="button"
-                  className="text-xs transition-colors"
-                  style={{ color: "#7c3aed" }}
                   onClick={() => setShowOverlay(true)}
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--accent)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
                 >
                   Mot de passe oublié ?
                 </button>
@@ -85,102 +97,134 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="input-field w-full px-4 py-3 text-sm"
+                className="input-field"
+                style={{ padding: "10px 14px", fontSize: "0.875rem" }}
               />
             </div>
 
             <button
               type="submit"
-              className="btn-accent w-full py-3 text-sm font-semibold mt-2"
+              className="btn-accent"
+              style={{ padding: "11px", fontSize: "0.9375rem", fontWeight: 600, marginTop: 4 }}
             >
               Se connecter
             </button>
           </form>
 
           <div
-            className="mt-5 pt-5 text-center text-sm border-t"
-            style={{ borderColor: "#1e1e2a" }}
+            style={{
+              marginTop: 18,
+              paddingTop: 18,
+              borderTop: "1px solid var(--border-subtle)",
+              textAlign: "center",
+              fontSize: "0.875rem",
+              color: "var(--text-secondary)",
+            }}
           >
-            <span style={{ color: "#5a5a72" }}>Pas encore de compte ?</span>{" "}
+            Pas encore de compte ?{" "}
             <Link
               href="/"
-              className="font-medium transition-colors"
-              style={{ color: "#8b5cf6" }}
+              style={{ color: "var(--accent)", fontWeight: 500, textDecoration: "none" }}
             >
               Rejoindre la waitlist
             </Link>
           </div>
         </div>
 
-        {/* Back to home */}
-        <div className="text-center mt-5">
+        {/* Back link */}
+        <div style={{ textAlign: "center", marginTop: 18 }}>
           <Link
             href="/"
-            className="text-sm flex items-center justify-center gap-1.5 transition-colors"
-            style={{ color: "#5a5a72" }}
+            style={{
+              fontSize: "0.8125rem",
+              color: "var(--text-muted)",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              transition: "color 0.15s ease",
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M10 4l-4 4 4 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Retour à l&apos;accueil
           </Link>
         </div>
       </div>
 
-      {/* Overlay */}
+      {/* Overlay "bientôt disponible" */}
       {showOverlay && (
         <div
-          className="fixed inset-0 flex items-center justify-center z-50 px-6"
-          style={{ background: "rgba(10, 10, 15, 0.85)", backdropFilter: "blur(12px)" }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowOverlay(false);
+          style={{
+            position: "fixed", inset: 0, zIndex: 100,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "1.5rem",
+            background: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(10px)",
           }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowOverlay(false); }}
         >
           <div
-            className="w-full max-w-md p-8 rounded-3xl border text-center"
             style={{
-              background: "#16161f",
-              borderColor: "rgba(124,58,237,0.25)",
-              boxShadow: "0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.1)",
+              width: "100%", maxWidth: 420,
+              padding: "40px 36px",
+              borderRadius: 20,
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              boxShadow: "var(--shadow-xl)",
+              textAlign: "center",
             }}
           >
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 mx-auto"
               style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.2)",
+                width: 56, height: 56, borderRadius: 14,
+                background: "var(--accent-subtle)", border: "1px solid var(--accent-border)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.5rem", margin: "0 auto 20px",
               }}
             >
               🚀
             </div>
             <h2
-              className="font-display text-2xl font-bold mb-3"
-              style={{ color: "#f0f0f5", letterSpacing: "-0.02em" }}
+              className="font-display"
+              style={{
+                fontSize: "1.5rem", fontWeight: 700,
+                color: "var(--text)", letterSpacing: "-0.02em",
+                marginBottom: 10,
+              }}
             >
               Bientôt disponible
             </h2>
-            <p className="text-sm leading-relaxed mb-7" style={{ color: "#9090aa" }}>
-              Sorell est en cours de développement. Rejoignez la waitlist pour être parmi
-              les premiers à y accéder et bénéficier de l&apos;offre fondateur −50% à vie.
+            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 24 }}>
+              Sorell est en cours de développement. Rejoignez la waitlist pour être parmi les
+              premiers à y accéder et bénéficier de l&apos;offre fondateur{" "}
+              <span style={{ color: "var(--text)", fontWeight: 600 }}>−50% à vie</span>.
             </p>
-            <div className="flex flex-col gap-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <Link
                 href="/"
-                className="btn-accent py-3 text-sm font-semibold text-center"
+                className="btn-accent"
                 onClick={() => setShowOverlay(false)}
+                style={{ padding: "12px", fontSize: "0.9375rem", fontWeight: 600 }}
               >
                 Rejoindre la waitlist →
               </Link>
               <button
                 onClick={() => setShowOverlay(false)}
-                className="text-sm py-2 transition-colors"
-                style={{ color: "#5a5a72" }}
+                style={{
+                  fontSize: "0.875rem",
+                  color: "var(--text-muted)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "6px",
+                  transition: "color 0.15s ease",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-secondary)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
               >
                 Fermer
               </button>
