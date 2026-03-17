@@ -6,135 +6,350 @@ export default function NewsletterPreview() {
         border: "1px solid var(--border)",
         borderRadius: 12,
         overflow: "hidden",
-        maxWidth: 520,
+        maxWidth: 540,
         width: "100%",
         margin: "0 auto",
         fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-        fontSize: "0.8125rem",
       }}
     >
-      {/* Card body */}
-      <div style={{ padding: "28px 32px" }}>
-        {/* Header */}
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px 28px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span
+            style={{
+              fontWeight: 700,
+              fontSize: "0.9375rem",
+              letterSpacing: "-0.02em",
+              color: "var(--text)",
+            }}
+          >
+            Sorel<span style={{ color: "var(--accent)" }}>l</span>
+          </span>
+          <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>NovaTech</span>
+        </div>
+        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+          Semaine du 17 mars 2026
+        </span>
+      </div>
+
+      {/* Hero image (article phare) */}
+      <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 16,
+            position: "absolute",
+            inset: 0,
+            background: "#1E293B",
+            backgroundImage:
+              "repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 20px)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "16px 20px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span
-              style={{
-                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-                fontWeight: 700,
-                fontSize: "0.9375rem",
-                letterSpacing: "-0.02em",
-                color: "var(--text)",
-              }}
-            >
-              Sorel<span style={{ color: "var(--accent)" }}>l</span>
-            </span>
-            <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
-            <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", fontWeight: 400 }}>NovaTech</span>
-          </div>
-          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>17 mars</span>
-        </div>
-
-        {/* Divider */}
-        <div style={{ height: 1, background: "var(--border)", marginBottom: 16 }} />
-
-        {/* Title */}
-        <p style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text)", marginBottom: 6, letterSpacing: "-0.01em" }}>
-          Votre briefing — Semaine du 17 mars
-        </p>
-        <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 20, lineHeight: 1.55 }}>
-          Bonjour Marie, 5 infos clés de votre secteur cette semaine.
-        </p>
-
-        {/* Featured article */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span
-              style={{
-                fontSize: "0.625rem",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "var(--accent)",
-              }}
-            >
-              ARTICLE PHARE
-            </span>
-          </div>
-          <p style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--text)", lineHeight: 1.4, marginBottom: 5, letterSpacing: "-0.01em" }}>
-            Anthropic dévoile Claude 4.6 Opus : une avancée majeure en raisonnement complexe
+          <span
+            style={{
+              display: "inline-block",
+              marginBottom: 8,
+              padding: "2px 8px",
+              borderRadius: 4,
+              fontSize: "0.5625rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase" as const,
+              background: "rgba(37,99,235,0.9)",
+              color: "white",
+            }}
+          >
+            ARTICLE PHARE
+          </span>
+          <p
+            style={{
+              fontWeight: 700,
+              fontSize: "1.0625rem",
+              color: "white",
+              lineHeight: 1.35,
+              marginBottom: 6,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Claude 4.6 Opus : Anthropic repousse les limites du raisonnement IA
           </p>
-          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.55, marginBottom: 5 }}>
-            Le nouveau modèle établit un record sur les benchmarks de raisonnement, surpassant GPT-4o et Gemini Ultra 2.0.
-          </p>
-          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+          <span style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.7)" }}>
             techcrunch.com · 2j
           </span>
         </div>
+      </div>
 
-        {/* Articles list */}
+      {/* Intro */}
+      <div
+        style={{
+          padding: "24px 28px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <p style={{ fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.6 }}>
+          <span style={{ fontWeight: 600 }}>Bonjour Marie,</span>{" "}
+          <span style={{ color: "var(--text-secondary)" }}>
+            voici les 5 actualités clés de votre secteur cette semaine, sélectionnées et résumées par Sorell.
+          </span>
+        </p>
+      </div>
+
+      {/* 2-column grid */}
+      <div
+        style={{
+          padding: "20px 28px 0",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 14,
+        }}
+      >
+        {/* Article 1 */}
+        <div
+          style={{
+            border: "0.5px solid var(--border)",
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              height: 90,
+              background: "#0F172A",
+              backgroundImage:
+                "repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px)",
+            }}
+          />
+          <div style={{ padding: "12px 14px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: 6,
+                padding: "2px 7px",
+                borderRadius: 4,
+                fontSize: "0.5625rem",
+                fontWeight: 600,
+                background: "#ECFDF5",
+                color: "#065F46",
+              }}
+            >
+              RÉGLEMENTATION
+            </span>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "var(--text)",
+                lineHeight: 1.35,
+                marginBottom: 5,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              IA Act : premières sanctions pour non-conformité en Europe
+            </p>
+            <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+              euractiv.fr · 3j
+            </span>
+          </div>
+        </div>
+
+        {/* Article 2 */}
+        <div
+          style={{
+            border: "0.5px solid var(--border)",
+            borderRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              height: 90,
+              background: "#1E3A5F",
+              backgroundImage:
+                "repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px)",
+            }}
+          />
+          <div style={{ padding: "12px 14px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: 6,
+                padding: "2px 7px",
+                borderRadius: 4,
+                fontSize: "0.5625rem",
+                fontWeight: 600,
+                background: "#EFF6FF",
+                color: "#1E40AF",
+              }}
+            >
+              CONCURRENT
+            </span>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "var(--text)",
+                lineHeight: 1.35,
+                marginBottom: 5,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Mistral AI lève 500M€ et accélère sur le B2B en Europe
+            </p>
+            <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+              lesechos.fr · 1j
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Highlight block */}
+      <div style={{ padding: "16px 28px 0" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 14,
+            padding: 16,
+            borderRadius: 8,
+            background: "var(--surface-alt)",
+          }}
+        >
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 6,
+              flexShrink: 0,
+              background: "#334155",
+              backgroundImage:
+                "repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 14px)",
+            }}
+          />
+          <div style={{ flex: 1 }}>
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: 6,
+                padding: "2px 7px",
+                borderRadius: 4,
+                fontSize: "0.5625rem",
+                fontWeight: 600,
+                background: "rgba(37,99,235,0.08)",
+                color: "var(--accent)",
+              }}
+            >
+              TENDANCE
+            </span>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "var(--text)",
+                lineHeight: 1.35,
+                marginBottom: 4,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Les agents autonomes arrivent en entreprise
+            </p>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--text-secondary)",
+                lineHeight: 1.5,
+                marginBottom: 4,
+              }}
+            >
+              Les organisations pilotent des agents IA capables d&apos;agir sans supervision humaine.
+            </p>
+            <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+              mckinsey.com · 4j
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats bar */}
+      <div
+        style={{
+          padding: "16px 28px",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: 10,
+        }}
+      >
         {[
-          {
-            tag: "IA",
-            tagClass: "email-tag-ai",
-            title: "OpenAI lance GPT-5 en accès anticipé pour les entreprises",
-            summary: "Capacités multimodales renforcées, fenêtre de contexte 256K tokens.",
-            source: "The Verge · 3j",
-          },
-          {
-            tag: "Réglementation",
-            tagClass: "email-tag-reg",
-            title: "L'IA Act entre en phase d'application pour les systèmes à haut risque",
-            summary: "Les entreprises ont jusqu'au 1er août pour se conformer.",
-            source: "Le Monde · 4j",
-          },
-          {
-            tag: "Concurrent",
-            tagClass: "email-tag-comp",
-            title: "Mistral AI lève 600M€ et annonce une expansion en Asie",
-            summary: "La licorne française accélère son déploiement B2B.",
-            source: "Les Echos · 5j",
-          },
-        ].map((article, i) => (
-          <div key={i}>
-            <div style={{ height: 1, background: "var(--border)", margin: "12px 0" }} />
-            <div>
-              <div style={{ marginBottom: 5 }}>
-                <span className={`email-tag ${article.tagClass}`}>{article.tag}</span>
-              </div>
-              <p style={{ fontWeight: 600, fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.35, marginBottom: 3, letterSpacing: "-0.01em" }}>
-                {article.title}
-              </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 3 }}>
-                {article.summary}
-              </p>
-              <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-                {article.source}
-              </span>
+          { value: "147", label: "Sources analysées" },
+          { value: "5", label: "Articles retenus" },
+          { value: "3min", label: "Temps de lecture" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            style={{
+              background: "var(--surface-alt)",
+              borderRadius: 8,
+              padding: 12,
+              textAlign: "center" as const,
+            }}
+          >
+            <div
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--accent)",
+                marginBottom: 2,
+              }}
+            >
+              {stat.value}
+            </div>
+            <div
+              style={{
+                fontSize: "0.625rem",
+                color: "var(--text-muted)",
+                lineHeight: 1.3,
+              }}
+            >
+              {stat.label}
             </div>
           </div>
         ))}
+      </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            marginTop: 16,
-            paddingTop: 14,
-            borderTop: "1px solid var(--border)",
-            textAlign: "center",
-          }}
-        >
-          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-            Généré automatiquement par Sorell
-          </span>
-        </div>
+      {/* Footer */}
+      <div
+        style={{
+          borderTop: "1px solid var(--border)",
+          padding: "16px 28px",
+          textAlign: "center" as const,
+        }}
+      >
+        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+          Généré automatiquement par Sorel
+          <span style={{ color: "var(--accent)" }}>l</span>
+          {" · "}Personnalisé pour Marie Dupont, Direction Marketing
+        </span>
       </div>
     </div>
   );

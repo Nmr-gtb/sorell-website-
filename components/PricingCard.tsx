@@ -13,6 +13,7 @@ interface PricingCardProps {
   ctaHref: string;
   popular?: boolean;
   enterprise?: boolean;
+  free?: boolean;
   badge?: string;
 }
 
@@ -27,6 +28,7 @@ export default function PricingCard({
   ctaHref,
   popular,
   enterprise,
+  free,
   badge,
 }: PricingCardProps) {
   const displayPrice =
@@ -108,6 +110,19 @@ export default function PricingCard({
             }}
           >
             Sur devis
+          </span>
+        ) : free || price === 0 ? (
+          <span
+            style={{
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "2.25rem",
+              fontWeight: 700,
+              color: "var(--text)",
+              lineHeight: 1,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Gratuit
           </span>
         ) : (
           <>

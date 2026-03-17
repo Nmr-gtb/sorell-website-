@@ -97,24 +97,38 @@ const steps = [
 
 const pricingPlans = [
   {
-    name: "Starter",
-    price: "49€",
-    desc: "Pour les petites équipes",
-    features: ["Jusqu'à 10 utilisateurs", "1 thématique de veille", "Envoi hebdomadaire", "Support email"],
+    name: "Free",
+    price: "Gratuit",
+    desc: "Pour découvrir Sorell",
+    features: ["1 newsletter générique / sem.", "1 thématique au choix", "Aperçu du produit"],
     popular: false,
   },
   {
-    name: "Business",
-    price: "199€",
-    desc: "Pour les PME ambitieuses",
-    features: ["Jusqu'à 50 utilisateurs", "Thématiques illimitées", "2 envois par semaine", "Analytics + White-label"],
+    name: "Solo",
+    price: "10€",
+    desc: "Pour les indépendants",
+    features: ["1 newsletter / semaine", "Livrée sur votre boîte mail", "3 thématiques au choix"],
+    popular: false,
+  },
+  {
+    name: "Pro",
+    price: "50€",
+    desc: "Pour les petites équipes",
+    features: ["Envoi depuis votre domaine", "Jusqu'à 10 destinataires", "5 thématiques"],
     popular: true,
+  },
+  {
+    name: "Business",
+    price: "200€",
+    desc: "Pour les PME ambitieuses",
+    features: ["Jusqu'à 50 destinataires", "Thématiques illimitées", "Analytics + white-label"],
+    popular: false,
   },
   {
     name: "Enterprise",
     price: "Sur devis",
     desc: "Pour les grandes organisations",
-    features: ["Utilisateurs illimités", "API & intégration CRM", "CSM dédié", "SLA 99,9%"],
+    features: ["Utilisateurs illimités", "API & intégration CRM", "CSM dédié"],
     popular: false,
   },
 ];
@@ -353,7 +367,7 @@ export default function HomePage() {
 
       {/* ─── PRICING TEASER ───────────────────────────────────── */}
       <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 48 }}>
               <h2
@@ -374,7 +388,7 @@ export default function HomePage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 250px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 180px), 1fr))",
               gap: 16,
               marginBottom: 32,
             }}
@@ -418,7 +432,7 @@ export default function HomePage() {
                     }}
                   >
                     {plan.price}
-                    {plan.price !== "Sur devis" && (
+                    {plan.price !== "Sur devis" && plan.price !== "Gratuit" && (
                       <span style={{ fontSize: "0.875rem", fontWeight: 400, color: "var(--text-secondary)", marginLeft: 3 }}>
                         /mois
                       </span>

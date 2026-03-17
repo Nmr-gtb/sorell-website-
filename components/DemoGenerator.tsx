@@ -224,6 +224,25 @@ const SECTOR_CONTENT: Record<string, SectorData> = {
   },
 };
 
+const SECTOR_COLORS: Record<string, { hero: string; grid1: string; grid2: string; highlight: string }> = {
+  "tech-ia":   { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
+  "finance":   { hero: "#1A2744", grid1: "#162032", grid2: "#1B3A4B", highlight: "#1E2D47" },
+  "sante":     { hero: "#0F2E1C", grid1: "#162E2E", grid2: "#1A2744", highlight: "#143524" },
+  "retail":    { hero: "#2D1B35", grid1: "#1F1135", grid2: "#2D1B22", highlight: "#28162A" },
+  "industrie": { hero: "#1A2112", grid1: "#0F1A10", grid2: "#1A2744", highlight: "#1A2112" },
+  "autre":     { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
+};
+
+function getTagStyle(tagClass: string): React.CSSProperties {
+  switch (tagClass) {
+    case "email-tag-reg":      return { background: "#ECFDF5", color: "#065F46" };
+    case "email-tag-comp":     return { background: "#EFF6FF", color: "#1E40AF" };
+    case "email-tag-ai":       return { background: "rgba(37,99,235,0.08)", color: "var(--accent)" };
+    case "email-tag-featured": return { background: "rgba(37,99,235,0.9)", color: "white" };
+    default:                   return { background: "var(--surface-alt)", color: "var(--text-muted)" };
+  }
+}
+
 const LOADING_MESSAGES = [
   "Analyse des sources sectorielles...",
   "Sélection des contenus pertinents...",
@@ -251,6 +270,15 @@ function DemoNewsletterResult({
   };
 
   const displayCompany = companyName.trim() || "votre entreprise";
+  const colors = SECTOR_COLORS[sector] || SECTOR_COLORS["autre"];
+
+  const featured = data.articles.find((a) => a.featured) || data.articles[0];
+  const gridArticle1 = data.articles[1] || data.articles[0];
+  const gridArticle2 = data.articles[2] || data.articles[1];
+  const highlight = data.articles[3] || data.articles[2];
+
+  const diagonalPattern =
+    "repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 16px)";
 
   return (
     <div
@@ -263,7 +291,7 @@ function DemoNewsletterResult({
         fontSize: "0.8125rem",
       }}
     >
-      {/* Email header */}
+      {/* Email metadata bar */}
       <div
         style={{
           background: "var(--surface-alt)",
@@ -287,102 +315,269 @@ function DemoNewsletterResult({
         </div>
       </div>
 
-      <div style={{ padding: "24px 24px" }}>
-        {/* Sender row */}
+      {/* Magazine header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px 24px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
+            Sorel<span style={{ color: "var(--accent)" }}>l</span>
+          </span>
+          <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+            {displayCompany}
+          </span>
+        </div>
+        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+          17 mars 2026 · 8h00
+        </span>
+      </div>
+
+      {/* Hero image */}
+      <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: colors.hero,
+            backgroundImage: diagonalPattern,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%)",
+          }}
+        />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "16px 20px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              marginBottom: 8,
+              padding: "2px 8px",
+              borderRadius: 4,
+              fontSize: "0.5625rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase" as const,
+              background: "rgba(37,99,235,0.9)",
+              color: "white",
+            }}
+          >
+            ARTICLE PHARE
+          </span>
+          <p
+            style={{
+              fontWeight: 700,
+              fontSize: "1.0625rem",
+              color: "white",
+              lineHeight: 1.35,
+              marginBottom: 6,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {featured.title}
+          </p>
+          <span style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.7)" }}>
+            {featured.source}
+          </span>
+        </div>
+      </div>
+
+      {/* Intro */}
+      <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border)" }}>
+        <p style={{ fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.6 }}>
+          <span style={{ fontWeight: 600 }}>Bonjour,</span>{" "}
+          <span style={{ color: "var(--text-secondary)" }}>
+            voici les {data.articles.length} actualités clés de votre secteur{" "}
+            {sectorLabels[sector] ? `(${sectorLabels[sector]})` : ""} cette semaine, sélectionnées par Sorell.
+          </span>
+        </p>
+      </div>
+
+      {/* 2-column grid */}
+      <div
+        style={{
+          padding: "16px 24px 0",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 14,
+        }}
+      >
+        {[
+          { article: gridArticle1, bg: colors.grid1 },
+          { article: gridArticle2, bg: colors.grid2 },
+        ].map(({ article, bg }, idx) => {
+          const tagStyle = getTagStyle(article.tagClass);
+          return (
+            <div
+              key={idx}
+              style={{ border: "0.5px solid var(--border)", borderRadius: 8, overflow: "hidden" }}
+            >
+              <div
+                style={{
+                  height: 90,
+                  background: bg,
+                  backgroundImage: diagonalPattern,
+                }}
+              />
+              <div style={{ padding: "12px 14px" }}>
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginBottom: 6,
+                    padding: "2px 7px",
+                    borderRadius: 4,
+                    fontSize: "0.5625rem",
+                    fontWeight: 600,
+                    ...tagStyle,
+                  }}
+                >
+                  {article.tagLabel.toUpperCase()}
+                </span>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: "var(--text)",
+                    lineHeight: 1.35,
+                    marginBottom: 5,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {article.title}
+                </p>
+                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+                  {article.source}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Highlight block */}
+      <div style={{ padding: "14px 24px 0" }}>
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 14,
-            flexWrap: "wrap",
-            gap: 8,
+            gap: 14,
+            padding: 16,
+            borderRadius: 8,
+            background: "var(--surface-alt)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
-              Sorel<span style={{ color: "var(--accent)" }}>l</span>
-            </span>
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 6,
+              flexShrink: 0,
+              background: colors.highlight,
+              backgroundImage: diagonalPattern,
+            }}
+          />
+          <div style={{ flex: 1 }}>
+            {highlight && (
+              <>
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginBottom: 6,
+                    padding: "2px 7px",
+                    borderRadius: 4,
+                    fontSize: "0.5625rem",
+                    fontWeight: 600,
+                    ...getTagStyle(highlight.tagClass),
+                  }}
+                >
+                  {highlight.tagLabel.toUpperCase()}
+                </span>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: "var(--text)",
+                    lineHeight: 1.35,
+                    marginBottom: 4,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {highlight.title}
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--text-secondary)",
+                    lineHeight: 1.5,
+                    marginBottom: 4,
+                  }}
+                >
+                  {highlight.summary}
+                </p>
+                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+                  Source : {highlight.source}
+                </span>
+              </>
+            )}
           </div>
-          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>17 mars 2026 · 8h00</span>
         </div>
+      </div>
 
-        <p style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text)", marginBottom: 4, letterSpacing: "-0.01em" }}>
-          Bonjour,
-        </p>
-        <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 16, lineHeight: 1.55 }}>
-          <span style={{ fontWeight: 600, color: "var(--text)" }}>{data.articles.length} actualités clés</span>{" "}
-          sélectionnées cette semaine pour {displayCompany}.
-        </p>
-
-        <div style={{ height: 1, background: "var(--border)", marginBottom: 16 }} />
-
-        {/* Articles */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {data.articles.map((article, i) => (
-            <div key={i}>
-              {i > 0 && (
-                <div style={{ height: 1, background: "var(--border)", margin: "14px 0" }} />
-              )}
-              {article.featured ? (
-                <div style={{ marginBottom: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
-                    <span
-                      style={{
-                        fontSize: "0.625rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.08em",
-                        textTransform: "uppercase",
-                        color: "var(--accent)",
-                      }}
-                    >
-                      ARTICLE PHARE
-                    </span>
-                    <span className={`email-tag ${article.tagClass}`}>{article.tagLabel}</span>
-                  </div>
-                  <p style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text)", lineHeight: 1.35, marginBottom: 6, letterSpacing: "-0.01em" }}>
-                    {article.title}
-                  </p>
-                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.55, marginBottom: 6 }}>
-                    {article.summary}
-                  </p>
-                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-                    Source : {article.source} ↗
-                  </span>
-                </div>
-              ) : (
-                <div>
-                  <div style={{ marginBottom: 5 }}>
-                    <span className={`email-tag ${article.tagClass}`}>{article.tagLabel}</span>
-                  </div>
-                  <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)", lineHeight: 1.35, marginBottom: 4, letterSpacing: "-0.01em" }}>
-                    {article.title}
-                  </p>
-                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: 4 }}>
-                    {article.summary}
-                  </p>
-                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-                    Source : {article.source} ↗
-                  </span>
-                </div>
-              )}
+      {/* Stats bar */}
+      <div
+        style={{
+          padding: "14px 24px",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: 10,
+        }}
+      >
+        {[
+          { value: "147", label: "Sources analysées" },
+          { value: String(data.articles.length), label: "Articles retenus" },
+          { value: "3min", label: "Temps de lecture" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            style={{
+              background: "var(--surface-alt)",
+              borderRadius: 8,
+              padding: 12,
+              textAlign: "center" as const,
+            }}
+          >
+            <div
+              style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent)", marginBottom: 2 }}
+            >
+              {stat.value}
             </div>
-          ))}
-        </div>
+            <div style={{ fontSize: "0.625rem", color: "var(--text-muted)", lineHeight: 1.3 }}>
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            marginTop: 16,
-            paddingTop: 14,
-            borderTop: "1px solid var(--border)",
-            textAlign: "center",
-          }}
-        >
-          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-            Généré automatiquement par Sorell
-          </span>
-        </div>
+      {/* Footer */}
+      <div
+        style={{
+          borderTop: "1px solid var(--border)",
+          padding: "14px 24px",
+          textAlign: "center" as const,
+        }}
+      >
+        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+          Généré automatiquement par Sorel<span style={{ color: "var(--accent)" }}>l</span>
+          {" · "}Personnalisé pour {displayCompany}
+        </span>
       </div>
     </div>
   );

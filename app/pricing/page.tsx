@@ -8,6 +8,10 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 
 const FAQ = [
   {
+    q: "Le plan gratuit est-il vraiment gratuit ?",
+    a: "Oui, totalement. Pas de carte bancaire requise. Vous recevez une newsletter générique par semaine pour tester le produit. Passez à Solo ou Pro quand vous êtes prêt.",
+  },
+  {
     q: "Comment fonctionne la génération de contenu ?",
     a: "Sorell utilise des modèles de langage de dernière génération pour analyser des centaines de sources d'actualité chaque semaine. L'IA sélectionne, synthétise et formate les contenus les plus pertinents selon les thématiques et profils configurés.",
   },
@@ -25,37 +29,41 @@ const FAQ = [
   },
   {
     q: "Proposez-vous une période d'essai ?",
-    a: "Oui, 14 jours d'essai gratuit sur tous les plans, sans carte bancaire requise. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
+    a: "Oui, 14 jours d'essai gratuit sur tous les plans payants, sans carte bancaire requise. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
   },
 ];
 
-const starterFeatures = [
-  "Jusqu'à 10 utilisateurs",
-  "1 thématique de veille",
-  "Envoi hebdomadaire",
-  "Synthèses IA incluses",
-  "Templates responsive",
-  "Support email",
+const freeFeatures = [
+  "1 newsletter générique / semaine",
+  "1 thématique au choix",
+  "Aperçu du produit",
+  "Contenu non personnalisé",
+];
+
+const soloFeatures = [
+  "1 newsletter personnalisée / semaine",
+  "Livrée sur votre boîte mail",
+  "3 thématiques au choix",
+  "Synthèses IA avancées",
+];
+
+const proFeatures = [
+  "Envoi depuis votre domaine (Gmail/Outlook)",
+  "Jusqu'à 10 destinataires",
+  "5 thématiques",
+  "Analytics de base",
 ];
 
 const businessFeatures = [
-  "Jusqu'à 50 utilisateurs",
+  "Jusqu'à 50 destinataires",
   "Thématiques illimitées",
-  "2 envois par semaine",
-  "Personnalisation par rôle",
+  "Analytics complets + white-label",
   "Veille concurrentielle",
-  "Dashboard analytics complet",
-  "White-label inclus",
-  "Support prioritaire 24/7",
 ];
 
 const enterpriseFeatures = [
   "Utilisateurs illimités",
-  "Thématiques illimitées",
-  "Fréquence personnalisée",
   "API & intégration CRM",
-  "Analytics avancés & export",
-  "SSO / SAML",
   "CSM dédié",
   "SLA 99,9%",
 ];
@@ -162,34 +170,55 @@ export default function PricingPage() {
 
       {/* Pricing cards */}
       <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 265px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 195px), 1fr))",
               gap: 20,
             }}
           >
             <PricingCard
-              name="Starter"
-              price={49}
-              annualPrice={39}
+              name="Free"
+              price={0}
+              annualPrice={0}
               period={period}
-              tagline="Pour les petites équipes"
-              features={starterFeatures}
+              tagline="Pour découvrir Sorell"
+              features={freeFeatures}
+              cta="Commencer gratuitement"
+              ctaHref="/#waitlist"
+              free
+            />
+            <PricingCard
+              name="Solo"
+              price={10}
+              annualPrice={8}
+              period={period}
+              tagline="Pour les indépendants"
+              features={soloFeatures}
               cta="Commencer gratuitement"
               ctaHref="/#waitlist"
             />
             <PricingCard
+              name="Pro"
+              price={50}
+              annualPrice={40}
+              period={period}
+              tagline="Pour les petites équipes"
+              features={proFeatures}
+              cta="Commencer gratuitement"
+              ctaHref="/#waitlist"
+              popular
+            />
+            <PricingCard
               name="Business"
-              price={199}
-              annualPrice={159}
+              price={200}
+              annualPrice={160}
               period={period}
               tagline="Pour les PME ambitieuses"
               features={businessFeatures}
               cta="Commencer gratuitement"
               ctaHref="/#waitlist"
-              popular
             />
             <PricingCard
               name="Enterprise"
