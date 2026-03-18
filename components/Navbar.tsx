@@ -115,6 +115,12 @@ export default function Navbar() {
         [data-theme="dark"] header {
           background: ${scrolled ? "rgba(15,17,23,0.92)" : "transparent"} !important;
         }
+        .nav-desktop { display: none !important; }
+        .nav-mobile-controls { display: flex !important; }
+        @media (min-width: 900px) {
+          .nav-desktop { display: flex !important; }
+          .nav-mobile-controls { display: none !important; }
+        }
       `}</style>
 
       <nav
@@ -133,8 +139,8 @@ export default function Navbar() {
 
         {/* Desktop center links */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 4 }}
-          className="hidden md:flex"
+          style={{ alignItems: "center", gap: 4 }}
+          className="nav-desktop"
         >
           {navLinks.map(({ href, label }) => (
             <Link
@@ -165,8 +171,8 @@ export default function Navbar() {
 
         {/* Desktop right */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 8 }}
-          className="hidden md:flex"
+          style={{ alignItems: "center", gap: 8 }}
+          className="nav-desktop"
         >
           <ThemeToggle />
           <Link
@@ -200,9 +206,10 @@ export default function Navbar() {
 
         {/* Mobile */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 8 }}
-          className="md:hidden flex"
+          style={{ alignItems: "center", gap: 8 }}
+          className="nav-mobile-controls"
         >
+          <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
