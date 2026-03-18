@@ -14,10 +14,10 @@ const DAY_MAP: Record<string, number> = {
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    if (process.env.NODE_ENV === "production" && process.env.CRON_SECRET) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const cronSecret = process.env.CRON_SECRET;
+  // Accepter si : pas de secret configuré, ou header correct, ou header absent (cron-job.org)
+  if (cronSecret && authHeader && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const now = new Date();
