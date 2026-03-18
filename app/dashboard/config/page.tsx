@@ -15,6 +15,15 @@ import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 
+const CURATED_SOURCES: Record<string, string[]> = {
+  "Généraliste": ["Les Echos", "Le Monde", "Le Figaro", "La Tribune", "BFM Business", "Challenges"],
+  "Tech & Innovation": ["TechCrunch", "The Verge", "Wired", "MIT Technology Review", "L'Usine Digitale", "Maddyness", "FrenchWeb"],
+  "Finance & Économie": ["Financial Times", "Bloomberg", "Reuters", "Capital", "Investir"],
+  "Santé & Sciences": ["The Lancet", "Nature", "INSERM", "Medscape"],
+  "International": ["The Economist", "Harvard Business Review", "McKinsey Insights", "Gartner", "Forrester"],
+  "Spécialisé": ["L'Usine Nouvelle", "LSA Commerce", "Stratégies", "CB News", "Mind Media"],
+};
+
 const defaultTopics = [
   { id: "ai", label: "Intelligence artificielle", enabled: true },
   { id: "reg", label: "Réglementation & conformité", enabled: true },
@@ -97,6 +106,9 @@ export default function ConfigPage() {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
 
+  const [showAddTopic, setShowAddTopic] = useState(false);
+  const [newTopicLabel, setNewTopicLabel] = useState("");
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -158,6 +170,19 @@ export default function ConfigPage() {
     setTopics((prev) => prev.map((t) => (t.id === id ? { ...t, enabled: !t.enabled } : t)));
   };
 
+  const addCustomTopic = () => {
+    const trimmed = newTopicLabel.trim();
+    if (!trimmed) return;
+    const id = `custom-${Date.now()}`;
+    setTopics((prev) => [...prev, { id, label: trimmed, enabled: true }]);
+    setNewTopicLabel("");
+    setShowAddTopic(false);
+  };
+
+  const removeTopic = (id: string) => {
+    setTopics((prev) => prev.filter((t) => t.id !== id));
+  };
+
   const addSource = () => {
     const trimmed = newSource.trim();
     if (trimmed && !sources.includes(trimmed)) {
@@ -167,6 +192,12 @@ export default function ConfigPage() {
   };
 
   const removeSource = (s: string) => setSources((prev) => prev.filter((x) => x !== s));
+
+  const addCuratedSource = (s: string) => {
+    if (!sources.includes(s)) {
+      setSources((prev) => [...prev, s]);
+    }
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -287,19 +318,85 @@ export default function ConfigPage() {
                     }}
                   >
                     <span style={{ fontSize: 14, color: "var(--text)" }}>{topic.label}</span>
-                    <Toggle enabled={topic.enabled} onChange={() => toggleTopic(topic.id)} />
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      {topic.id.startsWith("custom-") && (
+                        <button
+                          onClick={() => removeTopic(topic.id)}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--text-muted)",
+                            display: "flex",
+                            alignItems: "center",
+                            padding: 4,
+                            borderRadius: 4,
+                            transition: "color 0.1s ease",
+                          }}
+                          onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--error)")}
+                          onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)")}
+                        >
+                          <IconX />
+                        </button>
+                      )}
+                      <Toggle enabled={topic.enabled} onChange={() => toggleTopic(topic.id)} />
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
             <div style={{ marginTop: 12 }}>
-              <button
-                className="btn-ghost"
-                disabled
-                style={{ fontSize: 13, padding: "6px 14px", opacity: 0.5, cursor: "not-allowed" }}
-              >
-                + Ajouter une thématique
-              </button>
+              {limits.customBrief ? (
+                showAddTopic ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
+                    <input
+                      className="input-field"
+                      value={newTopicLabel}
+                      onChange={(e) => setNewTopicLabel(e.target.value)}
+                      placeholder="Ex: Blockchain, Supply Chain, IoT..."
+                      onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
+                      autoFocus
+                      style={{ width: "100%", boxSizing: "border-box" }}
+                    />
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        className="btn-primary"
+                        onClick={addCustomTopic}
+                        disabled={!newTopicLabel.trim()}
+                        style={{ fontSize: 13, padding: "6px 14px" }}
+                      >
+                        Ajouter
+                      </button>
+                      <button
+                        className="btn-ghost"
+                        onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
+                        style={{ fontSize: 13, padding: "6px 14px" }}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    className="btn-ghost"
+                    onClick={() => setShowAddTopic(true)}
+                    style={{ fontSize: 13, padding: "6px 14px" }}
+                  >
+                    + Ajouter une thématique
+                  </button>
+                )
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <button
+                    className="btn-ghost"
+                    disabled
+                    style={{ fontSize: 13, padding: "6px 14px", opacity: 0.5, cursor: "not-allowed" }}
+                  >
+                    + Ajouter une thématique
+                  </button>
+                  <CrownBadge tooltip="Disponible à partir du plan Solo" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -431,6 +528,52 @@ export default function ConfigPage() {
                   >
                     <IconX />
                   </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Curated sources library */}
+            <div style={{ marginTop: 20 }}>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>
+                Ou sélectionnez parmi nos sources vérifiées
+              </p>
+              {Object.entries(CURATED_SOURCES).map(([category, items]) => (
+                <div key={category} style={{ marginBottom: 16 }}>
+                  <p
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: "var(--text-muted)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {category}
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {items.map((source) => {
+                      const selected = sources.includes(source);
+                      return (
+                        <button
+                          key={source}
+                          onClick={() => !selected && addCuratedSource(source)}
+                          style={{
+                            padding: "4px 10px",
+                            borderRadius: 20,
+                            fontSize: 12,
+                            cursor: selected ? "default" : "pointer",
+                            border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
+                            background: selected ? "var(--accent)" : "var(--surface-alt)",
+                            color: selected ? "white" : "var(--text-secondary)",
+                            transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+                          }}
+                        >
+                          {source}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
