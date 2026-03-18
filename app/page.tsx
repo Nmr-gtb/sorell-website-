@@ -439,7 +439,7 @@ export default function HomePage() {
                 initials: "TR",
               },
               {
-                quote: "«\u202fEn freelance, je propose Sorell à tous mes clients et le retour est toujours le même : ils ne peuvent plus s'en passer. Un outil vraiment bluffant qui s'intègre parfaitement dans n'importe quelle organisation.\u202f»",
+                quote: "«\u202fEn freelance, je propose Sorell à tous mes clients et le retour est toujours très positif. Un outil vraiment bluffant qui s'intègre parfaitement dans n'importe quelle organisation.\u202f»",
                 name: "Laurent Mur",
                 title: "CEO, Weenk",
                 initials: "LM",
