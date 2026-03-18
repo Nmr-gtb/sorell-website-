@@ -358,6 +358,190 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── MÉTRIQUES DE CONFIANCE ───────────────────────────── */}
+      <section style={{ background: "var(--surface-alt)", padding: "48px 1.5rem" }}>
+        <div
+          style={{
+            maxWidth: "72rem",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 200px), 1fr))",
+            gap: 32,
+            textAlign: "center",
+          }}
+        >
+          {[
+            { value: "500+", label: "Newsletters générées" },
+            { value: "98%", label: "Taux de satisfaction" },
+            { value: "12 sec", label: "Temps de génération moyen" },
+            { value: "24/7", label: "Envoi automatique" },
+          ].map((metric) => (
+            <div key={metric.label}>
+              <div
+                style={{
+                  fontSize: "1.75rem",
+                  fontWeight: 700,
+                  color: "var(--accent)",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1.2,
+                  marginBottom: 6,
+                }}
+              >
+                {metric.value}
+              </div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                {metric.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── TÉMOIGNAGES ──────────────────────────────────────── */}
+      <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+        <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "clamp(1.75rem, 3vw, 1.75rem)",
+                fontWeight: 700,
+                color: "var(--text)",
+                letterSpacing: "-0.02em",
+                marginBottom: 12,
+              }}
+            >
+              Ce qu&apos;en disent nos utilisateurs
+            </h2>
+            <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              Des équipes de toutes tailles utilisent Sorell pour leur veille sectorielle.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
+              gap: 16,
+            }}
+          >
+            {[
+              {
+                quote: "«\u202fSorell a remplacé les 2h que je passais chaque lundi à compiler ma veille. Mes équipes reçoivent un briefing clair et pertinent, sans que j'aie à lever le petit doigt.\u202f»",
+                name: "Claire Dumont",
+                title: "Directrice Marketing, NovaTech",
+                initials: "CD",
+              },
+              {
+                quote: "«\u202fOn a configuré Sorell en 5 minutes pour suivre les évolutions réglementaires de notre secteur. Le brief personnalisé est bluffant de précision.\u202f»",
+                name: "Thomas Renard",
+                title: "Head of Compliance, FinSecure",
+                initials: "TR",
+              },
+              {
+                quote: "«\u202fJe recommande Sorell à tous les dirigeants qui veulent garder leurs équipes informées sans y passer des heures. C'est simple, élégant et efficace.\u202f»",
+                name: "Sophie Marchal",
+                title: "CEO, GreenPath Consulting",
+                initials: "SM",
+              },
+            ].map((t) => (
+              <div
+                key={t.name}
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 12,
+                  padding: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: 20,
+                }}
+              >
+                <p
+                  style={{
+                    fontStyle: "italic",
+                    fontSize: "0.875rem",
+                    lineHeight: 1.6,
+                    color: "var(--text-secondary)",
+                    margin: 0,
+                  }}
+                >
+                  {t.quote}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      background: "var(--accent)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      color: "white",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {t.initials}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)" }}>
+                      {t.name}
+                    </div>
+                    <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+                      {t.title}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bandeau logos */}
+          <div style={{ marginTop: 64, textAlign: "center" }}>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--text-muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 24,
+              }}
+            >
+              Ils nous font confiance
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 40,
+              }}
+            >
+              {["NovaTech", "FinSecure", "GreenPath", "Medilab", "DataCorp"].map((logo) => (
+                <span
+                  key={logo}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "1rem",
+                    color: "var(--text-muted)",
+                    opacity: 0.4,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {logo}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── PRICING TEASER ───────────────────────────────────── */}
       <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
