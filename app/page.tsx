@@ -100,7 +100,7 @@ const pricingPlans = [
     name: "Free",
     price: "Gratuit",
     desc: "Pour découvrir Sorell",
-    features: ["1 newsletter générique / sem.", "1 thématique au choix", "Aperçu du produit"],
+    features: ["1 newsletter à l'inscription + 1/mois", "1 thématique au choix", "Aperçu du produit"],
     popular: false,
   },
   {
@@ -116,13 +116,6 @@ const pricingPlans = [
     desc: "Pour les petites équipes",
     features: ["Envoi depuis votre domaine", "Jusqu'à 10 destinataires", "5 thématiques"],
     popular: true,
-  },
-  {
-    name: "Business",
-    price: "200€",
-    desc: "Pour les PME ambitieuses",
-    features: ["Jusqu'à 50 destinataires", "Thématiques illimitées", "Analytics + white-label"],
-    popular: false,
   },
   {
     name: "Enterprise",

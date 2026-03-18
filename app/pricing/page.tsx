@@ -34,7 +34,7 @@ const FAQ = [
 ];
 
 const freeFeatures = [
-  "1 newsletter générique / semaine",
+  "1 newsletter à l'inscription + 1 par mois",
   "1 thématique au choix",
   "Aperçu du produit",
   "Contenu non personnalisé",
@@ -52,13 +52,6 @@ const proFeatures = [
   "Jusqu'à 10 destinataires",
   "5 thématiques",
   "Analytics de base",
-];
-
-const businessFeatures = [
-  "Jusqu'à 50 destinataires",
-  "Thématiques illimitées",
-  "Analytics complets + white-label",
-  "Veille concurrentielle",
 ];
 
 const enterpriseFeatures = [
@@ -174,7 +167,7 @@ export default function PricingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 195px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 220px), 1fr))",
               gap: 20,
             }}
           >
@@ -209,16 +202,6 @@ export default function PricingPage() {
               cta="Commencer gratuitement"
               ctaHref="/#waitlist"
               popular
-            />
-            <PricingCard
-              name="Business"
-              price={200}
-              annualPrice={160}
-              period={period}
-              tagline="Pour les PME ambitieuses"
-              features={businessFeatures}
-              cta="Commencer gratuitement"
-              ctaHref="/#waitlist"
             />
             <PricingCard
               name="Enterprise"
