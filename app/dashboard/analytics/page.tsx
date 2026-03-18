@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { getProfile } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
+import { useDevMode } from "@/lib/DevModeContext";
 
 type AnalyticsData = {
   openRate: number;
@@ -47,7 +48,8 @@ export default function AnalyticsPage() {
   const router = useRouter();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [plan, setPlan] = useState<string>("free");
+  const [realPlan, setRealPlan] = useState<string>("free");
+  const { getEffectivePlan } = useDevMode();
 
   useEffect(() => {
     if (!user) return;
@@ -55,7 +57,7 @@ export default function AnalyticsPage() {
     async function loadAll() {
       const profileResult = await getProfile(user!.id);
       const userPlan = profileResult.data?.plan || "free";
-      setPlan(userPlan);
+      setRealPlan(userPlan);
 
       const limits = getPlanLimits(userPlan);
       if (limits.analytics === "none") {
@@ -75,6 +77,7 @@ export default function AnalyticsPage() {
     loadAll();
   }, [user]);
 
+  const plan = getEffectivePlan(realPlan);
   const limits = getPlanLimits(plan);
 
   if (loading) {

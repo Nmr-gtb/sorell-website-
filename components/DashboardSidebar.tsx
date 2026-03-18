@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { getProfile } from "@/lib/database";
+import { useDevMode } from "@/lib/DevModeContext";
 
 function IconGrid() {
   return (
@@ -96,12 +97,14 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const router = useRouter();
-  const [plan, setPlan] = useState<string>("free");
+  const [realPlan, setRealPlan] = useState<string>("free");
+  const { getEffectivePlan } = useDevMode();
+  const plan = getEffectivePlan(realPlan);
 
   useEffect(() => {
     if (!user) return;
     getProfile(user.id).then(({ data }) => {
-      if (data?.plan) setPlan(data.plan);
+      if (data?.plan) setRealPlan(data.plan);
     });
   }, [user]);
 

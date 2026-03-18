@@ -13,6 +13,7 @@ import {
 } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
+import { useDevMode } from "@/lib/DevModeContext";
 
 const defaultTopics = [
   { id: "ai", label: "Intelligence artificielle", enabled: true },
@@ -88,7 +89,8 @@ export default function ConfigPage() {
   const [sendHour, setSendHour] = useState(9);
   const [customBrief, setCustomBrief] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [plan, setPlan] = useState<string>("free");
+  const [realPlan, setRealPlan] = useState<string>("free");
+  const { getEffectivePlan } = useDevMode();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -114,7 +116,7 @@ export default function ConfigPage() {
       ]);
 
       if (profileResult.data?.plan) {
-        setPlan(profileResult.data.plan);
+        setRealPlan(profileResult.data.plan);
       }
 
       if (configResult.data) {
@@ -149,6 +151,7 @@ export default function ConfigPage() {
     loadData();
   }, [user]);
 
+  const plan = getEffectivePlan(realPlan);
   const limits = getPlanLimits(plan);
 
   const toggleTopic = (id: string) => {

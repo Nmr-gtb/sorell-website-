@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { getNewsletterConfig, getRecipients, getProfile, getMonthlyNewsletterCount } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
+import { useDevMode } from "@/lib/DevModeContext";
 
 type Article = {
   tag: string;
@@ -69,7 +70,8 @@ export default function GeneratePage() {
   const [customBrief, setCustomBrief] = useState("");
   const [recipientCount, setRecipientCount] = useState(0);
   const [loadingConfig, setLoadingConfig] = useState(true);
-  const [plan, setPlan] = useState<string>("free");
+  const [realPlan, setRealPlan] = useState<string>("free");
+  const { getEffectivePlan } = useDevMode();
   const [generatedThisMonth, setGeneratedThisMonth] = useState(0);
 
   const [generating, setGenerating] = useState(false);
@@ -101,7 +103,7 @@ export default function GeneratePage() {
       }
       setRecipientCount(recipientsResult.data.length);
       if (profileResult.data?.plan) {
-        setPlan(profileResult.data.plan);
+        setRealPlan(profileResult.data.plan);
       }
       setGeneratedThisMonth(countResult.count);
       setLoadingConfig(false);
@@ -109,6 +111,7 @@ export default function GeneratePage() {
     loadConfig();
   }, [user]);
 
+  const plan = getEffectivePlan(realPlan);
   const limits = getPlanLimits(plan);
   const isAtGenerationLimit = limits.generationsPerMonth !== -1 && generatedThisMonth >= limits.generationsPerMonth;
 
