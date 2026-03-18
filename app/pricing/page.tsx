@@ -226,7 +226,7 @@ export default function PricingPage() {
               period={period}
               tagline="Pour les indépendants"
               features={soloFeatures}
-              cta="Commencer gratuitement"
+              cta="S'abonner"
               onClick={() => handleCheckout("solo")}
               loading={checkoutLoading === "solo"}
             />
@@ -237,7 +237,7 @@ export default function PricingPage() {
               period={period}
               tagline="Pour les petites équipes"
               features={proFeatures}
-              cta="Commencer gratuitement"
+              cta="S'abonner"
               onClick={() => handleCheckout("pro")}
               loading={checkoutLoading === "pro"}
               popular
