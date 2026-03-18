@@ -37,17 +37,18 @@ const FAQ = [
 
 const freeFeatures = [
   "4 newsletters par mois",
-  "Jusqu'à 3 destinataires",
-  "Thématiques prédéfinies",
-  "Analytics basiques",
+  "1 destinataire (vous)",
+  "Brief 100% personnalisable",
+  "Thématiques & sources au choix",
   "Web search IA",
+  "Analytics basiques",
 ];
 
 const proFeatures = [
   "Newsletters illimitées",
-  "Destinataires illimités",
+  "Jusqu'à 10 destinataires",
   "Brief personnalisé",
-  "Thématiques custom",
+  "Thématiques & sources custom",
   "Analytics complets",
   "Support prioritaire",
 ];

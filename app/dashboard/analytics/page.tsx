@@ -59,12 +59,6 @@ export default function AnalyticsPage() {
       const userPlan = profileResult.data?.plan || "free";
       setRealPlan(userPlan);
 
-      const limits = getPlanLimits(userPlan);
-      if (limits.analytics === "none") {
-        setLoading(false);
-        return;
-      }
-
       fetch(`/api/analytics?userId=${user!.id}`)
         .then((res) => res.json())
         .then((json) => {
@@ -88,59 +82,6 @@ export default function AnalyticsPage() {
             Analytics
           </h1>
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Plan free : analytics verrouillées
-  if (limits.analytics === "none") {
-    return (
-      <div style={{ padding: 32, maxWidth: 900 }}>
-        <div style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
-            Analytics
-          </h1>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Suivez les performances de vos newsletters</p>
-        </div>
-        <div
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: 48,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ marginBottom: 16 }}>
-            <IconChart />
-          </div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-            Analytics verrouillées
-          </div>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Les analytics sont disponibles avec le plan Pro
-          </p>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <CrownBadge tooltip="Débloquer les analytics" />
-            <button
-              onClick={() => router.push("/pricing")}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                background: "var(--accent)",
-                color: "#fff",
-                fontSize: 14,
-                fontWeight: 500,
-                padding: "10px 20px",
-                borderRadius: 8,
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Voir les plans →
-            </button>
-          </div>
         </div>
       </div>
     );
@@ -388,11 +329,25 @@ export default function AnalyticsPage() {
             textTransform: "uppercase",
             letterSpacing: "0.06em",
             marginBottom: 16,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
         >
           Top articles
+          {limits.analytics === "basic" && <CrownBadge tooltip="Disponible avec le plan Pro" />}
         </h2>
-        {data.topArticles.length === 0 ? (
+        {limits.analytics === "basic" ? (
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+            Analytics complets disponibles avec le plan Pro.{" "}
+            <button
+              onClick={() => router.push("/pricing")}
+              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: 14, padding: 0, textDecoration: "underline" }}
+            >
+              Voir les plans →
+            </button>
+          </p>
+        ) : data.topArticles.length === 0 ? (
           <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Aucun clic enregistré pour le moment.</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import {
   getNewsletterConfig,
@@ -116,7 +115,6 @@ function IconX() {
 
 export default function ConfigPage() {
   const { user } = useAuth();
-  const router = useRouter();
 
   const [topics, setTopics] = useState(defaultTopics);
   const [sources, setSources] = useState(defaultSources);
@@ -250,8 +248,11 @@ export default function ConfigPage() {
 
     const maxR = limits.maxRecipients;
     if (maxR !== -1 && recipients.length >= maxR) {
-      const nextPlan = plan === "free" ? "Pro" : "supérieur";
-      setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
+      setRecipientLimitMsg(
+        plan === "free"
+          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 10.`
+          : `Limite de ${maxR} destinataires atteinte. Passez au plan supérieur pour en ajouter plus.`
+      );
       return;
     }
 
@@ -375,56 +376,43 @@ export default function ConfigPage() {
               ))}
             </div>
             <div style={{ marginTop: 12 }}>
-              {limits.customBrief ? (
-                showAddTopic ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
-                    <input
-                      className="input-field"
-                      value={newTopicLabel}
-                      onChange={(e) => setNewTopicLabel(e.target.value)}
-                      placeholder="Ex: Blockchain, Supply Chain, IoT..."
-                      onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
-                      autoFocus
-                      style={{ width: "100%", boxSizing: "border-box" }}
-                    />
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button
-                        className="btn-primary"
-                        onClick={addCustomTopic}
-                        disabled={!newTopicLabel.trim()}
-                        style={{ fontSize: 13, padding: "6px 14px" }}
-                      >
-                        Ajouter
-                      </button>
-                      <button
-                        className="btn-ghost"
-                        onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
-                        style={{ fontSize: 13, padding: "6px 14px" }}
-                      >
-                        Annuler
-                      </button>
-                    </div>
+              {showAddTopic ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
+                  <input
+                    className="input-field"
+                    value={newTopicLabel}
+                    onChange={(e) => setNewTopicLabel(e.target.value)}
+                    placeholder="Ex: Blockchain, Supply Chain, IoT..."
+                    onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
+                    autoFocus
+                    style={{ width: "100%", boxSizing: "border-box" }}
+                  />
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      className="btn-primary"
+                      onClick={addCustomTopic}
+                      disabled={!newTopicLabel.trim()}
+                      style={{ fontSize: 13, padding: "6px 14px" }}
+                    >
+                      Ajouter
+                    </button>
+                    <button
+                      className="btn-ghost"
+                      onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
+                      style={{ fontSize: 13, padding: "6px 14px" }}
+                    >
+                      Annuler
+                    </button>
                   </div>
-                ) : (
-                  <button
-                    className="btn-ghost"
-                    onClick={() => setShowAddTopic(true)}
-                    style={{ fontSize: 13, padding: "6px 14px" }}
-                  >
-                    + Ajouter une thématique
-                  </button>
-                )
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <button
-                    className="btn-ghost"
-                    disabled
-                    style={{ fontSize: 13, padding: "6px 14px", opacity: 0.5, cursor: "not-allowed" }}
-                  >
-                    + Ajouter une thématique
-                  </button>
-                  <CrownBadge tooltip="Disponible avec le plan Pro" />
                 </div>
+              ) : (
+                <button
+                  className="btn-ghost"
+                  onClick={() => setShowAddTopic(true)}
+                  style={{ fontSize: 13, padding: "6px 14px" }}
+                >
+                  + Ajouter une thématique
+                </button>
               )}
             </div>
           </div>
@@ -437,10 +425,7 @@ export default function ConfigPage() {
               borderRadius: 12,
               padding: 24,
               marginBottom: 24,
-              opacity: limits.customBrief ? 1 : 0.6,
-              cursor: limits.customBrief ? "default" : "pointer",
             }}
-            onClick={limits.customBrief ? undefined : () => router.push("/pricing")}
           >
             <h2
               style={{
@@ -456,25 +441,14 @@ export default function ConfigPage() {
               }}
             >
               Brief personnalisé
-              {!limits.customBrief && (
-                <span onClick={(e) => e.stopPropagation()}>
-                  <CrownBadge tooltip="Disponible avec le plan Pro" />
-                </span>
-              )}
             </h2>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
               Décrivez votre activité et ce que vous voulez surveiller. Plus vous êtes précis, plus votre newsletter sera pertinente et utile pour vos équipes.
             </p>
-            {!limits.customBrief && (
-              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12, fontStyle: "italic" }}>
-                Disponible avec le plan Pro
-              </p>
-            )}
 
             {/* Examples section */}
-            {limits.customBrief && (
-              <>
-                {customBrief.length <= 20 || showExamples ? (
+            <>
+              {customBrief.length <= 20 || showExamples ? (
                   <div style={{ marginBottom: 16 }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                       <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", margin: 0 }}>
@@ -556,15 +530,13 @@ export default function ConfigPage() {
                     <li>👥 Qui lit la newsletter (direction, technique, commercial...)</li>
                   </ul>
                 </div>
-              </>
-            )}
+            </>
 
             <textarea
               className="input-field"
               value={customBrief}
               onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
               placeholder="Ex : Je veux suivre les changements de réglementation autour des listes INCI en cosmétique, les nouvelles normes EU, les innovations en formulation clean beauty, et les lancements produits de nos concurrents (L'Oréal, Estée Lauder, Caudalie)."
-              disabled={!limits.customBrief}
               style={{ width: "100%", minHeight: 120, resize: "vertical", boxSizing: "border-box" }}
             />
             <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
@@ -921,8 +893,11 @@ export default function ConfigPage() {
                   onClick={() => {
                     const maxR = limits.maxRecipients;
                     if (maxR !== -1 && recipients.length >= maxR) {
-                      const nextPlan = plan === "free" ? "Pro" : "supérieur";
-                      setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
+                      setRecipientLimitMsg(
+                        plan === "free"
+                          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 10.`
+                          : `Limite de ${maxR} destinataires atteinte. Passez au plan supérieur pour en ajouter plus.`
+                      );
                     } else {
                       setShowAddForm(true);
                       setRecipientLimitMsg("");

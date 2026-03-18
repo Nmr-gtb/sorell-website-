@@ -99,15 +99,15 @@ const pricingPlans = [
   {
     name: "Free",
     price: "Gratuit",
-    desc: "Pour découvrir Sorell",
-    features: ["4 newsletters par mois", "Jusqu'à 3 destinataires", "Thématiques prédéfinies"],
+    desc: "Pour tester par vous-même",
+    features: ["4 newsletters/mois", "1 destinataire", "100% personnalisable"],
     popular: false,
   },
   {
     name: "Pro",
     price: "19€",
-    desc: "Pour les professionnels",
-    features: ["Newsletters illimitées", "Destinataires illimités", "Brief personnalisé"],
+    desc: "Pour diffuser à votre équipe",
+    features: ["Newsletters illimitées", "Jusqu'à 10 destinataires", "Analytics complets"],
     popular: true,
   },
   {

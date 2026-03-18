@@ -8,15 +8,15 @@ export const PLAN_LIMITS: Record<PlanType, {
   analytics: "none" | "basic" | "full";
 }> = {
   free: {
-    customBrief: false,
-    maxRecipients: 3,
+    customBrief: true,
+    maxRecipients: 1,
     frequency: ["weekly", "monthly"],
     generationsPerMonth: 4,
     analytics: "basic",
   },
   pro: {
     customBrief: true,
-    maxRecipients: -1,
+    maxRecipients: 10,
     frequency: ["weekly", "monthly"],
     generationsPerMonth: -1,
     analytics: "full",
