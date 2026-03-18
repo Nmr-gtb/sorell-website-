@@ -37,7 +37,7 @@ export default function LegalPage() {
             Le site sorell.fr est édité par Noé Mur, entrepreneur individuel.
           </p>
           <ul>
-            <li>Email : <a href="mailto:murnoe@outlook.com" style={{ color: "var(--accent)" }}>murnoe@outlook.com</a></li>
+            <li>Email : <a href="mailto:murnoe@outlook.fr" style={{ color: "var(--accent)" }}>murnoe@outlook.fr</a></li>
             <li>Site : <a href="https://sorell.fr" style={{ color: "var(--accent)" }}>https://sorell.fr</a></li>
           </ul>
         </Section>

@@ -107,7 +107,7 @@ export default function ContactPage() {
               Ou envoyez-nous un email directement :
             </p>
             <a
-              href="mailto:murnoe@outlook.com"
+              href="mailto:murnoe@outlook.fr"
               style={{
                 fontSize: 14,
                 fontWeight: 500,
@@ -121,7 +121,7 @@ export default function ContactPage() {
                 (e.currentTarget as HTMLElement).style.textDecoration = "none";
               }}
             >
-              murnoe@outlook.com
+              murnoe@outlook.fr
             </a>
           </div>
         </div>

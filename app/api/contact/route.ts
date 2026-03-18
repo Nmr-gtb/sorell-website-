@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     await resend.emails.send({
       from: "Sorell Contact <newsletter@sorell.fr>",
-      to: "murnoe@outlook.com",
+      to: "murnoe@outlook.fr",
       replyTo: email,
       subject: `[Sorell Contact] ${subject || "Nouveau message"} — ${name}`,
       html: `
