@@ -159,7 +159,7 @@ ${otherArticles.map((a: { tag: string; title: string; summary: string; source: s
 
         try {
           await resend.emails.send({
-            from: "Sorell <newsletter@sorell.fr>",
+            from: "Sorell <newsletter@send.sorell.fr>",
             to: recipient.email,
             subject,
             html: emailHtml,
