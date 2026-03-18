@@ -10,15 +10,23 @@ import { useDevMode } from "@/lib/DevModeContext";
 type Article = {
   tag: string;
   title: string;
-  summary: string;
+  hook?: string;
+  content?: string;
+  summary?: string; // ancien format, backward compat
   source: string;
   featured: boolean;
+};
+
+type KeyFigure = {
+  value: string;
+  label: string;
+  context: string;
 };
 
 type Newsletter = {
   id: string;
   subject: string;
-  content: Article[];
+  content: { editorial: string; key_figures: KeyFigure[]; articles: Article[] } | Article[];
   status: string;
 };
 
@@ -77,6 +85,8 @@ export default function GeneratePage() {
   const [generating, setGenerating] = useState(false);
   const [newsletter, setNewsletter] = useState<Newsletter | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [editorial, setEditorial] = useState("");
+  const [keyFigures, setKeyFigures] = useState<KeyFigure[]>([]);
   const [subject, setSubject] = useState("");
   const [generateError, setGenerateError] = useState("");
 
@@ -126,6 +136,8 @@ export default function GeneratePage() {
     setGenerateError("");
     setNewsletter(null);
     setArticles([]);
+    setEditorial("");
+    setKeyFigures([]);
     setSendResults(null);
     setSendError("");
 
@@ -141,6 +153,8 @@ export default function GeneratePage() {
       } else {
         setNewsletter(data.newsletter);
         setArticles(data.articles);
+        setEditorial(data.editorial || "");
+        setKeyFigures(data.keyFigures || []);
         setSubject(data.newsletter.subject);
         setGeneratedThisMonth((prev) => prev + 1);
       }
@@ -387,6 +401,52 @@ export default function GeneratePage() {
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{sendError}</p>
           )}
 
+          {/* Editorial */}
+          {editorial && (
+            <div
+              style={{
+                background: "var(--surface-alt)",
+                borderLeft: "3px solid var(--accent)",
+                borderRadius: 8,
+                padding: "16px 20px",
+                marginBottom: 12,
+              }}
+            >
+              <p style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>
+                Éditorial
+              </p>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: 0, lineHeight: 1.6, fontStyle: "italic" }}>
+                {editorial}
+              </p>
+            </div>
+          )}
+
+          {/* Chiffres clés */}
+          {keyFigures.length > 0 && (
+            <div style={{ marginBottom: 12 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>
+                Chiffres clés
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(keyFigures.length, 3)}, 1fr)`, gap: 8 }}>
+                {keyFigures.map((fig, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                      padding: 16,
+                    }}
+                  >
+                    <p style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", margin: "0 0 4px" }}>{fig.value}</p>
+                    <p style={{ fontSize: 13, color: "var(--text)", margin: "0 0 4px" }}>{fig.label}</p>
+                    <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>{fig.context}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Featured article */}
           <div
             style={{
@@ -416,8 +476,13 @@ export default function GeneratePage() {
             <h2 style={{ fontSize: 17, fontWeight: 600, color: "var(--text)", margin: "8px 0 6px", lineHeight: 1.35 }}>
               {featuredArticle.title}
             </h2>
+            {featuredArticle.hook && (
+              <p style={{ fontSize: 14, color: "var(--text)", margin: "0 0 6px", lineHeight: 1.5, fontStyle: "italic" }}>
+                {featuredArticle.hook}
+              </p>
+            )}
             <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "0 0 6px", lineHeight: 1.5 }}>
-              {featuredArticle.summary}
+              {featuredArticle.content || featuredArticle.summary}
             </p>
             <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{featuredArticle.source}</span>
           </div>
@@ -453,8 +518,13 @@ export default function GeneratePage() {
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "4px 0", lineHeight: 1.35 }}>
                   {article.title}
                 </h3>
+                {article.hook && (
+                  <p style={{ fontSize: 13, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.5, fontStyle: "italic" }}>
+                    {article.hook}
+                  </p>
+                )}
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 4px", lineHeight: 1.5 }}>
-                  {article.summary}
+                  {article.content || article.summary}
                 </p>
                 <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{article.source}</span>
               </div>
@@ -511,6 +581,8 @@ export default function GeneratePage() {
             onClick={() => {
               setNewsletter(null);
               setArticles([]);
+              setEditorial("");
+              setKeyFigures([]);
               setSendResults(null);
             }}
             style={{ fontSize: 14, padding: "7px 14px" }}

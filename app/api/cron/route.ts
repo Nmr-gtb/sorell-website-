@@ -62,46 +62,75 @@ export async function GET(request: Request) {
       const sources = (config.sources ?? []).join(", ");
       const customBrief = config.custom_brief ?? "";
 
-      const prompt = `Tu es un expert en veille sectorielle B2B. Génère une newsletter professionnelle avec exactement 5 articles d'actualité pertinents et RÉCENTS.
+      const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu rédiges une newsletter professionnelle, percutante et agréable à lire.
 
 ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
 "${customBrief}"
-
-Ce brief décrit exactement ce que le client veut recevoir. Les articles doivent correspondre à cette demande en priorité.
+Les articles doivent correspondre EXACTEMENT à cette demande.
 
 ` : ""}Thématiques : ${topics}
 ${sources ? `Sources préférées : ${sources}` : ""}
 Date : ${franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
-CONSIGNES :
-- Si un brief personnalisé est fourni, génère des articles qui correspondent EXACTEMENT à cette demande
-- Les articles doivent être réalistes, professionnels et ressembler à de vrais articles de presse
-- Chaque article doit apporter une information concrète et actionnable
+GÉNÈRE une newsletter au format JSON avec cette structure exacte :
 
-Pour CHAQUE article, génère :
-- tag : catégorie courte
-- title : titre accrocheur et professionnel (max 80 caractères)
-- summary : résumé en 1-2 phrases (max 150 caractères)
-- source : nom du média source crédible
-- featured : true pour le 1er article, false pour les autres
+{
+  "editorial": "Un paragraphe d'analyse de 2-3 phrases qui donne le ton de la semaine. Identifie la tendance principale ou le fil rouge entre les actualités. Ton professionnel mais engageant, pas corporate.",
+  "key_figures": [
+    { "value": "chiffre marquant", "label": "explication courte", "context": "source ou contexte" }
+  ],
+  "articles": [
+    {
+      "tag": "catégorie courte (ex: IA, Réglementation, Concurrent, Marché...)",
+      "title": "titre accrocheur et professionnel (max 80 caractères)",
+      "hook": "une phrase d'accroche qui donne envie de lire (max 120 caractères)",
+      "content": "2-3 phrases de contenu détaillé. Pas un résumé vague, mais une vraie information avec des chiffres, des noms, des faits concrets. Le lecteur doit apprendre quelque chose.",
+      "source": "nom du média source crédible",
+      "featured": true
+    }
+  ]
+}
 
-IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown.`;
+CONSIGNES IMPORTANTES :
+- L'éditorial doit être percutant : il résume l'état d'esprit de la semaine en 2-3 phrases max. Pas de blabla.
+- key_figures : génère 2-3 chiffres clés UNIQUEMENT si l'actualité s'y prête (stats, montants, pourcentages marquants). Si pas de chiffres pertinents, retourne un tableau vide [].
+- articles : génère exactement 5 articles. Le premier est "featured": true.
+- Chaque article doit avoir un vrai contenu informatif (pas juste "une entreprise a fait X"). Donne des détails, des chiffres, des implications.
+- Le "hook" est une phrase courte et punchy qui donne envie de lire l'article.
+- Varie les types d'articles : actu breaking, analyse de fond, chiffre marquant, tendance émergente, mouvement stratégique.
+- Varie les sources : presse spécialisée, rapports d'analystes, communiqués, médias internationaux.
+- Le ton est professionnel mais pas ennuyeux. Comme un briefing que tu ferais à ton boss le lundi matin.
+
+IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans backticks markdown.`;
 
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
+        max_tokens: 2500,
         messages: [{ role: "user", content: prompt }],
       });
 
       const responseText = message.content[0].type === "text" ? message.content[0].text : "";
       const cleanJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-      const articles = JSON.parse(cleanJson);
+      const parsed = JSON.parse(cleanJson);
+
+      // Gérer les 2 formats possibles (ancien tableau ou nouveau objet)
+      let newsletterContent;
+      if (Array.isArray(parsed)) {
+        newsletterContent = { editorial: "", key_figures: [], articles: parsed };
+      } else {
+        newsletterContent = {
+          editorial: parsed.editorial || "",
+          key_figures: parsed.key_figures || [],
+          articles: parsed.articles || [],
+        };
+      }
+      const articles = newsletterContent.articles;
 
       const subject = `Briefing — ${franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}`;
 
       const { data: newsletter } = await supabase
         .from("newsletters")
-        .insert({ user_id: config.user_id, subject, content: articles, status: "draft" })
+        .insert({ user_id: config.user_id, subject, content: newsletterContent, status: "draft" })
         .select()
         .single();
 
@@ -135,18 +164,20 @@ IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, 
 <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="color:#111827;text-decoration:none;">
 <h2 style="font-size:17px;font-weight:600;color:#111827;margin:8px 0 6px;line-height:1.35;">${featuredArticle.title}</h2>
 </a>
-<p style="font-size:14px;color:#6B7280;margin:0 0 6px;line-height:1.5;">${featuredArticle.summary}</p>
+${featuredArticle.hook ? `<p style="font-size:14px;font-style:italic;color:#374151;margin:0 0 6px;line-height:1.5;">${featuredArticle.hook}</p>` : ""}
+<p style="font-size:14px;color:#6B7280;margin:0 0 6px;line-height:1.5;">${featuredArticle.content || featuredArticle.summary || ""}</p>
 <span style="font-size:12px;color:#9CA3AF;">${featuredArticle.source}</span>
 </div>
 </div>
 <div style="padding:0 32px 32px;">
-${otherArticles.map((a: { tag: string; title: string; summary: string; source: string }) => `
+${otherArticles.map((a: { tag: string; title: string; hook?: string; content?: string; summary?: string; source: string }) => `
 <div style="padding:16px 0;border-top:1px solid #E5E7EB;">
 <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#F3F4F6;color:#374151;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${a.tag}</span>
 <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="color:#111827;text-decoration:none;">
 <h3 style="font-size:15px;font-weight:600;color:#111827;margin:4px 0;line-height:1.35;">${a.title}</h3>
 </a>
-<p style="font-size:13px;color:#6B7280;margin:0 0 4px;line-height:1.5;">${a.summary}</p>
+${a.hook ? `<p style="font-size:13px;font-style:italic;color:#374151;margin:0 0 4px;line-height:1.5;">${a.hook}</p>` : ""}
+<p style="font-size:13px;color:#6B7280;margin:0 0 4px;line-height:1.5;">${a.content || a.summary || ""}</p>
 <span style="font-size:11px;color:#9CA3AF;">${a.source}</span>
 </div>`).join("")}
 </div>

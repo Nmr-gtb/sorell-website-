@@ -23,35 +23,50 @@ export async function POST(request: Request) {
 
     const sourcesList = sources?.length ? `Sources préférées : ${sources.join(", ")}` : "";
 
-    const prompt = `Tu es un expert en veille sectorielle B2B. Génère une newsletter professionnelle avec exactement 5 articles d'actualité pertinents et RÉCENTS.
+    const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu rédiges une newsletter professionnelle, percutante et agréable à lire.
 
 ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
 "${customBrief}"
+Les articles doivent correspondre EXACTEMENT à cette demande.
 
-Ce brief décrit exactement ce que le client veut recevoir. Les articles doivent correspondre à cette demande en priorité. Les thématiques ci-dessous sont secondaires.
-
-` : ""}Thématiques générales : ${topicsList}
+` : ""}Thématiques : ${topicsList}
 ${sourcesList}
 Date : ${new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
-CONSIGNES :
-- Si un brief personnalisé est fourni, génère des articles qui correspondent EXACTEMENT à cette demande
-- Les articles doivent être réalistes, professionnels et ressembler à de vrais articles de presse
-- Chaque article doit apporter une information concrète et actionnable
-- Varie les sources (presse spécialisée, rapports d'analystes, médias sectoriels)
+GÉNÈRE une newsletter au format JSON avec cette structure exacte :
 
-Pour CHAQUE article, génère :
-- tag : catégorie courte (ex: "IA", "Réglementation", "Concurrent", "Tendance", "INCI", "Cosmétique"...)
-- title : titre accrocheur et professionnel (max 80 caractères)
-- summary : résumé en 1-2 phrases (max 150 caractères)
-- source : nom du média source crédible
-- featured : true pour le 1er article (article phare), false pour les autres
+{
+  "editorial": "Un paragraphe d'analyse de 2-3 phrases qui donne le ton de la semaine. Identifie la tendance principale ou le fil rouge entre les actualités. Ton professionnel mais engageant, pas corporate.",
+  "key_figures": [
+    { "value": "chiffre marquant", "label": "explication courte", "context": "source ou contexte" }
+  ],
+  "articles": [
+    {
+      "tag": "catégorie courte (ex: IA, Réglementation, Concurrent, Marché...)",
+      "title": "titre accrocheur et professionnel (max 80 caractères)",
+      "hook": "une phrase d'accroche qui donne envie de lire (max 120 caractères)",
+      "content": "2-3 phrases de contenu détaillé. Pas un résumé vague, mais une vraie information avec des chiffres, des noms, des faits concrets. Le lecteur doit apprendre quelque chose.",
+      "source": "nom du média source crédible",
+      "featured": true
+    }
+  ]
+}
 
-IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown. Juste le JSON pur.`;
+CONSIGNES IMPORTANTES :
+- L'éditorial doit être percutant : il résume l'état d'esprit de la semaine en 2-3 phrases max. Pas de blabla.
+- key_figures : génère 2-3 chiffres clés UNIQUEMENT si l'actualité s'y prête (stats, montants, pourcentages marquants). Si pas de chiffres pertinents, retourne un tableau vide [].
+- articles : génère exactement 5 articles. Le premier est "featured": true.
+- Chaque article doit avoir un vrai contenu informatif (pas juste "une entreprise a fait X"). Donne des détails, des chiffres, des implications.
+- Le "hook" est une phrase courte et punchy qui donne envie de lire l'article.
+- Varie les types d'articles : actu breaking, analyse de fond, chiffre marquant, tendance émergente, mouvement stratégique.
+- Varie les sources : presse spécialisée, rapports d'analystes, communiqués, médias internationaux.
+- Le ton est professionnel mais pas ennuyeux. Comme un briefing que tu ferais à ton boss le lundi matin.
+
+IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans backticks markdown.`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 1500,
+      max_tokens: 2500,
       messages: [{ role: "user", content: prompt }],
     });
 
@@ -62,7 +77,20 @@ IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, 
       .replace(/```json\n?/g, "")
       .replace(/```\n?/g, "")
       .trim();
-    const articles = JSON.parse(cleanJson);
+    const parsed = JSON.parse(cleanJson);
+
+    // Gérer les 2 formats possibles (ancien tableau ou nouveau objet)
+    let newsletterContent;
+    if (Array.isArray(parsed)) {
+      // Ancien format (tableau d'articles) — backward compatible
+      newsletterContent = { editorial: "", key_figures: [], articles: parsed };
+    } else {
+      newsletterContent = {
+        editorial: parsed.editorial || "",
+        key_figures: parsed.key_figures || [],
+        articles: parsed.articles || [],
+      };
+    }
 
     const today = new Date();
     const weekNum = Math.ceil(today.getDate() / 7);
@@ -73,7 +101,7 @@ IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, 
       .insert({
         user_id: userId,
         subject,
-        content: articles,
+        content: newsletterContent,
         status: "draft",
       })
       .select()
@@ -83,7 +111,7 @@ IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, 
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ newsletter, articles });
+    return NextResponse.json({ newsletter, articles: newsletterContent.articles, editorial: newsletterContent.editorial, keyFigures: newsletterContent.key_figures });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Generate error:", message);
