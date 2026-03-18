@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { userId, topics, sources } = await request.json();
+    const { userId, topics, sources, customBrief } = await request.json();
 
     if (!userId || !topics?.length) {
       return NextResponse.json({ error: "Missing userId or topics" }, { status: 400 });
@@ -23,23 +23,31 @@ export async function POST(request: Request) {
 
     const sourcesList = sources?.length ? `Sources préférées : ${sources.join(", ")}` : "";
 
-    const prompt = `Tu es un expert en veille sectorielle B2B. Génère une newsletter professionnelle avec exactement 5 articles d'actualité pertinents.
+    const prompt = `Tu es un expert en veille sectorielle B2B. Génère une newsletter professionnelle avec exactement 5 articles d'actualité pertinents et RÉCENTS.
 
-Thématiques demandées : ${topicsList}
+${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
+"${customBrief}"
+
+Ce brief décrit exactement ce que le client veut recevoir. Les articles doivent correspondre à cette demande en priorité. Les thématiques ci-dessous sont secondaires.
+
+` : ""}Thématiques générales : ${topicsList}
 ${sourcesList}
 Date : ${new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
+CONSIGNES :
+- Si un brief personnalisé est fourni, génère des articles qui correspondent EXACTEMENT à cette demande
+- Les articles doivent être réalistes, professionnels et ressembler à de vrais articles de presse
+- Chaque article doit apporter une information concrète et actionnable
+- Varie les sources (presse spécialisée, rapports d'analystes, médias sectoriels)
+
 Pour CHAQUE article, génère :
-- tag : catégorie courte (ex: "IA", "Réglementation", "Concurrent", "Tendance", "Cybersécurité")
+- tag : catégorie courte (ex: "IA", "Réglementation", "Concurrent", "Tendance", "INCI", "Cosmétique"...)
 - title : titre accrocheur et professionnel (max 80 caractères)
 - summary : résumé en 1-2 phrases (max 150 caractères)
-- source : nom du média source crédible (ex: "Les Echos", "TechCrunch", "McKinsey")
+- source : nom du média source crédible
 - featured : true pour le 1er article (article phare), false pour les autres
 
-IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown. Juste le JSON pur.
-
-Exemple de format :
-[{"tag":"IA","title":"...","summary":"...","source":"TechCrunch","featured":true},{"tag":"Réglementation","title":"...","summary":"...","source":"Les Echos","featured":false}]`;
+IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown. Juste le JSON pur.`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",

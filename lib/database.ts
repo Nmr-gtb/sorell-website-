@@ -36,6 +36,7 @@ export async function upsertNewsletterConfig(userId: string, config: {
   topics?: { id: string; label: string; enabled: boolean }[];
   sources?: string[];
   frequency?: string;
+  custom_brief?: string;
 }) {
   const { data, error } = await supabase
     .from("newsletter_config")
@@ -44,6 +45,7 @@ export async function upsertNewsletterConfig(userId: string, config: {
       topics: config.topics ?? [],
       sources: config.sources ?? [],
       frequency: config.frequency ?? "weekly-1",
+      custom_brief: config.custom_brief ?? "",
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" })
     .select()

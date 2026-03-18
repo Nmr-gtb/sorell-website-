@@ -64,6 +64,7 @@ export default function GeneratePage() {
   const [topics, setTopics] = useState<{ id: string; label: string; enabled: boolean }[]>([]);
   const [sources, setSources] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("weekly-1");
+  const [customBrief, setCustomBrief] = useState("");
   const [recipientCount, setRecipientCount] = useState(0);
   const [loadingConfig, setLoadingConfig] = useState(true);
 
@@ -88,6 +89,9 @@ export default function GeneratePage() {
         setTopics(configResult.data.topics ?? []);
         setSources(configResult.data.sources ?? []);
         setFrequency(configResult.data.frequency ?? "weekly-1");
+        if (configResult.data.custom_brief) {
+          setCustomBrief(configResult.data.custom_brief);
+        }
       }
       setRecipientCount(recipientsResult.data.length);
       setLoadingConfig(false);
@@ -113,7 +117,7 @@ export default function GeneratePage() {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, topics, sources }),
+        body: JSON.stringify({ userId: user.id, topics, sources, customBrief }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -217,6 +221,17 @@ export default function GeneratePage() {
                 <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Destinataires</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>{recipientCount}</span>
               </div>
+              {customBrief && (
+                <>
+                  <div style={{ height: 1, background: "var(--border)" }} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Brief</span>
+                    <span style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
+                      {customBrief.length > 100 ? `${customBrief.slice(0, 100)}...` : customBrief}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

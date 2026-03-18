@@ -79,6 +79,7 @@ export default function ConfigPage() {
   const [sources, setSources] = useState(defaultSources);
   const [newSource, setNewSource] = useState("");
   const [frequency, setFrequency] = useState("weekly-1");
+  const [customBrief, setCustomBrief] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -113,6 +114,9 @@ export default function ConfigPage() {
         if (cfg.frequency) {
           setFrequency(cfg.frequency);
         }
+        if (cfg.custom_brief) {
+          setCustomBrief(cfg.custom_brief);
+        }
       }
 
       if (recipientsResult.data) {
@@ -143,7 +147,7 @@ export default function ConfigPage() {
     if (!user) return;
     setSaving(true);
     setSaveError("");
-    const { error } = await upsertNewsletterConfig(user.id, { topics, sources, frequency });
+    const { error } = await upsertNewsletterConfig(user.id, { topics, sources, frequency, custom_brief: customBrief });
     setSaving(false);
     if (error) {
       setSaveError("Erreur lors de la sauvegarde. Veuillez réessayer.");
@@ -252,6 +256,43 @@ export default function ConfigPage() {
               >
                 + Ajouter une thématique
               </button>
+            </div>
+          </div>
+
+          {/* Custom brief card */}
+          <div
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: 12,
+              padding: 24,
+              marginBottom: 24,
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: "var(--text-muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                marginBottom: 6,
+              }}
+            >
+              Brief personnalisé
+            </h2>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+              Décrivez précisément ce que vous voulez recevoir. Plus vous êtes précis, meilleure sera la newsletter.
+            </p>
+            <textarea
+              className="input-field"
+              value={customBrief}
+              onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
+              placeholder="Ex : Je veux suivre les changements de réglementation autour des listes INCI en cosmétique, les nouvelles normes EU, les innovations en formulation clean beauty, et les lancements produits de nos concurrents (L'Oréal, Estée Lauder, Caudalie)."
+              style={{ width: "100%", minHeight: 120, resize: "vertical", boxSizing: "border-box" }}
+            />
+            <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
+              {customBrief.length} / 1000
             </div>
           </div>
 
