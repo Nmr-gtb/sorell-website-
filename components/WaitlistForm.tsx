@@ -25,18 +25,36 @@ export default function WaitlistForm({
     setLoading(true);
     setError("");
 
-    const { error: dbError } = await supabase
-      .from("waitlist")
-      .insert({ email: email.trim().toLowerCase() });
-
-    if (dbError) {
-      if (dbError.message?.includes("duplicate") || dbError.code === "23505") {
-        setSubmitted(true);
-      } else {
-        setError("Une erreur est survenue, réessayez.");
+    try {
+      if (!supabase) {
+        console.error("Supabase client not initialized. URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "SET" : "MISSING", "KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "SET" : "MISSING");
+        setError("Erreur de configuration. Veuillez réessayer plus tard.");
+        setLoading(false);
+        return;
       }
-    } else {
-      setSubmitted(true);
+
+      console.log("Sending email to Supabase:", email.trim().toLowerCase());
+
+      const { data, error: dbError } = await supabase
+        .from("waitlist")
+        .insert([{ email: email.trim().toLowerCase() }])
+        .select();
+
+      console.log("Supabase response - data:", data, "error:", dbError);
+
+      if (dbError) {
+        if (dbError.code === "23505" || dbError.message?.includes("duplicate")) {
+          setSubmitted(true);
+        } else {
+          console.error("Supabase error:", dbError);
+          setError("Une erreur est survenue : " + dbError.message);
+        }
+      } else {
+        setSubmitted(true);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setError("Une erreur inattendue est survenue.");
     }
 
     setLoading(false);
