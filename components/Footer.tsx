@@ -26,7 +26,7 @@ export default function Footer() {
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
           <Link href="/pricing" className="footer-link">Tarifs</Link>
           <Link href="/demo" className="footer-link">Démo</Link>
-          <Link href="mailto:murnoe@outlook.com" className="footer-link">Contact</Link>
+          <Link href="/contact" className="footer-link">Contact</Link>
           <Link href="/legal" className="footer-link">Mentions légales</Link>
           <Link href="/cgv" className="footer-link">CGV</Link>
           <Link href="/privacy" className="footer-link">Confidentialité</Link>

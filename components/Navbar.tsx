@@ -91,6 +91,7 @@ export default function Navbar() {
     { href: "/#features", label: "Fonctionnalités" },
     { href: "/pricing", label: "Tarifs" },
     { href: "/demo", label: "Démo" },
+    { href: "/contact", label: "Contact" },
   ];
 
   const isActive = (href: string) =>

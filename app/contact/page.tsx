@@ -1,0 +1,258 @@
+"use client";
+
+import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("Question générale");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, subject, message }),
+    });
+
+    if (res.ok) {
+      setSuccess(true);
+      setName("");
+      setEmail("");
+      setSubject("Question générale");
+      setMessage("");
+    } else {
+      setError("Une erreur est survenue. Veuillez réessayer ou nous contacter directement par email.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+
+      <main
+        style={{
+          flex: 1,
+          paddingTop: 80,
+          paddingBottom: 80,
+          padding: "80px 1.5rem",
+          maxWidth: 600,
+          margin: "0 auto",
+          width: "100%",
+        }}
+      >
+        {/* Header */}
+        <div style={{ marginBottom: 32, paddingTop: 40 }}>
+          <h1
+            style={{
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: 28,
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              color: "var(--text)",
+              marginBottom: 10,
+            }}
+          >
+            Contactez-nous
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Une question, un devis, un problème ? Écrivez-nous et nous vous répondrons sous 24h.
+          </p>
+        </div>
+
+        {/* Direct email card */}
+        <div
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 20,
+            marginBottom: 32,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: "var(--surface-alt)",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M2 7l10 7 10-7" />
+            </svg>
+          </div>
+          <div>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 2 }}>
+              Ou envoyez-nous un email directement :
+            </p>
+            <a
+              href="mailto:murnoe@outlook.com"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: "var(--accent)",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.textDecoration = "underline";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.textDecoration = "none";
+              }}
+            >
+              murnoe@outlook.com
+            </a>
+          </div>
+        </div>
+
+        {/* Form card */}
+        <div
+          style={{
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 28,
+            background: "var(--bg)",
+          }}
+        >
+          {success && (
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: 8,
+                background: "var(--success-bg)",
+                border: "1px solid var(--success)",
+                color: "var(--success)",
+                fontSize: 14,
+                fontWeight: 500,
+                marginBottom: 20,
+              }}
+            >
+              ✓ Message envoyé ! Nous vous répondrons sous 24h.
+            </div>
+          )}
+
+          {error && (
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: 8,
+                background: "var(--error-bg, #FEF2F2)",
+                border: "1px solid var(--error, #EF4444)",
+                color: "var(--error, #EF4444)",
+                fontSize: 14,
+                marginBottom: 20,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Nom */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                Nom
+              </label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Votre nom"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                Email
+              </label>
+              <input
+                type="email"
+                className="input-field"
+                placeholder="votre@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Sujet */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                Sujet
+              </label>
+              <select
+                className="select-field"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              >
+                <option>Question générale</option>
+                <option>Demande de devis (Enterprise)</option>
+                <option>Problème technique</option>
+                <option>Problème de paiement</option>
+                <option>Demande de partenariat</option>
+                <option>Autre</option>
+              </select>
+            </div>
+
+            {/* Message */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                Message
+              </label>
+              <textarea
+                className="input-field"
+                placeholder="Décrivez votre demande..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                style={{ minHeight: 140, resize: "vertical" }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={loading}
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                padding: "11px 20px",
+                fontSize: "0.9375rem",
+                opacity: loading ? 0.7 : 1,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+            >
+              {loading ? "Envoi en cours..." : "Envoyer le message"}
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
