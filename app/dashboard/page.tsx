@@ -283,6 +283,31 @@ export default function DashboardPage() {
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="dashboard-actions-grid">
         <Link
+          href="/dashboard/generate"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            background: "var(--accent)",
+            border: "1px solid var(--accent)",
+            borderRadius: 12,
+            padding: "16px 20px",
+            textDecoration: "none",
+            gridColumn: "1 / -1",
+            transition: "opacity 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.opacity = "0.88";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLAnchorElement).style.opacity = "1";
+          }}
+        >
+          <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+            Générer ma newsletter →
+          </span>
+        </Link>
+        <Link
           href="/dashboard/config"
           style={{
             display: "flex",
