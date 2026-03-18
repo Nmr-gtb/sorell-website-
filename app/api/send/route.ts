@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 
       try {
         const result = await resend.emails.send({
-          from: "Sorell <newsletter@send.sorell.fr>",
+          from: "Sorell <newsletter@sorell.fr>",
           to: recipient.email,
           subject: newsletter.subject,
           html: emailHtml,
