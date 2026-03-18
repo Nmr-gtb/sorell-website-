@@ -2,6 +2,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
+  title: "Mentions légales",
+  description: "Mentions légales du site sorell.fr — Éditeur, hébergement, propriété intellectuelle.",
+};
+
+export const metadata = {
   title: "Mentions légales — Sorell",
 };
 

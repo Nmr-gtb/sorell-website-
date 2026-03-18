@@ -12,22 +12,45 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sorell — Newsletter IA pour entreprises",
-  description:
-    "Sorell génère automatiquement une newsletter personnalisée pour chaque collaborateur de votre entreprise.",
-  keywords: "newsletter IA, veille sectorielle, newsletter entreprise, newsletter automatique, IA générative",
+  metadataBase: new URL("https://sorell.fr"),
+  title: {
+    default: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
+    template: "%s — Sorell",
+  },
+  description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA. Veille concurrentielle, réglementaire et marché — livrée chaque semaine à vos équipes.",
+  keywords: ["newsletter IA", "veille sectorielle", "newsletter automatique", "intelligence artificielle", "veille concurrentielle", "newsletter B2B", "newsletter personnalisée", "veille réglementaire"],
+  authors: [{ name: "Sorell" }],
+  creator: "Sorell",
+  publisher: "Sorell",
   openGraph: {
-    title: "Sorell — Newsletter IA pour entreprises",
-    description: "Sorell génère automatiquement une newsletter personnalisée pour chaque collaborateur.",
+    type: "website",
+    locale: "fr_FR",
     url: "https://sorell.fr",
     siteName: "Sorell",
-    locale: "fr_FR",
-    type: "website",
+    title: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
+    description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA. Veille concurrentielle, réglementaire et marché — livrée chaque semaine.",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Sorell — Newsletter IA pour les professionnels",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sorell — Newsletter IA pour entreprises",
-    description: "Veille sectorielle automatique et personnalisée par IA.",
+    title: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
+    description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA.",
+    images: ["/og-image.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
   icons: { icon: "/favicon.svg" },
 };

@@ -2,6 +2,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
+  title: "Conditions Générales de Vente",
+  description: "CGV de Sorell — Tarifs, paiement, résiliation, responsabilité.",
+};
+
+export const metadata = {
   title: "Conditions Générales de Vente — Sorell",
 };
 

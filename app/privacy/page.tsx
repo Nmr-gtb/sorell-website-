@@ -2,6 +2,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
+  title: "Politique de confidentialité",
+  description: "Politique de confidentialité et RGPD de Sorell — Données collectées, droits, cookies.",
+};
+
+export const metadata = {
   title: "Politique de confidentialité — Sorell",
 };
 
