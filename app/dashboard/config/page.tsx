@@ -24,6 +24,34 @@ const CURATED_SOURCES: Record<string, string[]> = {
   "Spécialisé": ["L'Usine Nouvelle", "LSA Commerce", "Stratégies", "CB News", "Mind Media"],
 };
 
+const BRIEF_EXAMPLES = [
+  {
+    sector: "Cosmétique & Packaging",
+    icon: "🧴",
+    brief: "Notre entreprise fait de la remise en forme de packaging cosmétique (surimpression de listes INCI, étiquetage réglementaire). Je veux suivre chaque semaine : les changements réglementaires européens sur les listes INCI, les nouvelles normes d'étiquetage cosmétique, les rappels produits liés au packaging, et les innovations en impression/packaging durable. Nos concurrents : Autajon, CCL Industries.",
+  },
+  {
+    sector: "SaaS & Tech B2B",
+    icon: "💻",
+    brief: "Nous développons un logiciel de gestion de projet pour les PME. Je veux suivre : les levées de fonds et acquisitions dans le secteur project management (Monday, Asana, Notion, ClickUp), les nouvelles fonctionnalités IA intégrées aux outils de productivité, les tendances du marché SaaS B2B en Europe, et les retours d'expérience clients sur l'adoption d'outils no-code/low-code.",
+  },
+  {
+    sector: "Cabinet de conseil",
+    icon: "📊",
+    brief: "Cabinet de conseil en transformation digitale, 30 consultants. Je veux que mes équipes reçoivent chaque lundi : les nouvelles réglementations impactant nos clients (RGPD, IA Act, CSRD), les rapports McKinsey/BCG/Gartner récents, les tendances en IA générative appliquée à l'entreprise, et les mouvements stratégiques des Big Four et cabinets concurrents.",
+  },
+  {
+    sector: "Immobilier & Construction",
+    icon: "🏗️",
+    brief: "Promoteur immobilier spécialisé dans le logement neuf en Île-de-France. Je veux suivre : les évolutions du PLU et des permis de construire, les prix du foncier et tendances du marché, les nouvelles normes RE2020 et leur impact sur les coûts, les projets de transport (Grand Paris) qui créent des opportunités, et les appels d'offres publics.",
+  },
+  {
+    sector: "E-commerce & Retail",
+    icon: "🛒",
+    brief: "Marque DTC de compléments alimentaires, vente en ligne + marketplace. Je veux suivre : les changements réglementaires sur les compléments alimentaires en Europe (DGCCRF, EFSA), les tendances de consommation santé/bien-être, les stratégies d'acquisition des marques concurrentes sur Meta/Google, et les évolutions des algorithmes Amazon/marketplace.",
+  },
+];
+
 const defaultTopics = [
   { id: "ai", label: "Intelligence artificielle", enabled: true },
   { id: "reg", label: "Réglementation & conformité", enabled: true },
@@ -106,6 +134,7 @@ export default function ConfigPage() {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
 
+  const [showExamples, setShowExamples] = useState(false);
   const [showAddTopic, setShowAddTopic] = useState(false);
   const [newTopicLabel, setNewTopicLabel] = useState("");
 
@@ -434,13 +463,102 @@ export default function ConfigPage() {
               )}
             </h2>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-              Décrivez précisément ce que vous voulez recevoir. Plus vous êtes précis, meilleure sera la newsletter.
+              Décrivez votre activité et ce que vous voulez surveiller. Plus vous êtes précis, plus votre newsletter sera pertinente et utile pour vos équipes.
             </p>
             {!limits.customBrief && (
               <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12, fontStyle: "italic" }}>
                 Disponible à partir du plan Solo
               </p>
             )}
+
+            {/* Examples section */}
+            {limits.customBrief && (
+              <>
+                {customBrief.length <= 20 || showExamples ? (
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", margin: 0 }}>
+                        Besoin d&apos;inspiration ?
+                      </p>
+                      {customBrief.length > 20 && showExamples && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setShowExamples(false); }}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: 12,
+                            color: "var(--text-muted)",
+                            padding: 0,
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Masquer
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {BRIEF_EXAMPLES.map((example) => (
+                        <button
+                          key={example.sector}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomBrief(example.brief);
+                            setShowExamples(false);
+                          }}
+                          style={{
+                            background: "var(--surface-alt)",
+                            border: "1px solid var(--border)",
+                            borderRadius: 8,
+                            padding: "12px 16px",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            transition: "border-color 0.15s ease",
+                          }}
+                          onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)")}
+                          onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)")}
+                        >
+                          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
+                            {example.icon} {example.sector}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: 12 }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowExamples(true); }}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 12,
+                        color: "var(--text-muted)",
+                        padding: 0,
+                        textDecoration: "underline",
+                      }}
+                    >
+                      Voir des exemples
+                    </button>
+                  </div>
+                )}
+
+                {/* Structured guide */}
+                <div style={{ marginBottom: 16 }}>
+                  <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 6 }}>
+                    Pour un brief efficace, précisez :
+                  </p>
+                  <ul style={{ margin: 0, padding: 0, listStyle: "none", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
+                    <li>🏢 Votre activité (que fait votre entreprise ?)</li>
+                    <li>🎯 Ce que vous surveillez (réglementation, concurrents, tendances...)</li>
+                    <li>🏭 Vos concurrents (noms précis si possible)</li>
+                    <li>👥 Qui lit la newsletter (direction, technique, commercial...)</li>
+                  </ul>
+                </div>
+              </>
+            )}
+
             <textarea
               className="input-field"
               value={customBrief}
