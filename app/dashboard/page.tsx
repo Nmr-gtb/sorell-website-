@@ -100,14 +100,17 @@ export default function DashboardPage() {
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
   const [nextNewsletter, setNextNewsletter] = useState<{ date: string; time: string } | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [openRate, setOpenRate] = useState<number | null>(null);
+  const [articleCount, setArticleCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
 
     async function loadData() {
-      const [recipientsResult, configResult] = await Promise.all([
+      const [recipientsResult, configResult, analyticsRes] = await Promise.all([
         getRecipients(user!.id),
         getNewsletterConfig(user!.id),
+        fetch(`/api/analytics?userId=${user!.id}`).then((r) => r.json()).catch(() => null),
       ]);
 
       setRecipientCount(recipientsResult.data.length);
@@ -116,6 +119,11 @@ export default function DashboardPage() {
       const day = configResult.data?.send_day ?? "monday";
       const hour = configResult.data?.send_hour ?? 9;
       setNextNewsletter(getNextDate(freq, day, hour));
+
+      if (analyticsRes && analyticsRes.totalSent > 0) {
+        setOpenRate(analyticsRes.openRate);
+        setArticleCount(analyticsRes.newsletters?.[0]?.articleCount ?? null);
+      }
 
       setLoadingData(false);
     }
@@ -143,13 +151,13 @@ export default function DashboardPage() {
     },
     {
       icon: <IconEye />,
-      value: "68%",
+      value: loadingData ? "..." : openRate !== null ? `${openRate}%` : "—",
       sublabel: "",
       label: "Taux d'ouverture moyen",
     },
     {
       icon: <IconDocument />,
-      value: "5",
+      value: loadingData ? "..." : articleCount !== null ? String(articleCount) : "—",
       sublabel: "sélectionnés",
       label: "Articles cette semaine",
     },
