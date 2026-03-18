@@ -62,7 +62,7 @@ export async function GET(request: Request) {
       const sources = (config.sources ?? []).join(", ");
       const customBrief = config.custom_brief ?? "";
 
-      const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu rédiges une newsletter professionnelle, percutante et agréable à lire.
+      const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger une newsletter basée sur de VRAIES actualités récentes trouvées sur le web.
 
 ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
 "${customBrief}"
@@ -70,46 +70,62 @@ Les articles doivent correspondre EXACTEMENT à cette demande.
 
 ` : ""}Thématiques : ${topics}
 ${sources ? `Sources préférées : ${sources}` : ""}
-Date : ${franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+Date du jour : ${franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
-GÉNÈRE une newsletter au format JSON avec cette structure exacte :
+INSTRUCTIONS :
+1. Utilise la recherche web pour trouver 5 actualités RÉELLES et RÉCENTES (moins de 7 jours) correspondant aux thématiques demandées.
+2. Pour chaque actualité trouvée, rédige un article de newsletter professionnel.
+3. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
+
+GÉNÈRE un JSON avec cette structure exacte :
 
 {
-  "editorial": "Un paragraphe d'analyse de 2-3 phrases qui donne le ton de la semaine. Identifie la tendance principale ou le fil rouge entre les actualités. Ton professionnel mais engageant, pas corporate.",
+  "editorial": "Un paragraphe d'analyse de 2-3 phrases qui donne le ton de la semaine. Identifie la tendance principale ou le fil rouge entre les actualités. Ton professionnel mais engageant.",
   "key_figures": [
-    { "value": "chiffre marquant", "label": "explication courte", "context": "source ou contexte" }
+    { "value": "chiffre marquant trouvé dans les articles", "label": "explication courte", "context": "source" }
   ],
   "articles": [
     {
-      "tag": "catégorie courte (ex: IA, Réglementation, Concurrent, Marché...)",
-      "title": "titre accrocheur et professionnel (max 80 caractères)",
-      "hook": "une phrase d'accroche qui donne envie de lire (max 120 caractères)",
-      "content": "2-3 phrases de contenu détaillé. Pas un résumé vague, mais une vraie information avec des chiffres, des noms, des faits concrets. Le lecteur doit apprendre quelque chose.",
-      "source": "nom du média source crédible",
+      "tag": "catégorie courte",
+      "title": "titre accrocheur basé sur le vrai article (max 80 chars)",
+      "hook": "une phrase d'accroche (max 120 chars)",
+      "content": "2-3 phrases de contenu factuel basé sur le vrai article. Chiffres, noms, faits concrets.",
+      "source": "nom du média (ex: Les Echos, TechCrunch, Reuters...)",
+      "url": "URL COMPLÈTE de l'article original (https://...)",
       "featured": true
     }
   ]
 }
 
-CONSIGNES IMPORTANTES :
-- L'éditorial doit être percutant : il résume l'état d'esprit de la semaine en 2-3 phrases max. Pas de blabla.
-- key_figures : génère 2-3 chiffres clés UNIQUEMENT si l'actualité s'y prête (stats, montants, pourcentages marquants). Si pas de chiffres pertinents, retourne un tableau vide [].
-- articles : génère exactement 5 articles. Le premier est "featured": true.
-- Chaque article doit avoir un vrai contenu informatif (pas juste "une entreprise a fait X"). Donne des détails, des chiffres, des implications.
-- Le "hook" est une phrase courte et punchy qui donne envie de lire l'article.
-- Varie les types d'articles : actu breaking, analyse de fond, chiffre marquant, tendance émergente, mouvement stratégique.
-- Varie les sources : presse spécialisée, rapports d'analystes, communiqués, médias internationaux.
-- Le ton est professionnel mais pas ennuyeux. Comme un briefing que tu ferais à ton boss le lundi matin.
+CONSIGNES :
+- TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
+- Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3).
+- key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].
+- Le premier article est "featured": true.
+- Sois factuel : ne déforme pas les informations des articles sources.
+- L'éditorial doit faire le lien entre les différentes actus trouvées.
 
 IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans backticks markdown.`;
 
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 2500,
+        max_tokens: 4000,
+        tools: [
+          {
+            type: "web_search_20250305" as "web_search_20250305",
+            name: "web_search",
+          },
+        ],
         messages: [{ role: "user", content: prompt }],
       });
 
-      const responseText = message.content[0].type === "text" ? message.content[0].text : "";
+      // Extraire le texte de la réponse (peut contenir plusieurs blocs avec web search)
+      let responseText = "";
+      for (const block of message.content) {
+        if (block.type === "text") {
+          responseText = block.text;
+        }
+      }
       const cleanJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       const parsed = JSON.parse(cleanJson);
 
@@ -144,8 +160,8 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
 
       if (!recipients?.length) continue;
 
-      const featuredArticle = articles.find((a: { featured: boolean }) => a.featured) || articles[0];
-      const otherArticles = articles.filter((a: { featured: boolean }) => a !== featuredArticle);
+      const featuredArticle = articles.find((a: { featured: boolean; url?: string }) => a.featured) || articles[0];
+      const otherArticles = articles.filter((a: { featured: boolean; url?: string }) => a !== featuredArticle);
 
       const { editorial, key_figures: keyFigures } = newsletterContent;
 
@@ -217,12 +233,13 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
             </td>
           </tr>
         </table>
-        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h2 style="font-size:18px;font-weight:700;color:#111827;margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
         </a>
         ${featuredArticle.hook ? `<p style="font-size:14px;color:#2563EB;margin:0 0 10px;font-weight:500;">${featuredArticle.hook}</p>` : ""}
         <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
         <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
+        ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
     </div>
 
@@ -238,12 +255,13 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
             </td>
           </tr>
         </table>
-        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 6px;line-height:1.35;">${a.title}</h3>
         </a>
         ${a.hook ? `<p style="font-size:13px;color:#2563EB;margin:0 0 8px;font-weight:500;">${a.hook}</p>` : ""}
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
         <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
+        ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
       `).join("")}
     </div>

@@ -14,6 +14,7 @@ type Article = {
   content?: string;
   summary?: string; // ancien format, backward compat
   source: string;
+  url?: string;
   featured: boolean;
 };
 
@@ -484,7 +485,17 @@ export default function GeneratePage() {
             <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "0 0 6px", lineHeight: 1.5 }}>
               {featuredArticle.content || featuredArticle.summary}
             </p>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{featuredArticle.source}</span>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Source : {featuredArticle.source}</span>
+            {featuredArticle.url && (
+              <a
+                href={featuredArticle.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "block", fontSize: 12, color: "#2563EB", textDecoration: "none", fontWeight: 500, marginTop: 4 }}
+              >
+                Lire l&apos;article →
+              </a>
+            )}
           </div>
 
           {/* Other articles */}
@@ -526,7 +537,17 @@ export default function GeneratePage() {
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 4px", lineHeight: 1.5 }}>
                   {article.content || article.summary}
                 </p>
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{article.source}</span>
+                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>Source : {article.source}</span>
+                {article.url && (
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: "block", fontSize: 11, color: "#2563EB", textDecoration: "none", fontWeight: 500, marginTop: 4 }}
+                  >
+                    Lire l&apos;article →
+                  </a>
+                )}
               </div>
             ))}
           </div>

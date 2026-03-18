@@ -47,33 +47,44 @@ export async function GET(request: Request) {
     }
 
     // Générer avec Claude
-    const prompt = `Tu es un expert en veille sectorielle B2B. Génère exactement 5 articles d'actualité professionnels et RÉCENTS pour le secteur suivant :
+    const prompt = `Tu es un expert en veille sectorielle B2B. Génère exactement 5 articles d'actualité professionnels et RÉCENTS pour le secteur suivant, basés sur de VRAIES actualités trouvées sur le web.
 
 Secteur : ${SECTOR_PROMPTS[sector]}
-Date : ${new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+Date du jour : ${new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
-CONSIGNES :
-- Les articles doivent être réalistes, professionnels et ressembler à de vrais articles de presse
-- Chaque article doit apporter une information concrète et actionnable
-- Varie les sources (presse spécialisée, rapports d'analystes, médias sectoriels)
+INSTRUCTIONS :
+1. Utilise la recherche web pour trouver des actualités RÉELLES et RÉCENTES (moins de 7 jours) pour ce secteur.
+2. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
 
 Pour CHAQUE article, génère :
 - tag : catégorie courte
 - title : titre accrocheur et professionnel (max 80 caractères)
-- summary : résumé en 2-3 phrases (max 200 caractères)
+- summary : résumé en 2-3 phrases factuel basé sur le vrai article
 - source : nom du média source crédible
+- url : URL COMPLÈTE de l'article original (https://...)
 - featured : true pour le 1er article, false pour les autres
 
 IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown.`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 1500,
+      max_tokens: 4000,
+      tools: [
+        {
+          type: "web_search_20250305" as "web_search_20250305",
+          name: "web_search",
+        },
+      ],
       messages: [{ role: "user", content: prompt }],
     });
 
-    const responseText =
-      message.content[0].type === "text" ? message.content[0].text : "";
+    // Extraire le texte de la réponse (peut contenir plusieurs blocs avec web search)
+    let responseText = "";
+    for (const block of message.content) {
+      if (block.type === "text") {
+        responseText = block.text;
+      }
+    }
     const cleanJson = responseText
       .replace(/```json\n?/g, "")
       .replace(/```\n?/g, "")

@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const raw = newsletter.content;
     let editorial = "";
     let keyFigures: { value: string; label: string; context: string }[] = [];
-    let articles: { tag: string; title: string; hook?: string; content?: string; summary?: string; source: string; featured: boolean }[] = [];
+    let articles: { tag: string; title: string; hook?: string; content?: string; summary?: string; source: string; url?: string; featured: boolean }[] = [];
 
     if (Array.isArray(raw)) {
       articles = raw;
@@ -116,12 +116,13 @@ export async function POST(request: Request) {
             </td>
           </tr>
         </table>
-        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h2 style="font-size:18px;font-weight:700;color:#111827;margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
         </a>
         ${featuredArticle.hook ? `<p style="font-size:14px;color:#2563EB;margin:0 0 10px;font-weight:500;">${featuredArticle.hook}</p>` : ""}
         <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
         <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
+        ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
     </div>
 
@@ -137,12 +138,13 @@ export async function POST(request: Request) {
             </td>
           </tr>
         </table>
-        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 6px;line-height:1.35;">${a.title}</h3>
         </a>
         ${a.hook ? `<p style="font-size:13px;color:#2563EB;margin:0 0 8px;font-weight:500;">${a.hook}</p>` : ""}
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
         <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
+        ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
       `).join("")}
     </div>
