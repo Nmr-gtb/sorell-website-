@@ -169,7 +169,7 @@ ${otherArticles.map((a: { tag: string; title: string; summary: string; source: s
         }
       }
 
-      await supabase.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", newsletter.id);
+      await supabase.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length }).eq("id", newsletter.id);
       await supabase.from("newsletter_config").update({ last_sent_at: new Date().toISOString() }).eq("user_id", config.user_id);
 
       results.push({ userId: config.user_id, status: "sent", recipients: recipients.length });

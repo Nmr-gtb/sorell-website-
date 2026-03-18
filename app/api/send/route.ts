@@ -109,7 +109,7 @@ export async function POST(request: Request) {
 
     await supabase
       .from("newsletters")
-      .update({ status: "sent", sent_at: new Date().toISOString() })
+      .update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length })
       .eq("id", newsletterId);
 
     return NextResponse.json({ success: true, results });

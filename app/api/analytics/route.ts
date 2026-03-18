@@ -56,7 +56,7 @@ export async function GET(request: Request) {
   const clicks = allEvents.filter((e) => e.event_type === "click");
 
   // Calculate rates
-  const totalSent = newsletters.length * recipientCount;
+  const totalSent = newsletters.reduce((sum, nl) => sum + (nl.recipient_count || recipientCount), 0);
   const totalOpens = opens.length;
   const totalClicks = clicks.length;
   const openRate = totalSent > 0 ? Math.round((totalOpens / totalSent) * 100) : 0;
@@ -79,7 +79,8 @@ export async function GET(request: Request) {
     .reverse()
     .map((nl, i) => {
       const nlOpens = opens.filter((e) => e.newsletter_id === nl.id).length;
-      const rate = recipientCount > 0 ? Math.round((nlOpens / recipientCount) * 100) : 0;
+      const nlRecipients = nl.recipient_count || recipientCount;
+      const rate = nlRecipients > 0 ? Math.round((nlOpens / nlRecipients) * 100) : 0;
       return { label: `S${i + 1}`, value: rate };
     });
 
@@ -87,13 +88,14 @@ export async function GET(request: Request) {
   const newsletterHistory = newsletters.slice(0, 10).map((nl) => {
     const nlOpens = opens.filter((e) => e.newsletter_id === nl.id).length;
     const nlClicks = clicks.filter((e) => e.newsletter_id === nl.id).length;
+    const nlRecipients = nl.recipient_count || recipientCount;
     return {
       id: nl.id,
       date: nl.sent_at,
       subject: nl.subject,
-      recipients: recipientCount,
-      openRate: recipientCount > 0 ? Math.round((nlOpens / recipientCount) * 100) : 0,
-      clickRate: recipientCount > 0 ? Math.round((nlClicks / recipientCount) * 100) : 0,
+      recipients: nlRecipients,
+      openRate: nlRecipients > 0 ? Math.round((nlOpens / nlRecipients) * 100) : 0,
+      clickRate: nlRecipients > 0 ? Math.round((nlClicks / nlRecipients) * 100) : 0,
       articleCount: Array.isArray(nl.content) ? nl.content.length : 0,
     };
   });
