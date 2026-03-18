@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface WaitlistFormProps {
   placeholder?: string;
@@ -16,13 +17,28 @@ export default function WaitlistForm({
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSubmitted(true);
+    setError("");
+
+    const { error: dbError } = await supabase
+      .from("waitlist")
+      .insert({ email: email.trim().toLowerCase() });
+
+    if (dbError) {
+      if (dbError.message?.includes("duplicate") || dbError.code === "23505") {
+        setSubmitted(true);
+      } else {
+        setError("Une erreur est survenue, réessayez.");
+      }
+    } else {
+      setSubmitted(true);
+    }
+
     setLoading(false);
   };
 
@@ -51,52 +67,58 @@ export default function WaitlistForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: "flex",
-        flexDirection: compact ? "column" : "row",
-        gap: compact ? 10 : 8,
-        width: "100%",
-        maxWidth: compact ? 320 : 480,
-      }}
-    >
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder={placeholder}
-        required
-        className="input-field"
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", maxWidth: compact ? 320 : 480 }}>
+      <form
+        onSubmit={handleSubmit}
         style={{
-          flex: 1,
-          padding: "0.75rem 1rem",
-          fontSize: "0.9375rem",
-        }}
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className="btn-primary"
-        style={{
-          padding: "0.75rem 1.375rem",
-          fontSize: "0.9375rem",
-          flexShrink: 0,
-          opacity: loading ? 0.75 : 1,
+          display: "flex",
+          flexDirection: compact ? "column" : "row",
+          gap: compact ? 10 : 8,
+          width: "100%",
         }}
       >
-        {loading ? (
-          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-              <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            Envoi...
-          </span>
-        ) : (
-          buttonText
-        )}
-      </button>
-    </form>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={placeholder}
+          required
+          className="input-field"
+          style={{
+            flex: 1,
+            padding: "0.75rem 1rem",
+            fontSize: "0.9375rem",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary"
+          style={{
+            padding: "0.75rem 1.375rem",
+            fontSize: "0.9375rem",
+            flexShrink: 0,
+            opacity: loading ? 0.75 : 1,
+          }}
+        >
+          {loading ? (
+            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Envoi...
+            </span>
+          ) : (
+            buttonText
+          )}
+        </button>
+      </form>
+      {error && (
+        <p style={{ fontSize: "0.8125rem", color: "var(--error, #dc2626)" }}>
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
