@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { getNewsletterConfig, getRecipients } from "@/lib/database";
+import { getNewsletterConfig, getRecipients, getProfile, getMonthlyNewsletterCount } from "@/lib/database";
+import { getPlanLimits } from "@/lib/plans";
+import CrownBadge from "@/components/CrownBadge";
 
 type Article = {
   tag: string;
@@ -67,6 +69,8 @@ export default function GeneratePage() {
   const [customBrief, setCustomBrief] = useState("");
   const [recipientCount, setRecipientCount] = useState(0);
   const [loadingConfig, setLoadingConfig] = useState(true);
+  const [plan, setPlan] = useState<string>("free");
+  const [generatedThisMonth, setGeneratedThisMonth] = useState(0);
 
   const [generating, setGenerating] = useState(false);
   const [newsletter, setNewsletter] = useState<Newsletter | null>(null);
@@ -81,9 +85,11 @@ export default function GeneratePage() {
   useEffect(() => {
     if (!user) return;
     async function loadConfig() {
-      const [configResult, recipientsResult] = await Promise.all([
+      const [configResult, recipientsResult, profileResult, countResult] = await Promise.all([
         getNewsletterConfig(user!.id),
         getRecipients(user!.id),
+        getProfile(user!.id),
+        getMonthlyNewsletterCount(user!.id),
       ]);
       if (configResult.data) {
         setTopics(configResult.data.topics ?? []);
@@ -94,10 +100,17 @@ export default function GeneratePage() {
         }
       }
       setRecipientCount(recipientsResult.data.length);
+      if (profileResult.data?.plan) {
+        setPlan(profileResult.data.plan);
+      }
+      setGeneratedThisMonth(countResult.count);
       setLoadingConfig(false);
     }
     loadConfig();
   }, [user]);
+
+  const limits = getPlanLimits(plan);
+  const isAtGenerationLimit = limits.generationsPerMonth !== -1 && generatedThisMonth >= limits.generationsPerMonth;
 
   const activeTopics = topics.filter((t) => t.enabled);
 
@@ -126,6 +139,7 @@ export default function GeneratePage() {
         setNewsletter(data.newsletter);
         setArticles(data.articles);
         setSubject(data.newsletter.subject);
+        setGeneratedThisMonth((prev) => prev + 1);
       }
     } catch {
       setGenerateError("Erreur réseau");
@@ -162,6 +176,10 @@ export default function GeneratePage() {
   const featuredArticle = articles.find((a) => a.featured) || articles[0];
   const otherArticles = articles.filter((a) => a !== featuredArticle);
   const successCount = sendResults?.filter((r) => r.success).length ?? 0;
+
+  const generationLimitLabel = limits.generationsPerMonth === -1
+    ? "Illimité"
+    : `${generatedThisMonth} / ${limits.generationsPerMonth} génération${limits.generationsPerMonth > 1 ? "s" : ""} ce mois`;
 
   return (
     <div style={{ padding: "32px", maxWidth: 760 }}>
@@ -232,6 +250,13 @@ export default function GeneratePage() {
                   </div>
                 </>
               )}
+              <div style={{ height: 1, background: "var(--border)" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Générations ce mois</span>
+                <span style={{ fontSize: 14, color: isAtGenerationLimit ? "var(--error)" : "var(--text)", fontWeight: 500 }}>
+                  {generationLimitLabel}
+                </span>
+              </div>
             </div>
           )}
 
@@ -239,35 +264,51 @@ export default function GeneratePage() {
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{generateError}</p>
           )}
 
-          <button
-            className="btn-primary"
-            onClick={handleGenerate}
-            disabled={generating || activeTopics.length === 0}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              fontSize: 15,
-              padding: "10px 20px",
-              opacity: activeTopics.length === 0 ? 0.5 : 1,
-            }}
-          >
-            {generating ? (
-              <>
-                <Spinner />
-                Analyse de vos sources en cours...
-              </>
-            ) : (
-              <>
-                <IconSparkles />
-                Générer ma newsletter
-              </>
-            )}
-          </button>
-          {activeTopics.length === 0 && !loadingConfig && (
-            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
-              Activez au moins une thématique dans la configuration pour générer.
-            </p>
+          {isAtGenerationLimit ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", margin: 0 }}>
+                Vous avez atteint votre limite de {limits.generationsPerMonth} génération(s) ce mois-ci.
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <CrownBadge tooltip="Générations illimitées avec le plan Pro" />
+                <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                  Passez au plan supérieur pour des générations illimitées
+                </span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button
+                className="btn-primary"
+                onClick={handleGenerate}
+                disabled={generating || activeTopics.length === 0}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: 15,
+                  padding: "10px 20px",
+                  opacity: activeTopics.length === 0 ? 0.5 : 1,
+                }}
+              >
+                {generating ? (
+                  <>
+                    <Spinner />
+                    Analyse de vos sources en cours...
+                  </>
+                ) : (
+                  <>
+                    <IconSparkles />
+                    Générer ma newsletter
+                  </>
+                )}
+              </button>
+              {activeTopics.length === 0 && !loadingConfig && (
+                <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
+                  Activez au moins une thématique dans la configuration pour générer.
+                </p>
+              )}
+            </>
           )}
         </div>
       )}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
+import { getProfile } from "@/lib/database";
 
 function IconGrid() {
   return (
@@ -95,6 +96,14 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const router = useRouter();
+  const [plan, setPlan] = useState<string>("free");
+
+  useEffect(() => {
+    if (!user) return;
+    getProfile(user.id).then(({ data }) => {
+      if (data?.plan) setPlan(data.plan);
+    });
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -178,6 +187,40 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
           </Link>
         ))}
       </nav>
+
+      {/* Upgrade banner — free plan only */}
+      {plan === "free" && (
+        <div style={{ padding: "0 8px 8px" }}>
+          <div
+            style={{
+              background: "linear-gradient(135deg, #FEF3C7, #FDE68A)",
+              border: "1px solid #F59E0B",
+              borderRadius: 8,
+              padding: 12,
+            }}
+          >
+            <p style={{ fontSize: 12, color: "#92400E", margin: "0 0 8px", fontWeight: 500, lineHeight: 1.4 }}>
+              Passez à Solo pour débloquer toutes les fonctionnalités
+            </p>
+            <button
+              onClick={() => router.push("/pricing")}
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#92400E",
+                background: "rgba(245,158,11,0.2)",
+                border: "1px solid #F59E0B",
+                borderRadius: 6,
+                padding: "4px 10px",
+                cursor: "pointer",
+                width: "100%",
+              }}
+            >
+              Voir les plans →
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* User block */}
       {user && (

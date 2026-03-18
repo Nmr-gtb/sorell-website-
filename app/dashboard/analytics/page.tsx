@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
+import { getProfile } from "@/lib/database";
+import { getPlanLimits } from "@/lib/plans";
+import CrownBadge from "@/components/CrownBadge";
 
 type AnalyticsData = {
   openRate: number;
@@ -40,20 +44,38 @@ function formatDateFr(dateStr: string) {
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [plan, setPlan] = useState<string>("free");
 
   useEffect(() => {
     if (!user) return;
 
-    fetch(`/api/analytics?userId=${user.id}`)
-      .then((res) => res.json())
-      .then((json) => {
-        setData(json);
+    async function loadAll() {
+      const profileResult = await getProfile(user!.id);
+      const userPlan = profileResult.data?.plan || "free";
+      setPlan(userPlan);
+
+      const limits = getPlanLimits(userPlan);
+      if (limits.analytics === "none") {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+        return;
+      }
+
+      fetch(`/api/analytics?userId=${user!.id}`)
+        .then((res) => res.json())
+        .then((json) => {
+          setData(json);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
+
+    loadAll();
   }, [user]);
+
+  const limits = getPlanLimits(plan);
 
   if (loading) {
     return (
@@ -63,6 +85,59 @@ export default function AnalyticsPage() {
             Analytics
           </h1>
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Plan free : analytics verrouillées
+  if (limits.analytics === "none") {
+    return (
+      <div style={{ padding: 32, maxWidth: 900 }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
+            Analytics
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Suivez les performances de vos newsletters</p>
+        </div>
+        <div
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 48,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ marginBottom: 16 }}>
+            <IconChart />
+          </div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+            Analytics verrouillées
+          </div>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
+            Les analytics sont disponibles à partir du plan Solo
+          </p>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+            <CrownBadge tooltip="Débloquer les analytics" />
+            <button
+              onClick={() => router.push("/pricing")}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                background: "var(--accent)",
+                color: "#fff",
+                fontSize: 14,
+                fontWeight: 500,
+                padding: "10px 20px",
+                borderRadius: 8,
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Voir les plans →
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -185,7 +260,7 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Chart section */}
+      {/* Chart section — verrouillé pour solo */}
       <div
         style={{
           background: "var(--surface)",
@@ -193,6 +268,8 @@ export default function AnalyticsPage() {
           borderRadius: 12,
           padding: 24,
           marginBottom: 24,
+          position: "relative",
+          overflow: "hidden",
         }}
       >
         <h2
@@ -203,11 +280,55 @@ export default function AnalyticsPage() {
             textTransform: "uppercase",
             letterSpacing: "0.06em",
             marginBottom: 24,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
         >
           Évolution du taux d&apos;ouverture
+          {limits.analytics === "basic" && <CrownBadge tooltip="Disponible avec le plan Pro" />}
         </h2>
-        {data.weeklyData.length === 0 ? (
+
+        {limits.analytics === "basic" ? (
+          <div style={{ position: "relative" }}>
+            {/* Blurred fake chart */}
+            <div
+              style={{
+                height: 120,
+                display: "flex",
+                alignItems: "flex-end",
+                gap: 10,
+                filter: "blur(4px)",
+                pointerEvents: "none",
+                userSelect: "none",
+              }}
+            >
+              {[40, 65, 30, 80, 55, 70, 45].map((v, i) => (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
+                  <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{v}%</span>
+                  <div style={{ width: "100%", height: `${(v / 80) * 80}px`, background: "var(--accent)", borderRadius: "4px 4px 0 0", opacity: 0.85, minHeight: 8 }} />
+                  <span style={{ fontSize: 11, color: "var(--text-muted)" }}>S{i + 1}</span>
+                </div>
+              ))}
+            </div>
+            {/* Overlay */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 12,
+                background: "rgba(var(--surface-rgb, 255,255,255), 0.7)",
+              }}
+            >
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: 0 }}>Disponible avec le plan Pro</p>
+              <CrownBadge tooltip="Débloquer l'évolution du taux d'ouverture" />
+            </div>
+          </div>
+        ) : data.weeklyData.length === 0 ? (
           <p style={{ fontSize: 14, color: "var(--text-muted)", textAlign: "center", padding: "24px 0" }}>
             Pas encore de données
           </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import {
   getNewsletterConfig,
@@ -8,7 +9,10 @@ import {
   getRecipients,
   addRecipient,
   deleteRecipient,
+  getProfile,
 } from "@/lib/database";
+import { getPlanLimits } from "@/lib/plans";
+import CrownBadge from "@/components/CrownBadge";
 
 const defaultTopics = [
   { id: "ai", label: "Intelligence artificielle", enabled: true },
@@ -74,6 +78,7 @@ function IconX() {
 
 export default function ConfigPage() {
   const { user } = useAuth();
+  const router = useRouter();
 
   const [topics, setTopics] = useState(defaultTopics);
   const [sources, setSources] = useState(defaultSources);
@@ -83,6 +88,7 @@ export default function ConfigPage() {
   const [sendHour, setSendHour] = useState(9);
   const [customBrief, setCustomBrief] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [plan, setPlan] = useState<string>("free");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -94,16 +100,22 @@ export default function ConfigPage() {
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("");
   const [addingRecipient, setAddingRecipient] = useState(false);
+  const [recipientLimitMsg, setRecipientLimitMsg] = useState("");
 
   useEffect(() => {
     if (!user) return;
 
     async function loadData() {
       setLoading(true);
-      const [configResult, recipientsResult] = await Promise.all([
+      const [configResult, recipientsResult, profileResult] = await Promise.all([
         getNewsletterConfig(user!.id),
         getRecipients(user!.id),
+        getProfile(user!.id),
       ]);
+
+      if (profileResult.data?.plan) {
+        setPlan(profileResult.data.plan);
+      }
 
       if (configResult.data) {
         const cfg = configResult.data;
@@ -136,6 +148,8 @@ export default function ConfigPage() {
 
     loadData();
   }, [user]);
+
+  const limits = getPlanLimits(plan);
 
   const toggleTopic = (id: string) => {
     setTopics((prev) => prev.map((t) => (t.id === id ? { ...t, enabled: !t.enabled } : t)));
@@ -170,6 +184,14 @@ export default function ConfigPage() {
 
   const handleAddRecipient = async () => {
     if (!user || !newName.trim() || !newEmail.trim()) return;
+
+    const maxR = limits.maxRecipients;
+    if (maxR !== -1 && recipients.length >= maxR) {
+      const nextPlan = plan === "free" ? "Solo" : plan === "solo" ? "Pro" : "supérieur";
+      setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
+      return;
+    }
+
     setAddingRecipient(true);
     const { data, error } = await addRecipient(user.id, {
       name: newName.trim(),
@@ -183,6 +205,7 @@ export default function ConfigPage() {
       setNewEmail("");
       setNewRole("");
       setShowAddForm(false);
+      setRecipientLimitMsg("");
     }
   };
 
@@ -190,8 +213,15 @@ export default function ConfigPage() {
     const { error } = await deleteRecipient(id);
     if (!error) {
       setRecipients((prev) => prev.filter((r) => r.id !== id));
+      setRecipientLimitMsg("");
     }
   };
+
+  const frequencyLocked = !limits.frequency.includes("weekly");
+  const maxR = limits.maxRecipients;
+  const recipientsLabel = maxR === -1
+    ? `${recipients.length} destinataire${recipients.length > 1 ? "s" : ""}`
+    : `${recipients.length} / ${maxR} destinataire${maxR > 1 ? "s" : ""}`;
 
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
@@ -278,7 +308,10 @@ export default function ConfigPage() {
               borderRadius: 12,
               padding: 24,
               marginBottom: 24,
+              opacity: limits.customBrief ? 1 : 0.6,
+              cursor: limits.customBrief ? "default" : "pointer",
             }}
+            onClick={limits.customBrief ? undefined : () => router.push("/pricing")}
           >
             <h2
               style={{
@@ -288,18 +321,32 @@ export default function ConfigPage() {
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 marginBottom: 6,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
               }}
             >
               Brief personnalisé
+              {!limits.customBrief && (
+                <span onClick={(e) => e.stopPropagation()}>
+                  <CrownBadge tooltip="Disponible à partir du plan Solo" />
+                </span>
+              )}
             </h2>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
               Décrivez précisément ce que vous voulez recevoir. Plus vous êtes précis, meilleure sera la newsletter.
             </p>
+            {!limits.customBrief && (
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12, fontStyle: "italic" }}>
+                Disponible à partir du plan Solo
+              </p>
+            )}
             <textarea
               className="input-field"
               value={customBrief}
               onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
               placeholder="Ex : Je veux suivre les changements de réglementation autour des listes INCI en cosmétique, les nouvelles normes EU, les innovations en formulation clean beauty, et les lancements produits de nos concurrents (L'Oréal, Estée Lauder, Caudalie)."
+              disabled={!limits.customBrief}
               style={{ width: "100%", minHeight: 120, resize: "vertical", boxSizing: "border-box" }}
             />
             <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
@@ -410,7 +457,10 @@ export default function ConfigPage() {
             </h2>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
-                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Fréquence</label>
+                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6 }}>
+                  Fréquence
+                  {frequencyLocked && <CrownBadge tooltip="Hebdomadaire disponible à partir du plan Solo" />}
+                </label>
                 <select
                   className="select-field"
                   value={frequency}
@@ -421,8 +471,10 @@ export default function ConfigPage() {
                     if (val === "weekly") setSendDay("monday");
                   }}
                 >
-                  <option value="weekly">Hebdomadaire</option>
                   <option value="monthly">Mensuel</option>
+                  {limits.frequency.includes("weekly") && (
+                    <option value="weekly">Hebdomadaire</option>
+                  )}
                 </select>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
@@ -482,18 +534,21 @@ export default function ConfigPage() {
               marginBottom: 24,
             }}
           >
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 16,
-              }}
-            >
-              Destinataires
-            </h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <h2
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  margin: 0,
+                }}
+              >
+                Destinataires
+              </h2>
+              <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{recipientsLabel}</span>
+            </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {recipients.map((r, i) => (
                 <div key={r.id}>
@@ -538,6 +593,13 @@ export default function ConfigPage() {
               ))}
             </div>
 
+            {recipientLimitMsg && (
+              <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>{recipientLimitMsg}</p>
+                <CrownBadge tooltip="Augmentez votre limite de destinataires" />
+              </div>
+            )}
+
             {showAddForm ? (
               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -580,6 +642,7 @@ export default function ConfigPage() {
                       setNewName("");
                       setNewEmail("");
                       setNewRole("");
+                      setRecipientLimitMsg("");
                     }}
                     style={{ fontSize: 13, padding: "6px 14px" }}
                   >
@@ -591,7 +654,16 @@ export default function ConfigPage() {
               <div style={{ marginTop: 12 }}>
                 <button
                   className="btn-ghost"
-                  onClick={() => setShowAddForm(true)}
+                  onClick={() => {
+                    const maxR = limits.maxRecipients;
+                    if (maxR !== -1 && recipients.length >= maxR) {
+                      const nextPlan = plan === "free" ? "Solo" : plan === "solo" ? "Pro" : "supérieur";
+                      setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
+                    } else {
+                      setShowAddForm(true);
+                      setRecipientLimitMsg("");
+                    }
+                  }}
                   style={{ fontSize: 13, padding: "6px 14px" }}
                 >
                   + Ajouter un destinataire

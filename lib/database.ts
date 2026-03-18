@@ -92,3 +92,19 @@ export async function deleteRecipient(recipientId: string) {
     .eq("id", recipientId);
   return { error };
 }
+
+// ═══ NEWSLETTERS ═══
+
+export async function getMonthlyNewsletterCount(userId: string) {
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const { data, error } = await supabase
+    .from("newsletters")
+    .select("id")
+    .eq("user_id", userId)
+    .gte("generated_at", startOfMonth.toISOString());
+
+  return { count: data?.length || 0, error };
+}
