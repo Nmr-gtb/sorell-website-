@@ -126,7 +126,8 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       }
       const articles = newsletterContent.articles;
 
-      const subject = `Briefing — ${franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}`;
+      const mainTopic = newsletterContent.articles.find((a: { featured: boolean }) => a.featured)?.tag || "Actualités";
+      const subject = `${mainTopic} — Briefing du ${franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`;
 
       const { data: newsletter } = await supabase
         .from("newsletters")
@@ -146,47 +147,129 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       const featuredArticle = articles.find((a: { featured: boolean }) => a.featured) || articles[0];
       const otherArticles = articles.filter((a: { featured: boolean }) => a !== featuredArticle);
 
+      const { editorial, key_figures: keyFigures } = newsletterContent;
+
       for (const recipient of recipients) {
         const emailHtml = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#F9FAFB;font-family:'Segoe UI',Roboto,sans-serif;">
-<div style="max-width:600px;margin:0 auto;background:#FFFFFF;">
-<div style="padding:24px 32px;border-bottom:1px solid #E5E7EB;">
-<span style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#2563EB;">l</span></span>
-</div>
-<div style="padding:32px 32px 24px;">
-<h1 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 8px;">${subject}</h1>
-<p style="font-size:14px;color:#6B7280;margin:0;">Votre veille sectorielle personnalisée</p>
-</div>
-<div style="padding:0 32px 24px;">
-<div style="background:#F9FAFB;border-radius:8px;padding:20px;border:1px solid #E5E7EB;">
-<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(37,99,235,0.08);color:#2563EB;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Article phare · ${featuredArticle.tag}</span>
-<a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="color:#111827;text-decoration:none;">
-<h2 style="font-size:17px;font-weight:600;color:#111827;margin:8px 0 6px;line-height:1.35;">${featuredArticle.title}</h2>
-</a>
-${featuredArticle.hook ? `<p style="font-size:14px;font-style:italic;color:#374151;margin:0 0 6px;line-height:1.5;">${featuredArticle.hook}</p>` : ""}
-<p style="font-size:14px;color:#6B7280;margin:0 0 6px;line-height:1.5;">${featuredArticle.content || featuredArticle.summary || ""}</p>
-<span style="font-size:12px;color:#9CA3AF;">${featuredArticle.source}</span>
-</div>
-</div>
-<div style="padding:0 32px 32px;">
-${otherArticles.map((a: { tag: string; title: string; hook?: string; content?: string; summary?: string; source: string }) => `
-<div style="padding:16px 0;border-top:1px solid #E5E7EB;">
-<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#F3F4F6;color:#374151;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${a.tag}</span>
-<a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="color:#111827;text-decoration:none;">
-<h3 style="font-size:15px;font-weight:600;color:#111827;margin:4px 0;line-height:1.35;">${a.title}</h3>
-</a>
-${a.hook ? `<p style="font-size:13px;font-style:italic;color:#374151;margin:0 0 4px;line-height:1.5;">${a.hook}</p>` : ""}
-<p style="font-size:13px;color:#6B7280;margin:0 0 4px;line-height:1.5;">${a.content || a.summary || ""}</p>
-<span style="font-size:11px;color:#9CA3AF;">${a.source}</span>
-</div>`).join("")}
-</div>
-<div style="padding:20px 32px;border-top:1px solid #E5E7EB;text-align:center;">
-<p style="font-size:12px;color:#9CA3AF;margin:0;">Généré automatiquement par Sorel<span style="color:#2563EB;">l</span> · <a href="https://sorell.fr" style="color:#9CA3AF;">Se désabonner</a></p>
-</div>
-</div>
-<img src="https://www.sorell.fr/api/track/open?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}" width="1" height="1" style="display:none;" alt="" />
-</body></html>`;
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#F3F4F6;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
+
+    <!-- Header -->
+    <div style="padding:28px 32px;border-bottom:2px solid #2563EB;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td>
+            <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#2563EB;">l</span></span>
+          </td>
+          <td align="right">
+            <span style="font-size:12px;color:#9CA3AF;">${franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Subject -->
+    <div style="padding:28px 32px 20px;">
+      <h1 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;letter-spacing:-0.02em;line-height:1.3;">${subject}</h1>
+      <p style="font-size:13px;color:#9CA3AF;margin:0;">Votre veille sectorielle personnalisée par IA</p>
+    </div>
+
+    ${editorial ? `
+    <!-- Éditorial -->
+    <div style="padding:0 32px 24px;">
+      <div style="border-left:3px solid #2563EB;padding:16px 20px;background:#F8FAFC;border-radius:0 8px 8px 0;">
+        <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px;">Éditorial</p>
+        <p style="font-size:14px;color:#374151;line-height:1.65;margin:0;font-style:italic;">${editorial}</p>
+      </div>
+    </div>
+    ` : ""}
+
+    ${keyFigures.length > 0 ? `
+    <!-- Chiffres clés -->
+    <div style="padding:0 32px 24px;">
+      <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;">Chiffres clés</p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          ${keyFigures.map((fig: { value: string; label: string; context: string }) => `
+          <td style="padding:12px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;text-align:center;width:${Math.floor(100 / keyFigures.length)}%;">
+            <div style="font-size:22px;font-weight:700;color:#2563EB;letter-spacing:-0.02em;margin-bottom:4px;">${fig.value}</div>
+            <div style="font-size:12px;color:#111827;font-weight:500;margin-bottom:2px;">${fig.label}</div>
+            <div style="font-size:11px;color:#9CA3AF;">${fig.context}</div>
+          </td>
+          `).join('<td style="width:8px;"></td>')}
+        </tr>
+      </table>
+    </div>
+    ` : ""}
+
+    <!-- Article phare -->
+    <div style="padding:0 32px 24px;">
+      <div style="background:#F8FAFC;border-radius:10px;padding:24px;border:1px solid #E5E7EB;">
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td>
+              <span style="display:inline-block;padding:3px 10px;border-radius:4px;background:#2563EB;color:white;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Article phare · ${featuredArticle.tag}</span>
+            </td>
+          </tr>
+        </table>
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+          <h2 style="font-size:18px;font-weight:700;color:#111827;margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
+        </a>
+        ${featuredArticle.hook ? `<p style="font-size:14px;color:#2563EB;margin:0 0 10px;font-weight:500;">${featuredArticle.hook}</p>` : ""}
+        <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
+        <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
+      </div>
+    </div>
+
+    <!-- Autres articles -->
+    <div style="padding:0 32px 16px;">
+      <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;">Les actus de la semaine</p>
+      ${otherArticles.map((a: { tag: string; title: string; hook?: string; content?: string; summary?: string; source: string }, i: number) => `
+      <div style="padding:20px 0;${i < otherArticles.length - 1 ? "border-bottom:1px solid #E5E7EB;" : ""}">
+        <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+          <tr>
+            <td>
+              <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#F3F4F6;color:#374151;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">${a.tag}</span>
+            </td>
+          </tr>
+        </table>
+        <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent("https://sorell.fr")}" style="text-decoration:none;">
+          <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 6px;line-height:1.35;">${a.title}</h3>
+        </a>
+        ${a.hook ? `<p style="font-size:13px;color:#2563EB;margin:0 0 8px;font-weight:500;">${a.hook}</p>` : ""}
+        <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
+        <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
+      </div>
+      `).join("")}
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:24px 32px;border-top:2px solid #E5E7EB;background:#F9FAFB;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td>
+            <span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:#2563EB;">l</span></span>
+          </td>
+          <td align="right">
+            <a href="https://sorell.fr" style="font-size:12px;color:#2563EB;text-decoration:none;">sorell.fr</a>
+          </td>
+        </tr>
+      </table>
+      <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
+        Généré automatiquement par IA · Personnalisé pour vous<br/>
+        <a href="https://sorell.fr" style="color:#9CA3AF;">Se désabonner</a>
+      </p>
+    </div>
+
+  </div>
+  <img src="https://www.sorell.fr/api/track/open?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}" width="1" height="1" style="display:none;" alt="" />
+</body>
+</html>`;
 
         try {
           await resend.emails.send({
