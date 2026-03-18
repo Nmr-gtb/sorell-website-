@@ -501,44 +501,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Bandeau logos */}
-          <div style={{ marginTop: 64, textAlign: "center" }}>
-            <p
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 24,
-              }}
-            >
-              Ils nous font confiance
-            </p>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 40,
-              }}
-            >
-              {["NovaTech", "FinSecure", "GreenPath", "Medilab", "DataCorp"].map((logo) => (
-                <span
-                  key={logo}
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "1rem",
-                    color: "var(--text-muted)",
-                    opacity: 0.4,
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {logo}
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
