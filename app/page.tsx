@@ -439,10 +439,10 @@ export default function HomePage() {
                 initials: "TR",
               },
               {
-                quote: "«\u202fJe recommande Sorell à tous les dirigeants qui veulent garder leurs équipes informées sans y passer des heures. C'est simple, élégant et efficace.\u202f»",
-                name: "Sophie Marchal",
-                title: "CEO, GreenPath Consulting",
-                initials: "SM",
+                quote: "«\u202fEn freelance, je propose Sorell à tous mes clients et le retour est toujours le même : ils ne peuvent plus s'en passer. Un outil vraiment bluffant qui s'intègre parfaitement dans n'importe quelle organisation.\u202f»",
+                name: "Laurent Mur",
+                title: "CEO, Weenk",
+                initials: "LM",
               },
             ].map((t) => (
               <div
