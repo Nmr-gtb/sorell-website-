@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
+import { getRecipients, getNewsletterConfig } from "@/lib/database";
 
 function IconCalendar() {
   return (
@@ -54,40 +56,113 @@ function IconArrow() {
   );
 }
 
-const metrics = [
-  {
-    icon: <IconCalendar />,
-    value: "Lundi 24 mars",
-    sublabel: "9h00",
-    label: "Prochaine newsletter",
-  },
-  {
-    icon: <IconUsers />,
-    value: "12",
-    sublabel: "collaborateurs",
-    label: "Destinataires",
-  },
-  {
-    icon: <IconEye />,
-    value: "68%",
-    sublabel: "",
-    label: "Taux d'ouverture moyen",
-  },
-  {
-    icon: <IconDocument />,
-    value: "5",
-    sublabel: "sélectionnés",
-    label: "Articles cette semaine",
-  },
+const DAYS_FR = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+const MONTHS_FR = [
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
+
+function getNextDate(frequency: string): { date: string; time: string } {
+  const now = new Date();
+  const today = now.getDay(); // 0=dim, 1=lun, ..., 6=sam
+
+  if (frequency === "daily") {
+    const next = new Date(now);
+    next.setDate(now.getDate() + 1);
+    const day = DAYS_FR[next.getDay()];
+    return {
+      date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
+      time: "8h00",
+    };
+  }
+
+  if (frequency === "weekly-2") {
+    // next Monday (1) or Thursday (4)
+    const targets = [1, 4];
+    let minDiff = 7;
+    for (const t of targets) {
+      let diff = (t - today + 7) % 7;
+      if (diff === 0) diff = 7;
+      if (diff < minDiff) minDiff = diff;
+    }
+    const next = new Date(now);
+    next.setDate(now.getDate() + minDiff);
+    const day = DAYS_FR[next.getDay()];
+    return {
+      date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
+      time: "9h00",
+    };
+  }
+
+  // weekly-1: next Monday
+  let diff = (1 - today + 7) % 7;
+  if (diff === 0) diff = 7;
+  const next = new Date(now);
+  next.setDate(now.getDate() + diff);
+  const day = DAYS_FR[next.getDay()];
+  return {
+    date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
+    time: "9h00",
+  };
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [recipientCount, setRecipientCount] = useState<number | null>(null);
+  const [nextNewsletter, setNextNewsletter] = useState<{ date: string; time: string } | null>(null);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function loadData() {
+      const [recipientsResult, configResult] = await Promise.all([
+        getRecipients(user!.id),
+        getNewsletterConfig(user!.id),
+      ]);
+
+      setRecipientCount(recipientsResult.data.length);
+
+      const freq = configResult.data?.frequency ?? "weekly-1";
+      setNextNewsletter(getNextDate(freq));
+
+      setLoadingData(false);
+    }
+
+    loadData();
+  }, [user]);
 
   const firstName =
     user?.user_metadata?.full_name?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
     "vous";
+
+  const metrics = [
+    {
+      icon: <IconCalendar />,
+      value: loadingData ? "..." : (nextNewsletter?.date ?? "—"),
+      sublabel: loadingData ? "" : (nextNewsletter?.time ?? ""),
+      label: "Prochaine newsletter",
+    },
+    {
+      icon: <IconUsers />,
+      value: loadingData ? "..." : String(recipientCount ?? 0),
+      sublabel: "collaborateurs",
+      label: "Destinataires",
+    },
+    {
+      icon: <IconEye />,
+      value: "68%",
+      sublabel: "",
+      label: "Taux d'ouverture moyen",
+    },
+    {
+      icon: <IconDocument />,
+      value: "5",
+      sublabel: "sélectionnés",
+      label: "Articles cette semaine",
+    },
+  ];
 
   return (
     <div style={{ padding: "32px", maxWidth: 900 }}>

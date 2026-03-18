@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
+import { getProfile } from "@/lib/database";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -14,9 +15,24 @@ function getInitials(user: { user_metadata?: { full_name?: string }; email?: str
   return (user.email?.[0] ?? "?").toUpperCase();
 }
 
+function capitalize(s: string) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
 export default function ProfilePage() {
   const { user } = useAuth();
   const [newsletter, setNewsletter] = useState(true);
+  const [plan, setPlan] = useState<string | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    getProfile(user.id).then(({ data }) => {
+      if (data?.plan) setPlan(data.plan);
+      setLoadingProfile(false);
+    });
+  }, [user]);
 
   if (!user) return null;
 
@@ -26,6 +42,8 @@ export default function ProfilePage() {
     month: "long",
     day: "numeric",
   });
+
+  const planLabel = plan ? capitalize(plan) : "Free";
 
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
@@ -123,14 +141,8 @@ export default function ProfilePage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: "var(--text)",
-                }}
-              >
-                Free
+              <span style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
+                {loadingProfile ? "..." : planLabel}
               </span>
               <span
                 style={{
