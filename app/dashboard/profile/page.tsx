@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
-import { getProfile } from "@/lib/database";
+import { getProfile, updateProfile } from "@/lib/database";
+import { supabase } from "@/lib/supabase";
 import { useSearchParams } from "next/navigation";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
@@ -22,12 +24,25 @@ function capitalize(s: string) {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [newsletter, setNewsletter] = useState(true);
   const [plan, setPlan] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
+
+  // Edit name states
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Delete account states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const upgraded = searchParams.get("upgraded") === "true";
 
@@ -52,6 +67,40 @@ export default function ProfilePage() {
       window.location.href = data.url;
     } else {
       setPortalLoading(false);
+    }
+  };
+
+  const handleSaveName = async () => {
+    if (!user || !editName.trim()) return;
+    setSaving(true);
+
+    const { error } = await updateProfile(user.id, { full_name: editName.trim() });
+    await supabase.auth.updateUser({ data: { full_name: editName.trim() } });
+
+    if (!error) {
+      setSaveSuccess(true);
+      setEditing(false);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    }
+    setSaving(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (confirmText !== "SUPPRIMER" || !user) return;
+    setDeleting(true);
+
+    const res = await fetch("/api/delete-account", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id }),
+    });
+
+    if (res.ok) {
+      await signOut();
+      router.push("/");
+    } else {
+      setDeleteError("Erreur lors de la suppression. Contactez le support.");
+      setDeleting(false);
     }
   };
 
@@ -83,6 +132,24 @@ export default function ProfilePage() {
           }}
         >
           Votre abonnement a bien été activé. Bienvenue sur le plan {planLabel} !
+        </div>
+      )}
+
+      {/* Save success banner */}
+      {saveSuccess && (
+        <div
+          style={{
+            marginBottom: 24,
+            padding: "12px 16px",
+            borderRadius: 8,
+            background: "var(--success-bg)",
+            border: "1px solid var(--success)",
+            color: "var(--success)",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+        >
+          Nom mis à jour avec succès.
         </div>
       )}
 
@@ -145,13 +212,15 @@ export default function ProfilePage() {
               Membre depuis le {joinDate}
             </div>
           </div>
-          <button
-            className="btn-ghost"
-            disabled
-            style={{ fontSize: 14, padding: "6px 14px", opacity: 0.5, cursor: "not-allowed" }}
-          >
-            Modifier
-          </button>
+          {!editing && (
+            <button
+              className="btn-ghost"
+              onClick={() => { setEditing(true); setEditName(displayName); }}
+              style={{ fontSize: 14, padding: "6px 14px" }}
+            >
+              Modifier
+            </button>
+          )}
         </div>
       </div>
 
@@ -258,12 +327,40 @@ export default function ProfilePage() {
             >
               Nom complet
             </label>
-            <input
-              className="input-field"
-              value={user.user_metadata?.full_name || ""}
-              disabled
-              style={{ opacity: 0.7, cursor: "not-allowed" }}
-            />
+            {editing ? (
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <input
+                  className="input-field"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  style={{ flex: 1 }}
+                  autoFocus
+                />
+                <button
+                  className="btn-primary"
+                  onClick={handleSaveName}
+                  disabled={saving || !editName.trim()}
+                  style={{ fontSize: 13, padding: "6px 14px", opacity: saving ? 0.7 : 1, cursor: saving ? "wait" : "pointer", whiteSpace: "nowrap" }}
+                >
+                  {saving ? "..." : "Sauvegarder"}
+                </button>
+                <button
+                  className="btn-ghost"
+                  onClick={() => setEditing(false)}
+                  disabled={saving}
+                  style={{ fontSize: 13, padding: "6px 14px", whiteSpace: "nowrap" }}
+                >
+                  Annuler
+                </button>
+              </div>
+            ) : (
+              <input
+                className="input-field"
+                value={user.user_metadata?.full_name || ""}
+                disabled
+                style={{ opacity: 0.7, cursor: "not-allowed" }}
+              />
+            )}
           </div>
 
           {/* Email field */}
@@ -339,6 +436,7 @@ export default function ProfilePage() {
 
           {/* Delete account */}
           <button
+            onClick={() => { setShowDeleteModal(true); setConfirmText(""); setDeleteError(""); }}
             style={{
               background: "transparent",
               border: "none",
@@ -354,6 +452,125 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      {/* Delete account modal */}
+      {showDeleteModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: 16,
+          }}
+        >
+          <div
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: 16,
+              padding: 28,
+              maxWidth: 400,
+              width: "100%",
+            }}
+          >
+            {/* Warning icon */}
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "rgba(239,68,68,0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 16,
+                fontSize: 22,
+              }}
+            >
+              ⚠️
+            </div>
+
+            <h3
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: "var(--text)",
+                marginBottom: 10,
+              }}
+            >
+              Supprimer mon compte
+            </h3>
+            <p
+              style={{
+                fontSize: 14,
+                color: "var(--text-secondary)",
+                marginBottom: 20,
+                lineHeight: 1.5,
+              }}
+            >
+              Cette action est irréversible. Toutes vos données, newsletters et configurations seront définitivement supprimées.
+            </p>
+
+            <label
+              style={{
+                display: "block",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "var(--text-secondary)",
+                marginBottom: 6,
+              }}
+            >
+              Tapez <strong>SUPPRIMER</strong> pour confirmer
+            </label>
+            <input
+              className="input-field"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="SUPPRIMER"
+              style={{ marginBottom: 16 }}
+            />
+
+            {deleteError && (
+              <p style={{ fontSize: 13, color: "var(--error)", marginBottom: 12 }}>
+                {deleteError}
+              </p>
+            )}
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button
+                className="btn-ghost"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                style={{ fontSize: 14, padding: "7px 14px" }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={confirmText !== "SUPPRIMER" || deleting}
+                style={{
+                  fontSize: 14,
+                  padding: "7px 14px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: confirmText === "SUPPRIMER" && !deleting ? "var(--error)" : "rgba(239,68,68,0.3)",
+                  color: "white",
+                  cursor: confirmText === "SUPPRIMER" && !deleting ? "pointer" : "not-allowed",
+                  fontWeight: 500,
+                  transition: "background 0.2s ease",
+                }}
+              >
+                {deleting ? "Suppression..." : "Supprimer définitivement"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
