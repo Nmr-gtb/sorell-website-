@@ -78,7 +78,9 @@ export default function ConfigPage() {
   const [topics, setTopics] = useState(defaultTopics);
   const [sources, setSources] = useState(defaultSources);
   const [newSource, setNewSource] = useState("");
-  const [frequency, setFrequency] = useState("weekly-1");
+  const [frequency, setFrequency] = useState("weekly");
+  const [sendDay, setSendDay] = useState("monday");
+  const [sendHour, setSendHour] = useState(9);
   const [customBrief, setCustomBrief] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
 
@@ -114,6 +116,12 @@ export default function ConfigPage() {
         if (cfg.frequency) {
           setFrequency(cfg.frequency);
         }
+        if (cfg.send_day) {
+          setSendDay(cfg.send_day);
+        }
+        if (cfg.send_hour !== undefined && cfg.send_hour !== null) {
+          setSendHour(cfg.send_hour);
+        }
         if (cfg.custom_brief) {
           setCustomBrief(cfg.custom_brief);
         }
@@ -147,7 +155,10 @@ export default function ConfigPage() {
     if (!user) return;
     setSaving(true);
     setSaveError("");
-    const { error } = await upsertNewsletterConfig(user.id, { topics, sources, frequency, custom_brief: customBrief });
+    const { error } = await upsertNewsletterConfig(user.id, {
+      topics, sources, frequency, custom_brief: customBrief,
+      send_day: sendDay, send_hour: sendHour,
+    });
     setSaving(false);
     if (error) {
       setSaveError("Erreur lors de la sauvegarde. Veuillez réessayer.");
@@ -375,7 +386,7 @@ export default function ConfigPage() {
             </div>
           </div>
 
-          {/* Frequency card */}
+          {/* Scheduling card */}
           <div
             style={{
               background: "var(--surface)",
@@ -395,37 +406,70 @@ export default function ConfigPage() {
                 marginBottom: 16,
               }}
             >
-              Fréquence d&apos;envoi
+              Planification de l&apos;envoi
             </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[
-                { value: "weekly-1", label: "1 fois par semaine (lundi 9h)" },
-                { value: "weekly-2", label: "2 fois par semaine (lundi + jeudi 9h)" },
-                { value: "daily", label: "Quotidien (tous les matins 8h)" },
-              ].map((opt) => (
-                <label
-                  key={opt.value}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    cursor: "pointer",
-                    fontSize: 14,
-                    color: "var(--text)",
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Fréquence</label>
+                <select
+                  className="select-field"
+                  value={frequency}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFrequency(val);
+                    if (val === "monthly") setSendDay("1st");
+                    if (val === "weekly") setSendDay("monday");
                   }}
                 >
-                  <input
-                    type="radio"
-                    name="frequency"
-                    value={opt.value}
-                    checked={frequency === opt.value}
-                    onChange={() => setFrequency(opt.value)}
-                    style={{ accentColor: "var(--accent)", width: 16, height: 16, cursor: "pointer" }}
-                  />
-                  {opt.label}
-                </label>
-              ))}
+                  <option value="weekly">Hebdomadaire</option>
+                  <option value="monthly">Mensuel</option>
+                </select>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Jour</label>
+                <select
+                  className="select-field"
+                  value={sendDay}
+                  onChange={(e) => setSendDay(e.target.value)}
+                >
+                  {frequency === "weekly" ? (
+                    <>
+                      <option value="monday">Lundi</option>
+                      <option value="tuesday">Mardi</option>
+                      <option value="wednesday">Mercredi</option>
+                      <option value="thursday">Jeudi</option>
+                      <option value="friday">Vendredi</option>
+                      <option value="saturday">Samedi</option>
+                      <option value="sunday">Dimanche</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="1st">1er du mois</option>
+                      <option value="15th">15 du mois</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
+                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
+                <select
+                  className="select-field"
+                  value={sendHour}
+                  onChange={(e) => setSendHour(Number(e.target.value))}
+                >
+                  {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
+                    <option key={h} value={h}>{h}h00</option>
+                  ))}
+                </select>
+              </div>
             </div>
+            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 14, marginBottom: 0 }}>
+              {frequency === "weekly"
+                ? `Votre newsletter sera envoyée chaque ${
+                    { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche" }[sendDay] ?? sendDay
+                  } à ${sendHour}h00`
+                : `Votre newsletter sera envoyée le ${sendDay === "1st" ? "1er" : "15"} de chaque mois à ${sendHour}h00`}
+            </p>
           </div>
 
           {/* Recipients card */}

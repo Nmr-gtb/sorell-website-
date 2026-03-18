@@ -37,6 +37,8 @@ export async function upsertNewsletterConfig(userId: string, config: {
   sources?: string[];
   frequency?: string;
   custom_brief?: string;
+  send_day?: string;
+  send_hour?: number;
 }) {
   const { data, error } = await supabase
     .from("newsletter_config")
@@ -44,13 +46,23 @@ export async function upsertNewsletterConfig(userId: string, config: {
       user_id: userId,
       topics: config.topics ?? [],
       sources: config.sources ?? [],
-      frequency: config.frequency ?? "weekly-1",
+      frequency: config.frequency ?? "weekly",
       custom_brief: config.custom_brief ?? "",
+      send_day: config.send_day ?? "monday",
+      send_hour: config.send_hour ?? 9,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" })
     .select()
     .single();
   return { data, error };
+}
+
+export async function getAllNewsletterConfigs() {
+  const { data, error } = await supabase
+    .from("newsletter_config")
+    .select("*, profiles!newsletter_config_user_id_fkey(full_name, plan)")
+    .not("topics", "eq", "[]");
+  return { data: data ?? [], error };
 }
 
 // ═══ RECIPIENTS ═══

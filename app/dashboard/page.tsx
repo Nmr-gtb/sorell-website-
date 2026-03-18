@@ -62,47 +62,36 @@ const MONTHS_FR = [
   "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
 
-function getNextDate(frequency: string): { date: string; time: string } {
+const DAY_INDEX: Record<string, number> = {
+  sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
+  thursday: 4, friday: 5, saturday: 6,
+};
+
+function getNextDate(frequency: string, sendDay: string, sendHour: number): { date: string; time: string } {
   const now = new Date();
-  const today = now.getDay(); // 0=dim, 1=lun, ..., 6=sam
+  const today = now.getDay();
+  const timeStr = `${sendHour}h00`;
 
-  if (frequency === "daily") {
-    const next = new Date(now);
-    next.setDate(now.getDate() + 1);
-    const day = DAYS_FR[next.getDay()];
+  if (frequency === "monthly") {
+    const targetDate = sendDay === "1st" ? 1 : 15;
+    const next = new Date(now.getFullYear(), now.getMonth(), targetDate);
+    if (next <= now) next.setMonth(next.getMonth() + 1);
     return {
-      date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
-      time: "8h00",
+      date: `${next.getDate()} ${MONTHS_FR[next.getMonth()]} ${next.getFullYear()}`,
+      time: timeStr,
     };
   }
 
-  if (frequency === "weekly-2") {
-    // next Monday (1) or Thursday (4)
-    const targets = [1, 4];
-    let minDiff = 7;
-    for (const t of targets) {
-      let diff = (t - today + 7) % 7;
-      if (diff === 0) diff = 7;
-      if (diff < minDiff) minDiff = diff;
-    }
-    const next = new Date(now);
-    next.setDate(now.getDate() + minDiff);
-    const day = DAYS_FR[next.getDay()];
-    return {
-      date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
-      time: "9h00",
-    };
-  }
-
-  // weekly-1: next Monday
-  let diff = (1 - today + 7) % 7;
+  // weekly
+  const targetDay = DAY_INDEX[sendDay] ?? 1;
+  let diff = (targetDay - today + 7) % 7;
   if (diff === 0) diff = 7;
   const next = new Date(now);
   next.setDate(now.getDate() + diff);
   const day = DAYS_FR[next.getDay()];
   return {
     date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
-    time: "9h00",
+    time: timeStr,
   };
 }
 
@@ -123,8 +112,10 @@ export default function DashboardPage() {
 
       setRecipientCount(recipientsResult.data.length);
 
-      const freq = configResult.data?.frequency ?? "weekly-1";
-      setNextNewsletter(getNextDate(freq));
+      const freq = configResult.data?.frequency ?? "weekly";
+      const day = configResult.data?.send_day ?? "monday";
+      const hour = configResult.data?.send_hour ?? 9;
+      setNextNewsletter(getNextDate(freq, day, hour));
 
       setLoadingData(false);
     }
