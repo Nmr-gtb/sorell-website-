@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 import { getProfile } from "@/lib/database";
+import { useSearchParams } from "next/navigation";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -22,9 +23,13 @@ function capitalize(s: string) {
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [newsletter, setNewsletter] = useState(true);
   const [plan, setPlan] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const upgraded = searchParams.get("upgraded") === "true";
 
   useEffect(() => {
     if (!user) return;
@@ -33,6 +38,22 @@ export default function ProfilePage() {
       setLoadingProfile(false);
     });
   }, [user]);
+
+  const handlePortal = async () => {
+    if (!user) return;
+    setPortalLoading(true);
+    const res = await fetch("/api/portal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      setPortalLoading(false);
+    }
+  };
 
   if (!user) return null;
 
@@ -47,6 +68,24 @@ export default function ProfilePage() {
 
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
+      {/* Upgrade success banner */}
+      {upgraded && (
+        <div
+          style={{
+            marginBottom: 24,
+            padding: "12px 16px",
+            borderRadius: 8,
+            background: "var(--success-bg)",
+            border: "1px solid var(--success)",
+            color: "var(--success)",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+        >
+          Votre abonnement a bien été activé. Bienvenue sur le plan {planLabel} !
+        </div>
+      )}
+
       {/* Page header */}
       <h1
         style={{
@@ -165,9 +204,22 @@ export default function ProfilePage() {
             </p>
           </div>
         </div>
-        <Link href="/pricing" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
-          Changer de plan →
-        </Link>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {plan && plan !== "free" ? (
+            <button
+              onClick={handlePortal}
+              disabled={portalLoading}
+              className="btn-ghost"
+              style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
+            >
+              {portalLoading ? "Chargement..." : "Gérer mon abonnement →"}
+            </button>
+          ) : (
+            <Link href="/pricing" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
+              Changer de plan →
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Account settings card */}

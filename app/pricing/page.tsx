@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PricingCard from "@/components/PricingCard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import { useAuth } from "@/lib/AuthContext";
 
 const FAQ = [
   {
@@ -61,9 +63,44 @@ const enterpriseFeatures = [
   "SLA 99,9%",
 ];
 
+const PRICE_MAP: Record<string, string> = {
+  "solo-monthly": "price_1TCKcS54nBPaQCDaZes7bFfg",
+  "solo-annual": "price_1TCKcS54nBPaQCDaCOxOdHnt",
+  "pro-monthly": "price_1TCKdF54nBPaQCDaQDe6HzH5",
+  "pro-annual": "price_1TCKdZ54nBPaQCDa7jPxphnY",
+};
+
 export default function PricingPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (plan: string) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const priceId = PRICE_MAP[`${plan}-${period}`];
+    if (!priceId) return;
+
+    setCheckoutLoading(plan);
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email }),
+    });
+
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      setCheckoutLoading(null);
+    }
+  };
 
   return (
     <div style={{ background: "var(--bg)" }}>
@@ -179,7 +216,7 @@ export default function PricingPage() {
               tagline="Pour découvrir Sorell"
               features={freeFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/#waitlist"
+              ctaHref="/login"
               free
             />
             <PricingCard
@@ -190,7 +227,8 @@ export default function PricingPage() {
               tagline="Pour les indépendants"
               features={soloFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/#waitlist"
+              onClick={() => handleCheckout("solo")}
+              loading={checkoutLoading === "solo"}
             />
             <PricingCard
               name="Pro"
@@ -200,7 +238,8 @@ export default function PricingPage() {
               tagline="Pour les petites équipes"
               features={proFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/#waitlist"
+              onClick={() => handleCheckout("pro")}
+              loading={checkoutLoading === "pro"}
               popular
             />
             <PricingCard

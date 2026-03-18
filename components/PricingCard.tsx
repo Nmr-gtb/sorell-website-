@@ -10,7 +10,9 @@ interface PricingCardProps {
   tagline: string;
   features: string[];
   cta: string;
-  ctaHref: string;
+  ctaHref?: string;
+  onClick?: () => void;
+  loading?: boolean;
   popular?: boolean;
   enterprise?: boolean;
   free?: boolean;
@@ -26,6 +28,8 @@ export default function PricingCard({
   features,
   cta,
   ctaHref,
+  onClick,
+  loading,
   popular,
   enterprise,
   free,
@@ -194,18 +198,37 @@ export default function PricingCard({
       </ul>
 
       {/* CTA */}
-      <Link
-        href={ctaHref}
-        className={popular ? "btn-primary" : "btn-ghost"}
-        style={{
-          textAlign: "center",
-          padding: "10px 20px",
-          fontSize: "0.875rem",
-          justifyContent: "center",
-        }}
-      >
-        {cta}
-      </Link>
+      {onClick ? (
+        <button
+          onClick={onClick}
+          disabled={loading}
+          className={popular ? "btn-primary" : "btn-ghost"}
+          style={{
+            textAlign: "center",
+            padding: "10px 20px",
+            fontSize: "0.875rem",
+            justifyContent: "center",
+            width: "100%",
+            opacity: loading ? 0.7 : 1,
+            cursor: loading ? "wait" : "pointer",
+          }}
+        >
+          {loading ? "Chargement..." : cta}
+        </button>
+      ) : (
+        <Link
+          href={ctaHref || "/"}
+          className={popular ? "btn-primary" : "btn-ghost"}
+          style={{
+            textAlign: "center",
+            padding: "10px 20px",
+            fontSize: "0.875rem",
+            justifyContent: "center",
+          }}
+        >
+          {cta}
+        </Link>
+      )}
     </div>
   );
 }
