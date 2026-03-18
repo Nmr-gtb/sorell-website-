@@ -5,15 +5,11 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const PRICE_IDS = {
-  solo_monthly: "price_1TCKcS54nBPaQCDaZes7bFfg",
-  solo_annual: "price_1TCKcS54nBPaQCDaCOxOdHnt",
-  pro_monthly: "price_1TCKdF54nBPaQCDaQDe6HzH5",
-  pro_annual: "price_1TCKdZ54nBPaQCDa7jPxphnY",
+  pro_monthly: "price_1TCQa37A2mOEJEeWkjjKWDQL",
+  pro_annual: "price_1TCQaK7A2mOEJEeW7XCq4bnX",
 } as const;
 
 export const PRICE_TO_PLAN: Record<string, string> = {
-  [PRICE_IDS.solo_monthly]: "solo",
-  [PRICE_IDS.solo_annual]: "solo",
   [PRICE_IDS.pro_monthly]: "pro",
   [PRICE_IDS.pro_annual]: "pro",
 };

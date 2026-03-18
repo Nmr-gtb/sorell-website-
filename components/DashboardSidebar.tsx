@@ -203,7 +203,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
             }}
           >
             <p style={{ fontSize: 12, color: "#92400E", margin: "0 0 8px", fontWeight: 500, lineHeight: 1.4 }}>
-              Passez à Solo pour débloquer toutes les fonctionnalités
+              Passez à Pro pour débloquer toutes les fonctionnalités
             </p>
             <button
               onClick={() => router.push("/pricing")}

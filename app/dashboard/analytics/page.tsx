@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
             Analytics verrouillées
           </div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Les analytics sont disponibles à partir du plan Solo
+            Les analytics sont disponibles avec le plan Pro
           </p>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
             <CrownBadge tooltip="Débloquer les analytics" />

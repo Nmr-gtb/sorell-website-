@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/AuthContext";
 const FAQ = [
   {
     q: "Le plan gratuit est-il vraiment gratuit ?",
-    a: "Oui, totalement. Pas de carte bancaire requise. Vous recevez une newsletter générique par semaine pour tester le produit. Passez à Solo ou Pro quand vous êtes prêt.",
+    a: "Oui, totalement. Pas de carte bancaire requise. Vous bénéficiez de 4 newsletters par mois pour tester le produit. Passez à Pro quand vous êtes prêt.",
   },
   {
     q: "Comment fonctionne la génération de contenu ?",
@@ -36,38 +36,33 @@ const FAQ = [
 ];
 
 const freeFeatures = [
-  "1 newsletter à l'inscription + 1 par mois",
-  "1 thématique au choix",
-  "Aperçu du produit",
-  "Contenu non personnalisé",
-];
-
-const soloFeatures = [
-  "1 newsletter personnalisée / semaine",
-  "Livrée sur votre boîte mail",
-  "3 thématiques au choix",
-  "Synthèses IA avancées",
+  "4 newsletters par mois",
+  "Jusqu'à 3 destinataires",
+  "Thématiques prédéfinies",
+  "Analytics basiques",
+  "Web search IA",
 ];
 
 const proFeatures = [
-  "Envoi depuis votre domaine (Gmail/Outlook)",
-  "Jusqu'à 10 destinataires",
-  "5 thématiques",
-  "Analytics de base",
+  "Newsletters illimitées",
+  "Destinataires illimités",
+  "Brief personnalisé",
+  "Thématiques custom",
+  "Analytics complets",
+  "Support prioritaire",
 ];
 
 const enterpriseFeatures = [
-  "Utilisateurs illimités",
-  "API & intégration CRM",
+  "Tout illimité",
+  "API & intégrations",
+  "CRM connecté",
   "CSM dédié",
   "SLA 99,9%",
 ];
 
 const PRICE_MAP: Record<string, string> = {
-  "solo-monthly": "price_1TCKcS54nBPaQCDaZes7bFfg",
-  "solo-annual": "price_1TCKcS54nBPaQCDaCOxOdHnt",
-  "pro-monthly": "price_1TCKdF54nBPaQCDaQDe6HzH5",
-  "pro-annual": "price_1TCKdZ54nBPaQCDa7jPxphnY",
+  "pro-monthly": "price_1TCQa37A2mOEJEeWkjjKWDQL",
+  "pro-annual": "price_1TCQaK7A2mOEJEeW7XCq4bnX",
 };
 
 export default function PricingPage() {
@@ -204,7 +199,7 @@ export default function PricingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 220px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
               gap: 20,
             }}
           >
@@ -220,22 +215,11 @@ export default function PricingPage() {
               free
             />
             <PricingCard
-              name="Solo"
-              price={10}
-              annualPrice={8}
-              period={period}
-              tagline="Pour les indépendants"
-              features={soloFeatures}
-              cta="S'abonner"
-              onClick={() => handleCheckout("solo")}
-              loading={checkoutLoading === "solo"}
-            />
-            <PricingCard
               name="Pro"
-              price={50}
-              annualPrice={40}
+              price={19}
+              annualPrice={190 / 12}
               period={period}
-              tagline="Pour les petites équipes"
+              tagline="Pour les professionnels"
               features={proFeatures}
               cta="S'abonner"
               onClick={() => handleCheckout("pro")}
@@ -250,7 +234,7 @@ export default function PricingPage() {
               tagline="Pour les grandes organisations"
               features={enterpriseFeatures}
               cta="Nous contacter"
-              ctaHref="mailto:contact@sorell.fr"
+              ctaHref="mailto:murnoe@outlook.fr"
               enterprise
             />
           </div>

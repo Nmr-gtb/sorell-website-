@@ -250,7 +250,7 @@ export default function ConfigPage() {
 
     const maxR = limits.maxRecipients;
     if (maxR !== -1 && recipients.length >= maxR) {
-      const nextPlan = plan === "free" ? "Solo" : plan === "solo" ? "Pro" : "supérieur";
+      const nextPlan = plan === "free" ? "Pro" : "supérieur";
       setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
       return;
     }
@@ -423,7 +423,7 @@ export default function ConfigPage() {
                   >
                     + Ajouter une thématique
                   </button>
-                  <CrownBadge tooltip="Disponible à partir du plan Solo" />
+                  <CrownBadge tooltip="Disponible avec le plan Pro" />
                 </div>
               )}
             </div>
@@ -458,7 +458,7 @@ export default function ConfigPage() {
               Brief personnalisé
               {!limits.customBrief && (
                 <span onClick={(e) => e.stopPropagation()}>
-                  <CrownBadge tooltip="Disponible à partir du plan Solo" />
+                  <CrownBadge tooltip="Disponible avec le plan Pro" />
                 </span>
               )}
             </h2>
@@ -467,7 +467,7 @@ export default function ConfigPage() {
             </p>
             {!limits.customBrief && (
               <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12, fontStyle: "italic" }}>
-                Disponible à partir du plan Solo
+                Disponible avec le plan Pro
               </p>
             )}
 
@@ -723,7 +723,7 @@ export default function ConfigPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
                 <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6 }}>
                   Fréquence
-                  {frequencyLocked && <CrownBadge tooltip="Hebdomadaire disponible à partir du plan Solo" />}
+                  {frequencyLocked && <CrownBadge tooltip="Hebdomadaire disponible avec le plan Pro" />}
                 </label>
                 <select
                   className="select-field"
@@ -773,7 +773,7 @@ export default function ConfigPage() {
                   value={sendHour}
                   onChange={(e) => setSendHour(Number(e.target.value))}
                 >
-                  {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
+                  {Array.from({ length: 16 }, (_, i) => i + 6).map((h) => (
                     <option key={h} value={h}>{h}h00</option>
                   ))}
                 </select>
@@ -921,7 +921,7 @@ export default function ConfigPage() {
                   onClick={() => {
                     const maxR = limits.maxRecipients;
                     if (maxR !== -1 && recipients.length >= maxR) {
-                      const nextPlan = plan === "free" ? "Solo" : plan === "solo" ? "Pro" : "supérieur";
+                      const nextPlan = plan === "free" ? "Pro" : "supérieur";
                       setRecipientLimitMsg(`Limite de ${maxR} destinataire(s) atteinte. Passez au plan ${nextPlan} pour en ajouter plus.`);
                     } else {
                       setShowAddForm(true);

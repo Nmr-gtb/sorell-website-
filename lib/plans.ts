@@ -1,29 +1,22 @@
-export type PlanType = "free" | "solo" | "pro" | "enterprise";
+export type PlanType = "free" | "pro" | "enterprise";
 
 export const PLAN_LIMITS: Record<PlanType, {
   customBrief: boolean;
-  maxRecipients: number; // -1 = illimité
-  frequency: string[]; // options disponibles
-  generationsPerMonth: number; // -1 = illimité
+  maxRecipients: number;
+  frequency: string[];
+  generationsPerMonth: number;
   analytics: "none" | "basic" | "full";
 }> = {
   free: {
     customBrief: false,
-    maxRecipients: 1,
-    frequency: ["monthly"],
-    generationsPerMonth: 1,
-    analytics: "none",
-  },
-  solo: {
-    customBrief: true,
-    maxRecipients: 1,
+    maxRecipients: 3,
     frequency: ["weekly", "monthly"],
     generationsPerMonth: 4,
     analytics: "basic",
   },
   pro: {
     customBrief: true,
-    maxRecipients: 10,
+    maxRecipients: -1,
     frequency: ["weekly", "monthly"],
     generationsPerMonth: -1,
     analytics: "full",
@@ -38,5 +31,6 @@ export const PLAN_LIMITS: Record<PlanType, {
 };
 
 export function getPlanLimits(plan: string) {
+  if (plan === "solo") return PLAN_LIMITS.pro; // backward compat
   return PLAN_LIMITS[(plan as PlanType)] || PLAN_LIMITS.free;
 }
