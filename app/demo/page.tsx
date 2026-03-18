@@ -3,9 +3,9 @@ import Footer from "@/components/Footer";
 import DemoGenerator from "@/components/DemoGenerator";
 
 export const metadata = {
-  title: "Démo — Sorell | Générez votre briefing IA en direct",
+  title: "Démo — Sorell | Voir l'IA générer votre newsletter en direct",
   description:
-    "Configurez votre newsletter en 30 secondes et voyez ce que l'IA génère pour vous. Aucun compte requis.",
+    "Sélectionnez un secteur et découvrez la newsletter que l'IA génère pour vous en quelques secondes. Aucun compte requis.",
 };
 
 export default function DemoPage() {
@@ -34,16 +34,16 @@ export default function DemoPage() {
               marginBottom: 16,
             }}
           >
-            Essayez Sorell en 30 secondes
+            Voir Sorell en action
           </h1>
           <p
             style={{
-              fontSize: "1rem",
+              fontSize: "0.9375rem",
               color: "var(--text-secondary)",
               lineHeight: 1.7,
             }}
           >
-            Choisissez votre secteur et voyez ce que Sorell génère pour vous.{" "}
+            Sélectionnez un secteur et découvrez la newsletter que l&apos;IA génère pour vous en quelques secondes.{" "}
             <span style={{ color: "var(--text-muted)" }}>Aucun compte requis.</span>
           </p>
         </div>

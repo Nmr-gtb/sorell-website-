@@ -1,492 +1,410 @@
 "use client";
 
 import { useState } from "react";
-import WaitlistForm from "./WaitlistForm";
+import Link from "next/link";
 
-type Article = {
-  tagClass: string;
-  tagLabel: string;
+type AIArticle = {
+  tag: string;
   title: string;
   summary: string;
   source: string;
   featured?: boolean;
 };
 
-type SectorData = {
-  tag: string;
-  articles: Article[];
-};
+const SECTORS = [
+  {
+    key: "tech",
+    label: "Tech & IA",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="7" y="7" width="10" height="10" rx="1" />
+        <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
+      </svg>
+    ),
+  },
+  {
+    key: "finance",
+    label: "Finance & Marchés",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+        <polyline points="16 7 22 7 22 13" />
+      </svg>
+    ),
+  },
+  {
+    key: "sante",
+    label: "Santé & Biotech",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    ),
+  },
+  {
+    key: "rh",
+    label: "RH & Management",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    key: "immobilier",
+    label: "Immobilier",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="1" />
+        <path d="M3 9h18" />
+        <path d="M9 21V9" />
+      </svg>
+    ),
+  },
+  {
+    key: "energie",
+    label: "Énergie & Climat",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </svg>
+    ),
+  },
+];
 
-const SECTOR_CONTENT: Record<string, SectorData> = {
-  "tech-ia": {
-    tag: "Veille IA & Tech",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "IA",
-        title: "L'IA générative transforme le secteur tech en 2026 : bilan et perspectives",
-        summary: "Agents autonomes, multimodalité et souveraineté des données s'imposent comme les tendances dominantes. Les entreprises françaises accélèrent leurs déploiements.",
-        source: "McKinsey",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "IA",
-        title: "OpenAI lance GPT-5 en accès anticipé pour les entreprises",
-        summary: "Capacités multimodales renforcées et fenêtre de contexte de 256K tokens.",
-        source: "The Verge",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "Modèles",
-        title: "Anthropic dévoile Claude 4.6 Opus : record sur les benchmarks de raisonnement",
-        summary: "Le nouveau modèle surpasse GPT-4o et Gemini Ultra 2.0 sur 12 benchmarks indépendants.",
-        source: "MIT Technology Review",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Concurrent",
-        title: "Mistral AI lève 600M€ et annonce une expansion en Asie",
-        summary: "La licorne française valorisée à 6 milliards accélère son déploiement B2B.",
-        source: "Les Echos",
-      },
-    ],
-  },
-  "finance": {
-    tag: "Veille Finance & Marchés",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "BCE",
-        title: "Les taux BCE et leur impact sur les fintechs : analyse du T1 2026",
-        summary: "Maintien des taux à 2,5% avec signal d'une possible baisse au T3. Les néobanques revoient leur modèle de revenus.",
-        source: "BCE",
-      },
-      {
-        tagClass: "email-tag-reg",
-        tagLabel: "Crypto",
-        title: "MiCA pleinement opérationnel : les exchanges s'adaptent",
-        summary: "Binance et Coinbase ont soumis leurs dossiers PSAN+. Le cadre réglementaire européen renforce la confiance.",
-        source: "AMF",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Néobanques",
-        title: "Revolut dépasse 3M de clients en France après obtention de sa licence",
-        summary: "La fintech britannique peut désormais proposer des crédits immobiliers.",
-        source: "Les Echos",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "ESG",
-        title: "CSRD : 50 000 entreprises françaises doivent publier leur bilan carbone",
-        summary: "L'entrée en vigueur progressive jusqu'en 2026 crée une forte demande pour les cabinets de conseil ESG.",
-        source: "EFRAG",
-      },
-    ],
-  },
-  "sante": {
-    tag: "Veille Santé & Biotech",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "IA médicale",
-        title: "L'IA diagnostique les cancers du sein avec 94% de précision : premiers essais cliniques",
-        summary: "Une étude publiée dans The Lancet valide l'utilisation clinique de l'outil DeepMind. Douze hôpitaux français participent.",
-        source: "The Lancet",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "Télémédecine",
-        title: "Déserts médicaux : les téléconsultations augmentent de 62% en zone rurale",
-        summary: "Le gouvernement annonce 2 000 postes de médecins salariés. Les plateformes de télémédecine affichent une forte croissance.",
-        source: "DREES",
-      },
-      {
-        tagClass: "email-tag-reg",
-        tagLabel: "Réglementation",
-        title: "Réforme du remboursement des dispositifs médicaux connectés",
-        summary: "La HAS publie une nouvelle grille d'évaluation. Les startups healthtech ont 6 mois pour se mettre à jour.",
-        source: "HAS",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Biotech",
-        title: "Alzheimer : nouvelle molécule réduit la progression de 35% en phase 2",
-        summary: "Résultats préliminaires encourageants du laboratoire BioArctic. La phase 3 impliquera 8 000 patients.",
-        source: "NEJM",
-      },
-    ],
-  },
-  "retail": {
-    tag: "Veille Retail & Commerce",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "Commerce unifié",
-        title: "Le commerce unifié redéfinit l'expérience client en 2026",
-        summary: "Magasin physique, e-commerce et réseaux sociaux s'intègrent dans un parcours client sans couture. +28% de conversion.",
-        source: "FEVAD",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "IA retail",
-        title: "TikTok Shop capte 28% des achats impulsifs chez les 18-34 ans",
-        summary: "Le social commerce dépasse Amazon sur ce segment. Les marques réallouent leurs budgets digitaux.",
-        source: "FEVAD",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Logistique",
-        title: "Crise du dernier kilomètre : les coûts logistiques en hausse de 22%",
-        summary: "Nouvelles ZFE et hausse du carburant complexifient les livraisons urbaines.",
-        source: "L'Usine Nouvelle",
-      },
-      {
-        tagClass: "email-tag-reg",
-        tagLabel: "Tendances",
-        title: "67% des Français intègrent l'impact environnemental dans leurs achats",
-        summary: "La durabilité dépasse le prix comme critère d'achat sur le segment supérieur à 50€.",
-        source: "OpinionWay",
-      },
-    ],
-  },
-  "industrie": {
-    tag: "Veille Industrie & Énergie",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "Industrie 4.0",
-        title: "L'industrie 4.0 accélère dans les PME françaises : ROI en 8 mois",
-        summary: "Les jumeaux numériques réduisent les arrêts de production de 25%. Retour sur investissement moyen en moins d'un an.",
-        source: "Siemens",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "Robotique",
-        title: "Airbus accélère : 3 000 robots supplémentaires dans ses lignes d'assemblage",
-        summary: "Investissement de 2Md€. La reconversion de 1 800 opérateurs vers la maintenance robotique est amorcée.",
-        source: "Airbus IR",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Supply chain",
-        title: "Semi-conducteurs : 12 mois d'attente pour certaines puces spécialisées",
-        summary: "Les constructeurs automobiles ajustent leurs plans. L'UE accélère le Chips Act avec 43Md€ d'investissements.",
-        source: "Bloomberg",
-      },
-      {
-        tagClass: "email-tag-reg",
-        tagLabel: "Décarbonation",
-        title: "France : 40% d'énergie renouvelable dans le mix électrique — record historique",
-        summary: "L'éolien offshore breton y contribue pour 8%. RTE prévoit 55% de renouvelables d'ici 2028.",
-        source: "RTE",
-      },
-    ],
-  },
-  "autre": {
-    tag: "Veille Générale Business",
-    articles: [
-      {
-        featured: true,
-        tagClass: "email-tag-featured",
-        tagLabel: "IA",
-        title: "Les 5 tendances IA qui vont transformer les entreprises françaises en 2026",
-        summary: "Agents autonomes, IA multimodale, edge computing, souveraineté et gouvernance des données — analyse McKinsey.",
-        source: "McKinsey",
-      },
-      {
-        tagClass: "email-tag-ai",
-        tagLabel: "Travail",
-        title: "3 jours bureau / 2 jours remote devient la norme dans les grandes entreprises",
-        summary: "74% des cadres en mode hybride selon le baromètre Malakoff Humanis 2026.",
-        source: "Malakoff Humanis",
-      },
-      {
-        tagClass: "email-tag-comp",
-        tagLabel: "Cybersécurité",
-        title: "Ransomware : +45% d'attaques sur les PME françaises",
-        summary: "12% seulement sont assurées. L'ANSSI publie un guide de résilience.",
-        source: "ANSSI",
-      },
-      {
-        tagClass: "email-tag-reg",
-        tagLabel: "Écosystème",
-        title: "Record : 8,3Md€ levés par les start-up françaises au T1 2026",
-        summary: "La French Tech résiste malgré le contexte macro. IA, deeptech et greentech captent 60% des montants.",
-        source: "France Digitale",
-      },
-    ],
-  },
+const SECTOR_LABELS: Record<string, string> = {
+  tech: "Tech & IA",
+  finance: "Finance & Marchés",
+  sante: "Santé & Biotech",
+  rh: "RH & Management",
+  immobilier: "Immobilier",
+  energie: "Énergie & Climat",
 };
 
 const SECTOR_COLORS: Record<string, { hero: string; grid1: string; grid2: string; highlight: string }> = {
-  "tech-ia":   { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
-  "finance":   { hero: "#1A2744", grid1: "#162032", grid2: "#1B3A4B", highlight: "#1E2D47" },
-  "sante":     { hero: "#0F2E1C", grid1: "#162E2E", grid2: "#1A2744", highlight: "#143524" },
-  "retail":    { hero: "#2D1B35", grid1: "#1F1135", grid2: "#2D1B22", highlight: "#28162A" },
-  "industrie": { hero: "#1A2112", grid1: "#0F1A10", grid2: "#1A2744", highlight: "#1A2112" },
-  "autre":     { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
+  tech:       { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
+  finance:    { hero: "#1A2744", grid1: "#162032", grid2: "#1B3A4B", highlight: "#1E2D47" },
+  sante:      { hero: "#0F2E1C", grid1: "#162E2E", grid2: "#1A2744", highlight: "#143524" },
+  rh:         { hero: "#2D1B35", grid1: "#1F1135", grid2: "#2D1B22", highlight: "#28162A" },
+  immobilier: { hero: "#1A2112", grid1: "#0F1A10", grid2: "#1A2744", highlight: "#1A2112" },
+  energie:    { hero: "#0F1A20", grid1: "#0A1520", grid2: "#0F2A18", highlight: "#0F1A20" },
 };
-
-function getTagStyle(tagClass: string): React.CSSProperties {
-  switch (tagClass) {
-    case "email-tag-reg":      return { background: "#ECFDF5", color: "#065F46" };
-    case "email-tag-comp":     return { background: "#EFF6FF", color: "#1E40AF" };
-    case "email-tag-ai":       return { background: "rgba(37,99,235,0.08)", color: "var(--accent)" };
-    case "email-tag-featured": return { background: "rgba(37,99,235,0.9)", color: "white" };
-    default:                   return { background: "var(--surface-alt)", color: "var(--text-muted)" };
-  }
-}
 
 const LOADING_MESSAGES = [
   "Analyse des sources sectorielles...",
   "Sélection des contenus pertinents...",
-  "Personnalisation par profil...",
-  "Génération du briefing...",
+  "Personnalisation par secteur...",
+  "Génération du briefing IA...",
   "Mise en forme finale...",
 ];
 
+function getTagStyle(tag: string): React.CSSProperties {
+  const t = tag.toLowerCase();
+  if (t.includes("réglem") || t.includes("loi") || t.includes("norme") || t.includes("légis") || t.includes("compliance"))
+    return { background: "#ECFDF5", color: "#065F46" };
+  if (t.includes("concurrent") || t.includes("marché") || t.includes("business") || t.includes("levée") || t.includes("financement"))
+    return { background: "#EFF6FF", color: "#1E40AF" };
+  return { background: "rgba(37,99,235,0.08)", color: "var(--accent)" };
+}
+
 function DemoNewsletterResult({
-  data,
+  articles,
   sector,
-  companyName,
+  generationTime,
+  fromCache,
+  generatedAt,
 }: {
-  data: SectorData;
+  articles: AIArticle[];
   sector: string;
-  companyName: string;
+  generationTime: number;
+  fromCache: boolean;
+  generatedAt: string | null;
 }) {
-  const sectorLabels: Record<string, string> = {
-    "tech-ia": "Tech / IA",
-    finance: "Finance",
-    sante: "Santé",
-    retail: "Retail",
-    industrie: "Industrie",
-    autre: "Général",
-  };
-
-  const displayCompany = companyName.trim() || "votre entreprise";
-  const colors = SECTOR_COLORS[sector] || SECTOR_COLORS["autre"];
-
-  const featured = data.articles.find((a) => a.featured) || data.articles[0];
-  const gridArticle1 = data.articles[1] || data.articles[0];
-  const gridArticle2 = data.articles[2] || data.articles[1];
-  const highlight = data.articles[3] || data.articles[2];
+  const colors = SECTOR_COLORS[sector] || SECTOR_COLORS["tech"];
+  const featured = articles.find((a) => a.featured) || articles[0];
+  const rest = articles.filter((a) => !a.featured).slice(0, 4);
+  const gridArticle1 = rest[0] || articles[1];
+  const gridArticle2 = rest[1] || articles[2];
+  const highlight = rest[2] || articles[3];
 
   const diagonalPattern =
     "repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 16px)";
 
+  const minsAgo =
+    fromCache && generatedAt
+      ? Math.round((Date.now() - new Date(generatedAt).getTime()) / 60000)
+      : null;
+
+  const now = new Date();
+  const dateLabel = now.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
-    <div
-      style={{
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        overflow: "hidden",
-        fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-        fontSize: "0.8125rem",
-      }}
-    >
-      {/* Email metadata bar */}
-      <div
-        style={{
-          background: "var(--surface-alt)",
-          borderBottom: "1px solid var(--border)",
-          padding: "12px 20px",
-        }}
-      >
-        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
-          <span style={{ color: "var(--text-muted)" }}>De : </span>
-          <span style={{ fontWeight: 500, color: "var(--text)" }}>Sorell</span>
-          <span style={{ color: "var(--text-muted)" }}> &lt;newsletter@sorell.fr&gt;</span>
-        </div>
-        <div style={{ fontSize: "0.75rem" }}>
-          <span style={{ color: "var(--text-muted)" }}>Objet : </span>
-          <span style={{ fontWeight: 600, color: "var(--text)" }}>
-            Votre briefing {sectorLabels[sector] || "général"} — semaine du 17 mars 2026
-          </span>
-        </div>
-        <div style={{ fontSize: "0.6875rem", color: "var(--text-muted)", marginTop: 4 }}>
-          Pour : {displayCompany}
-        </div>
-      </div>
-
-      {/* Magazine header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "20px 24px",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
-            Sorel<span style={{ color: "var(--accent)" }}>l</span>
-          </span>
-          <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
-          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-            {displayCompany}
-          </span>
-        </div>
-        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-          17 mars 2026 · 8h00
-        </span>
-      </div>
-
-      {/* Hero image */}
-      <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: colors.hero,
-            backgroundImage: diagonalPattern,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%)",
-          }}
-        />
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "16px 20px" }}>
+    <div>
+      {/* Generation badge */}
+      <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}>
+        {fromCache && minsAgo !== null ? (
           <span
             style={{
-              display: "inline-block",
-              marginBottom: 8,
-              padding: "2px 8px",
-              borderRadius: 4,
-              fontSize: "0.5625rem",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase" as const,
-              background: "rgba(37,99,235,0.9)",
-              color: "white",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 12px",
+              borderRadius: 20,
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              background: "var(--surface-alt)",
+              color: "var(--text-secondary)",
+              border: "1px solid var(--border)",
             }}
           >
-            ARTICLE PHARE
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#F59E0B",
+                flexShrink: 0,
+              }}
+            />
+            Résultat en cache — généré il y a {minsAgo < 1 ? "moins d'1 min" : `${minsAgo} min`}
           </span>
-          <p
+        ) : (
+          <span
             style={{
-              fontWeight: 700,
-              fontSize: "1.0625rem",
-              color: "white",
-              lineHeight: 1.35,
-              marginBottom: 6,
-              letterSpacing: "-0.01em",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 12px",
+              borderRadius: 20,
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              background: "rgba(16,185,129,0.08)",
+              color: "#059669",
+              border: "1px solid rgba(16,185,129,0.2)",
             }}
           >
-            {featured.title}
-          </p>
-          <span style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.7)" }}>
-            {featured.source}
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#10B981",
+                flexShrink: 0,
+              }}
+            />
+            Généré par IA en {generationTime} seconde{generationTime > 1 ? "s" : ""}
           </span>
-        </div>
+        )}
       </div>
 
-      {/* Intro */}
-      <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border)" }}>
-        <p style={{ fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.6 }}>
-          <span style={{ fontWeight: 600 }}>Bonjour,</span>{" "}
-          <span style={{ color: "var(--text-secondary)" }}>
-            voici les {data.articles.length} actualités clés de votre secteur{" "}
-            {sectorLabels[sector] ? `(${sectorLabels[sector]})` : ""} cette semaine, sélectionnées par Sorell.
-          </span>
-        </p>
-      </div>
-
-      {/* 2-column grid */}
+      {/* Newsletter card */}
       <div
         style={{
-          padding: "16px 24px 0",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 14,
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          overflow: "hidden",
+          fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+          fontSize: "0.8125rem",
         }}
       >
-        {[
-          { article: gridArticle1, bg: colors.grid1 },
-          { article: gridArticle2, bg: colors.grid2 },
-        ].map(({ article, bg }, idx) => {
-          const tagStyle = getTagStyle(article.tagClass);
-          return (
-            <div
-              key={idx}
-              style={{ border: "0.5px solid var(--border)", borderRadius: 8, overflow: "hidden" }}
-            >
-              <div
-                style={{
-                  height: 90,
-                  background: bg,
-                  backgroundImage: diagonalPattern,
-                }}
-              />
-              <div style={{ padding: "12px 14px" }}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    marginBottom: 6,
-                    padding: "2px 7px",
-                    borderRadius: 4,
-                    fontSize: "0.5625rem",
-                    fontWeight: 600,
-                    ...tagStyle,
-                  }}
-                >
-                  {article.tagLabel.toUpperCase()}
-                </span>
-                <p
-                  style={{
-                    fontSize: "0.8125rem",
-                    fontWeight: 600,
-                    color: "var(--text)",
-                    lineHeight: 1.35,
-                    marginBottom: 5,
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {article.title}
-                </p>
-                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-                  {article.source}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        {/* Email metadata bar */}
+        <div
+          style={{
+            background: "var(--surface-alt)",
+            borderBottom: "1px solid var(--border)",
+            padding: "12px 20px",
+          }}
+        >
+          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
+            <span style={{ color: "var(--text-muted)" }}>De : </span>
+            <span style={{ fontWeight: 500, color: "var(--text)" }}>Sorell</span>
+            <span style={{ color: "var(--text-muted)" }}> &lt;newsletter@sorell.fr&gt;</span>
+          </div>
+          <div style={{ fontSize: "0.75rem" }}>
+            <span style={{ color: "var(--text-muted)" }}>Objet : </span>
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>
+              Votre briefing {SECTOR_LABELS[sector]} — {dateLabel}
+            </span>
+          </div>
+        </div>
 
-      {/* Highlight block */}
-      <div style={{ padding: "14px 24px 0" }}>
+        {/* Magazine header */}
         <div
           style={{
             display: "flex",
-            gap: 14,
-            padding: 16,
-            borderRadius: 8,
-            background: "var(--surface-alt)",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "20px 24px",
+            borderBottom: "1px solid var(--border)",
           }}
         >
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
+              Sorel<span style={{ color: "var(--accent)" }}>l</span>
+            </span>
+            <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
+            <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+              {SECTOR_LABELS[sector]}
+            </span>
+          </div>
+          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+            {dateLabel} · 8h00
+          </span>
+        </div>
+
+        {/* Hero image */}
+        <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
           <div
             style={{
-              width: 80,
-              height: 80,
-              borderRadius: 6,
-              flexShrink: 0,
-              background: colors.highlight,
+              position: "absolute",
+              inset: 0,
+              background: colors.hero,
               backgroundImage: diagonalPattern,
             }}
           />
-          <div style={{ flex: 1 }}>
-            {highlight && (
-              <>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%)",
+            }}
+          />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "16px 20px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: 8,
+                padding: "2px 8px",
+                borderRadius: 4,
+                fontSize: "0.5625rem",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase" as const,
+                background: "rgba(37,99,235,0.9)",
+                color: "white",
+              }}
+            >
+              ARTICLE PHARE
+            </span>
+            <p
+              style={{
+                fontWeight: 700,
+                fontSize: "1.0625rem",
+                color: "white",
+                lineHeight: 1.35,
+                marginBottom: 6,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {featured?.title}
+            </p>
+            <span style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.7)" }}>
+              {featured?.source}
+            </span>
+          </div>
+        </div>
+
+        {/* Intro */}
+        <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border)" }}>
+          <p style={{ fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.6 }}>
+            <span style={{ fontWeight: 600 }}>Bonjour,</span>{" "}
+            <span style={{ color: "var(--text-secondary)" }}>
+              voici les {articles.length} actualités clés de votre secteur ({SECTOR_LABELS[sector]}) cette semaine, sélectionnées par Sorell.
+            </span>
+          </p>
+        </div>
+
+        {/* 2-column grid */}
+        {gridArticle1 && gridArticle2 && (
+          <div
+            style={{
+              padding: "16px 24px 0",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 14,
+            }}
+          >
+            {[
+              { article: gridArticle1, bg: colors.grid1 },
+              { article: gridArticle2, bg: colors.grid2 },
+            ].map(({ article, bg }, idx) => (
+              <div
+                key={idx}
+                style={{ border: "0.5px solid var(--border)", borderRadius: 8, overflow: "hidden" }}
+              >
+                <div
+                  style={{
+                    height: 90,
+                    background: bg,
+                    backgroundImage: diagonalPattern,
+                  }}
+                />
+                <div style={{ padding: "12px 14px" }}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      marginBottom: 6,
+                      padding: "2px 7px",
+                      borderRadius: 4,
+                      fontSize: "0.5625rem",
+                      fontWeight: 600,
+                      ...getTagStyle(article.tag),
+                    }}
+                  >
+                    {article.tag.toUpperCase()}
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--text)",
+                      lineHeight: 1.35,
+                      marginBottom: 5,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {article.title}
+                  </p>
+                  <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+                    {article.source}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Highlight block */}
+        {highlight && (
+          <div style={{ padding: "14px 24px 0" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                padding: 16,
+                borderRadius: 8,
+                background: "var(--surface-alt)",
+              }}
+            >
+              <div
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 6,
+                  flexShrink: 0,
+                  background: colors.highlight,
+                  backgroundImage: diagonalPattern,
+                }}
+              />
+              <div style={{ flex: 1 }}>
                 <span
                   style={{
                     display: "inline-block",
@@ -495,10 +413,10 @@ function DemoNewsletterResult({
                     borderRadius: 4,
                     fontSize: "0.5625rem",
                     fontWeight: 600,
-                    ...getTagStyle(highlight.tagClass),
+                    ...getTagStyle(highlight.tag),
                   }}
                 >
-                  {highlight.tagLabel.toUpperCase()}
+                  {highlight.tag.toUpperCase()}
                 </span>
                 <p
                   style={{
@@ -525,95 +443,109 @@ function DemoNewsletterResult({
                 <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
                   Source : {highlight.source}
                 </span>
-              </>
-            )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Stats bar */}
-      <div
-        style={{
-          padding: "14px 24px",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: 10,
-        }}
-      >
-        {[
-          { value: "147", label: "Sources analysées" },
-          { value: String(data.articles.length), label: "Articles retenus" },
-          { value: "3min", label: "Temps de lecture" },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            style={{
-              background: "var(--surface-alt)",
-              borderRadius: 8,
-              padding: 12,
-              textAlign: "center" as const,
-            }}
-          >
+        {/* Stats bar */}
+        <div
+          style={{
+            padding: "14px 24px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: 10,
+          }}
+        >
+          {[
+            { value: "147", label: "Sources analysées" },
+            { value: String(articles.length), label: "Articles retenus" },
+            { value: "3min", label: "Temps de lecture" },
+          ].map((stat) => (
             <div
-              style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent)", marginBottom: 2 }}
+              key={stat.label}
+              style={{
+                background: "var(--surface-alt)",
+                borderRadius: 8,
+                padding: 12,
+                textAlign: "center" as const,
+              }}
             >
-              {stat.value}
+              <div
+                style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent)", marginBottom: 2 }}
+              >
+                {stat.value}
+              </div>
+              <div style={{ fontSize: "0.625rem", color: "var(--text-muted)", lineHeight: 1.3 }}>
+                {stat.label}
+              </div>
             </div>
-            <div style={{ fontSize: "0.625rem", color: "var(--text-muted)", lineHeight: 1.3 }}>
-              {stat.label}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Footer */}
-      <div
-        style={{
-          borderTop: "1px solid var(--border)",
-          padding: "14px 24px",
-          textAlign: "center" as const,
-        }}
-      >
-        <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-          Généré automatiquement par Sorel<span style={{ color: "var(--accent)" }}>l</span>
-          {" · "}Personnalisé pour {displayCompany}
-        </span>
+        {/* Footer */}
+        <div
+          style={{
+            borderTop: "1px solid var(--border)",
+            padding: "14px 24px",
+            textAlign: "center" as const,
+          }}
+        >
+          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+            Généré automatiquement par Sorel<span style={{ color: "var(--accent)" }}>l</span>
+            {" · "}Propulsé par IA
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
 export default function DemoGenerator() {
-  const [sector, setSector] = useState("");
-  const [companyName, setCompanyName] = useState("");
+  const [sector, setSector] = useState("tech");
+  const [articles, setArticles] = useState<AIArticle[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [msgIdx, setMsgIdx] = useState(0);
-  const [result, setResult] = useState<SectorData | null>(null);
-  const [currentSector, setCurrentSector] = useState("");
-  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [error, setError] = useState("");
+  const [generationTime, setGenerationTime] = useState(0);
+  const [fromCache, setFromCache] = useState(false);
+  const [generatedAt, setGeneratedAt] = useState<string | null>(null);
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sector) return;
+  const handleGenerate = async () => {
     setLoading(true);
-    setResult(null);
-    setShowWaitlist(false);
-    setCurrentSector(sector);
+    setError("");
+    setArticles(null);
+    const start = Date.now();
     let idx = 0;
     setMsgIdx(0);
     const interval = setInterval(() => {
       idx = (idx + 1) % LOADING_MESSAGES.length;
       setMsgIdx(idx);
-    }, 800);
-    await new Promise((r) => setTimeout(r, 4000));
-    clearInterval(interval);
-    setResult(SECTOR_CONTENT[sector] || SECTOR_CONTENT["autre"]);
+    }, 1200);
+
+    try {
+      const res = await fetch(`/api/demo?sector=${sector}`);
+      const data = await res.json();
+      clearInterval(interval);
+      setGenerationTime(Math.round((Date.now() - start) / 1000));
+
+      if (data.articles) {
+        setArticles(data.articles);
+        setFromCache(data.fromCache || false);
+        setGeneratedAt(data.generatedAt || null);
+      } else {
+        setError(data.error || "Erreur lors de la génération. Veuillez réessayer.");
+      }
+    } catch {
+      clearInterval(interval);
+      setError("Erreur de connexion. Veuillez réessayer.");
+    }
     setLoading(false);
   };
 
   return (
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
-      {/* Config form */}
+      {/* Sector selector */}
       <div
         style={{
           background: "var(--surface)",
@@ -633,79 +565,87 @@ export default function DemoGenerator() {
             letterSpacing: "-0.02em",
           }}
         >
-          Configurez votre briefing
+          Choisissez votre secteur
         </h2>
-        <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 28 }}>
-          Remplissez les champs ci-dessous et notre IA génère un aperçu en quelques secondes.
+        <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 24 }}>
+          Sélectionnez un domaine pour voir la newsletter générée par l&apos;IA.
         </p>
 
-        <form onSubmit={handleGenerate} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <div>
-            <label
-              style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "var(--text)", marginBottom: 8 }}
-            >
-              Votre secteur d&apos;activité{" "}
-              <span style={{ color: "var(--accent)" }}>*</span>
-            </label>
-            <select
-              value={sector}
-              onChange={(e) => setSector(e.target.value)}
-              required
-              className="select-field"
-            >
-              <option value="" disabled>Choisissez votre secteur...</option>
-              <option value="tech-ia">Tech / IA</option>
-              <option value="finance">Finance & Banque</option>
-              <option value="sante">Santé & Biotech</option>
-              <option value="retail">Retail & Commerce</option>
-              <option value="industrie">Industrie & Énergie</option>
-              <option value="autre">Autre secteur</option>
-            </select>
-          </div>
+        {/* Sector grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(175px, 1fr))",
+            gap: 10,
+            marginBottom: 24,
+          }}
+        >
+          {SECTORS.map((s) => {
+            const isActive = sector === s.key;
+            return (
+              <button
+                key={s.key}
+                onClick={() => setSector(s.key)}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  padding: "16px",
+                  borderRadius: 10,
+                  border: isActive ? "1.5px solid var(--accent)" : "1px solid var(--border)",
+                  background: isActive ? "rgba(37,99,235,0.06)" : "var(--surface)",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "border-color 0.15s, background 0.15s",
+                  color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                }}
+              >
+                <span style={{ color: isActive ? "var(--accent)" : "var(--text-muted)" }}>
+                  {s.icon}
+                </span>
+                <span
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    color: isActive ? "var(--accent)" : "var(--text)",
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {s.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          <div>
-            <label
-              style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "var(--text)", marginBottom: 8 }}
-            >
-              Nom de votre entreprise{" "}
-              <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>(optionnel)</span>
-            </label>
-            <input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="ex : Acme Corp, NovaTech..."
-              className="input-field"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={!sector || loading}
-            className="btn-primary"
-            style={{
-              padding: "13px",
-              fontSize: "0.9375rem",
-              fontWeight: 500,
-              opacity: !sector ? 0.5 : 1,
-              cursor: !sector ? "not-allowed" : "pointer",
-              justifyContent: "center",
-              marginTop: 4,
-            }}
-          >
-            {loading ? (
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-                  <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                Génération en cours...
-              </span>
-            ) : (
-              "Générer ma newsletter →"
-            )}
-          </button>
-        </form>
+        {/* Generate button */}
+        <button
+          onClick={handleGenerate}
+          disabled={loading}
+          className="btn-primary"
+          style={{
+            width: "100%",
+            padding: "13px",
+            fontSize: "0.9375rem",
+            fontWeight: 500,
+            justifyContent: "center",
+            opacity: loading ? 0.7 : 1,
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? (
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Génération IA en cours...
+            </span>
+          ) : (
+            "Générer ma newsletter démo →"
+          )}
+        </button>
       </div>
 
       {/* Loading state */}
@@ -745,7 +685,7 @@ export default function DemoGenerator() {
             {LOADING_MESSAGES[msgIdx]}
           </p>
           <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-            Analyse de centaines de sources en temps réel
+            Claude analyse les sources et génère vos articles en temps réel
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
             {LOADING_MESSAGES.map((_, i) => (
@@ -764,12 +704,35 @@ export default function DemoGenerator() {
         </div>
       )}
 
-      {/* Result */}
-      {result && !loading && (
-        <div>
-          <DemoNewsletterResult data={result} sector={currentSector} companyName={companyName} />
+      {/* Error */}
+      {error && !loading && (
+        <div
+          style={{
+            padding: "16px 20px",
+            background: "rgba(239,68,68,0.06)",
+            border: "1px solid rgba(239,68,68,0.2)",
+            borderRadius: 10,
+            color: "#DC2626",
+            fontSize: "0.875rem",
+            marginBottom: 24,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
-          {/* Post-result CTA */}
+      {/* Result */}
+      {articles && !loading && (
+        <div>
+          <DemoNewsletterResult
+            articles={articles}
+            sector={sector}
+            generationTime={generationTime}
+            fromCache={fromCache}
+            generatedAt={generatedAt}
+          />
+
+          {/* CTA */}
           <div
             style={{
               marginTop: 20,
@@ -780,35 +743,19 @@ export default function DemoGenerator() {
               textAlign: "center",
             }}
           >
-            {!showWaitlist ? (
-              <>
-                <p style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text)", marginBottom: 6, letterSpacing: "-0.01em" }}>
-                  Vous aimez ce que vous voyez ?
-                </p>
-                <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-                  Recevez ce briefing chaque semaine, personnalisé pour votre équipe.
-                </p>
-                <button
-                  onClick={() => setShowWaitlist(true)}
-                  className="btn-primary"
-                  style={{ padding: "11px 28px", fontSize: "0.9375rem" }}
-                >
-                  Recevoir cette newsletter chaque semaine →
-                </button>
-              </>
-            ) : (
-              <>
-                <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "1rem", marginBottom: 6, letterSpacing: "-0.01em" }}>
-                  Rejoindre la waitlist
-                </p>
-                <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-                  Gratuit. Pas de spam. Recevez un échantillon dès votre inscription.
-                </p>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <WaitlistForm />
-                </div>
-              </>
-            )}
+            <p style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text)", marginBottom: 6, letterSpacing: "-0.01em" }}>
+              Envie de recevoir ça chaque semaine ?
+            </p>
+            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
+              Créez votre compte gratuitement et personnalisez votre newsletter sectorielle.
+            </p>
+            <Link
+              href="/login"
+              className="btn-primary"
+              style={{ display: "inline-flex", padding: "11px 28px", fontSize: "0.9375rem" }}
+            >
+              Créer mon compte gratuitement →
+            </Link>
           </div>
         </div>
       )}
