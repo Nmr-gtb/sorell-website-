@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       .map((t: { label: string }) => t.label)
       .join(", ");
 
-    const sourcesList = sources?.length ? `Sources préférées : ${sources.join(", ")}` : "";
+    const sourcesList = sources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci — cherche sur TOUT le web) : ${sources.join(", ")}` : "";
 
     const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger une newsletter basée sur de VRAIES actualités récentes trouvées sur le web.
 
@@ -59,6 +59,7 @@ GÉNÈRE un JSON avec cette structure exacte :
 }
 
 CONSIGNES :
+- Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
 - Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3).
 - key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].

@@ -69,7 +69,7 @@ ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
 Les articles doivent correspondre EXACTEMENT à cette demande.
 
 ` : ""}Thématiques : ${topics}
-${sources ? `Sources préférées : ${sources}` : ""}
+${sources ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci — cherche sur TOUT le web) : ${sources}` : ""}
 Date du jour : ${franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
 INSTRUCTIONS :
@@ -98,6 +98,7 @@ GÉNÈRE un JSON avec cette structure exacte :
 }
 
 CONSIGNES :
+- Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
 - Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3).
 - key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].
