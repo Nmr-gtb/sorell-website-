@@ -6,9 +6,6 @@ export const metadata = {
   description: "CGV de Sorell — Tarifs, paiement, résiliation, responsabilité.",
 };
 
-export const metadata = {
-  title: "Conditions Générales de Vente — Sorell",
-};
 
 export default function CGVPage() {
   return (

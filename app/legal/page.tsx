@@ -6,9 +6,6 @@ export const metadata = {
   description: "Mentions légales du site sorell.fr — Éditeur, hébergement, propriété intellectuelle.",
 };
 
-export const metadata = {
-  title: "Mentions légales — Sorell",
-};
 
 export default function LegalPage() {
   return (

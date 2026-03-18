@@ -6,9 +6,6 @@ export const metadata = {
   description: "Politique de confidentialité et RGPD de Sorell — Données collectées, droits, cookies.",
 };
 
-export const metadata = {
-  title: "Politique de confidentialité — Sorell",
-};
 
 export default function PrivacyPage() {
   return (
