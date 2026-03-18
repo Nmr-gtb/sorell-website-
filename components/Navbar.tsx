@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import SorellLogo from "./SorellLogo";
+import { useAuth } from "@/lib/AuthContext";
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -78,6 +79,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -167,7 +169,7 @@ export default function Navbar() {
         >
           <ThemeToggle />
           <Link
-            href="/login"
+            href={user ? "/dashboard" : "/login"}
             style={{
               padding: "6px 14px",
               borderRadius: 6,
@@ -184,7 +186,7 @@ export default function Navbar() {
               (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
             }}
           >
-            Se connecter
+            {user ? "Dashboard" : "Se connecter"}
           </Link>
           <Link
             href="/#waitlist"
@@ -277,12 +279,12 @@ export default function Navbar() {
           ))}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 12 }}>
             <Link
-              href="/login"
+              href={user ? "/dashboard" : "/login"}
               onClick={() => setMobileOpen(false)}
               className="btn-ghost"
               style={{ justifyContent: "center", padding: "10px", width: "100%", fontSize: "0.875rem" }}
             >
-              Se connecter
+              {user ? "Dashboard" : "Se connecter"}
             </Link>
             <Link
               href="/#waitlist"
