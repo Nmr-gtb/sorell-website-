@@ -200,8 +200,10 @@ export default function PricingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
               gap: 20,
+              maxWidth: 960,
+              margin: "0 auto",
             }}
           >
             <PricingCard

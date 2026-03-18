@@ -520,9 +520,10 @@ export default function HomePage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 180px), 1fr))",
-              gap: 16,
-              marginBottom: 32,
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+              gap: 20,
+              maxWidth: 960,
+              margin: "0 auto 32px",
             }}
           >
             {pricingPlans.map((plan) => (
