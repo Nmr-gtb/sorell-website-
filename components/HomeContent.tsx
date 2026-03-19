@@ -100,24 +100,24 @@ export default function HomeContent() {
       quote: t("social.testimonial1"),
       name: t("social.testimonial1_name"),
       title: t("social.testimonial1_role"),
-      initials: "CD",
+      initials: "MT",
     },
     {
       quote: t("social.testimonial2"),
       name: t("social.testimonial2_name"),
       title: t("social.testimonial2_role"),
-      initials: "TR",
+      initials: "AD",
     },
     {
       quote: t("social.testimonial3"),
       name: t("social.testimonial3_name"),
       title: t("social.testimonial3_role"),
-      initials: "SM",
+      initials: "LM",
     },
   ];
 
   const metrics = [
-    { value: "500+", label: t("social.metric_newsletters") },
+    { value: "30+", label: t("social.metric_newsletters") },
     { value: "98%", label: t("social.metric_satisfaction") },
     { value: "12 sec", label: t("social.metric_generation") },
     { value: "24/7", label: t("social.metric_auto") },
