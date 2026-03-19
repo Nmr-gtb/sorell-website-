@@ -109,10 +109,10 @@ export default function HomeContent() {
       initials: "TR",
     },
     {
-      quote: t("home.testimonial3"),
-      name: t("home.testimonial3_name"),
-      title: t("home.testimonial3_role"),
-      initials: "LM",
+      quote: t("social.testimonial3"),
+      name: t("social.testimonial3_name"),
+      title: t("social.testimonial3_role"),
+      initials: "SM",
     },
   ];
 
@@ -399,10 +399,10 @@ export default function HomeContent() {
                 marginBottom: 12,
               }}
             >
-              {t("home.testimonials_title")}
+              {t("social.title")}
             </h2>
             <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              {t("home.testimonials_subtitle")}
+              {t("social.subtitle")}
             </p>
           </div>
 
@@ -615,7 +615,7 @@ export default function HomeContent() {
               {t("home.cta_subtitle")}
             </p>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 36 }}>
-              {t("home.cta_founder")}
+              {t("home.cta_note")}
             </p>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <WaitlistForm buttonText={t("hero.cta_primary")} />

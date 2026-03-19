@@ -15,10 +15,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://sorell.fr"),
   title: {
-    default: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
+    default: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
     template: "%s — Sorell",
   },
-  description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA. Veille concurrentielle, réglementaire et marché — livrée chaque semaine à vos équipes.",
+  description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
   keywords: ["newsletter IA", "veille sectorielle", "newsletter automatique", "intelligence artificielle", "veille concurrentielle", "newsletter B2B", "newsletter personnalisée", "veille réglementaire"],
   authors: [{ name: "Sorell" }],
   creator: "Sorell",
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     url: "https://sorell.fr",
     siteName: "Sorell",
-    title: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
-    description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA. Veille concurrentielle, réglementaire et marché — livrée chaque semaine.",
+    title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
     images: [
       {
         url: "/og-image.svg",
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sorell — La newsletter IA que vos équipes vont vraiment lire",
-    description: "Sorell génère automatiquement des newsletters sectorielles personnalisées par IA.",
+    title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
     images: ["/og-image.svg"],
   },
   robots: {
