@@ -24,11 +24,36 @@ export default function CommentCaMarchePage() {
         flexDirection: "column",
       }}
     >
+      <style>{`
+        @media (max-width: 768px) {
+          .hiw-hero {
+            padding-top: 80px !important;
+          }
+          .hiw-hero-title {
+            font-size: 1.75rem !important;
+          }
+          .hiw-step-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          .hiw-step-illustration {
+            display: none !important;
+          }
+          .hiw-comparison-table-wrapper {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .hiw-faq-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
       <Navbar />
 
       <main style={{ flex: 1 }}>
         {/* Hero */}
         <section
+          className="hiw-hero"
           style={{
             paddingTop: 120,
             paddingBottom: 80,
@@ -51,6 +76,7 @@ export default function CommentCaMarchePage() {
               Guide complet
             </p>
             <h1
+              className="hiw-hero-title"
               style={{
                 fontSize: "clamp(1.875rem, 4vw, 2.75rem)",
                 fontWeight: 700,
@@ -86,6 +112,7 @@ export default function CommentCaMarchePage() {
         >
           {/* Étape 1 */}
           <div
+            className="hiw-step-grid"
             style={{
               marginBottom: 96,
               display: "grid",
@@ -149,7 +176,7 @@ export default function CommentCaMarchePage() {
                 </p>
               </div>
             </div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div className="hiw-step-illustration" style={{ display: "flex", justifyContent: "center" }}>
               <div
                 style={{
                   width: 220,
@@ -240,6 +267,7 @@ export default function CommentCaMarchePage() {
 
           {/* Étape 2 */}
           <div
+            className="hiw-step-grid"
             style={{
               marginBottom: 96,
               display: "grid",
@@ -248,7 +276,7 @@ export default function CommentCaMarchePage() {
               alignItems: "center",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "center", order: -1 }}>
+            <div className="hiw-step-illustration" style={{ display: "flex", justifyContent: "center", order: -1 }}>
               <div
                 style={{
                   width: 220,
@@ -403,6 +431,7 @@ export default function CommentCaMarchePage() {
 
           {/* Étape 3 */}
           <div
+            className="hiw-step-grid"
             style={{
               marginBottom: 96,
               display: "grid",
@@ -463,7 +492,7 @@ export default function CommentCaMarchePage() {
                 </p>
               </div>
             </div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div className="hiw-step-illustration" style={{ display: "flex", justifyContent: "center" }}>
               <div
                 style={{
                   width: 220,
@@ -549,7 +578,7 @@ export default function CommentCaMarchePage() {
               ChatGPT est un outil généraliste. Sorell est conçu spécifiquement pour la veille
               sectorielle automatique.
             </p>
-            <div style={{ overflowX: "auto" }}>
+            <div className="hiw-comparison-table-wrapper" style={{ overflowX: "auto" }}>
               <table
                 style={{
                   width: "100%",
@@ -712,6 +741,7 @@ export default function CommentCaMarchePage() {
             Questions fréquentes
           </h2>
           <div
+            className="hiw-faq-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 480px), 1fr))",

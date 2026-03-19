@@ -53,6 +53,9 @@ export const metadata: Metadata = {
     },
   },
   icons: { icon: "/favicon.svg" },
+  alternates: {
+    canonical: "https://sorell.fr",
+  },
 };
 
 const themeScript = `
@@ -68,6 +71,25 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Sorell",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "EUR",
+              },
+              "description": "Newsletter IA automatisée pour la veille sectorielle B2B",
+              "url": "https://sorell.fr",
+            }),
+          }}
+        />
         <ThemeProvider>
           <AuthProvider>
             {children}

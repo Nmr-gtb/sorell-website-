@@ -220,7 +220,7 @@ export default function PricingPage() {
             <PricingCard
               name="Pro"
               price={19}
-              annualPrice={190 / 12}
+              annualPrice={16}
               period={period}
               tagline="Pour les professionnels"
               features={proFeatures}

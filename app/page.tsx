@@ -195,7 +195,10 @@ export default function HomePage() {
           </div>
 
           <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-            Pas de carte bancaire · Annulable à tout moment
+            Pas de carte bancaire · Annulable à tout moment ·{" "}
+            <Link href="/comment-ca-marche" className="link-accent">
+              Comment ça marche ?
+            </Link>
           </p>
         </div>
       </section>
