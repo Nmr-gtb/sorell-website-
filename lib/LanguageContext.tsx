@@ -1,8 +1,15 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import frTranslations from "@/lib/translations/fr";
+import enTranslations from "@/lib/translations/en";
 
 type Language = "fr" | "en";
+
+const allTranslations: Record<Language, Record<string, string>> = {
+  fr: frTranslations,
+  en: enTranslations,
+};
 
 interface LanguageContextType {
   lang: Language;
@@ -13,12 +20,11 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType>({
   lang: "fr",
   setLang: () => {},
-  t: (key) => key,
+  t: (key) => frTranslations[key] || key,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>("fr");
-  const [translations, setTranslations] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const saved = localStorage.getItem("sorell-lang") as Language;
@@ -27,19 +33,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => {
-    import(`@/lib/translations/${lang}`).then((mod) => {
-      setTranslations(mod.default);
-    });
-  }, [lang]);
-
   const setLang = (newLang: Language) => {
     setLangState(newLang);
     localStorage.setItem("sorell-lang", newLang);
   };
 
   const t = (key: string): string => {
-    return translations[key] || key;
+    return allTranslations[lang][key] || allTranslations["fr"][key] || key;
   };
 
   return (
