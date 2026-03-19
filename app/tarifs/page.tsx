@@ -379,7 +379,7 @@ export default function PricingPage() {
             {t("pricing.team_responds")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-            <a href="mailto:murnoe@outlook.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
+            <a href="/contact" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
               {t("pricing.contact_us_btn")}
             </a>
             <a href="/demo" className="btn-primary" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
