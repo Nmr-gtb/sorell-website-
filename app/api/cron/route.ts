@@ -281,7 +281,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       </table>
       <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
         Généré automatiquement par IA · Personnalisé pour vous<br/>
-        <a href="https://sorell.fr" style="color:#9CA3AF;">Se désabonner</a>
+        <a href="https://www.sorell.fr/api/unsubscribe?email=${encodeURIComponent(recipient.email)}&uid=${config.user_id}" style="color:#9CA3AF;">Se désabonner</a>
       </p>
     </div>
 
