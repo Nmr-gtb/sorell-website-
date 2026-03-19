@@ -107,6 +107,12 @@ export default function LoginPage() {
       setError(error.message);
     } else {
       setSuccess(t("login.verify_email"));
+      // Envoyer l'email de bienvenue
+      fetch("/api/welcome-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
+      }).catch(() => {}); // fire and forget, pas bloquant
     }
     setLoading(false);
   };
