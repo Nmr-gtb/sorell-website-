@@ -39,9 +39,15 @@ export default function LegalPage() {
             Le site sorell.fr est édité par Noé Mur, entrepreneur individuel.
           </p>
           <ul>
+            <li>SIRET : 993 646 116 00018</li>
+            <li>Activité : Conseil en relations publiques et communication (code APE : 7021Z)</li>
+            <li>Adresse : 315, Chemin des Ventarelles, 13090 Aix-en-Provence</li>
             <li>Email : <a href="mailto:murnoe@outlook.fr" style={{ color: "var(--accent)" }}>murnoe@outlook.fr</a></li>
             <li>Site : <a href="https://sorell.fr" style={{ color: "var(--accent)" }}>https://sorell.fr</a></li>
           </ul>
+          <p style={{ marginTop: "1rem" }}>
+            TVA non applicable, article 293 B du CGI (franchise en base de TVA).
+          </p>
         </Section>
 
         <Section title="2. Hébergement">

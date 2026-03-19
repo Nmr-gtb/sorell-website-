@@ -53,14 +53,13 @@ export default function CGVPage() {
         <Section title="3. Tarifs et abonnements">
           <p>
             Les tarifs en vigueur sont affichés sur la page de tarification du site (sorell.fr/tarifs).
-            Les prix sont indiqués en euros TTC.
+            Les prix sont indiqués en euros TTC. TVA non applicable, article 293 B du CGI.
           </p>
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>
           <ul>
-            <li><strong>Free</strong> : gratuit — 1 newsletter à l'inscription + 1 par mois</li>
-            <li><strong>Solo</strong> : 10€/mois ou 96€/an — 1 newsletter personnalisée par semaine</li>
-            <li><strong>Pro</strong> : 50€/mois ou 480€/an — newsletters illimitées, jusqu'à 10 destinataires, analytics complets</li>
-            <li><strong>Enterprise</strong> : sur devis — fonctionnalités illimitées, support dédié</li>
+            <li><strong>Free</strong> : gratuit — 4 newsletters par mois, 1 destinataire, brief personnalisable, thématiques et sources au choix, web search IA, analytics basiques</li>
+            <li><strong>Pro</strong> : 9€/mois ou 90€/an — newsletters illimitées, jusqu'à 10 destinataires, brief personnalisé, thématiques et sources custom, analytics complets, support prioritaire</li>
+            <li><strong>Enterprise</strong> : sur devis — fonctionnalités illimitées, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Sorell se réserve le droit de modifier ses tarifs à tout moment. Les modifications
