@@ -39,8 +39,8 @@ const FAQ = [
 // Features arrays are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
-  "pro-monthly": "price_1TCQa37A2mOEJEeWkjjKWDQL",
-  "pro-annual": "price_1TCQaK7A2mOEJEeW7XCq4bnX",
+  "pro-monthly": "price_1TCdgv7A2mOEJEeWEEsDD5pM",
+  "pro-annual": "price_1TCdh67A2mOEJEeWsknZ5cx6",
 };
 
 export default function PricingPage() {
@@ -223,8 +223,8 @@ export default function PricingPage() {
             />
             <PricingCard
               name={t("pricing.pro")}
-              price={19}
-              annualPrice={16}
+              price={9}
+              annualPrice={7.5}
               period={period}
               tagline={t("pricing.pro_desc")}
               features={proFeatures}

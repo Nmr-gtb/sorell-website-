@@ -751,7 +751,7 @@ export default function CommentCaMarchePage() {
               },
               {
                 q: "Sorell est-il gratuit ?",
-                a: "Oui, le plan gratuit vous permet de recevoir jusqu'à 4 newsletters par mois, entièrement personnalisées. Si vous souhaitez envoyer la newsletter à votre équipe (jusqu'à 10 personnes), le plan Pro est à 19€ par mois.",
+                a: "Oui, le plan gratuit vous permet de recevoir jusqu'à 4 newsletters par mois, entièrement personnalisées. Si vous souhaitez envoyer la newsletter à votre équipe (jusqu'à 10 personnes), le plan Pro est à 9€ par mois.",
               },
               {
                 q: "Puis-je personnaliser le contenu de ma newsletter ?",

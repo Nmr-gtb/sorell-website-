@@ -77,7 +77,7 @@ export default function HomeContent() {
     },
     {
       name: t("pricing.pro"),
-      price: "19€",
+      price: "9€",
       desc: t("pricing.pro_desc"),
       features: [t("pricing.pro_f1"), t("pricing.pro_f2"), t("pricing.pro_f5")],
       popular: true,

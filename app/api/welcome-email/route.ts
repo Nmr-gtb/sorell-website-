@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     <div style="padding:0 32px 28px;">
       <div style="background:#F8FAFC;border-radius:8px;padding:20px;border:1px solid #E5E7EB;">
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0;">
-          <strong style="color:#111827;">Votre plan Free inclut :</strong> 4 newsletters par mois, brief 100% personnalisable, thématiques et sources au choix, web search IA. Passez au plan Pro (19€/mois) pour envoyer à toute votre équipe.
+          <strong style="color:#111827;">Votre plan Free inclut :</strong> 4 newsletters par mois, brief 100% personnalisable, thématiques et sources au choix, web search IA. Passez au plan Pro (9€/mois) pour envoyer à toute votre équipe.
         </p>
       </div>
     </div>
