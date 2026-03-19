@@ -182,7 +182,7 @@ export default function HomeContent() {
             }}
           >
             <a
-              href="#waitlist"
+              href="/connexion"
               className="btn-primary"
               style={{ padding: "14px 28px", fontSize: "0.9375rem", fontWeight: 500 }}
             >

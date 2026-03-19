@@ -32,7 +32,7 @@ const FAQ = [
   },
   {
     q: "Proposez-vous une période d'essai ?",
-    a: "Oui, 14 jours d'essai gratuit sur tous les plans payants, sans carte bancaire requise. L'offre fondateur (−50% à vie) est disponible pour les 50 premiers inscrits.",
+    a: "Oui. Le plan gratuit vous permet de tester le produit sans carte bancaire. Passez à Pro quand vous êtes prêt, annulation à tout moment.",
   },
 ];
 
@@ -263,7 +263,7 @@ export default function PricingPage() {
             }}
           >
             <span style={{ fontWeight: 600, color: "var(--text)" }}>{t("pricing.included_label")}</span>{" "}
-            Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant · Mises à jour automatiques · Onboarding guidé · 14 jours d&apos;essai gratuit
+            Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant · Mises à jour automatiques · Onboarding guidé
           </div>
         </div>
       </section>
@@ -379,7 +379,7 @@ export default function PricingPage() {
             {t("pricing.team_responds")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-            <a href="mailto:contact@sorell.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
+            <a href="mailto:murnoe@outlook.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
               {t("pricing.contact_us_btn")}
             </a>
             <a href="/demo" className="btn-primary" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>

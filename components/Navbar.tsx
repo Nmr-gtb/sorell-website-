@@ -213,7 +213,7 @@ export default function Navbar() {
               {user ? t("nav.dashboard") : t("nav.login")}
             </Link>
             <Link
-              href="/#waitlist"
+              href="/connexion"
               className="btn-primary"
               style={{ padding: "7px 16px", fontSize: "0.875rem" }}
             >
@@ -392,7 +392,7 @@ export default function Navbar() {
             {user ? t("nav.dashboard") : t("nav.login")}
           </Link>
           <Link
-            href="/#waitlist"
+            href="/connexion"
             onClick={close}
             className="btn-primary"
             style={{
