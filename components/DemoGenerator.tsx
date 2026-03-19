@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
 type AIArticle = {
   tag: string;
@@ -502,6 +503,7 @@ function DemoNewsletterResult({
 }
 
 export default function DemoGenerator() {
+  const { t } = useLanguage();
   const [sector, setSector] = useState("tech");
   const [articles, setArticles] = useState<AIArticle[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -565,10 +567,10 @@ export default function DemoGenerator() {
             letterSpacing: "-0.02em",
           }}
         >
-          Choisissez votre secteur
+          {t("demo.sector_title")}
         </h2>
         <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 24 }}>
-          Sélectionnez un domaine pour voir la newsletter générée par l&apos;IA.
+          {t("demo.sector_subtitle")}
         </p>
 
         {/* Sector grid */}
@@ -640,10 +642,10 @@ export default function DemoGenerator() {
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
                 <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              Génération IA en cours...
+              {t("demo.generating")}
             </span>
           ) : (
-            "Générer ma newsletter démo →"
+            t("demo.generate")
           )}
         </button>
       </div>
@@ -744,17 +746,17 @@ export default function DemoGenerator() {
             }}
           >
             <p style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text)", marginBottom: 6, letterSpacing: "-0.01em" }}>
-              Envie de recevoir ça chaque semaine ?
+              {t("demo.cta_title")}
             </p>
             <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-              Créez votre compte gratuitement et personnalisez votre newsletter sectorielle.
+              {t("demo.cta_subtitle")}
             </p>
             <Link
               href="/connexion"
               className="btn-primary"
               style={{ display: "inline-flex", padding: "11px 28px", fontSize: "0.9375rem" }}
             >
-              Créer mon compte gratuitement →
+              {t("demo.cta_button")}
             </Link>
           </div>
         </div>

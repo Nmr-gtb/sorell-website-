@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { getProfile } from "@/lib/database";
 import { useDevMode } from "@/lib/DevModeContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function IconGrid() {
   return (
@@ -66,13 +67,7 @@ function IconLogout() {
   );
 }
 
-const navItems = [
-  { label: "Vue d'ensemble", href: "/dashboard", icon: <IconGrid /> },
-  { label: "Newsletter", href: "/dashboard/config", icon: <IconMail /> },
-  { label: "Générer", href: "/dashboard/generate", icon: <IconSparkles /> },
-  { label: "Analytics", href: "/dashboard/analytics", icon: <IconChart /> },
-  { label: "Profil", href: "/dashboard/profile", icon: <IconUser /> },
-];
+// navItems is built inside the component to use t()
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -97,9 +92,18 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [realPlan, setRealPlan] = useState<string>("free");
   const { getEffectivePlan } = useDevMode();
   const plan = getEffectivePlan(realPlan);
+
+  const navItems = [
+    { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid /> },
+    { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail /> },
+    { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles /> },
+    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart /> },
+    { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser /> },
+  ];
 
   useEffect(() => {
     if (!user) return;
@@ -203,7 +207,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
             }}
           >
             <p style={{ fontSize: 12, color: "#92400E", margin: "0 0 8px", fontWeight: 500, lineHeight: 1.4 }}>
-              Passez à Pro pour envoyer à votre équipe (jusqu&apos;à 10 destinataires)
+              {t("dash.upgrade_text")}
             </p>
             <button
               onClick={() => router.push("/tarifs")}
@@ -219,7 +223,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
                 width: "100%",
               }}
             >
-              Voir les plans →
+              {t("dash.upgrade_btn")}
             </button>
           </div>
         </div>

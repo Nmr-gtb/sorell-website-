@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function ContactPage() {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("Question générale");
+  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -29,10 +31,10 @@ export default function ContactPage() {
       setSuccess(true);
       setName("");
       setEmail("");
-      setSubject("Question générale");
+      setSubject("");
       setMessage("");
     } else {
-      setError("Une erreur est survenue. Veuillez réessayer ou nous contacter directement par email.");
+      setError(t("contact.error"));
     }
     setLoading(false);
   };
@@ -64,10 +66,10 @@ export default function ContactPage() {
               marginBottom: 10,
             }}
           >
-            Contactez-nous
+            {t("contact.title")}
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Une question, un devis, un problème ? Écrivez-nous et nous vous répondrons sous 24h.
+            {t("contact.subtitle")}
           </p>
         </div>
 
@@ -104,7 +106,7 @@ export default function ContactPage() {
           </div>
           <div>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 2 }}>
-              Ou envoyez-nous un email directement :
+              {t("contact.email_direct")}
             </p>
             <a
               href="mailto:murnoe@outlook.fr"
@@ -148,7 +150,7 @@ export default function ContactPage() {
                 marginBottom: 20,
               }}
             >
-              ✓ Message envoyé ! Nous vous répondrons sous 24h.
+              {t("contact.success")}
             </div>
           )}
 
@@ -172,12 +174,12 @@ export default function ContactPage() {
             {/* Nom */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
-                Nom
+                {t("login.name_label")}
               </label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Votre nom"
+                placeholder={t("contact.name")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -187,12 +189,12 @@ export default function ContactPage() {
             {/* Email */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
-                Email
+                {t("login.email")}
               </label>
               <input
                 type="email"
                 className="input-field"
-                placeholder="votre@email.com"
+                placeholder={t("contact.email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -202,19 +204,19 @@ export default function ContactPage() {
             {/* Sujet */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
-                Sujet
+                {t("contact.subject")}
               </label>
               <select
                 className="select-field"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
               >
-                <option>Question générale</option>
-                <option>Demande de devis (Enterprise)</option>
-                <option>Problème technique</option>
-                <option>Problème de paiement</option>
-                <option>Demande de partenariat</option>
-                <option>Autre</option>
+                <option value={t("contact.subject_general")}>{t("contact.subject_general")}</option>
+                <option value={t("contact.subject_quote")}>{t("contact.subject_quote")}</option>
+                <option value={t("contact.subject_tech")}>{t("contact.subject_tech")}</option>
+                <option value={t("contact.subject_billing")}>{t("contact.subject_billing")}</option>
+                <option value={t("contact.subject_partner")}>{t("contact.subject_partner")}</option>
+                <option value={t("contact.subject_other")}>{t("contact.subject_other")}</option>
               </select>
             </div>
 
@@ -225,7 +227,7 @@ export default function ContactPage() {
               </label>
               <textarea
                 className="input-field"
-                placeholder="Décrivez votre demande..."
+                placeholder={t("contact.message")}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
@@ -246,7 +248,7 @@ export default function ContactPage() {
                 cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              {loading ? "Envoi en cours..." : "Envoyer le message"}
+              {loading ? t("contact.sending") : t("contact.send")}
             </button>
           </form>
         </div>

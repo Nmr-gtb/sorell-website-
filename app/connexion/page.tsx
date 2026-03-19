@@ -6,6 +6,7 @@ import Link from "next/link";
 import SorellLogo from "@/components/SorellLogo";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 type Mode = "login" | "signup" | "reset";
 
@@ -41,6 +42,7 @@ function GoogleIcon() {
 export default function LoginPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
 
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
@@ -104,7 +106,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      setSuccess("Vérifiez votre email pour confirmer votre compte.");
+      setSuccess(t("login.verify_email"));
     }
     setLoading(false);
   };
@@ -119,7 +121,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      setSuccess("Lien de réinitialisation envoyé !");
+      setSuccess(t("login.reset_sent"));
     }
     setLoading(false);
   };
@@ -133,9 +135,9 @@ export default function LoginPage() {
   }
 
   const titles: Record<Mode, { title: string; sub: string }> = {
-    login: { title: "Connectez-vous", sub: "Accédez à votre espace Sorell" },
-    signup: { title: "Créer un compte", sub: "Commencez gratuitement avec Sorell" },
-    reset: { title: "Réinitialiser le mot de passe", sub: "Recevez un lien par email" },
+    login: { title: t("login.title_login"), sub: t("login.sub_login") },
+    signup: { title: t("login.title_signup"), sub: t("login.sub_signup") },
+    reset: { title: t("login.title_reset"), sub: t("login.sub_reset") },
   };
 
   const inputStyle: React.CSSProperties = {
@@ -232,7 +234,7 @@ export default function LoginPage() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
               >
                 <GoogleIcon />
-                Continuer avec Google
+                {t("login.google")}
               </button>
 
               {/* Separator */}
@@ -245,7 +247,7 @@ export default function LoginPage() {
                 }}
               >
                 <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-                <span style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>ou</span>
+                <span style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>{t("login.or")}</span>
                 <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
               </div>
             </>
@@ -255,7 +257,7 @@ export default function LoginPage() {
           {mode === "login" && (
             <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>Adresse email</label>
+                <label style={labelStyle}>{t("login.email_label")}</label>
                 <input
                   type="email"
                   value={email}
@@ -268,7 +270,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
-                  <label style={{ ...labelStyle, marginBottom: 0 }}>Mot de passe</label>
+                  <label style={{ ...labelStyle, marginBottom: 0 }}>{t("login.password_label")}</label>
                   <button
                     type="button"
                     onClick={() => switchMode("reset")}
@@ -281,7 +283,7 @@ export default function LoginPage() {
                       padding: 0,
                     }}
                   >
-                    Mot de passe oublié ?
+                    {t("login.forgot")}
                   </button>
                 </div>
                 <input
@@ -302,7 +304,7 @@ export default function LoginPage() {
                 className="btn-primary"
                 style={{ padding: "12px", fontSize: "0.9375rem", fontWeight: 500, justifyContent: "center", marginTop: 4, opacity: loading ? 0.7 : 1 }}
               >
-                {loading ? <Spinner /> : "Se connecter"}
+                {loading ? <Spinner /> : t("login.login_btn")}
               </button>
             </form>
           )}
@@ -311,7 +313,7 @@ export default function LoginPage() {
           {mode === "signup" && (
             <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>Nom complet</label>
+                <label style={labelStyle}>{t("login.name_label")}</label>
                 <input
                   type="text"
                   value={name}
@@ -323,7 +325,7 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Adresse email</label>
+                <label style={labelStyle}>{t("login.email_label")}</label>
                 <input
                   type="email"
                   value={email}
@@ -335,7 +337,7 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Mot de passe</label>
+                <label style={labelStyle}>{t("login.password_label")}</label>
                 <input
                   type="password"
                   value={password}
@@ -355,7 +357,7 @@ export default function LoginPage() {
                 className="btn-primary"
                 style={{ padding: "12px", fontSize: "0.9375rem", fontWeight: 500, justifyContent: "center", marginTop: 4, opacity: loading ? 0.7 : 1 }}
               >
-                {loading ? <Spinner /> : "Créer mon compte"}
+                {loading ? <Spinner /> : t("login.signup_btn")}
               </button>
             </form>
           )}
@@ -364,7 +366,7 @@ export default function LoginPage() {
           {mode === "reset" && (
             <form onSubmit={handleReset} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>Adresse email</label>
+                <label style={labelStyle}>{t("login.email_label")}</label>
                 <input
                   type="email"
                   value={email}
@@ -383,7 +385,7 @@ export default function LoginPage() {
                 className="btn-primary"
                 style={{ padding: "12px", fontSize: "0.9375rem", fontWeight: 500, justifyContent: "center", marginTop: 4, opacity: loading ? 0.7 : 1 }}
               >
-                {loading ? <Spinner /> : "Envoyer le lien"}
+                {loading ? <Spinner /> : t("login.reset_btn")}
               </button>
               <button
                 type="button"
@@ -398,7 +400,7 @@ export default function LoginPage() {
                   textAlign: "center",
                 }}
               >
-                ← Retour à la connexion
+                {t("login.back_to_login")}
               </button>
             </form>
           )}
@@ -417,24 +419,24 @@ export default function LoginPage() {
             >
               {mode === "login" ? (
                 <>
-                  Pas encore de compte ?{" "}
+                  {t("login.no_account")}{" "}
                   <button
                     type="button"
                     onClick={() => switchMode("signup")}
                     style={{ color: "var(--accent)", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }}
                   >
-                    Créer un compte
+                    {t("login.create")}
                   </button>
                 </>
               ) : (
                 <>
-                  Déjà un compte ?{" "}
+                  {t("login.has_account")}{" "}
                   <button
                     type="button"
                     onClick={() => switchMode("login")}
                     style={{ color: "var(--accent)", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }}
                   >
-                    Se connecter
+                    {t("login.back_login")}
                   </button>
                 </>
               )}
@@ -461,7 +463,7 @@ export default function LoginPage() {
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
               <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Retour à l&apos;accueil
+            {t("login.back_home")}
           </Link>
         </div>
       </div>

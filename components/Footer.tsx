@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import SorellLogo from "./SorellLogo";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer
       style={{
@@ -24,13 +29,13 @@ export default function Footer() {
         <SorellLogo size="sm" />
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
-          <Link href="/comment-ca-marche" className="footer-link">Comment ça marche</Link>
-          <Link href="/tarifs" className="footer-link">Tarifs</Link>
-          <Link href="/demo" className="footer-link">Démo</Link>
-          <Link href="/contact" className="footer-link">Contact</Link>
-          <Link href="/legal" className="footer-link">Mentions légales</Link>
-          <Link href="/cgv" className="footer-link">CGV</Link>
-          <Link href="/confidentialite" className="footer-link">Confidentialité</Link>
+          <Link href="/comment-ca-marche" className="footer-link">{t("nav.how_it_works")}</Link>
+          <Link href="/tarifs" className="footer-link">{t("nav.pricing")}</Link>
+          <Link href="/demo" className="footer-link">{t("nav.demo")}</Link>
+          <Link href="/contact" className="footer-link">{t("nav.contact")}</Link>
+          <Link href="/legal" className="footer-link">{t("footer.legal")}</Link>
+          <Link href="/cgv" className="footer-link">{t("footer.cgv")}</Link>
+          <Link href="/confidentialite" className="footer-link">{t("footer.privacy")}</Link>
         </div>
 
         <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>

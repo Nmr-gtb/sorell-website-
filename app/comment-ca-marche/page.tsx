@@ -1,20 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Comment ça marche",
-  description:
-    "Découvrez comment Sorell génère automatiquement des newsletters sectorielles personnalisées par IA. Configuration en 5 minutes, envoi automatique chaque semaine.",
-  openGraph: {
-    title: "Comment ça marche — Sorell",
-    description:
-      "Sorell génère vos newsletters sectorielles en 3 étapes. Configuration en 5 minutes, envoi automatique.",
-  },
-};
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function CommentCaMarchePage() {
+  const { t } = useLanguage();
   return (
     <div
       style={{
@@ -73,7 +65,7 @@ export default function CommentCaMarchePage() {
                 marginBottom: "1rem",
               }}
             >
-              Guide complet
+              {t("hiw.guide")}
             </p>
             <h1
               className="hiw-hero-title"
@@ -85,7 +77,7 @@ export default function CommentCaMarchePage() {
                 marginBottom: "1.25rem",
               }}
             >
-              Comment Sorell génère votre newsletter en 3 étapes
+              {t("hiw.title")}
             </h1>
             <p
               style={{
@@ -96,8 +88,7 @@ export default function CommentCaMarchePage() {
                 margin: "0 auto",
               }}
             >
-              De la configuration à l&apos;envoi automatique, tout est pensé pour que vous
-              n&apos;ayez rien à faire après les 5 premières minutes.
+              {t("hiw.subtitle")}
             </p>
           </div>
         </section>
@@ -143,7 +134,7 @@ export default function CommentCaMarchePage() {
                   marginBottom: "1.25rem",
                 }}
               >
-                Configurez votre veille
+                {t("hiw.step1_title")}
               </h2>
               <div
                 style={{
@@ -391,7 +382,7 @@ export default function CommentCaMarchePage() {
                   marginBottom: "1.25rem",
                 }}
               >
-                L&apos;IA recherche et rédige
+                {t("hiw.step2_title")}
               </h2>
               <div
                 style={{
@@ -462,7 +453,7 @@ export default function CommentCaMarchePage() {
                   marginBottom: "1.25rem",
                 }}
               >
-                Vos équipes reçoivent le briefing
+                {t("hiw.step3_title")}
               </h2>
               <div
                 style={{
@@ -565,7 +556,7 @@ export default function CommentCaMarchePage() {
                 textAlign: "center",
               }}
             >
-              Pourquoi Sorell plutôt que ChatGPT ?
+              {t("hiw.vs_title")}
             </h2>
             <p
               style={{
@@ -575,8 +566,7 @@ export default function CommentCaMarchePage() {
                 marginBottom: "2.5rem",
               }}
             >
-              ChatGPT est un outil généraliste. Sorell est conçu spécifiquement pour la veille
-              sectorielle automatique.
+              {t("hiw.vs_subtitle")}
             </p>
             <div className="hiw-comparison-table-wrapper" style={{ overflowX: "auto" }}>
               <table
@@ -738,7 +728,7 @@ export default function CommentCaMarchePage() {
               textAlign: "center",
             }}
           >
-            Questions fréquentes
+            {t("hiw.faq_title")}
           </h2>
           <div
             className="hiw-faq-grid"
@@ -822,7 +812,7 @@ export default function CommentCaMarchePage() {
                 marginBottom: "0.75rem",
               }}
             >
-              Prêt à automatiser votre veille ?
+              {t("hiw.cta_title")}
             </h2>
             <p
               style={{
@@ -832,7 +822,7 @@ export default function CommentCaMarchePage() {
                 lineHeight: 1.6,
               }}
             >
-              Créez votre compte en 30 secondes. Pas de carte bancaire requise.
+              {t("hiw.cta_subtitle")}
             </p>
             <div
               style={{
@@ -847,14 +837,14 @@ export default function CommentCaMarchePage() {
                 className="btn-primary"
                 style={{ padding: "10px 24px", fontSize: "0.9375rem" }}
               >
-                Commencer gratuitement →
+                {t("hiw.cta_primary")}
               </Link>
               <Link
                 href="/demo"
                 className="btn-ghost"
                 style={{ padding: "10px 24px", fontSize: "0.9375rem" }}
               >
-                Voir la démo →
+                {t("hiw.cta_secondary")}
               </Link>
             </div>
             <p
@@ -864,11 +854,7 @@ export default function CommentCaMarchePage() {
                 color: "var(--text-muted)",
               }}
             >
-              Découvrez aussi nos{" "}
-              <Link href="/tarifs" className="link-accent">
-                tarifs
-              </Link>{" "}
-              — plan gratuit disponible sans carte bancaire.
+              {t("hiw.cta_footer")}
             </p>
           </div>
         </section>

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import SorellLogo from "./SorellLogo";
 import { useAuth } from "@/lib/AuthContext";
 import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -81,6 +82,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -95,11 +97,11 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const navLinks = [
-    { href: "/#fonctionnalites", label: "Fonctionnalités" },
-    { href: "/comment-ca-marche", label: "Comment ça marche" },
-    { href: "/tarifs", label: "Tarifs" },
-    { href: "/demo", label: "Démo" },
-    { href: "/contact", label: "Contact" },
+    { href: "/#fonctionnalites", label: t("nav.features") },
+    { href: "/comment-ca-marche", label: t("nav.how_it_works") },
+    { href: "/tarifs", label: t("nav.pricing") },
+    { href: "/demo", label: t("nav.demo") },
+    { href: "/contact", label: t("nav.contact") },
   ];
 
   const isActive = (href: string) =>
@@ -208,14 +210,14 @@ export default function Navbar() {
                 (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
               }}
             >
-              {user ? "Dashboard" : "Se connecter"}
+              {user ? t("nav.dashboard") : t("nav.login")}
             </Link>
             <Link
               href="/#waitlist"
               className="btn-primary"
               style={{ padding: "7px 16px", fontSize: "0.875rem" }}
             >
-              Commencer
+              {t("nav.start")}
             </Link>
           </div>
 
@@ -387,7 +389,7 @@ export default function Navbar() {
               border: "1px solid var(--border)",
             }}
           >
-            {user ? "Dashboard" : "Se connecter"}
+            {user ? t("nav.dashboard") : t("nav.login")}
           </Link>
           <Link
             href="/#waitlist"
@@ -402,7 +404,7 @@ export default function Navbar() {
               boxSizing: "border-box",
             }}
           >
-            Commencer
+            {t("nav.start")}
           </Link>
         </div>
       </div>

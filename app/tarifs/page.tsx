@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import PricingCard from "@/components/PricingCard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const FAQ = [
   {
@@ -35,31 +36,7 @@ const FAQ = [
   },
 ];
 
-const freeFeatures = [
-  "4 newsletters par mois",
-  "1 destinataire (vous)",
-  "Brief 100% personnalisable",
-  "Thématiques & sources au choix",
-  "Web search IA",
-  "Analytics basiques",
-];
-
-const proFeatures = [
-  "Newsletters illimitées",
-  "Jusqu'à 10 destinataires",
-  "Brief personnalisé",
-  "Thématiques & sources custom",
-  "Analytics complets",
-  "Support prioritaire",
-];
-
-const enterpriseFeatures = [
-  "Tout illimité",
-  "API & intégrations",
-  "CRM connecté",
-  "CSM dédié",
-  "SLA 99,9%",
-];
+// Features arrays are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
   "pro-monthly": "price_1TCQa37A2mOEJEeWkjjKWDQL",
@@ -69,7 +46,34 @@ const PRICE_MAP: Record<string, string> = {
 export default function PricingPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
+
+  const freeFeatures = [
+    t("pricing.free_f1"),
+    t("pricing.free_f2"),
+    t("pricing.free_f3"),
+    t("pricing.free_f4"),
+    t("pricing.free_f5"),
+    t("pricing.free_f6"),
+  ];
+
+  const proFeatures = [
+    t("pricing.pro_f1"),
+    t("pricing.pro_f2"),
+    t("pricing.pro_f3"),
+    t("pricing.pro_f4"),
+    t("pricing.pro_f5"),
+    t("pricing.pro_f6"),
+  ];
+
+  const enterpriseFeatures = [
+    t("pricing.ent_f1"),
+    t("pricing.ent_f2"),
+    t("pricing.ent_f3"),
+    t("pricing.ent_f4"),
+    t("pricing.ent_f5"),
+  ];
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
@@ -123,10 +127,10 @@ export default function PricingPage() {
               marginBottom: 16,
             }}
           >
-            Tarifs simples, sans engagement
+            {t("pricing.title")}
           </h1>
           <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
-            Choisissez le plan adapté à votre équipe. Changez ou annulez à tout moment.
+            {t("pricing.subtitle")}
           </p>
 
           {/* Toggle mensuel / annuel */}
@@ -157,7 +161,7 @@ export default function PricingPage() {
                 boxShadow: period === "monthly" ? "var(--shadow-sm)" : "none",
               }}
             >
-              Mensuel
+              {t("pricing.monthly")}
             </button>
             <button
               onClick={() => setPeriod("annual")}
@@ -176,7 +180,7 @@ export default function PricingPage() {
                 gap: 6,
               }}
             >
-              Annuel
+              {t("pricing.annual")}
               <span
                 style={{
                   fontSize: "0.6875rem",
@@ -207,36 +211,36 @@ export default function PricingPage() {
             }}
           >
             <PricingCard
-              name="Free"
+              name={t("pricing.free")}
               price={0}
               annualPrice={0}
               period={period}
-              tagline="Pour découvrir Sorell"
+              tagline={t("pricing.free_desc")}
               features={freeFeatures}
-              cta="Commencer gratuitement"
+              cta={t("pricing.cta_free")}
               ctaHref="/connexion"
               free
             />
             <PricingCard
-              name="Pro"
+              name={t("pricing.pro")}
               price={19}
               annualPrice={16}
               period={period}
-              tagline="Pour les professionnels"
+              tagline={t("pricing.pro_desc")}
               features={proFeatures}
-              cta="S'abonner"
+              cta={t("pricing.cta_pro")}
               onClick={() => handleCheckout("pro")}
               loading={checkoutLoading === "pro"}
               popular
             />
             <PricingCard
-              name="Enterprise"
+              name={t("pricing.enterprise")}
               price={null}
               annualPrice={null}
               period={period}
-              tagline="Pour les grandes organisations"
+              tagline={t("pricing.enterprise_desc")}
               features={enterpriseFeatures}
-              cta="Nous contacter"
+              cta={t("pricing.cta_enterprise")}
               ctaHref="mailto:murnoe@outlook.fr"
               enterprise
             />
@@ -258,7 +262,7 @@ export default function PricingPage() {
               lineHeight: 1.65,
             }}
           >
-            <span style={{ fontWeight: 600, color: "var(--text)" }}>Tous les plans incluent :</span>{" "}
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>{t("pricing.included_label")}</span>{" "}
             Hébergement sur serveurs européens · Chiffrement AES-256 · RGPD compliant · Mises à jour automatiques · Onboarding guidé · 14 jours d&apos;essai gratuit
           </div>
         </div>
@@ -279,7 +283,7 @@ export default function PricingPage() {
                 marginBottom: "2.5rem",
               }}
             >
-              Questions fréquentes
+              {t("pricing.faq_title")}
             </h2>
           </AnimateOnScroll>
 
@@ -369,17 +373,17 @@ export default function PricingPage() {
               marginBottom: 12,
             }}
           >
-            Toujours des questions ?
+            {t("pricing.still_questions")}
           </h2>
           <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: 28 }}>
-            Notre équipe répond sous 24h.
+            {t("pricing.team_responds")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
             <a href="mailto:contact@sorell.fr" className="btn-ghost" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
-              Nous contacter
+              {t("pricing.contact_us_btn")}
             </a>
             <a href="/demo" className="btn-primary" style={{ padding: "10px 22px", fontSize: "0.875rem" }}>
-              Essayer la démo →
+              {t("pricing.try_demo")}
             </a>
           </div>
         </AnimateOnScroll>
