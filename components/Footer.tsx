@@ -24,6 +24,7 @@ export default function Footer() {
         <SorellLogo size="sm" />
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
+          <Link href="/comment-ca-marche" className="footer-link">Comment ça marche</Link>
           <Link href="/pricing" className="footer-link">Tarifs</Link>
           <Link href="/demo" className="footer-link">Démo</Link>
           <Link href="/contact" className="footer-link">Contact</Link>

@@ -95,6 +95,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/#features", label: "Fonctionnalités" },
+    { href: "/comment-ca-marche", label: "Comment ça marche" },
     { href: "/pricing", label: "Tarifs" },
     { href: "/demo", label: "Démo" },
     { href: "/contact", label: "Contact" },
