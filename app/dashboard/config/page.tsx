@@ -14,14 +14,40 @@ import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 
-const CURATED_SOURCES: Record<string, string[]> = {
-  "Généraliste": ["Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune", "Challenges"],
-  "International": ["Financial Times", "Bloomberg", "Reuters", "The Economist", "Harvard Business Review"],
-  "Tech & Innovation": ["TechCrunch", "The Verge", "Wired", "MIT Technology Review", "L'Usine Digitale", "Maddyness", "FrenchWeb"],
-  "Finance & Économie": ["Capital", "Investir", "Gartner", "McKinsey Insights", "Forrester"],
-  "Santé & Sciences": ["The Lancet", "Nature", "INSERM", "Medscape"],
-  "Spécialisé France": ["L'Usine Nouvelle", "LSA Commerce", "Stratégies", "CB News", "Mind Media"],
-};
+const ALL_SOURCES = [
+  "Les Echos",
+  "Le Monde",
+  "Le Figaro",
+  "BFM Business",
+  "La Tribune",
+  "Challenges",
+  "Financial Times",
+  "Bloomberg",
+  "Reuters",
+  "The Economist",
+  "Harvard Business Review",
+  "TechCrunch",
+  "The Verge",
+  "Wired",
+  "MIT Technology Review",
+  "L'Usine Digitale",
+  "Maddyness",
+  "FrenchWeb",
+  "Capital",
+  "Investir",
+  "McKinsey Insights",
+  "Gartner",
+  "Forrester",
+  "The Lancet",
+  "Nature",
+  "INSERM",
+  "Medscape",
+  "L'Usine Nouvelle",
+  "LSA Commerce",
+  "Stratégies",
+  "CB News",
+  "Mind Media",
+];
 
 const BRIEF_EXAMPLES = [
   {
@@ -129,7 +155,7 @@ export default function ConfigPage() {
 
   const [showExamples, setShowExamples] = useState(false);
   const [showAddTopic, setShowAddTopic] = useState(false);
-  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [showSourcePicker, setShowSourcePicker] = useState(false);
   const [newTopicLabel, setNewTopicLabel] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -447,7 +473,7 @@ export default function ConfigPage() {
               {customBrief.length <= 20 || showExamples ? (
                   <div style={{ marginBottom: 16 }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", margin: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--accent)", margin: 0 }}>
                         Besoin d&apos;inspiration ?
                       </p>
                       {customBrief.length > 20 && showExamples && (
@@ -630,87 +656,84 @@ export default function ConfigPage() {
 
             {/* Curated sources library */}
             <div style={{ marginTop: 20 }}>
-              <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 12 }}>
-                Ou sélectionnez parmi nos sources vérifiées
-              </p>
-              {Object.entries(CURATED_SOURCES).map(([category, items]) => {
-                const selectedCount = items.filter((s) => sources.includes(s)).length;
-                const isOpen = openCategory === category;
-                return (
-                  <div key={category} style={{ marginBottom: 8 }}>
-                    <button
-                      onClick={() => setOpenCategory(isOpen ? null : category)}
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "10px 14px",
-                        background: "var(--surface-alt)",
-                        border: "1px solid var(--border)",
-                        borderRadius: isOpen ? "8px 8px 0 0" : 8,
-                        cursor: "pointer",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        color: "var(--text)",
-                      }}
-                    >
-                      <span>{category}</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        {selectedCount > 0 && (
-                          <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
-                            {selectedCount} sélectionnée{selectedCount > 1 ? "s" : ""}
-                          </span>
+              <button
+                onClick={() => setShowSourcePicker(!showSourcePicker)}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: showSourcePicker ? "8px 8px 0 0" : 8,
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "var(--text)",
+                }}
+              >
+                <span>Sélectionner parmi nos sources vérifiées</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {sources.length > 0 && (
+                    <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
+                      {sources.length} source{sources.length > 1 ? "s" : ""}
+                    </span>
+                  )}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                    style={{ color: "var(--text-muted)", transform: showSourcePicker ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </span>
+              </button>
+              {showSourcePicker && (
+                <div style={{
+                  border: "1px solid var(--border)",
+                  borderTop: "none",
+                  borderRadius: "0 0 8px 8px",
+                  maxHeight: 280,
+                  overflowY: "auto",
+                  background: "var(--surface)",
+                }}>
+                  {ALL_SOURCES.map((source, index) => {
+                    const isSelected = sources.includes(source);
+                    return (
+                      <button
+                        key={source}
+                        onClick={() => {
+                          if (isSelected) {
+                            setSources(sources.filter(s => s !== source));
+                          } else {
+                            setSources([...sources, source]);
+                          }
+                        }}
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "8px 14px",
+                          background: isSelected ? "rgba(37,99,235,0.04)" : "transparent",
+                          border: "none",
+                          borderBottom: index < ALL_SOURCES.length - 1 ? "1px solid var(--border)" : "none",
+                          cursor: "pointer",
+                          fontSize: 13,
+                          color: isSelected ? "var(--accent)" : "var(--text)",
+                          fontWeight: isSelected ? 500 : 400,
+                          textAlign: "left",
+                        }}
+                      >
+                        <span>{source}</span>
+                        {isSelected && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12l5 5L20 7" />
+                          </svg>
                         )}
-                        <svg
-                          width="12" height="12" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                          style={{
-                            color: "var(--text-muted)",
-                            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                            transition: "transform 0.2s ease",
-                          }}
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </span>
-                    </button>
-                    {isOpen && (
-                      <div style={{
-                        padding: "12px 14px",
-                        border: "1px solid var(--border)",
-                        borderTop: "none",
-                        borderRadius: "0 0 8px 8px",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 6,
-                      }}>
-                        {items.map((source) => {
-                          const selected = sources.includes(source);
-                          return (
-                            <button
-                              key={source}
-                              onClick={() => !selected && addCuratedSource(source)}
-                              style={{
-                                padding: "4px 10px",
-                                borderRadius: 20,
-                                fontSize: 12,
-                                cursor: selected ? "default" : "pointer",
-                                border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
-                                background: selected ? "var(--accent)" : "var(--surface-alt)",
-                                color: selected ? "white" : "var(--text-secondary)",
-                                transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
-                              }}
-                            >
-                              {source}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
