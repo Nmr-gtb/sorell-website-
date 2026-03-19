@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     default: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
     template: "%s — Sorell",
   },
-  description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
+  description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
   keywords: ["newsletter IA", "veille sectorielle", "newsletter automatique", "intelligence artificielle", "veille concurrentielle", "newsletter B2B", "newsletter personnalisée", "veille réglementaire"],
   authors: [{ name: "Sorell" }],
   creator: "Sorell",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: "https://sorell.fr",
     siteName: "Sorell",
     title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
-    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
+    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
     images: [
       {
         url: "/og-image.svg",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
-    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour. Gratuit.",
+    description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
     images: ["/og-image.svg"],
   },
   robots: {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
       follow: true,
     },
   },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/icon.svg" },
   alternates: {
     canonical: "https://sorell.fr",
   },
