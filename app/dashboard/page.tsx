@@ -225,7 +225,7 @@ export default function DashboardPage() {
             marginBottom: 6,
           }}
         >
-          Bonjour, {firstName} 👋
+          Bonjour, {firstName}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
           Voici un résumé de votre activité

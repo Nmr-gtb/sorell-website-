@@ -15,38 +15,33 @@ import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 
 const CURATED_SOURCES: Record<string, string[]> = {
-  "Généraliste": ["Les Echos", "Le Monde", "Le Figaro", "La Tribune", "BFM Business", "Challenges"],
+  "Généraliste": ["Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune", "Challenges"],
+  "International": ["Financial Times", "Bloomberg", "Reuters", "The Economist", "Harvard Business Review"],
   "Tech & Innovation": ["TechCrunch", "The Verge", "Wired", "MIT Technology Review", "L'Usine Digitale", "Maddyness", "FrenchWeb"],
-  "Finance & Économie": ["Financial Times", "Bloomberg", "Reuters", "Capital", "Investir"],
+  "Finance & Économie": ["Capital", "Investir", "Gartner", "McKinsey Insights", "Forrester"],
   "Santé & Sciences": ["The Lancet", "Nature", "INSERM", "Medscape"],
-  "International": ["The Economist", "Harvard Business Review", "McKinsey Insights", "Gartner", "Forrester"],
-  "Spécialisé": ["L'Usine Nouvelle", "LSA Commerce", "Stratégies", "CB News", "Mind Media"],
+  "Spécialisé France": ["L'Usine Nouvelle", "LSA Commerce", "Stratégies", "CB News", "Mind Media"],
 };
 
 const BRIEF_EXAMPLES = [
   {
     sector: "Cosmétique & Packaging",
-    icon: "🧴",
     brief: "Notre entreprise fait de la remise en forme de packaging cosmétique (surimpression de listes INCI, étiquetage réglementaire). Je veux suivre chaque semaine : les changements réglementaires européens sur les listes INCI, les nouvelles normes d'étiquetage cosmétique, les rappels produits liés au packaging, et les innovations en impression/packaging durable. Nos concurrents : Autajon, CCL Industries.",
   },
   {
     sector: "SaaS & Tech B2B",
-    icon: "💻",
     brief: "Nous développons un logiciel de gestion de projet pour les PME. Je veux suivre : les levées de fonds et acquisitions dans le secteur project management (Monday, Asana, Notion, ClickUp), les nouvelles fonctionnalités IA intégrées aux outils de productivité, les tendances du marché SaaS B2B en Europe, et les retours d'expérience clients sur l'adoption d'outils no-code/low-code.",
   },
   {
     sector: "Cabinet de conseil",
-    icon: "📊",
     brief: "Cabinet de conseil en transformation digitale, 30 consultants. Je veux que mes équipes reçoivent chaque lundi : les nouvelles réglementations impactant nos clients (RGPD, IA Act, CSRD), les rapports McKinsey/BCG/Gartner récents, les tendances en IA générative appliquée à l'entreprise, et les mouvements stratégiques des Big Four et cabinets concurrents.",
   },
   {
     sector: "Immobilier & Construction",
-    icon: "🏗️",
     brief: "Promoteur immobilier spécialisé dans le logement neuf en Île-de-France. Je veux suivre : les évolutions du PLU et des permis de construire, les prix du foncier et tendances du marché, les nouvelles normes RE2020 et leur impact sur les coûts, les projets de transport (Grand Paris) qui créent des opportunités, et les appels d'offres publics.",
   },
   {
     sector: "E-commerce & Retail",
-    icon: "🛒",
     brief: "Marque DTC de compléments alimentaires, vente en ligne + marketplace. Je veux suivre : les changements réglementaires sur les compléments alimentaires en Europe (DGCCRF, EFSA), les tendances de consommation santé/bien-être, les stratégies d'acquisition des marques concurrentes sur Meta/Google, et les évolutions des algorithmes Amazon/marketplace.",
   },
 ];
@@ -134,6 +129,7 @@ export default function ConfigPage() {
 
   const [showExamples, setShowExamples] = useState(false);
   const [showAddTopic, setShowAddTopic] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [newTopicLabel, setNewTopicLabel] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -492,8 +488,18 @@ export default function ConfigPage() {
                           onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)")}
                           onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)")}
                         >
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
-                            {example.icon} {example.sector}
+                          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{
+                              width: 7,
+                              height: 7,
+                              borderRadius: "50%",
+                              background: "var(--accent)",
+                              display: "inline-block",
+                              flexShrink: 0,
+                            }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
+                              {example.sector}
+                            </span>
                           </span>
                         </button>
                       ))}
@@ -524,10 +530,10 @@ export default function ConfigPage() {
                     Pour un brief efficace, précisez :
                   </p>
                   <ul style={{ margin: 0, padding: 0, listStyle: "none", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
-                    <li>🏢 Votre activité (que fait votre entreprise ?)</li>
-                    <li>🎯 Ce que vous surveillez (réglementation, concurrents, tendances...)</li>
-                    <li>🏭 Vos concurrents (noms précis si possible)</li>
-                    <li>👥 Qui lit la newsletter (direction, technique, commercial...)</li>
+                    <li>• Votre activité (que fait votre entreprise ?)</li>
+                    <li>• Ce que vous surveillez (réglementation, concurrents, tendances...)</li>
+                    <li>• Vos concurrents (noms précis si possible)</li>
+                    <li>• Qui lit la newsletter (direction, technique, commercial...)</li>
                   </ul>
                 </div>
             </>
@@ -624,48 +630,87 @@ export default function ConfigPage() {
 
             {/* Curated sources library */}
             <div style={{ marginTop: 20 }}>
-              <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 12 }}>
                 Ou sélectionnez parmi nos sources vérifiées
               </p>
-              {Object.entries(CURATED_SOURCES).map(([category, items]) => (
-                <div key={category} style={{ marginBottom: 16 }}>
-                  <p
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: "var(--text-muted)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      marginBottom: 8,
-                    }}
-                  >
-                    {category}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {items.map((source) => {
-                      const selected = sources.includes(source);
-                      return (
-                        <button
-                          key={source}
-                          onClick={() => !selected && addCuratedSource(source)}
+              {Object.entries(CURATED_SOURCES).map(([category, items]) => {
+                const selectedCount = items.filter((s) => sources.includes(s)).length;
+                const isOpen = openCategory === category;
+                return (
+                  <div key={category} style={{ marginBottom: 8 }}>
+                    <button
+                      onClick={() => setOpenCategory(isOpen ? null : category)}
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "10px 14px",
+                        background: "var(--surface-alt)",
+                        border: "1px solid var(--border)",
+                        borderRadius: isOpen ? "8px 8px 0 0" : 8,
+                        cursor: "pointer",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: "var(--text)",
+                      }}
+                    >
+                      <span>{category}</span>
+                      <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        {selectedCount > 0 && (
+                          <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
+                            {selectedCount} sélectionnée{selectedCount > 1 ? "s" : ""}
+                          </span>
+                        )}
+                        <svg
+                          width="12" height="12" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                           style={{
-                            padding: "4px 10px",
-                            borderRadius: 20,
-                            fontSize: 12,
-                            cursor: selected ? "default" : "pointer",
-                            border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
-                            background: selected ? "var(--accent)" : "var(--surface-alt)",
-                            color: selected ? "white" : "var(--text-secondary)",
-                            transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+                            color: "var(--text-muted)",
+                            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform 0.2s ease",
                           }}
                         >
-                          {source}
-                        </button>
-                      );
-                    })}
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <div style={{
+                        padding: "12px 14px",
+                        border: "1px solid var(--border)",
+                        borderTop: "none",
+                        borderRadius: "0 0 8px 8px",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 6,
+                      }}>
+                        {items.map((source) => {
+                          const selected = sources.includes(source);
+                          return (
+                            <button
+                              key={source}
+                              onClick={() => !selected && addCuratedSource(source)}
+                              style={{
+                                padding: "4px 10px",
+                                borderRadius: 20,
+                                fontSize: 12,
+                                cursor: selected ? "default" : "pointer",
+                                border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
+                                background: selected ? "var(--accent)" : "var(--surface-alt)",
+                                color: selected ? "white" : "var(--text-secondary)",
+                                transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+                              }}
+                            >
+                              {source}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
