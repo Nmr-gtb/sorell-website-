@@ -52,7 +52,7 @@ export default function CGVPage() {
 
         <Section title="3. Tarifs et abonnements">
           <p>
-            Les tarifs en vigueur sont affichés sur la page de tarification du site (sorell.fr/pricing).
+            Les tarifs en vigueur sont affichés sur la page de tarification du site (sorell.fr/tarifs).
             Les prix sont indiqués en euros TTC.
           </p>
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>

@@ -94,9 +94,9 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const navLinks = [
-    { href: "/#features", label: "Fonctionnalités" },
+    { href: "/#fonctionnalites", label: "Fonctionnalités" },
     { href: "/comment-ca-marche", label: "Comment ça marche" },
-    { href: "/pricing", label: "Tarifs" },
+    { href: "/tarifs", label: "Tarifs" },
     { href: "/demo", label: "Démo" },
     { href: "/contact", label: "Contact" },
   ];
@@ -189,7 +189,7 @@ export default function Navbar() {
           <div style={{ alignItems: "center", gap: 8 }} className="nav-desktop">
             <ThemeToggle />
             <Link
-              href={user ? "/dashboard" : "/login"}
+              href={user ? "/dashboard" : "/connexion"}
               style={{
                 padding: "6px 14px",
                 borderRadius: 6,
@@ -369,7 +369,7 @@ export default function Navbar() {
         {/* CTA buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 20 }}>
           <Link
-            href={user ? "/dashboard" : "/login"}
+            href={user ? "/dashboard" : "/connexion"}
             onClick={close}
             className="mobile-auth-link"
             style={{

@@ -843,7 +843,7 @@ export default function CommentCaMarchePage() {
               }}
             >
               <Link
-                href="/login"
+                href="/connexion"
                 className="btn-primary"
                 style={{ padding: "10px 24px", fontSize: "0.9375rem" }}
               >
@@ -865,7 +865,7 @@ export default function CommentCaMarchePage() {
               }}
             >
               Découvrez aussi nos{" "}
-              <Link href="/pricing" className="link-accent">
+              <Link href="/tarifs" className="link-accent">
                 tarifs
               </Link>{" "}
               — plan gratuit disponible sans carte bancaire.

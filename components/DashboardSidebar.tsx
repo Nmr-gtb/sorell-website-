@@ -206,7 +206,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
               Passez à Pro pour envoyer à votre équipe (jusqu&apos;à 10 destinataires)
             </p>
             <button
-              onClick={() => router.push("/pricing")}
+              onClick={() => router.push("/tarifs")}
               style={{
                 fontSize: 12,
                 fontWeight: 600,

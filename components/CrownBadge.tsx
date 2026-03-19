@@ -7,7 +7,7 @@ export default function CrownBadge({ tooltip }: { tooltip?: string }) {
 
   return (
     <button
-      onClick={() => router.push("/pricing")}
+      onClick={() => router.push("/tarifs")}
       title={tooltip || "Disponible avec un abonnement payant"}
       style={{
         display: "inline-flex",

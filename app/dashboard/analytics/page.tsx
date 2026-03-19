@@ -341,7 +341,7 @@ export default function AnalyticsPage() {
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
             Analytics complets disponibles avec le plan Pro.{" "}
             <button
-              onClick={() => router.push("/pricing")}
+              onClick={() => router.push("/tarifs")}
               style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: 14, padding: 0, textDecoration: "underline" }}
             >
               Voir les plans →

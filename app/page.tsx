@@ -246,7 +246,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FONCTIONNALITÉS ──────────────────────────────────── */}
-      <section id="features" style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 56 }}>
@@ -614,7 +614,7 @@ export default function HomePage() {
 
           <div style={{ textAlign: "center" }}>
             <Link
-              href="/pricing"
+              href="/tarifs"
               className="link-accent"
               style={{ fontSize: "0.9375rem" }}
             >

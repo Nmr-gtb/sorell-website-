@@ -75,7 +75,7 @@ export default function PricingPage() {
 
   const handleCheckout = async (plan: string) => {
     if (!user) {
-      router.push("/login");
+      router.push("/connexion");
       return;
     }
 
@@ -214,7 +214,7 @@ export default function PricingPage() {
               tagline="Pour découvrir Sorell"
               features={freeFeatures}
               cta="Commencer gratuitement"
-              ctaHref="/login"
+              ctaHref="/connexion"
               free
             />
             <PricingCard

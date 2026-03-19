@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       customer_email: userEmail,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr"}/dashboard/profile?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr"}/pricing`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr"}/tarifs`,
       metadata: { userId },
     });
 

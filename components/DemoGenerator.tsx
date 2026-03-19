@@ -750,7 +750,7 @@ export default function DemoGenerator() {
               Créez votre compte gratuitement et personnalisez votre newsletter sectorielle.
             </p>
             <Link
-              href="/login"
+              href="/connexion"
               className="btn-primary"
               style={{ display: "inline-flex", padding: "11px 28px", fontSize: "0.9375rem" }}
             >

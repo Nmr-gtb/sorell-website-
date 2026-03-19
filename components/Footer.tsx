@@ -25,12 +25,12 @@ export default function Footer() {
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
           <Link href="/comment-ca-marche" className="footer-link">Comment ça marche</Link>
-          <Link href="/pricing" className="footer-link">Tarifs</Link>
+          <Link href="/tarifs" className="footer-link">Tarifs</Link>
           <Link href="/demo" className="footer-link">Démo</Link>
           <Link href="/contact" className="footer-link">Contact</Link>
           <Link href="/legal" className="footer-link">Mentions légales</Link>
           <Link href="/cgv" className="footer-link">CGV</Link>
-          <Link href="/privacy" className="footer-link">Confidentialité</Link>
+          <Link href="/confidentialite" className="footer-link">Confidentialité</Link>
         </div>
 
         <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>

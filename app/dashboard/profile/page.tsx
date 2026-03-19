@@ -284,7 +284,7 @@ export default function ProfilePage() {
               {portalLoading ? "Chargement..." : "Gérer mon abonnement →"}
             </button>
           ) : (
-            <Link href="/pricing" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
+            <Link href="/tarifs" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
               Changer de plan →
             </Link>
           )}
