@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import SorellLogo from "./SorellLogo";
 import { useAuth } from "@/lib/AuthContext";
+import LanguageToggle from "./LanguageToggle";
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -187,6 +188,7 @@ export default function Navbar() {
 
           {/* Desktop right */}
           <div style={{ alignItems: "center", gap: 8 }} className="nav-desktop">
+            <LanguageToggle />
             <ThemeToggle />
             <Link
               href={user ? "/dashboard" : "/connexion"}
@@ -219,6 +221,7 @@ export default function Navbar() {
 
           {/* Mobile controls: theme toggle + hamburger */}
           <div style={{ alignItems: "center", gap: 8 }} className="nav-mobile-controls">
+            <LanguageToggle />
             <ThemeToggle />
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
