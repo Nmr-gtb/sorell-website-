@@ -10,7 +10,7 @@ const fr: Record<string, string> = {
   "nav.start": "Commencer",
 
   // Hero
-  "hero.title": "Chaque lundi, votre secteur résumé en 5 minutes",
+  "hero.title": "Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
   "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour.",
   "hero.cta_primary": "Essayer gratuitement",
   "hero.cta_secondary": "Voir un exemple",
