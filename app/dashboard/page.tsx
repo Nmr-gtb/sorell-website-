@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 import { getRecipients, getNewsletterConfig } from "@/lib/database";
+import { supabase } from "@/lib/supabase";
 
 function IconCalendar() {
   return (
@@ -95,22 +96,51 @@ function getNextDate(frequency: string, sendDay: string, sendHour: number): { da
   };
 }
 
+type Newsletter = {
+  id: string;
+  subject: string;
+  sent_at: string | null;
+  generated_at: string | null;
+  status: string;
+  open_count: number;
+  click_count: number;
+  recipient_count: number;
+  content: unknown;
+};
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function countArticles(content: unknown): number | null {
+  if (!content) return null;
+  if (Array.isArray(content)) return content.length;
+  const c = content as Record<string, unknown>;
+  if (Array.isArray(c.articles)) return (c.articles as unknown[]).length;
+  return null;
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
   const [nextNewsletter, setNextNewsletter] = useState<{ date: string; time: string } | null>(null);
   const [loadingData, setLoadingData] = useState(true);
-  const [openRate, setOpenRate] = useState<number | null>(null);
-  const [articleCount, setArticleCount] = useState<number | null>(null);
+  const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
+  const [loadingNewsletter, setLoadingNewsletter] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
     async function loadData() {
-      const [recipientsResult, configResult, analyticsRes] = await Promise.all([
+      const [recipientsResult, configResult] = await Promise.all([
         getRecipients(user!.id),
         getNewsletterConfig(user!.id),
-        fetch(`/api/analytics?userId=${user!.id}`).then((r) => r.json()).catch(() => null),
       ]);
 
       setRecipientCount(recipientsResult.data.length);
@@ -120,21 +150,40 @@ export default function DashboardPage() {
       const hour = configResult.data?.send_hour ?? 9;
       setNextNewsletter(getNextDate(freq, day, hour));
 
-      if (analyticsRes && analyticsRes.totalSent > 0) {
-        setOpenRate(analyticsRes.openRate);
-        setArticleCount(analyticsRes.newsletters?.[0]?.articleCount ?? null);
-      }
-
       setLoadingData(false);
     }
 
     loadData();
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    supabase
+      .from("newsletters")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("generated_at", { ascending: false })
+      .limit(1)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setLastNewsletter(data[0] as Newsletter);
+        }
+        setLoadingNewsletter(false);
+      });
+  }, [user]);
+
   const firstName =
     user?.user_metadata?.full_name?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
     "vous";
+
+  const lastOpenRate =
+    lastNewsletter && lastNewsletter.recipient_count > 0
+      ? Math.round((lastNewsletter.open_count / lastNewsletter.recipient_count) * 100)
+      : null;
+
+  const lastArticleCount = lastNewsletter ? countArticles(lastNewsletter.content) : null;
 
   const metrics = [
     {
@@ -151,15 +200,15 @@ export default function DashboardPage() {
     },
     {
       icon: <IconEye />,
-      value: loadingData ? "..." : openRate !== null ? `${openRate}%` : "—",
+      value: loadingNewsletter ? "..." : lastOpenRate !== null ? `${lastOpenRate}%` : "—",
       sublabel: "",
-      label: "Taux d'ouverture moyen",
+      label: "Taux d'ouverture (dernière)",
     },
     {
       icon: <IconDocument />,
-      value: loadingData ? "..." : articleCount !== null ? String(articleCount) : "—",
-      sublabel: "sélectionnés",
-      label: "Articles cette semaine",
+      value: loadingNewsletter ? "..." : lastArticleCount !== null ? String(lastArticleCount) : "—",
+      sublabel: lastArticleCount !== null ? "articles" : "",
+      label: "Articles (dernière newsletter)",
     },
   ];
 
@@ -239,32 +288,71 @@ export default function DashboardPage() {
             marginBottom: 16,
           }}
         >
-          Dernière newsletter envoyée
+          Dernière newsletter
         </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Date d&apos;envoi</span>
-            <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>17 mars 2026</span>
+        {loadingNewsletter ? (
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+        ) : lastNewsletter === null ? (
+          <div style={{ textAlign: "center", padding: "16px 0" }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+              Aucune newsletter envoyée
+            </p>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20 }}>
+              Configurez vos thématiques et générez votre première newsletter.
+            </p>
+            <Link href="/dashboard/generate" className="btn-primary" style={{ padding: "10px 20px", fontSize: 14 }}>
+              Générer ma première newsletter →
+            </Link>
           </div>
-          <div style={{ height: 1, background: "var(--border)" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Sujet</span>
-            <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>Briefing S12 — IA & Réglementation</span>
-          </div>
-          <div style={{ height: 1, background: "var(--border)" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Taux d&apos;ouverture</span>
-            <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>68%</span>
-          </div>
-          <div style={{ height: 1, background: "var(--border)" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Nombre de clics</span>
-            <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>34</span>
-          </div>
-        </div>
-        <button className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
-          Voir le détail
-        </button>
+        ) : (
+          <>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+                  {lastNewsletter.status === "sent" ? "Date d'envoi" : "Générée le"}
+                </span>
+                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
+                  {lastNewsletter.sent_at
+                    ? formatDate(lastNewsletter.sent_at)
+                    : lastNewsletter.generated_at
+                    ? formatDate(lastNewsletter.generated_at)
+                    : "—"}
+                </span>
+              </div>
+              <div style={{ height: 1, background: "var(--border)" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Sujet</span>
+                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500, textAlign: "right", maxWidth: "60%" }}>
+                  {lastNewsletter.subject || "—"}
+                </span>
+              </div>
+              <div style={{ height: 1, background: "var(--border)" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Statut</span>
+                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
+                  {lastNewsletter.status === "sent" ? "Envoyée" : "Brouillon"}
+                </span>
+              </div>
+              <div style={{ height: 1, background: "var(--border)" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Taux d&apos;ouverture</span>
+                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
+                  {lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
+                </span>
+              </div>
+              <div style={{ height: 1, background: "var(--border)" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Nombre de clics</span>
+                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
+                  {lastNewsletter.click_count ?? "—"}
+                </span>
+              </div>
+            </div>
+            <Link href="/dashboard/generate" className="btn-ghost" style={{ fontSize: 13, padding: "6px 14px" }}>
+              Générer une nouvelle →
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Quick actions */}
