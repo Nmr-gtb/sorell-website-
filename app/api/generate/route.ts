@@ -108,9 +108,11 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       };
     }
 
-    const today = new Date();
-    const weekNum = Math.ceil(today.getDate() / 7);
-    const subject = `Briefing S${weekNum} — ${topicsList.split(",").slice(0, 2).join(" &")}`;
+    const featuredArticle = newsletterContent.articles.find((a: { featured: boolean }) => a.featured) || newsletterContent.articles[0];
+    const dateLabel = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+    const subject = featuredArticle
+      ? `${featuredArticle.tag} — ${featuredArticle.title.slice(0, 60)}`
+      : `Votre veille du ${dateLabel}`;
 
     const { data: newsletter, error } = await supabase
       .from("newsletters")

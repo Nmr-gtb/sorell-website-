@@ -143,8 +143,11 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       }
       const articles = newsletterContent.articles;
 
-      const mainTopic = newsletterContent.articles.find((a: { featured: boolean }) => a.featured)?.tag || "Actualités";
-      const subject = `${mainTopic} — Briefing du ${franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`;
+      const dateLabel = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+      const subjectArticle = articles.find((a: { featured: boolean }) => a.featured) || articles[0];
+      const subject = subjectArticle
+        ? `${subjectArticle.tag} — ${subjectArticle.title.slice(0, 60)}`
+        : `Votre veille du ${dateLabel}`;
 
       const { data: newsletter } = await supabase
         .from("newsletters")

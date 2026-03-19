@@ -278,6 +278,28 @@ export default function GeneratePage() {
             </div>
           )}
 
+          {/* Automation info */}
+          <div style={{
+            background: "rgba(37,99,235,0.04)",
+            border: "1px solid rgba(37,99,235,0.12)",
+            borderRadius: 10,
+            padding: "16px 20px",
+            marginBottom: 24,
+            display: "flex",
+            gap: 12,
+            alignItems: "flex-start",
+          }}>
+            <span style={{ fontSize: 20, flexShrink: 0 }}>⚡</span>
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+                Vos newsletters sont envoyées automatiquement
+              </p>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
+                Une fois configuré, Sorell génère et envoie votre newsletter au jour et à l&apos;heure choisis dans l&apos;onglet Newsletter. Vous pouvez aussi en générer une manuellement ici.
+              </p>
+            </div>
+          </div>
+
           {generateError && (
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{generateError}</p>
           )}

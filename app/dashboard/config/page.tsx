@@ -751,13 +751,29 @@ export default function ConfigPage() {
                 </select>
               </div>
             </div>
-            <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 14, marginBottom: 0 }}>
-              {frequency === "weekly"
-                ? `Votre newsletter sera envoyée chaque ${
-                    { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche" }[sendDay] ?? sendDay
-                  } à ${sendHour}h00`
-                : `Votre newsletter sera envoyée le ${sendDay === "1st" ? "1er" : "15"} de chaque mois à ${sendHour}h00`}
-            </p>
+            {(() => {
+              const dayLabels: Record<string, string> = {
+                monday: "lundi", tuesday: "mardi", wednesday: "mercredi",
+                thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche",
+              };
+              const dayText = frequency === "weekly"
+                ? dayLabels[sendDay] || sendDay
+                : `le ${sendDay === "1st" ? "1er" : "15"} de chaque mois`;
+              return (
+                <div style={{
+                  marginTop: 12,
+                  padding: "10px 14px",
+                  background: "rgba(16,185,129,0.06)",
+                  border: "1px solid rgba(16,185,129,0.15)",
+                  borderRadius: 8,
+                  fontSize: 13,
+                  color: "#059669",
+                  lineHeight: 1.5,
+                }}>
+                  ✓ Votre newsletter sera générée et envoyée automatiquement chaque {dayText} à {sendHour}h00. Aucune action requise.
+                </div>
+              );
+            })()}
           </div>
 
           {/* Recipients card */}
