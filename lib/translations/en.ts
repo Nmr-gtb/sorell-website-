@@ -152,10 +152,24 @@ const en: Record<string, string> = {
   "dash.overview": "Overview",
   "dash.newsletter": "Settings",
   "dash.generate": "Preview",
+  "dash.customization": "Customization",
   "dash.analytics": "Analytics",
   "dash.profile": "Profile",
   "dash.upgrade_text": "Upgrade to Pro to send to your team (up to 10 recipients)",
   "dash.upgrade_btn": "See plans →",
+
+  // Customization page
+  "custom.title": "Customization",
+  "custom.color_title": "Brand color",
+  "custom.color_desc": "Choose the main color for your newsletter.",
+  "custom.logo_title": "Custom logo",
+  "custom.logo_desc": "Enter your logo URL to replace 'Sorell' in your newsletters.",
+  "custom.logo_placeholder": "https://yoursite.com/logo.png",
+  "custom.save": "Save",
+  "custom.saved": "Customization saved",
+  "custom.locked_title": "Customization available with Pro plan",
+  "custom.locked_desc": "Customize your newsletters with your brand identity.",
+  "custom.upgrade": "Upgrade to Pro",
 
   // Footer
   "footer.rights": "All rights reserved.",

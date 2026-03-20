@@ -152,10 +152,24 @@ const fr: Record<string, string> = {
   "dash.overview": "Vue d'ensemble",
   "dash.newsletter": "Configuration",
   "dash.generate": "Aperçu",
+  "dash.customization": "Personnalisation",
   "dash.analytics": "Analytics",
   "dash.profile": "Profil",
   "dash.upgrade_text": "Passez à Pro pour envoyer à votre équipe (jusqu'à 10 destinataires)",
   "dash.upgrade_btn": "Voir les plans →",
+
+  // Customization page
+  "custom.title": "Personnalisation",
+  "custom.color_title": "Couleur dominante",
+  "custom.color_desc": "Choisissez la couleur principale de votre newsletter.",
+  "custom.logo_title": "Logo personnalisé",
+  "custom.logo_desc": "Entrez l'URL de votre logo pour remplacer 'Sorell' dans vos newsletters.",
+  "custom.logo_placeholder": "https://votresite.com/logo.png",
+  "custom.save": "Sauvegarder",
+  "custom.saved": "Personnalisation sauvegardée",
+  "custom.locked_title": "Personnalisation disponible avec le plan Pro",
+  "custom.locked_desc": "Personnalisez vos newsletters avec votre identité visuelle.",
+  "custom.upgrade": "Passer au Pro",
 
   // Footer
   "footer.rights": "Tous droits réservés.",

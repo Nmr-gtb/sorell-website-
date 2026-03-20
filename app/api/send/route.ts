@@ -22,6 +22,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Newsletter not found" }, { status: 404 });
     }
 
+    const { data: config } = await supabase
+      .from("newsletter_config")
+      .select("brand_color, custom_logo_url")
+      .eq("user_id", newsletter.user_id)
+      .single();
+
+    const brandColor = config?.brand_color || "#2563EB";
+    const customLogo = config?.custom_logo_url || null;
+
     const { data: recipients } = await supabase
       .from("recipients")
       .select("*")
@@ -59,11 +68,14 @@ export async function POST(request: Request) {
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
 
     <!-- Header -->
-    <div style="padding:28px 32px;border-bottom:2px solid #2563EB;">
+    <div style="padding:28px 32px;border-bottom:2px solid ${brandColor};">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td>
-            <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#2563EB;">l</span></span>
+            ${customLogo
+              ? `<img src="${customLogo}" alt="Logo" style="max-height:36px;max-width:180px;" />`
+              : `<span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:${brandColor};">l</span></span>`
+            }
           </td>
           <td align="right">
             <span style="font-size:12px;color:#9CA3AF;">${new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
@@ -81,8 +93,8 @@ export async function POST(request: Request) {
     ${editorial ? `
     <!-- Éditorial -->
     <div style="padding:0 32px 24px;">
-      <div style="border-left:3px solid #2563EB;padding:16px 20px;background:#F8FAFC;border-radius:0 8px 8px 0;">
-        <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px;">Éditorial</p>
+      <div style="border-left:3px solid ${brandColor};padding:16px 20px;background:#F8FAFC;border-radius:0 8px 8px 0;">
+        <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px;">Éditorial</p>
         <p style="font-size:14px;color:#374151;line-height:1.65;margin:0;font-style:italic;">${editorial}</p>
       </div>
     </div>
@@ -91,12 +103,12 @@ export async function POST(request: Request) {
     ${keyFigures.length > 0 ? `
     <!-- Chiffres clés -->
     <div style="padding:0 32px 24px;">
-      <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;">Chiffres clés</p>
+      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;">Chiffres clés</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           ${keyFigures.map(fig => `
           <td style="padding:12px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;text-align:center;width:${Math.floor(100 / keyFigures.length)}%;">
-            <div style="font-size:22px;font-weight:700;color:#2563EB;letter-spacing:-0.02em;margin-bottom:4px;">${fig.value}</div>
+            <div style="font-size:22px;font-weight:700;color:${brandColor};letter-spacing:-0.02em;margin-bottom:4px;">${fig.value}</div>
             <div style="font-size:12px;color:#111827;font-weight:500;margin-bottom:2px;">${fig.label}</div>
             <div style="font-size:11px;color:#9CA3AF;">${fig.context}</div>
           </td>
@@ -112,7 +124,7 @@ export async function POST(request: Request) {
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td>
-              <span style="display:inline-block;padding:3px 10px;border-radius:4px;background:#2563EB;color:white;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Article phare · ${featuredArticle.tag}</span>
+              <span style="display:inline-block;padding:3px 10px;border-radius:4px;background:${brandColor};color:white;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Article phare · ${featuredArticle.tag}</span>
             </td>
           </tr>
         </table>
@@ -122,13 +134,13 @@ export async function POST(request: Request) {
         ${featuredArticle.hook ? `<p style="font-size:14px;color:#4B5563;margin:0 0 10px;font-weight:500;font-style:italic;">${featuredArticle.hook}</p>` : ""}
         <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
         <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
-        ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
+        ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
     </div>
 
     <!-- Autres articles -->
     <div style="padding:0 32px 16px;">
-      <p style="font-size:11px;font-weight:600;color:#2563EB;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;">Les actus de la semaine</p>
+      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;">Les actus de la semaine</p>
       ${otherArticles.map((a, i) => `
       <div style="padding:20px 0;${i < otherArticles.length - 1 ? "border-bottom:1px solid #E5E7EB;" : ""}">
         <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
@@ -144,7 +156,7 @@ export async function POST(request: Request) {
         ${a.hook ? `<p style="font-size:13px;color:#4B5563;margin:0 0 8px;font-weight:500;font-style:italic;">${a.hook}</p>` : ""}
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
         <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
-        ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
+        ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
       `).join("")}
     </div>
@@ -152,7 +164,7 @@ export async function POST(request: Request) {
     <!-- CTA -->
     <div style="padding:24px 32px;text-align:center;">
       <p style="font-size:14px;color:#6B7280;margin:0 0 12px;">Cette newsletter vous a été utile ?</p>
-      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:10px 24px;background:#2563EB;color:white;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;">Partager avec votre équipe</a>
+      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:10px 24px;background:${brandColor};color:white;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;">Partager avec votre équipe</a>
     </div>
 
     <!-- Footer -->
@@ -160,10 +172,13 @@ export async function POST(request: Request) {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td>
-            <span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:#2563EB;">l</span></span>
+            ${customLogo
+              ? `<img src="${customLogo}" alt="Logo" style="max-height:28px;max-width:140px;" />`
+              : `<span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:${brandColor};">l</span></span>`
+            }
           </td>
           <td align="right">
-            <a href="https://sorell.fr" style="font-size:12px;color:#2563EB;text-decoration:none;">sorell.fr</a>
+            <a href="https://sorell.fr" style="font-size:12px;color:${brandColor};text-decoration:none;">sorell.fr</a>
           </td>
         </tr>
       </table>
