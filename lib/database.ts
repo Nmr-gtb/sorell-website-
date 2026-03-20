@@ -108,3 +108,18 @@ export async function getMonthlyNewsletterCount(userId: string) {
 
   return { count: data?.length || 0, error };
 }
+
+export async function getMonthlyManualCount(userId: string) {
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const { count, error } = await supabase
+    .from("newsletters")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("status", "draft")
+    .gte("generated_at", startOfMonth.toISOString());
+
+  return { count: count || 0, error };
+}

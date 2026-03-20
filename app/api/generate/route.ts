@@ -16,6 +16,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing userId or topics" }, { status: 400 });
     }
 
+    const { data: profile } = await supabase.from("profiles").select("plan").eq("id", userId).single();
+    const plan = profile?.plan || "free";
+
+    if (plan === "free") {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { count } = await supabase
+        .from("newsletters")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("status", "draft")
+        .gte("generated_at", startOfMonth.toISOString());
+
+      if ((count || 0) >= 4) {
+        return NextResponse.json(
+          { error: "Limite de 4 aperçus par mois atteinte. Passez au plan Pro pour des aperçus illimités." },
+          { status: 403 }
+        );
+      }
+    }
+
     const topicsList = topics
       .filter((t: { enabled: boolean }) => t.enabled)
       .map((t: { label: string }) => t.label)

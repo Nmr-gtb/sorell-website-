@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { getNewsletterConfig, getRecipients, getProfile, getMonthlyNewsletterCount } from "@/lib/database";
-import { getPlanLimits } from "@/lib/plans";
+import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount } from "@/lib/database";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 
@@ -102,7 +101,7 @@ export default function GeneratePage() {
         getNewsletterConfig(user!.id),
         getRecipients(user!.id),
         getProfile(user!.id),
-        getMonthlyNewsletterCount(user!.id),
+        getMonthlyManualCount(user!.id),
       ]);
       if (configResult.data) {
         setTopics(configResult.data.topics ?? []);
@@ -123,8 +122,7 @@ export default function GeneratePage() {
   }, [user]);
 
   const plan = getEffectivePlan(realPlan);
-  const limits = getPlanLimits(plan);
-  const isAtGenerationLimit = limits.generationsPerMonth !== -1 && generatedThisMonth >= limits.generationsPerMonth;
+  const isAtGenerationLimit = plan === "free" && generatedThisMonth >= 4;
 
   const activeTopics = topics.filter((t) => t.enabled);
 
@@ -195,9 +193,9 @@ export default function GeneratePage() {
   const otherArticles = articles.filter((a) => a !== featuredArticle);
   const successCount = sendResults?.filter((r) => r.success).length ?? 0;
 
-  const generationLimitLabel = limits.generationsPerMonth === -1
-    ? "Illimité"
-    : `${generatedThisMonth} / ${limits.generationsPerMonth} génération${limits.generationsPerMonth > 1 ? "s" : ""} ce mois`;
+  const generationLimitLabel = plan === "free"
+    ? `${generatedThisMonth} / 4 aperçus ce mois`
+    : "Aperçus : Illimité";
 
   return (
     <div style={{ padding: "32px", maxWidth: 760 }}>
@@ -270,7 +268,7 @@ export default function GeneratePage() {
               )}
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Générations ce mois</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Aperçus ce mois</span>
                 <span style={{ fontSize: 14, color: isAtGenerationLimit ? "var(--error)" : "var(--text)", fontWeight: 500 }}>
                   {generationLimitLabel}
                 </span>
@@ -309,12 +307,12 @@ export default function GeneratePage() {
           {isAtGenerationLimit ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <p style={{ fontSize: 14, color: "var(--text-muted)", margin: 0 }}>
-                Vous avez atteint votre limite de {limits.generationsPerMonth} génération(s) ce mois-ci.
+                Vous avez atteint votre limite de 4 aperçus ce mois-ci.
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <CrownBadge tooltip="Générations illimitées avec le plan Pro" />
+                <CrownBadge tooltip="Aperçus illimités avec le plan Pro" />
                 <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  Passez au plan supérieur pour des générations illimitées
+                  <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>Passer au Pro</a> pour des aperçus illimités
                 </span>
               </div>
             </div>

@@ -58,6 +58,24 @@ export async function GET(request: Request) {
         if (lastSentFrance.toDateString() === franceTime.toDateString()) continue;
       }
 
+      const { data: profile } = await supabase.from("profiles").select("plan").eq("id", config.user_id).single();
+      const userPlan = profile?.plan || "free";
+
+      if (userPlan === "free") {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { count } = await supabase
+          .from("newsletters")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", config.user_id)
+          .eq("status", "sent")
+          .gte("generated_at", startOfMonth.toISOString());
+
+        if ((count || 0) >= 4) continue;
+      }
+
       const topics = (config.topics ?? []).filter((t: { enabled: boolean }) => t.enabled).map((t: { label: string }) => t.label).join(", ");
       const sources = (config.sources ?? []).join(", ");
       const customBrief = config.custom_brief ?? "";
