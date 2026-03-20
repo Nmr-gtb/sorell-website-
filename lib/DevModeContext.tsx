@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 const ADMIN_EMAIL = "mur.noe.celony@gmail.com";
 
@@ -31,6 +32,13 @@ export function DevModeProvider({ children }: { children: ReactNode }) {
 
   const toggleDevMode = () => setDevMode((prev) => !prev);
 
+  const handleSetSimulatedPlan = async (plan: string) => {
+    setSimulatedPlan(plan);
+    if (user?.id) {
+      await supabase.from("profiles").update({ plan }).eq("id", user.id);
+    }
+  };
+
   const getEffectivePlan = (realPlan: string) => {
     if (!isAdmin) return realPlan;
     if (devMode) return "enterprise";
@@ -38,7 +46,7 @@ export function DevModeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <DevModeContext.Provider value={{ isAdmin, devMode, simulatedPlan, toggleDevMode, setSimulatedPlan, getEffectivePlan }}>
+    <DevModeContext.Provider value={{ isAdmin, devMode, simulatedPlan, toggleDevMode, setSimulatedPlan: handleSetSimulatedPlan, getEffectivePlan }}>
       {children}
     </DevModeContext.Provider>
   );
