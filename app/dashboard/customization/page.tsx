@@ -3,6 +3,7 @@
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS custom_logo_url text DEFAULT NULL;
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS text_color text DEFAULT '#111827';
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS bg_color text DEFAULT '#FFFFFF';
+// ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS body_text_color text DEFAULT '#4B5563';
 
 // NOTE: Dans Supabase -> Storage -> logos -> Policies, ajouter :
 // INSERT policy : authenticated users can upload to their own folder (storage.foldername(name))[1] = auth.uid()
@@ -38,6 +39,7 @@ export default function CustomizationPage() {
   const [brandColor, setBrandColor] = useState("#2563EB");
   const [textColor, setTextColor] = useState("#111827");
   const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [bodyTextColor, setBodyTextColor] = useState("#4B5563");
   const [logoUrl, setLogoUrl] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -63,7 +65,7 @@ export default function CustomizationPage() {
 
     supabase
       .from("newsletter_config")
-      .select("brand_color, custom_logo_url, text_color, bg_color")
+      .select("brand_color, custom_logo_url, text_color, bg_color, body_text_color")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -71,6 +73,7 @@ export default function CustomizationPage() {
         if (data?.custom_logo_url) setLogoUrl(data.custom_logo_url);
         if (data?.text_color) setTextColor(data.text_color);
         if (data?.bg_color) setBgColor(data.bg_color);
+        if (data?.body_text_color) setBodyTextColor(data.body_text_color);
       });
   }, [user]);
 
@@ -137,6 +140,7 @@ export default function CustomizationPage() {
         custom_logo_url: finalLogoUrl || null,
         text_color: textColor,
         bg_color: bgColor,
+        body_text_color: bodyTextColor,
       })
       .eq("user_id", user.id);
 
@@ -379,6 +383,33 @@ export default function CustomizationPage() {
               </div>
             </div>
           </div>
+
+          {/* Card Couleur des textes */}
+          <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur des textes</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Contenu, accroches, sources</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
+              <input
+                type="color"
+                value={bodyTextColor}
+                onChange={(e) => setBodyTextColor(e.target.value)}
+                style={{ width: 40, height: 40, border: "none", cursor: "pointer", borderRadius: 8, padding: 2, flexShrink: 0 }}
+              />
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 3 }}>Code HEX</label>
+                <input
+                  type="text"
+                  value={bodyTextColor}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBodyTextColor(val);
+                  }}
+                  placeholder="#4B5563"
+                  style={{ width: "100%", padding: "5px 8px", fontSize: 13, borderRadius: 6, border: "1px solid var(--border)", background: "var(--surface-alt)", color: "var(--text)", fontFamily: "monospace", boxSizing: "border-box" }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -534,8 +565,8 @@ export default function CustomizationPage() {
             <div style={{ background: `${brandColor}11`, borderRadius: 8, padding: 16, border: `1px solid ${brandColor}33` }}>
               <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 4, background: brandColor, color: "white", fontSize: 9, fontWeight: 700, textTransform: "uppercase" }}>Article phare</span>
               <p style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0 4px" }}>Un exemple d&apos;article mis en avant</p>
-              <p style={{ fontSize: 12, color: "#4B5563", fontStyle: "italic", margin: "0 0 6px" }}>Accroche de l&apos;article en gris italique</p>
-              <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>Contenu de l&apos;article avec des détails concrets...</p>
+              <p style={{ fontSize: 12, color: bodyTextColor, fontStyle: "italic", margin: "0 0 6px" }}>Accroche de l&apos;article en gris italique</p>
+              <p style={{ fontSize: 12, color: bodyTextColor, margin: 0 }}>Contenu de l&apos;article avec des détails concrets...</p>
             </div>
           </div>
           {/* Article normal */}

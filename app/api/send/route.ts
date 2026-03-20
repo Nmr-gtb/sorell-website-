@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     const { data: config } = await supabase
       .from("newsletter_config")
-      .select("brand_color, custom_logo_url, text_color, bg_color")
+      .select("brand_color, custom_logo_url, text_color, bg_color, body_text_color")
       .eq("user_id", newsletter.user_id)
       .single();
 
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     const customLogo = config?.custom_logo_url || null;
     const textColor = config?.text_color || "#111827";
     const bgColor = config?.bg_color || "#FFFFFF";
+    const bodyTextColor = config?.body_text_color || "#4B5563";
 
     const { data: recipients } = await supabase
       .from("recipients")
@@ -97,7 +98,7 @@ export async function POST(request: Request) {
     <div style="padding:0 32px 24px;">
       <div style="border-left:3px solid ${brandColor};padding:16px 20px;background:#F8FAFC;border-radius:0 8px 8px 0;">
         <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px;">Éditorial</p>
-        <p style="font-size:14px;color:#374151;line-height:1.65;margin:0;font-style:italic;">${editorial}</p>
+        <p style="font-size:14px;color:${bodyTextColor};line-height:1.65;margin:0;font-style:italic;">${editorial}</p>
       </div>
     </div>
     ` : ""}
@@ -133,8 +134,8 @@ export async function POST(request: Request) {
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h2 style="font-size:18px;font-weight:700;color:${textColor};margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
         </a>
-        ${featuredArticle.hook ? `<p style="font-size:14px;color:#4B5563;margin:0 0 10px;font-weight:500;font-style:italic;">${featuredArticle.hook}</p>` : ""}
-        <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
+        ${featuredArticle.hook ? `<p style="font-size:14px;color:${bodyTextColor};margin:0 0 10px;font-weight:500;font-style:italic;">${featuredArticle.hook}</p>` : ""}
+        <p style="font-size:14px;color:${bodyTextColor};line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
         <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
         ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
@@ -155,8 +156,8 @@ export async function POST(request: Request) {
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h3 style="font-size:16px;font-weight:600;color:${textColor};margin:0 0 6px;line-height:1.35;">${a.title}</h3>
         </a>
-        ${a.hook ? `<p style="font-size:13px;color:#4B5563;margin:0 0 8px;font-weight:500;font-style:italic;">${a.hook}</p>` : ""}
-        <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
+        ${a.hook ? `<p style="font-size:13px;color:${bodyTextColor};margin:0 0 8px;font-weight:500;font-style:italic;">${a.hook}</p>` : ""}
+        <p style="font-size:13px;color:${bodyTextColor};line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
         <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
         ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>

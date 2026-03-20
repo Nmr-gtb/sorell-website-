@@ -101,6 +101,7 @@ export default function GeneratePage() {
   const [customLogo, setCustomLogo] = useState<string | null>(null);
   const [textColor, setTextColor] = useState("#111827");
   const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [bodyTextColor, setBodyTextColor] = useState("#4B5563");
 
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<SendResult[] | null>(null);
@@ -126,6 +127,7 @@ export default function GeneratePage() {
         if (configResult.data.custom_logo_url) setCustomLogo(configResult.data.custom_logo_url);
         if (configResult.data.text_color) setTextColor(configResult.data.text_color);
         if (configResult.data.bg_color) setBgColor(configResult.data.bg_color);
+        if (configResult.data.body_text_color) setBodyTextColor(configResult.data.body_text_color);
       }
       setRecipientCount(recipientsResult.data.length);
       if (profileResult.data?.plan) {
@@ -477,7 +479,7 @@ export default function GeneratePage() {
                   <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
                     Éditorial
                   </p>
-                  <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.65, margin: 0, fontStyle: "italic" }}>
+                  <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: 0, fontStyle: "italic" }}>
                     {editorial}
                   </p>
                 </div>
@@ -522,11 +524,11 @@ export default function GeneratePage() {
                   {featuredArticle.title}
                 </h2>
                 {featuredArticle.hook && (
-                  <p style={{ fontSize: 14, color: "#4B5563", margin: "0 0 8px", fontWeight: 400, fontStyle: "italic" }}>
+                  <p style={{ fontSize: 14, color: bodyTextColor, margin: "0 0 8px", fontWeight: 400, fontStyle: "italic" }}>
                     {featuredArticle.hook}
                   </p>
                 )}
-                <p style={{ fontSize: 14, color: "#4B5563", lineHeight: 1.65, margin: "0 0 10px" }}>
+                <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 10px" }}>
                   {featuredArticle.content || featuredArticle.summary}
                 </p>
                 <span style={{ fontSize: 12, color: "#9CA3AF" }}>Source : {featuredArticle.source}</span>
@@ -564,11 +566,11 @@ export default function GeneratePage() {
                     {article.title}
                   </h3>
                   {article.hook && (
-                    <p style={{ fontSize: 13, color: "#4B5563", margin: "0 0 6px", fontWeight: 400, fontStyle: "italic" }}>
+                    <p style={{ fontSize: 13, color: bodyTextColor, margin: "0 0 6px", fontWeight: 400, fontStyle: "italic" }}>
                       {article.hook}
                     </p>
                   )}
-                  <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.6, margin: "0 0 6px" }}>
+                  <p style={{ fontSize: 13, color: bodyTextColor, lineHeight: 1.6, margin: "0 0 6px" }}>
                     {article.content || article.summary}
                   </p>
                   <span style={{ fontSize: 11, color: "#9CA3AF" }}>Source : {article.source}</span>
