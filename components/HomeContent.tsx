@@ -70,7 +70,7 @@ export default function HomeContent() {
       name: t("pricing.free"),
       price: t("pricing.free_price"),
       desc: t("pricing.free_desc"),
-      features: [t("pricing.free_f1"), t("pricing.free_f2"), t("pricing.free_f3")],
+      features: [t("pricing.free_f1"), t("pricing.free_f2"), t("pricing.free_f3"), t("pricing.free_f7")],
       popular: false,
       isFree: true,
       isEnterprise: false,

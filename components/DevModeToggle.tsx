@@ -2,7 +2,7 @@
 
 import { useDevMode } from "@/lib/DevModeContext";
 
-const PLANS = ["free", "solo", "pro", "enterprise"] as const;
+const PLANS = ["free", "pro", "enterprise"] as const;
 
 export default function DevModeToggle() {
   const { isAdmin, devMode, simulatedPlan, toggleDevMode, setSimulatedPlan } = useDevMode();

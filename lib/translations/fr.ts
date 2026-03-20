@@ -86,6 +86,7 @@ const fr: Record<string, string> = {
   "pricing.free_f4": "Thématiques & sources au choix",
   "pricing.free_f5": "Web search IA",
   "pricing.free_f6": "Analytics basiques",
+  "pricing.free_f7": "4 aperçus manuels par mois",
   "pricing.pro_f1": "Newsletters illimitées",
   "pricing.pro_f2": "Jusqu'à 10 destinataires",
   "pricing.pro_f3": "Brief personnalisé",

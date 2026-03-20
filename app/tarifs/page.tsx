@@ -43,6 +43,7 @@ export default function PricingPage() {
     t("pricing.free_f4"),
     t("pricing.free_f5"),
     t("pricing.free_f6"),
+    t("pricing.free_f7"),
   ];
 
   const proFeatures = [
