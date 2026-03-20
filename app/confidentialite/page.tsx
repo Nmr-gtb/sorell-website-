@@ -39,7 +39,7 @@ export default function PrivacyPage() {
             Le responsable du traitement des données personnelles est Noé Mur, entrepreneur individuel.
           </p>
           <ul style={{ marginTop: "0.5rem" }}>
-            <li>Email : <a href="mailto:murnoe@outlook.fr" style={{ color: "var(--accent)" }}>murnoe@outlook.fr</a></li>
+            <li>Email : <a href="mailto:noe@sorell.fr" style={{ color: "var(--accent)" }}>noe@sorell.fr</a></li>
           </ul>
         </Section>
 
@@ -112,7 +112,7 @@ export default function PrivacyPage() {
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Pour exercer vos droits, contactez-nous à{" "}
-            <a href="mailto:murnoe@outlook.fr" style={{ color: "var(--accent)" }}>murnoe@outlook.fr</a>.
+            <a href="mailto:noe@sorell.fr" style={{ color: "var(--accent)" }}>noe@sorell.fr</a>.
             Nous répondrons dans un délai de 30 jours.
           </p>
         </Section>

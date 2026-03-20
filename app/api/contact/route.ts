@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     await resend.emails.send({
       from: "Sorell Contact <newsletter@sorell.fr>",
-      to: "murnoe@outlook.fr",
+      to: "noe@sorell.fr",
       replyTo: email,
       subject: `[Sorell Contact] ${subject || "Nouveau message"} - ${name}`,
       html: `
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: "Sorell <newsletter@sorell.fr>",
       to: email,
-      replyTo: "murnoe@outlook.fr",
+      replyTo: "noe@sorell.fr",
       subject: "Nous avons bien reçu votre message - Sorell",
       html: `
         <div style="font-family: 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
             </div>
             <p style="font-size: 14px; color: #6B7280; line-height: 1.6; margin: 28px 0 0;">
               Pour toute urgence, vous pouvez nous contacter directement à
-              <a href="mailto:murnoe@outlook.fr" style="color: #2563EB; text-decoration: none; font-weight: 500;">murnoe@outlook.fr</a>.
+              <a href="mailto:noe@sorell.fr" style="color: #2563EB; text-decoration: none; font-weight: 500;">noe@sorell.fr</a>.
             </p>
           </div>
           <div style="padding: 20px 32px; border-top: 1px solid #E5E7EB; background: #F9FAFB;">

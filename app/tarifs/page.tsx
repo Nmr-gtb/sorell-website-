@@ -228,7 +228,7 @@ export default function PricingPage() {
               tagline={t("pricing.enterprise_desc")}
               features={enterpriseFeatures}
               cta={t("pricing.cta_enterprise")}
-              ctaHref="mailto:murnoe@outlook.fr"
+              ctaHref="mailto:noe@sorell.fr"
               enterprise
             />
           </div>

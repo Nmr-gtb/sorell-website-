@@ -109,7 +109,7 @@ export default function ContactPage() {
               {t("contact.email_direct")}
             </p>
             <a
-              href="mailto:murnoe@outlook.fr"
+              href="mailto:noe@sorell.fr"
               style={{
                 fontSize: 14,
                 fontWeight: 500,
@@ -123,7 +123,7 @@ export default function ContactPage() {
                 (e.currentTarget as HTMLElement).style.textDecoration = "none";
               }}
             >
-              murnoe@outlook.fr
+              noe@sorell.fr
             </a>
           </div>
         </div>

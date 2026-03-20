@@ -85,10 +85,10 @@ function UnsubscribeContent() {
             <>
               Le désabonnement n&apos;a pas pu être effectué. Contactez-nous à{" "}
               <a
-                href="mailto:murnoe@outlook.fr"
+                href="mailto:noe@sorell.fr"
                 style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}
               >
-                murnoe@outlook.fr
+                noe@sorell.fr
               </a>{" "}
               pour être retiré manuellement.
             </>

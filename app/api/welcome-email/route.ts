@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: "Sorell <newsletter@sorell.fr>",
       to: email,
-      replyTo: "murnoe@outlook.fr",
+      replyTo: "noe@sorell.fr",
       subject: "Bienvenue sur Sorell ! Votre première newsletter en 3 étapes",
       html: `<!DOCTYPE html>
 <html>
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       </table>
       <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
         Vous recevez cet email car vous venez de créer un compte sur Sorell.<br/>
-        <a href="mailto:murnoe@outlook.fr" style="color:#9CA3AF;">Besoin d'aide ? Contactez-nous</a>
+        <a href="mailto:noe@sorell.fr" style="color:#9CA3AF;">Besoin d'aide ? Contactez-nous</a>
       </p>
     </div>
 
