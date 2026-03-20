@@ -185,9 +185,12 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
       const dateLabel = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
       const subjectArticle = articles.find((a: { featured: boolean }) => a.featured) || articles[0];
-      const subject = subjectArticle
-        ? `${subjectArticle.tag} - ${subjectArticle.title.slice(0, 60)}`
+      let subject = subjectArticle
+        ? `${subjectArticle.tag} - ${subjectArticle.title}`
         : `Votre veille du ${dateLabel}`;
+      if (subject.length > 65) {
+        subject = subject.substring(0, 62) + "...";
+      }
 
       const { data: newsletter } = await supabase
         .from("newsletters")
@@ -269,7 +272,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
     <!-- Article phare -->
     <div style="padding:0 32px 24px;">
-      <div style="background:#F8FAFC;border-radius:10px;padding:24px;border:1px solid #E5E7EB;">
+      <div style="background:#EFF6FF;border-radius:10px;padding:24px;border:1px solid #BFDBFE;">
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td>
@@ -280,7 +283,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h2 style="font-size:18px;font-weight:700;color:#111827;margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
         </a>
-        ${featuredArticle.hook ? `<p style="font-size:14px;color:#2563EB;margin:0 0 10px;font-weight:500;">${featuredArticle.hook}</p>` : ""}
+        ${featuredArticle.hook ? `<p style="font-size:14px;color:#4B5563;margin:0 0 10px;font-weight:500;font-style:italic;">${featuredArticle.hook}</p>` : ""}
         <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
         <span style="font-size:12px;color:#9CA3AF;">Source : ${featuredArticle.source}</span>
         ${featuredArticle.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
@@ -302,12 +305,18 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url || "https://sorell.fr")}" style="text-decoration:none;">
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 6px;line-height:1.35;">${a.title}</h3>
         </a>
-        ${a.hook ? `<p style="font-size:13px;color:#2563EB;margin:0 0 8px;font-weight:500;">${a.hook}</p>` : ""}
+        ${a.hook ? `<p style="font-size:13px;color:#4B5563;margin:0 0 8px;font-weight:500;font-style:italic;">${a.hook}</p>` : ""}
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
         <span style="font-size:11px;color:#9CA3AF;">Source : ${a.source}</span>
         ${a.url ? `<br/><a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url)}" style="font-size:12px;color:#2563EB;text-decoration:none;font-weight:500;">Lire l'article →</a>` : ""}
       </div>
       `).join("")}
+    </div>
+
+    <!-- CTA -->
+    <div style="padding:24px 32px;text-align:center;">
+      <p style="font-size:14px;color:#6B7280;margin:0 0 12px;">Cette newsletter vous a été utile ?</p>
+      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:10px 24px;background:#2563EB;color:white;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;">Partager avec votre équipe</a>
     </div>
 
     <!-- Footer -->

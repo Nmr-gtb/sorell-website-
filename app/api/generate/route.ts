@@ -151,9 +151,12 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
     const featuredArticle = newsletterContent.articles.find((a: { featured: boolean }) => a.featured) || newsletterContent.articles[0];
     const dateLabel = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
-    const subject = featuredArticle
-      ? `${featuredArticle.tag} - ${featuredArticle.title.slice(0, 60)}`
+    let subject = featuredArticle
+      ? `${featuredArticle.tag} - ${featuredArticle.title}`
       : `Votre veille du ${dateLabel}`;
+    if (subject.length > 65) {
+      subject = subject.substring(0, 62) + "...";
+    }
 
     const { data: newsletter, error } = await supabase
       .from("newsletters")
