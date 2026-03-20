@@ -9,50 +9,7 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const FAQ = [
-  {
-    q: "Quelle est la différence avec ChatGPT ?",
-    a: "ChatGPT est un outil généraliste que vous devez relancer chaque semaine avec un prompt. Sorell est automatique : vous configurez une fois, et chaque semaine votre newsletter arrive toute seule dans votre boîte mail. En plus, Sorell utilise de vraies sources web (Les Echos, Bloomberg, Reuters...) avec des liens cliquables, là où ChatGPT peut inventer des informations. Enfin, Sorell envoie à toute votre équipe et vous montre qui lit quoi - impossible avec ChatGPT.",
-  },
-  {
-    q: "Quelle est la différence avec Google Alerts ?",
-    a: "Google Alerts vous envoie des liens bruts sans résumé - vous devez tout lire vous-même. Sorell analyse les articles, les résume et vous livre un briefing éditorial prêt à lire en 5 minutes. C'est la différence entre recevoir 30 liens et recevoir un résumé clair de ce qui compte vraiment.",
-  },
-  {
-    q: "Est-ce que les informations sont fiables ?",
-    a: "Oui. Chaque article de votre newsletter est basé sur une vraie source trouvée sur le web (presse, médias spécialisés, rapports). Chaque article contient un lien direct vers la source originale pour que vous puissiez vérifier. Sorell ne génère pas de fausses informations.",
-  },
-  {
-    q: "Le plan gratuit est-il vraiment gratuit ?",
-    a: "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée - c'est la même qualité que le plan Pro.",
-  },
-  {
-    q: "Combien de temps faut-il pour configurer Sorell ?",
-    a: "5 minutes. Vous décrivez votre activité en quelques lignes, vous choisissez vos thématiques, et c'est tout. Votre première newsletter peut être générée immédiatement.",
-  },
-  {
-    q: "Pourquoi payer 9€/mois alors que le plan gratuit existe ?",
-    a: "Le plan gratuit est limité à 1 destinataire (vous). Le plan Pro permet d'envoyer la newsletter à votre équipe (jusqu'à 10 personnes), avec des newsletters illimitées et des analytics complets pour savoir qui lit et quels sujets intéressent le plus.",
-  },
-  {
-    q: "Mon stagiaire peut faire la même chose, non ?",
-    a: "Un stagiaire passe en moyenne 2 à 4 heures par semaine pour compiler une veille sectorielle. Sorell le fait en 12 secondes, chaque semaine, sans oubli, sans absence, sans formation. Et le coût est de 9€/mois contre un salaire de stagiaire.",
-  },
-  {
-    q: "Puis-je annuler à tout moment ?",
-    a: "Oui, en un clic depuis votre profil. Pas de préavis, pas de frais. L'accès est maintenu jusqu'à la fin de la période en cours.",
-  },
-  {
-    q: "Mes données sont-elles sécurisées ?",
-    a: "Oui. Hébergement sur serveurs européens, chiffrement AES-256, conforme RGPD. Nous ne revendons jamais vos données. Les paiements sont sécurisés par Stripe.",
-  },
-  {
-    q: "L'IA peut-elle se tromper ?",
-    a: "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
-  },
-];
-
-// Features arrays are built inside the component to use t()
+// Features arrays and FAQ are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
   "pro-monthly": "price_1TCdgv7A2mOEJEeWEEsDD5pM",
@@ -63,6 +20,20 @@ export default function PricingPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { t } = useLanguage();
+
+  const FAQ = [
+    { q: t("faq.q1"), a: t("faq.a1") },
+    { q: t("faq.q2"), a: t("faq.a2") },
+    { q: t("faq.q3"), a: t("faq.a3") },
+    { q: t("faq.q4"), a: t("faq.a4") },
+    { q: t("faq.q5"), a: t("faq.a5") },
+    { q: t("faq.q6"), a: t("faq.a6") },
+    { q: t("faq.q7"), a: t("faq.a7") },
+    { q: t("faq.q8"), a: t("faq.a8") },
+    { q: t("faq.q9"), a: t("faq.a9") },
+    { q: t("faq.q10"), a: t("faq.a10") },
+  ];
+
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
 
   const freeFeatures = [

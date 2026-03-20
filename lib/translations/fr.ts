@@ -227,6 +227,28 @@ const fr: Record<string, string> = {
   "hiw.cta_primary": "Commencer gratuitement →",
   "hiw.cta_secondary": "Voir la démo →",
   "hiw.cta_footer": "Découvrez aussi nos tarifs - plan gratuit disponible sans carte bancaire.",
+
+  // FAQ tarifs
+  "faq.q1": "Quelle est la différence avec ChatGPT ?",
+  "faq.a1": "ChatGPT est un outil généraliste que vous devez relancer chaque semaine avec un prompt. Sorell est automatique : vous configurez une fois, et chaque semaine votre newsletter arrive toute seule dans votre boîte mail. En plus, Sorell utilise de vraies sources web (Les Echos, Bloomberg, Reuters...) avec des liens cliquables, là où ChatGPT peut inventer des informations. Enfin, Sorell envoie à toute votre équipe et vous montre qui lit quoi - impossible avec ChatGPT.",
+  "faq.q2": "Quelle est la différence avec Google Alerts ?",
+  "faq.a2": "Google Alerts vous envoie des liens bruts sans résumé - vous devez tout lire vous-même. Sorell analyse les articles, les résume et vous livre un briefing éditorial prêt à lire en 5 minutes. C'est la différence entre recevoir 30 liens et recevoir un résumé clair de ce qui compte vraiment.",
+  "faq.q3": "Est-ce que les informations sont fiables ?",
+  "faq.a3": "Oui. Chaque article de votre newsletter est basé sur une vraie source trouvée sur le web (presse, médias spécialisés, rapports). Chaque article contient un lien direct vers la source originale pour que vous puissiez vérifier. Sorell ne génère pas de fausses informations.",
+  "faq.q4": "Le plan gratuit est-il vraiment gratuit ?",
+  "faq.a4": "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée - c'est la même qualité que le plan Pro.",
+  "faq.q5": "Combien de temps faut-il pour configurer Sorell ?",
+  "faq.a5": "5 minutes. Vous décrivez votre activité en quelques lignes, vous choisissez vos thématiques, et c'est tout. Votre première newsletter peut être générée immédiatement.",
+  "faq.q6": "Pourquoi payer 9€/mois alors que le plan gratuit existe ?",
+  "faq.a6": "Le plan gratuit est limité à 1 destinataire (vous). Le plan Pro permet d'envoyer la newsletter à votre équipe (jusqu'à 10 personnes), avec des newsletters illimitées et des analytics complets pour savoir qui lit et quels sujets intéressent le plus.",
+  "faq.q7": "Mon stagiaire peut faire la même chose, non ?",
+  "faq.a7": "Un stagiaire passe en moyenne 2 à 4 heures par semaine pour compiler une veille sectorielle. Sorell le fait en 12 secondes, chaque semaine, sans oubli, sans absence, sans formation. Et le coût est de 9€/mois contre un salaire de stagiaire.",
+  "faq.q8": "Puis-je annuler à tout moment ?",
+  "faq.a8": "Oui, en un clic depuis votre profil. Pas de préavis, pas de frais. L'accès est maintenu jusqu'à la fin de la période en cours.",
+  "faq.q9": "Mes données sont-elles sécurisées ?",
+  "faq.a9": "Oui. Hébergement sur serveurs européens, chiffrement AES-256, conforme RGPD. Nous ne revendons jamais vos données. Les paiements sont sécurisés par Stripe.",
+  "faq.q10": "L'IA peut-elle se tromper ?",
+  "faq.a10": "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
 };
 
 export default fr;

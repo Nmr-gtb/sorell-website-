@@ -227,6 +227,28 @@ const en: Record<string, string> = {
   "hiw.cta_primary": "Start for free →",
   "hiw.cta_secondary": "See the demo →",
   "hiw.cta_footer": "Also check out our pricing - free plan available without a credit card.",
+
+  // FAQ pricing
+  "faq.q1": "What's the difference with ChatGPT?",
+  "faq.a1": "ChatGPT is a generalist tool you have to prompt every week. Sorell is automatic: you set it up once, and every week your newsletter arrives on its own. Plus, Sorell uses real web sources (Financial Times, Bloomberg, Reuters...) with clickable links, while ChatGPT can make up information. And Sorell sends to your whole team and shows you who reads what - impossible with ChatGPT.",
+  "faq.q2": "What's the difference with Google Alerts?",
+  "faq.a2": "Google Alerts sends raw links with no summary - you have to read everything yourself. Sorell analyzes the articles, summarizes them and delivers an editorial briefing ready to read in 5 minutes. It's the difference between receiving 30 links and getting a clear summary of what really matters.",
+  "faq.q3": "Is the information reliable?",
+  "faq.a3": "Yes. Every article in your newsletter is based on a real source found on the web (press, specialized media, reports). Each article contains a direct link to the original source so you can verify. Sorell does not generate false information.",
+  "faq.q4": "Is the free plan really free?",
+  "faq.a4": "Yes, no credit card and no commitment. You get 4 newsletters per month, fully personalized with web search. No features are degraded - it's the same quality as the Pro plan.",
+  "faq.q5": "How long does it take to set up Sorell?",
+  "faq.a5": "5 minutes. Describe your business in a few lines, choose your topics, and that's it. Your first newsletter can be generated immediately.",
+  "faq.q6": "Why pay 9€/month when the free plan exists?",
+  "faq.a6": "The free plan is limited to 1 recipient (you). The Pro plan lets you send the newsletter to your team (up to 10 people), with unlimited newsletters and full analytics to see who reads and what topics interest them most.",
+  "faq.q7": "My intern can do the same thing, right?",
+  "faq.a7": "An intern spends on average 2 to 4 hours per week compiling industry news. Sorell does it in 12 seconds, every week, without forgetting, without absences, without training. And the cost is 9€/month versus an intern's salary.",
+  "faq.q8": "Can I cancel anytime?",
+  "faq.a8": "Yes, in one click from your profile. No notice, no fees. Access is maintained until the end of the current period.",
+  "faq.q9": "Is my data secure?",
+  "faq.a9": "Yes. Hosted on European servers, AES-256 encryption, GDPR compliant. We never resell your data. Payments are secured by Stripe.",
+  "faq.q10": "Can the AI make mistakes?",
+  "faq.a10": "Like any tool, AI can sometimes lack precision. That's why each article contains a link to the original source - you can always verify. The content does not constitute professional advice.",
 };
 
 export default en;
