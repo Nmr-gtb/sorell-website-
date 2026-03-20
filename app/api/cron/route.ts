@@ -107,7 +107,7 @@ CONSIGNES :
 - Sois factuel : ne déforme pas les informations des articles sources.
 - L'éditorial doit faire le lien entre les différentes actus trouvées.
 
-IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans backticks markdown.`;
+CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks, pas d'explication. UNIQUEMENT le JSON brut.`;
 
       const message = await anthropic.messages.create({
         model: "claude-haiku-4-5-20251001",
@@ -121,14 +121,35 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
         messages: [{ role: "user", content: prompt }],
       });
 
-      // Extraire le texte de la réponse (peut contenir plusieurs blocs avec web search)
-      let responseText = "";
-      for (const block of message.content) {
-        if (block.type === "text") {
-          responseText = block.text;
-        }
+      const responseText = message.content
+        .filter((block: { type: string }) => block.type === "text")
+        .map((block: { type: string; text?: string }) => block.text || "")
+        .join("");
+
+      // Nettoyer : supprimer backticks markdown
+      let cleanJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+      // Extraire le JSON : trouver le premier { ou [ et le dernier } ou ]
+      const firstBrace = cleanJson.indexOf("{");
+      const firstBracket = cleanJson.indexOf("[");
+      let startIndex = -1;
+
+      if (firstBrace === -1 && firstBracket === -1) {
+        throw new Error("Aucun JSON trouvé dans la réponse");
       }
-      const cleanJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+      if (firstBrace === -1) startIndex = firstBracket;
+      else if (firstBracket === -1) startIndex = firstBrace;
+      else startIndex = Math.min(firstBrace, firstBracket);
+
+      const isObject = cleanJson[startIndex] === "{";
+      const lastIndex = isObject ? cleanJson.lastIndexOf("}") : cleanJson.lastIndexOf("]");
+
+      if (lastIndex === -1 || lastIndex <= startIndex) {
+        throw new Error("JSON incomplet dans la réponse");
+      }
+
+      cleanJson = cleanJson.substring(startIndex, lastIndex + 1);
       const parsed = JSON.parse(cleanJson);
 
       // Gérer les 2 formats possibles (ancien tableau ou nouveau objet)

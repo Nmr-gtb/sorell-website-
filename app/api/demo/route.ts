@@ -66,7 +66,7 @@ Pour CHAQUE article, génère :
 
 OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${SECTOR_PROMPTS[sector]} actualités ${new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les 5 articles.
 
-IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown.`;
+CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks, pas d'explication. UNIQUEMENT le JSON brut.`;
 
     const message = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
@@ -80,17 +80,35 @@ IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, 
       messages: [{ role: "user", content: prompt }],
     });
 
-    // Extraire le texte de la réponse (peut contenir plusieurs blocs avec web search)
-    let responseText = "";
-    for (const block of message.content) {
-      if (block.type === "text") {
-        responseText = block.text;
-      }
+    const responseText = message.content
+      .filter((block: { type: string }) => block.type === "text")
+      .map((block: { type: string; text?: string }) => block.text || "")
+      .join("");
+
+    // Nettoyer : supprimer backticks markdown
+    let cleanJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+    // Extraire le JSON : trouver le premier { ou [ et le dernier } ou ]
+    const firstBrace = cleanJson.indexOf("{");
+    const firstBracket = cleanJson.indexOf("[");
+    let startIndex = -1;
+
+    if (firstBrace === -1 && firstBracket === -1) {
+      throw new Error("Aucun JSON trouvé dans la réponse");
     }
-    const cleanJson = responseText
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
+
+    if (firstBrace === -1) startIndex = firstBracket;
+    else if (firstBracket === -1) startIndex = firstBrace;
+    else startIndex = Math.min(firstBrace, firstBracket);
+
+    const isObject = cleanJson[startIndex] === "{";
+    const lastIndex = isObject ? cleanJson.lastIndexOf("}") : cleanJson.lastIndexOf("]");
+
+    if (lastIndex === -1 || lastIndex <= startIndex) {
+      throw new Error("JSON incomplet dans la réponse");
+    }
+
+    cleanJson = cleanJson.substring(startIndex, lastIndex + 1);
     const articles = JSON.parse(cleanJson);
     const generatedAt = new Date().toISOString();
 
