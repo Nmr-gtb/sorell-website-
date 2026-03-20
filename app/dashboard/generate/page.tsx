@@ -445,154 +445,155 @@ export default function GeneratePage() {
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{sendError}</p>
           )}
 
-          {/* Editorial */}
-          {editorial && (
-            <div
-              style={{
-                background: "var(--surface-alt)",
-                borderLeft: "3px solid var(--accent)",
-                borderRadius: 8,
-                padding: "16px 20px",
-                marginBottom: 12,
-              }}
-            >
-              <p style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>
-                Éditorial
-              </p>
-              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: 0, lineHeight: 1.6, fontStyle: "italic" }}>
-                {editorial}
-              </p>
-            </div>
-          )}
+          {/* Email preview container */}
+          <div style={{ background: bgColor, border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
 
-          {/* Chiffres clés */}
-          {keyFigures.length > 0 && (
-            <div style={{ marginBottom: 12 }}>
-              <p style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>
-                Chiffres clés
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(keyFigures.length, 3)}, 1fr)`, gap: 8 }}>
-                {keyFigures.map((fig, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      borderRadius: 8,
-                      padding: 16,
-                    }}
-                  >
-                    <p style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", margin: "0 0 4px" }}>{fig.value}</p>
-                    <p style={{ fontSize: 13, color: "var(--text)", margin: "0 0 4px" }}>{fig.label}</p>
-                    <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>{fig.context}</p>
-                  </div>
-                ))}
+            {/* Header */}
+            <div style={{ padding: "24px 32px", borderBottom: `2px solid ${brandColor}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              {customLogo ? (
+                <img src={customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 160 }} />
+              ) : (
+                <span style={{ fontSize: 18, fontWeight: 600, color: textColor, letterSpacing: "-0.02em" }}>
+                  Sorel<span style={{ color: brandColor }}>l</span>
+                </span>
+              )}
+              <span style={{ fontSize: 12, color: "#9CA3AF" }}>
+                {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+              </span>
+            </div>
+
+            {/* Subject */}
+            <div style={{ padding: "24px 32px 20px" }}>
+              <h1 style={{ fontSize: 20, fontWeight: 600, color: textColor, margin: "0 0 6px", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
+                {subject}
+              </h1>
+              <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>Votre veille sectorielle personnalisée par IA</p>
+            </div>
+
+            {/* Editorial */}
+            {editorial && (
+              <div style={{ padding: "0 32px 24px" }}>
+                <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "16px 20px", background: "#F8FAFC", borderRadius: "0 8px 8px 0" }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
+                    Éditorial
+                  </p>
+                  <p style={{ fontSize: 14, color: "#374151", lineHeight: 1.65, margin: 0, fontStyle: "italic" }}>
+                    {editorial}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Chiffres clés */}
+            {keyFigures.length > 0 && (
+              <div style={{ padding: "0 32px 24px" }}>
+                <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 12px" }}>
+                  Chiffres clés
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(keyFigures.length, 3)}, 1fr)`, gap: 8 }}>
+                  {keyFigures.map((fig, i) => (
+                    <div key={i} style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: 16, textAlign: "center" }}>
+                      <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px", letterSpacing: "-0.02em" }}>{fig.value}</p>
+                      <p style={{ fontSize: 12, color: "#111827", fontWeight: 500, margin: "0 0 2px" }}>{fig.label}</p>
+                      <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{fig.context}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Featured article */}
+            <div style={{ padding: "0 32px 24px" }}>
+              <div style={{ background: hexToRgba(brandColor, 0.06), borderRadius: 10, padding: 24, border: `1px solid ${hexToRgba(brandColor, 0.18)}` }}>
+                <span style={{
+                  display: "inline-block",
+                  padding: "3px 10px",
+                  borderRadius: 4,
+                  background: brandColor,
+                  color: "white",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}>
+                  Article phare · {featuredArticle.tag}
+                </span>
+                <h2 style={{ fontSize: 17, fontWeight: 600, color: textColor, margin: "12px 0 8px", lineHeight: 1.35, letterSpacing: "-0.01em" }}>
+                  {featuredArticle.title}
+                </h2>
+                {featuredArticle.hook && (
+                  <p style={{ fontSize: 14, color: "#4B5563", margin: "0 0 8px", fontWeight: 400, fontStyle: "italic" }}>
+                    {featuredArticle.hook}
+                  </p>
+                )}
+                <p style={{ fontSize: 14, color: "#4B5563", lineHeight: 1.65, margin: "0 0 10px" }}>
+                  {featuredArticle.content || featuredArticle.summary}
+                </p>
+                <span style={{ fontSize: 12, color: "#9CA3AF" }}>Source : {featuredArticle.source}</span>
+                {featuredArticle.url && (
+                  <a href={featuredArticle.url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "block", fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}>
+                    Lire l&apos;article →
+                  </a>
+                )}
               </div>
             </div>
-          )}
 
-          {/* Featured article */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 20,
-              marginBottom: 12,
-            }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                padding: "2px 8px",
-                borderRadius: 4,
-                background: hexToRgba(brandColor, 0.08),
-                color: "var(--accent)",
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                marginBottom: 10,
-              }}
-            >
-              Article phare · {featuredArticle.tag}
-            </span>
-            <h2 style={{ fontSize: 17, fontWeight: 600, color: textColor, margin: "8px 0 6px", lineHeight: 1.35 }}>
-              {featuredArticle.title}
-            </h2>
-            {featuredArticle.hook && (
-              <p style={{ fontSize: 14, color: "var(--text)", margin: "0 0 6px", lineHeight: 1.5, fontStyle: "italic" }}>
-                {featuredArticle.hook}
+            {/* Other articles */}
+            <div style={{ padding: "0 32px 16px" }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 16px" }}>
+                Les actus de la semaine
               </p>
-            )}
-            <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "0 0 6px", lineHeight: 1.5 }}>
-              {featuredArticle.content || featuredArticle.summary}
-            </p>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Source : {featuredArticle.source}</span>
-            {featuredArticle.url && (
-              <a
-                href={featuredArticle.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "block", fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}
-              >
-                Lire l&apos;article →
-              </a>
-            )}
-          </div>
-
-          {/* Other articles */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {otherArticles.map((article, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 12,
-                  padding: 16,
-                }}
-              >
-                <span
-                  style={{
+              {otherArticles.map((article, i) => (
+                <div key={i} style={{ padding: "20px 0", borderBottom: i < otherArticles.length - 1 ? "1px solid #E5E7EB" : "none" }}>
+                  <span style={{
                     display: "inline-block",
                     padding: "2px 8px",
                     borderRadius: 4,
-                    background: "var(--surface-alt)",
-                    color: "var(--text-secondary)",
+                    background: "#F3F4F6",
+                    color: "#374151",
                     fontSize: 10,
                     fontWeight: 600,
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
                     marginBottom: 6,
-                  }}
-                >
-                  {article.tag}
-                </span>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: textColor, margin: "4px 0", lineHeight: 1.35 }}>
-                  {article.title}
-                </h3>
-                {article.hook && (
-                  <p style={{ fontSize: 13, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.5, fontStyle: "italic" }}>
-                    {article.hook}
+                  }}>
+                    {article.tag}
+                  </span>
+                  <h3 style={{ fontSize: 15, fontWeight: 500, color: textColor, margin: "4px 0", lineHeight: 1.35 }}>
+                    {article.title}
+                  </h3>
+                  {article.hook && (
+                    <p style={{ fontSize: 13, color: "#4B5563", margin: "0 0 6px", fontWeight: 400, fontStyle: "italic" }}>
+                      {article.hook}
+                    </p>
+                  )}
+                  <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.6, margin: "0 0 6px" }}>
+                    {article.content || article.summary}
                   </p>
-                )}
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "0 0 4px", lineHeight: 1.5 }}>
-                  {article.content || article.summary}
-                </p>
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>Source : {article.source}</span>
-                {article.url && (
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: "block", fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}
-                  >
-                    Lire l&apos;article →
-                  </a>
-                )}
-              </div>
-            ))}
+                  <span style={{ fontSize: 11, color: "#9CA3AF" }}>Source : {article.source}</span>
+                  {article.url && (
+                    <a href={article.url} target="_blank" rel="noopener noreferrer"
+                      style={{ display: "block", fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}>
+                      Lire l&apos;article →
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: "24px 32px", borderTop: "2px solid #E5E7EB", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              {customLogo ? (
+                <img src={customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 140 }} />
+              ) : (
+                <span style={{ fontSize: 14, fontWeight: 600, color: textColor, letterSpacing: "-0.01em" }}>
+                  Sorel<span style={{ color: brandColor }}>l</span>
+                </span>
+              )}
+              <span style={{ fontSize: 12, color: brandColor }}>sorell.fr</span>
+            </div>
+
           </div>
         </>
       )}
