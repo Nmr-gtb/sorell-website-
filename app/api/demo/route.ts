@@ -2,6 +2,11 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
+function cleanCiteTags(text: string): string {
+  if (!text) return text;
+  return text.replace(/<cite[^>]*>/g, "").replace(/<\/cite>/g, "").trim();
+}
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -109,7 +114,14 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
     }
 
     cleanJson = cleanJson.substring(startIndex, lastIndex + 1);
-    const articles = JSON.parse(cleanJson);
+    const rawArticles = JSON.parse(cleanJson);
+    const articles = (Array.isArray(rawArticles) ? rawArticles : rawArticles.articles || []).map((a: any) => ({
+      ...a,
+      title: cleanCiteTags(a.title || ""),
+      hook: cleanCiteTags(a.hook || ""),
+      content: cleanCiteTags(a.content || ""),
+      summary: cleanCiteTags(a.summary || ""),
+    }));
     const generatedAt = new Date().toISOString();
 
     // Sauvegarder en cache (upsert)

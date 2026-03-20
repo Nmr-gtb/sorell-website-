@@ -2,6 +2,11 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
+function cleanCiteTags(text: string): string {
+  if (!text) return text;
+  return text.replace(/<cite[^>]*>/g, "").replace(/<\/cite>/g, "").trim();
+}
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -147,6 +152,28 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         key_figures: parsed.key_figures || [],
         articles: parsed.articles || [],
       };
+    }
+
+    // Nettoyer les balises cite de tout le contenu
+    if (newsletterContent.editorial) {
+      newsletterContent.editorial = cleanCiteTags(newsletterContent.editorial);
+    }
+    if (newsletterContent.articles) {
+      newsletterContent.articles = newsletterContent.articles.map((a: any) => ({
+        ...a,
+        title: cleanCiteTags(a.title || ""),
+        hook: cleanCiteTags(a.hook || ""),
+        content: cleanCiteTags(a.content || ""),
+        summary: cleanCiteTags(a.summary || ""),
+      }));
+    }
+    if (newsletterContent.key_figures) {
+      newsletterContent.key_figures = newsletterContent.key_figures.map((f: any) => ({
+        ...f,
+        value: cleanCiteTags(f.value || ""),
+        label: cleanCiteTags(f.label || ""),
+        context: cleanCiteTags(f.context || ""),
+      }));
     }
 
     const featuredArticle = newsletterContent.articles.find((a: { featured: boolean }) => a.featured) || newsletterContent.articles[0];
