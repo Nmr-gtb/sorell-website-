@@ -69,7 +69,7 @@ OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches p
 IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown.`;
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 4096,
       tools: [
         {
