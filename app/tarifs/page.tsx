@@ -12,11 +12,11 @@ import { useLanguage } from "@/lib/LanguageContext";
 const FAQ = [
   {
     q: "Quelle est la différence avec ChatGPT ?",
-    a: "ChatGPT est un outil généraliste que vous devez relancer chaque semaine avec un prompt. Sorell est automatique : vous configurez une fois, et chaque semaine votre newsletter arrive toute seule dans votre boîte mail. En plus, Sorell utilise de vraies sources web (Les Echos, Bloomberg, Reuters...) avec des liens cliquables, là où ChatGPT peut inventer des informations. Enfin, Sorell envoie à toute votre équipe et vous montre qui lit quoi — impossible avec ChatGPT.",
+    a: "ChatGPT est un outil généraliste que vous devez relancer chaque semaine avec un prompt. Sorell est automatique : vous configurez une fois, et chaque semaine votre newsletter arrive toute seule dans votre boîte mail. En plus, Sorell utilise de vraies sources web (Les Echos, Bloomberg, Reuters...) avec des liens cliquables, là où ChatGPT peut inventer des informations. Enfin, Sorell envoie à toute votre équipe et vous montre qui lit quoi - impossible avec ChatGPT.",
   },
   {
     q: "Quelle est la différence avec Google Alerts ?",
-    a: "Google Alerts vous envoie des liens bruts sans résumé — vous devez tout lire vous-même. Sorell analyse les articles, les résume et vous livre un briefing éditorial prêt à lire en 5 minutes. C'est la différence entre recevoir 30 liens et recevoir un résumé clair de ce qui compte vraiment.",
+    a: "Google Alerts vous envoie des liens bruts sans résumé - vous devez tout lire vous-même. Sorell analyse les articles, les résume et vous livre un briefing éditorial prêt à lire en 5 minutes. C'est la différence entre recevoir 30 liens et recevoir un résumé clair de ce qui compte vraiment.",
   },
   {
     q: "Est-ce que les informations sont fiables ?",
@@ -24,7 +24,7 @@ const FAQ = [
   },
   {
     q: "Le plan gratuit est-il vraiment gratuit ?",
-    a: "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée — c'est la même qualité que le plan Pro.",
+    a: "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée - c'est la même qualité que le plan Pro.",
   },
   {
     q: "Combien de temps faut-il pour configurer Sorell ?",
@@ -48,7 +48,7 @@ const FAQ = [
   },
   {
     q: "L'IA peut-elle se tromper ?",
-    a: "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale — vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
+    a: "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
   },
 ];
 

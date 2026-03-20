@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       .map((t: { label: string }) => t.label)
       .join(", ");
 
-    const sourcesList = sources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci — cherche sur TOUT le web) : ${sources.join(", ")}` : "";
+    const sourcesList = sources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${sources.join(", ")}` : "";
 
     const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger une newsletter basée sur de VRAIES actualités récentes trouvées sur le web.
 
@@ -98,7 +98,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
     // Gérer les 2 formats possibles (ancien tableau ou nouveau objet)
     let newsletterContent;
     if (Array.isArray(parsed)) {
-      // Ancien format (tableau d'articles) — backward compatible
+      // Ancien format (tableau d'articles) - backward compatible
       newsletterContent = { editorial: "", key_figures: [], articles: parsed };
     } else {
       newsletterContent = {
@@ -111,7 +111,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
     const featuredArticle = newsletterContent.articles.find((a: { featured: boolean }) => a.featured) || newsletterContent.articles[0];
     const dateLabel = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
     const subject = featuredArticle
-      ? `${featuredArticle.tag} — ${featuredArticle.title.slice(0, 60)}`
+      ? `${featuredArticle.tag} - ${featuredArticle.title.slice(0, 60)}`
       : `Votre veille du ${dateLabel}`;
 
     const { data: newsletter, error } = await supabase

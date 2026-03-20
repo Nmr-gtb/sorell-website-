@@ -69,7 +69,7 @@ ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
 Les articles doivent correspondre EXACTEMENT à cette demande.
 
 ` : ""}Thématiques : ${topics}
-${sources ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci — cherche sur TOUT le web) : ${sources}` : ""}
+${sources ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${sources}` : ""}
 Date du jour : ${franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
 
 INSTRUCTIONS :
@@ -146,7 +146,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
       const dateLabel = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
       const subjectArticle = articles.find((a: { featured: boolean }) => a.featured) || articles[0];
       const subject = subjectArticle
-        ? `${subjectArticle.tag} — ${subjectArticle.title.slice(0, 60)}`
+        ? `${subjectArticle.tag} - ${subjectArticle.title.slice(0, 60)}`
         : `Votre veille du ${dateLabel}`;
 
       const { data: newsletter } = await supabase

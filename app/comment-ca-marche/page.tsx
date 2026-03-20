@@ -147,8 +147,8 @@ export default function CommentCaMarchePage() {
                 <p style={{ marginBottom: "1rem" }}>
                   Dès votre inscription gratuite, vous accédez à votre tableau de bord. La
                   première chose à faire : décrire ce que vous voulez surveiller. Sorell vous
-                  propose des thématiques prédéfinies — intelligence artificielle,
-                  réglementation, concurrence, finance, RH, cybersécurité — mais vous pouvez
+                  propose des thématiques prédéfinies - intelligence artificielle,
+                  réglementation, concurrence, finance, RH, cybersécurité - mais vous pouvez
                   aussi créer les vôtres.
                 </p>
                 <p style={{ marginBottom: "1rem" }}>
@@ -162,8 +162,8 @@ export default function CommentCaMarchePage() {
                 </p>
                 <p>
                   Vous choisissez ensuite vos sources préférées parmi notre bibliothèque de
-                  médias vérifiés — Les Echos, TechCrunch, Bloomberg, Reuters, et des dizaines
-                  d&apos;autres — ou ajoutez les vôtres manuellement.
+                  médias vérifiés - Les Echos, TechCrunch, Bloomberg, Reuters, et des dizaines
+                  d&apos;autres - ou ajoutez les vôtres manuellement.
                 </p>
               </div>
             </div>
@@ -396,7 +396,7 @@ export default function CommentCaMarchePage() {
                   Chaque semaine (ou chaque mois, selon votre préférence), Sorell se met au
                   travail. Notre intelligence artificielle parcourt le web à la recherche
                   d&apos;actualités récentes et pertinentes pour votre secteur. Elle ne se
-                  contente pas de copier des titres — elle analyse, synthétise et rédige un
+                  contente pas de copier des titres - elle analyse, synthétise et rédige un
                   véritable briefing éditorial.
                 </p>
                 <p style={{ marginBottom: "1rem" }}>Votre newsletter contient :</p>
@@ -464,10 +464,10 @@ export default function CommentCaMarchePage() {
                 }}
               >
                 <p style={{ marginBottom: "1rem" }}>
-                  Ajoutez les adresses email de vos collaborateurs — ou gardez-le juste pour
+                  Ajoutez les adresses email de vos collaborateurs - ou gardez-le juste pour
                   vous sur le plan gratuit. Le jour et l&apos;heure que vous avez choisis,
                   Sorell envoie automatiquement la newsletter. Chaque lundi à 9h, chaque
-                  vendredi à 14h, chaque premier du mois — c&apos;est vous qui décidez.
+                  vendredi à 14h, chaque premier du mois - c&apos;est vous qui décidez.
                 </p>
                 <p style={{ marginBottom: "1rem" }}>
                   L&apos;email arrive dans la boîte de réception de vos équipes avec un design

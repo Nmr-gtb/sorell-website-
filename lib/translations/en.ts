@@ -11,7 +11,7 @@ const en: Record<string, string> = {
 
   // Hero
   "hero.title": "One email per week. Everything you need to know about your industry.",
-  "hero.subtitle": "Sorell automatically sends you a summary of your industry news. Nothing to do — you receive, you read, you're up to date.",
+  "hero.subtitle": "Sorell automatically sends you a summary of your industry news. Nothing to do - you receive, you read, you're up to date.",
   "hero.cta_primary": "Try for free",
   "hero.cta_secondary": "See an example",
   "hero.no_card": "Free · No credit card · Ready in 5 minutes",
@@ -172,7 +172,7 @@ const en: Record<string, string> = {
 
   // Home page specific
   "home.preview_title": "Every email is personalized and relevant",
-  "home.preview_subtitle": "AI analyzes your sources, filters the noise, and delivers the essentials — tailored to each recipient's role.",
+  "home.preview_subtitle": "AI analyzes your sources, filters the noise, and delivers the essentials - tailored to each recipient's role.",
   "home.features_title": "How it helps you",
   "home.features_subtitle": "You don't have to do anything. Sorell handles everything.",
   "home.feat1_title": "Real articles, not fluff",
@@ -226,7 +226,7 @@ const en: Record<string, string> = {
   "hiw.cta_subtitle": "Create your account in 30 seconds. No credit card required.",
   "hiw.cta_primary": "Start for free →",
   "hiw.cta_secondary": "See the demo →",
-  "hiw.cta_footer": "Also check out our pricing — free plan available without a credit card.",
+  "hiw.cta_footer": "Also check out our pricing - free plan available without a credit card.",
 };
 
 export default en;

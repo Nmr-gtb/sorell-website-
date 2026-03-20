@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Conditions Générales de Vente",
-  description: "CGV de Sorell — Tarifs, paiement, résiliation, responsabilité.",
+  description: "CGV de Sorell - Tarifs, paiement, résiliation, responsabilité.",
 };
 
 
@@ -57,9 +57,9 @@ export default function CGVPage() {
           </p>
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>
           <ul>
-            <li><strong>Free</strong> : gratuit — 4 newsletters par mois, 1 destinataire, brief personnalisable, thématiques et sources au choix, web search IA, analytics basiques</li>
-            <li><strong>Pro</strong> : 9€/mois ou 90€/an — newsletters illimitées, jusqu'à 10 destinataires, brief personnalisé, thématiques et sources custom, analytics complets, support prioritaire</li>
-            <li><strong>Enterprise</strong> : sur devis — fonctionnalités illimitées, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
+            <li><strong>Free</strong> : gratuit - 4 newsletters par mois, 1 destinataire, brief personnalisable, thématiques et sources au choix, web search IA, analytics basiques</li>
+            <li><strong>Pro</strong> : 9€/mois ou 90€/an - newsletters illimitées, jusqu'à 10 destinataires, brief personnalisé, thématiques et sources custom, analytics complets, support prioritaire</li>
+            <li><strong>Enterprise</strong> : sur devis - fonctionnalités illimitées, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Sorell se réserve le droit de modifier ses tarifs à tout moment. Les modifications

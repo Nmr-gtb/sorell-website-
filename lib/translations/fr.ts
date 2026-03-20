@@ -11,7 +11,7 @@ const fr: Record<string, string> = {
 
   // Hero
   "hero.title": "Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
-  "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire — vous recevez, vous lisez, vous êtes à jour.",
+  "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire - vous recevez, vous lisez, vous êtes à jour.",
   "hero.cta_primary": "Essayer gratuitement",
   "hero.cta_secondary": "Voir un exemple",
   "hero.no_card": "Gratuit · Sans carte bancaire · Prêt en 5 minutes",
@@ -172,7 +172,7 @@ const fr: Record<string, string> = {
 
   // Home page specific
   "home.preview_title": "Chaque email est personnalisé et pertinent",
-  "home.preview_subtitle": "L'IA analyse vos sources, filtre le bruit, et livre l'essentiel — adapté au rôle de chaque destinataire.",
+  "home.preview_subtitle": "L'IA analyse vos sources, filtre le bruit, et livre l'essentiel - adapté au rôle de chaque destinataire.",
   "home.features_title": "Comment ça vous aide",
   "home.features_subtitle": "Vous n'avez rien à faire. Sorell s'occupe de tout.",
   "home.feat1_title": "Des vrais articles, pas du blabla",
@@ -226,7 +226,7 @@ const fr: Record<string, string> = {
   "hiw.cta_subtitle": "Créez votre compte en 30 secondes. Pas de carte bancaire requise.",
   "hiw.cta_primary": "Commencer gratuitement →",
   "hiw.cta_secondary": "Voir la démo →",
-  "hiw.cta_footer": "Découvrez aussi nos tarifs — plan gratuit disponible sans carte bancaire.",
+  "hiw.cta_footer": "Découvrez aussi nos tarifs - plan gratuit disponible sans carte bancaire.",
 };
 
 export default fr;

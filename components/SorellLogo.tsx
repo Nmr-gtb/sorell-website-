@@ -6,7 +6,7 @@ export default function SorellLogo({ size = "md" }: { size?: "sm" | "md" | "lg" 
     <Link
       href="/"
       style={{ textDecoration: "none", display: "inline-block" }}
-      aria-label="Sorell — Accueil"
+      aria-label="Sorell - Accueil"
     >
       <span
         style={{

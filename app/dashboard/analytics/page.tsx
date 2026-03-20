@@ -204,7 +204,7 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Chart section — verrouillé pour solo */}
+      {/* Chart section - verrouillé pour solo */}
       <div
         style={{
           background: "var(--surface)",

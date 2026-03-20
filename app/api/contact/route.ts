@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       from: "Sorell Contact <newsletter@sorell.fr>",
       to: "murnoe@outlook.fr",
       replyTo: email,
-      subject: `[Sorell Contact] ${subject || "Nouveau message"} — ${name}`,
+      subject: `[Sorell Contact] ${subject || "Nouveau message"} - ${name}`,
       html: `
         <div style="font-family: 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="padding: 24px 32px; border-bottom: 1px solid #E5E7EB;">
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       from: "Sorell <newsletter@sorell.fr>",
       to: email,
       replyTo: "murnoe@outlook.fr",
-      subject: "Nous avons bien reçu votre message — Sorell",
+      subject: "Nous avons bien reçu votre message - Sorell",
       html: `
         <div style="font-family: 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
           <div style="padding: 24px 32px; border-bottom: 2px solid #2563EB;">

@@ -215,7 +215,7 @@ export default function GeneratePage() {
         </p>
       </div>
 
-      {/* Step 1 — Config summary + Generate button */}
+      {/* Step 1 - Config summary + Generate button */}
       {!newsletter && (
         <div
           style={{
@@ -355,7 +355,7 @@ export default function GeneratePage() {
         </div>
       )}
 
-      {/* Step 2 — Preview */}
+      {/* Step 2 - Preview */}
       {newsletter && articles.length > 0 && !sendResults && (
         <>
           {/* Subject + actions */}
@@ -578,7 +578,7 @@ export default function GeneratePage() {
         </>
       )}
 
-      {/* Step 3 — Send results */}
+      {/* Step 3 - Send results */}
       {sendResults && (
         <div
           style={{

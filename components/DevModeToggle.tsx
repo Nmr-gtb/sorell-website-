@@ -13,7 +13,7 @@ export default function DevModeToggle() {
     return (
       <div
         onClick={toggleDevMode}
-        title="Dev mode actif — cliquer pour simuler un plan"
+        title="Dev mode actif - cliquer pour simuler un plan"
         style={{
           position: "fixed",
           top: 12,

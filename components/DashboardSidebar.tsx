@@ -195,7 +195,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
         ))}
       </nav>
 
-      {/* Upgrade banner — free plan only */}
+      {/* Upgrade banner - free plan only */}
       {plan === "free" && (
         <div style={{ padding: "0 8px 8px" }}>
           <div

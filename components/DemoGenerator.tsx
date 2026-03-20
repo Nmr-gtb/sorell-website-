@@ -174,7 +174,7 @@ function DemoNewsletterResult({
                 flexShrink: 0,
               }}
             />
-            Résultat en cache — généré il y a {minsAgo < 1 ? "moins d'1 min" : `${minsAgo} min`}
+            Résultat en cache - généré il y a {minsAgo < 1 ? "moins d'1 min" : `${minsAgo} min`}
           </span>
         ) : (
           <span
@@ -232,7 +232,7 @@ function DemoNewsletterResult({
           <div style={{ fontSize: "0.75rem" }}>
             <span style={{ color: "var(--text-muted)" }}>Objet : </span>
             <span style={{ fontWeight: 600, color: "var(--text)" }}>
-              Votre briefing {SECTOR_LABELS[sector]} — {dateLabel}
+              Votre briefing {SECTOR_LABELS[sector]} - {dateLabel}
             </span>
           </div>
         </div>

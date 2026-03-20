@@ -15,8 +15,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://sorell.fr"),
   title: {
-    default: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
-    template: "%s — Sorell",
+    default: "Sorell - Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+    template: "%s - Sorell",
   },
   description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
   keywords: ["newsletter IA", "veille sectorielle", "newsletter automatique", "intelligence artificielle", "veille concurrentielle", "newsletter B2B", "newsletter personnalisée", "veille réglementaire"],
@@ -28,20 +28,20 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     url: "https://sorell.fr",
     siteName: "Sorell",
-    title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+    title: "Sorell - Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
     description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
     images: [
       {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Sorell — Newsletter IA pour les professionnels",
+        alt: "Sorell - Newsletter IA pour les professionnels",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sorell — Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+    title: "Sorell - Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
     description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
     images: ["/og-image.svg"],
   },
