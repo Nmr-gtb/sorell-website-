@@ -2,6 +2,11 @@
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS brand_color text DEFAULT '#2563EB';
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS custom_logo_url text DEFAULT NULL;
 
+// NOTE: Dans Supabase -> Storage -> logos -> Policies, ajouter :
+// INSERT policy : authenticated users can upload to their own folder (storage.foldername(name))[1] = auth.uid()
+// SELECT policy : public access (pour que les logos soient visibles dans les emails)
+// DELETE policy : authenticated users can delete their own files
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -31,7 +36,9 @@ export default function CustomizationPage() {
   const [brandColor, setBrandColor] = useState("#2563EB");
   const [hexInput, setHexInput] = useState("#2563EB");
   const [logoUrl, setLogoUrl] = useState("");
-  const [logoError, setLogoError] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [realPlan, setRealPlan] = useState("free");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -77,12 +84,66 @@ export default function CustomizationPage() {
     }
   };
 
+  const handleLogoDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === "image/png" || file.type === "image/svg+xml" || file.type === "image/jpeg")) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === "image/png" || file.type === "image/svg+xml" || file.type === "image/jpeg")) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadLogo = async () => {
+    if (!logoFile || !user) return null;
+    setUploading(true);
+
+    const fileExt = logoFile.name.split(".").pop();
+    const filePath = `${user.id}/logo.${fileExt}`;
+
+    // Supprimer l'ancien logo s'il existe
+    await supabase.storage.from("logos").remove([`${user.id}/logo.png`, `${user.id}/logo.svg`, `${user.id}/logo.jpg`, `${user.id}/logo.jpeg`]);
+
+    const { error } = await supabase.storage
+      .from("logos")
+      .upload(filePath, logoFile, { upsert: true });
+
+    setUploading(false);
+
+    if (error) {
+      console.error("Upload error:", error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage.from("logos").getPublicUrl(filePath);
+    return urlData.publicUrl;
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+
+    let finalLogoUrl = logoUrl;
+
+    if (logoFile) {
+      const uploadedUrl = await uploadLogo();
+      if (uploadedUrl) {
+        finalLogoUrl = uploadedUrl;
+        setLogoUrl(uploadedUrl);
+        setLogoFile(null);
+      }
+    }
+
     const { error } = await supabase
       .from("newsletter_config")
-      .update({ brand_color: brandColor, custom_logo_url: logoUrl || null })
+      .update({ brand_color: brandColor, custom_logo_url: finalLogoUrl || null })
       .eq("user_id", user.id);
 
     setSaving(false);
@@ -397,82 +458,77 @@ export default function CustomizationPage() {
           transparent, max 200x60px.
         </p>
 
-        <label
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleLogoDrop}
           style={{
-            display: "block",
-            fontSize: 13,
-            color: "var(--text-secondary)",
-            marginBottom: 6,
-            fontWeight: 500,
+            border: "2px dashed var(--border)",
+            borderRadius: 10,
+            padding: "32px 20px",
+            textAlign: "center",
+            cursor: "pointer",
+            background: "var(--surface)",
+            transition: "border-color 0.2s",
           }}
+          onClick={() => document.getElementById("logo-input")?.click()}
         >
-          URL de votre logo (hébergé en ligne)
-        </label>
-        <input
-          type="text"
-          value={logoUrl}
-          onChange={(e) => {
-            setLogoUrl(e.target.value);
-            setLogoError(false);
-          }}
-          placeholder={t("custom.logo_placeholder")}
-          style={{
-            width: "100%",
-            fontSize: 13,
-            padding: "8px 12px",
-            border: "1px solid var(--border)",
-            borderRadius: 6,
-            background: "var(--surface-alt)",
-            color: "var(--text)",
-            boxSizing: "border-box",
-          }}
-        />
+          {logoPreview || logoUrl ? (
+            <div>
+              <img
+                src={logoPreview || logoUrl}
+                alt="Logo"
+                style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }}
+              />
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>
+                Cliquez ou glissez pour remplacer
+              </p>
+            </div>
+          ) : (
+            <div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ marginBottom: 8 }}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>
+                Glissez votre logo ici ou cliquez pour sélectionner
+              </p>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
+                PNG, SVG ou JPG - max 200x60px recommandé
+              </p>
+            </div>
+          )}
+          <input
+            id="logo-input"
+            type="file"
+            accept="image/png,image/svg+xml,image/jpeg"
+            style={{ display: "none" }}
+            onChange={handleLogoSelect}
+          />
+        </div>
 
-        {logoUrl && !logoError && (
-          <div
+        {(logoUrl || logoPreview) && (
+          <button
+            onClick={() => {
+              setLogoUrl("");
+              setLogoPreview(null);
+              setLogoFile(null);
+            }}
             style={{
-              marginTop: 16,
-              padding: 16,
-              border: "1px dashed var(--border)",
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
+              marginTop: 8,
+              fontSize: 13,
+              color: "#EF4444",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
             }}
           >
-            <img
-              src={logoUrl}
-              alt="Logo"
-              style={{ maxHeight: 40, maxWidth: 200 }}
-              onError={() => setLogoError(true)}
-            />
-            <button
-              onClick={() => {
-                setLogoUrl("");
-                setLogoError(false);
-              }}
-              style={{
-                fontSize: 12,
-                color: "#DC2626",
-                background: "none",
-                border: "1px solid #DC2626",
-                borderRadius: 6,
-                padding: "4px 10px",
-                cursor: "pointer",
-              }}
-            >
-              Supprimer
-            </button>
-          </div>
+            Supprimer le logo
+          </button>
         )}
 
-        {logoError && (
-          <p style={{ fontSize: 12, color: "#DC2626", marginTop: 8 }}>
-            Impossible de charger l&apos;image. Vérifiez l&apos;URL.
-          </p>
-        )}
-
-        {!logoUrl && (
+        {!logoUrl && !logoPreview && (
           <p
             style={{
               fontSize: 12,
@@ -489,7 +545,7 @@ export default function CustomizationPage() {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || uploading}
           style={{
             padding: "10px 24px",
             background: "var(--accent)",
@@ -498,11 +554,11 @@ export default function CustomizationPage() {
             borderRadius: 8,
             fontSize: 14,
             fontWeight: 600,
-            cursor: saving ? "not-allowed" : "pointer",
-            opacity: saving ? 0.7 : 1,
+            cursor: saving || uploading ? "not-allowed" : "pointer",
+            opacity: saving || uploading ? 0.7 : 1,
           }}
         >
-          {saving ? "Sauvegarde..." : t("custom.save")}
+          {uploading ? "Upload en cours..." : saving ? "Sauvegarde..." : t("custom.save")}
         </button>
         {saveSuccess && (
           <span
