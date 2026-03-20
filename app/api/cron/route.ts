@@ -111,7 +111,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
 
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
+        max_tokens: 4096,
         tools: [
           {
             type: "web_search_20250305" as "web_search_20250305",
