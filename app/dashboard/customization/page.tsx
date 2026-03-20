@@ -1,6 +1,8 @@
 // NOTE: Run in Supabase SQL Editor BEFORE using this page:
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS brand_color text DEFAULT '#2563EB';
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS custom_logo_url text DEFAULT NULL;
+// ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS text_color text DEFAULT '#111827';
+// ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS bg_color text DEFAULT '#FFFFFF';
 
 // NOTE: Dans Supabase -> Storage -> logos -> Policies, ajouter :
 // INSERT policy : authenticated users can upload to their own folder (storage.foldername(name))[1] = auth.uid()
@@ -34,7 +36,8 @@ export default function CustomizationPage() {
   const { getEffectivePlan } = useDevMode();
 
   const [brandColor, setBrandColor] = useState("#2563EB");
-  const [hexInput, setHexInput] = useState("#2563EB");
+  const [textColor, setTextColor] = useState("#111827");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
   const [logoUrl, setLogoUrl] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -60,29 +63,16 @@ export default function CustomizationPage() {
 
     supabase
       .from("newsletter_config")
-      .select("brand_color, custom_logo_url")
+      .select("brand_color, custom_logo_url, text_color, bg_color")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data?.brand_color) {
-          setBrandColor(data.brand_color);
-          setHexInput(data.brand_color);
-        }
+        if (data?.brand_color) setBrandColor(data.brand_color);
         if (data?.custom_logo_url) setLogoUrl(data.custom_logo_url);
+        if (data?.text_color) setTextColor(data.text_color);
+        if (data?.bg_color) setBgColor(data.bg_color);
       });
   }, [user]);
-
-  const handleColorSelect = (color: string) => {
-    setBrandColor(color);
-    setHexInput(color);
-  };
-
-  const handleHexInput = (val: string) => {
-    setHexInput(val);
-    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-      setBrandColor(val);
-    }
-  };
 
   const handleLogoDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -108,7 +98,6 @@ export default function CustomizationPage() {
     const fileExt = logoFile.name.split(".").pop();
     const filePath = `${user.id}/logo.${fileExt}`;
 
-    // Supprimer l'ancien logo s'il existe
     await supabase.storage.from("logos").remove([`${user.id}/logo.png`, `${user.id}/logo.svg`, `${user.id}/logo.jpg`, `${user.id}/logo.jpeg`]);
 
     const { error } = await supabase.storage
@@ -143,7 +132,12 @@ export default function CustomizationPage() {
 
     const { error } = await supabase
       .from("newsletter_config")
-      .update({ brand_color: brandColor, custom_logo_url: finalLogoUrl || null })
+      .update({
+        brand_color: brandColor,
+        custom_logo_url: finalLogoUrl || null,
+        text_color: textColor,
+        bg_color: bgColor,
+      })
       .eq("user_id", user.id);
 
     setSaving(false);
@@ -156,42 +150,15 @@ export default function CustomizationPage() {
   if (!isPro) {
     return (
       <div style={{ padding: "40px 32px" }}>
-        <div
-          style={{
-            textAlign: "center",
-            padding: "60px 20px",
-          }}
-        >
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--text-muted)"
-            strokeWidth="1.5"
-          >
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 600,
-              marginTop: 16,
-              color: "var(--text)",
-            }}
-          >
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginTop: 16, color: "var(--text)" }}>
             {t("custom.locked_title")}
           </h2>
-          <p
-            style={{
-              fontSize: 14,
-              color: "var(--text-secondary)",
-              marginTop: 8,
-              maxWidth: 400,
-              margin: "8px auto 0",
-            }}
-          >
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 8, maxWidth: 400, margin: "8px auto 0" }}>
             {t("custom.locked_desc")}
           </p>
           <a
@@ -215,8 +182,10 @@ export default function CustomizationPage() {
     );
   }
 
+  const customLogo = logoUrl;
+
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 680 }}>
+    <div style={{ padding: "40px 32px", maxWidth: 720 }}>
       <h1
         style={{
           fontSize: 22,
@@ -229,7 +198,7 @@ export default function CustomizationPage() {
         {t("custom.title")}
       </h1>
 
-      {/* Section couleur */}
+      {/* Section couleurs */}
       <div
         style={{
           background: "var(--surface)",
@@ -259,167 +228,156 @@ export default function CustomizationPage() {
             lineHeight: 1.5,
           }}
         >
-          Choisissez la couleur principale de votre newsletter. Elle sera
-          utilisée pour les accents, les titres de sections et les boutons.
+          Personnalisez les couleurs de votre newsletter.
         </p>
 
-        {/* Swatches */}
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
-          {PRESET_COLORS.map((c) => (
-            <button
-              key={c.value}
-              onClick={() => handleColorSelect(c.value)}
-              title={c.label}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                background: c.value,
-                border:
-                  brandColor === c.value
-                    ? `3px solid ${c.value}`
-                    : "3px solid transparent",
-                outline:
-                  brandColor === c.value ? `2px solid ${c.value}` : "none",
-                outlineOffset: 2,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow:
-                  brandColor === c.value
-                    ? "0 0 0 2px white, 0 0 0 4px " + c.value
-                    : "0 1px 3px rgba(0,0,0,0.15)",
-                transition: "box-shadow 0.15s ease",
-                flexShrink: 0,
-              }}
-            >
-              {brandColor === c.value && (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          {/* Card Couleur dominante */}
+          <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur dominante</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Accents, liens, boutons</p>
+
+            {/* Swatches */}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              {PRESET_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  onClick={() => setBrandColor(c.value)}
+                  title={c.label}
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    background: c.value,
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow:
+                      brandColor === c.value
+                        ? "0 0 0 2px white, 0 0 0 4px " + c.value
+                        : "0 1px 3px rgba(0,0,0,0.15)",
+                    flexShrink: 0,
+                    padding: 0,
+                  }}
                 >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </button>
-          ))}
-        </div>
+                  {brandColor === c.value && (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </button>
+              ))}
+            </div>
 
-        {/* HEX input */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <label
-            style={{
-              fontSize: 13,
-              color: "var(--text-secondary)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Ou entrez un code couleur :
-          </label>
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 6,
-              background: brandColor,
-              border: "1px solid var(--border)",
-              flexShrink: 0,
-            }}
-          />
-          <input
-            type="text"
-            value={hexInput}
-            onChange={(e) => handleHexInput(e.target.value)}
-            placeholder="#2563EB"
-            style={{
-              fontSize: 13,
-              padding: "6px 10px",
-              border: "1px solid var(--border)",
-              borderRadius: 6,
-              background: "var(--surface-alt)",
-              color: "var(--text)",
-              width: 110,
-              fontFamily: "monospace",
-            }}
-          />
-        </div>
-
-        {/* Preview */}
-        <div
-          style={{
-            marginTop: 20,
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              padding: "12px 16px",
-              borderBottom: `2px solid ${brandColor}`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              background: "#fff",
-            }}
-          >
-            <span
-              style={{
-                fontSize: 15,
-                fontWeight: 700,
-                color: "#111827",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Sorel
-              <span style={{ color: brandColor }}>l</span>
-            </span>
-            <span style={{ fontSize: 11, color: "#9CA3AF" }}>Aperçu</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <input
+                type="color"
+                value={brandColor}
+                onChange={(e) => setBrandColor(e.target.value)}
+                style={{ width: 40, height: 40, border: "none", cursor: "pointer", borderRadius: 8, padding: 2, flexShrink: 0 }}
+              />
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 3 }}>Code HEX</label>
+                <input
+                  type="text"
+                  value={brandColor}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBrandColor(val);
+                  }}
+                  placeholder="#2563EB"
+                  style={{
+                    width: "100%",
+                    padding: "5px 8px",
+                    fontSize: 13,
+                    borderRadius: 6,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface-alt)",
+                    color: "var(--text)",
+                    fontFamily: "monospace",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+            </div>
           </div>
-          <div style={{ padding: "12px 16px", background: "#F9FAFB" }}>
-            <span
-              style={{
-                display: "inline-block",
-                padding: "2px 8px",
-                borderRadius: 4,
-                background: brandColor,
-                color: "white",
-                fontSize: 10,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
-              Article phare
-            </span>
-            <p
-              style={{
-                fontSize: 13,
-                color: "#111827",
-                fontWeight: 600,
-                margin: "8px 0 4px",
-              }}
-            >
-              Titre de l&apos;article principal
-            </p>
-            <a
-              href="#"
-              style={{
-                fontSize: 12,
-                color: brandColor,
-                textDecoration: "none",
-                fontWeight: 500,
-              }}
-            >
-              Lire l&apos;article →
-            </a>
+
+          {/* Card Couleur des titres */}
+          <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur des titres</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Titres d&apos;articles et sujet</p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                style={{ width: 40, height: 40, border: "none", cursor: "pointer", borderRadius: 8, padding: 2, flexShrink: 0 }}
+              />
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 3 }}>Code HEX</label>
+                <input
+                  type="text"
+                  value={textColor}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setTextColor(val);
+                  }}
+                  placeholder="#111827"
+                  style={{
+                    width: "100%",
+                    padding: "5px 8px",
+                    fontSize: 13,
+                    borderRadius: 6,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface-alt)",
+                    color: "var(--text)",
+                    fontFamily: "monospace",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Card Couleur de fond */}
+          <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur de fond</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Arrière-plan de la newsletter</p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
+              <input
+                type="color"
+                value={bgColor}
+                onChange={(e) => setBgColor(e.target.value)}
+                style={{ width: 40, height: 40, border: "none", cursor: "pointer", borderRadius: 8, padding: 2, flexShrink: 0 }}
+              />
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 3 }}>Code HEX</label>
+                <input
+                  type="text"
+                  value={bgColor}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBgColor(val);
+                  }}
+                  placeholder="#FFFFFF"
+                  style={{
+                    width: "100%",
+                    padding: "5px 8px",
+                    fontSize: 13,
+                    borderRadius: 6,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface-alt)",
+                    color: "var(--text)",
+                    fontFamily: "monospace",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -454,8 +412,7 @@ export default function CustomizationPage() {
             lineHeight: 1.5,
           }}
         >
-          {t("custom.logo_desc")} Format recommandé : PNG ou SVG, fond
-          transparent, max 200x60px.
+          {t("custom.logo_desc")} Format recommandé : PNG ou SVG, fond transparent, max 200x60px.
         </p>
 
         <div
@@ -529,16 +486,75 @@ export default function CustomizationPage() {
         )}
 
         {!logoUrl && !logoPreview && (
-          <p
-            style={{
-              fontSize: 12,
-              color: "var(--text-muted)",
-              marginTop: 8,
-            }}
-          >
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8 }}>
             Sans logo, le texte &quot;Sorell&quot; sera utilisé par défaut.
           </p>
         )}
+      </div>
+
+      {/* Preview */}
+      <div
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          padding: 24,
+          marginBottom: 24,
+        }}
+      >
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: "var(--text-muted)",
+            margin: "0 0 16px",
+          }}
+        >
+          Aperçu
+        </p>
+        <div style={{ maxWidth: 500, border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
+          {/* Header */}
+          <div style={{ padding: "16px 20px", borderBottom: `2px solid ${brandColor}`, background: bgColor, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {customLogo ? (
+              <img src={logoPreview || customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 140 }} />
+            ) : (
+              <span style={{ fontSize: 16, fontWeight: 700, color: textColor }}>Sorel<span style={{ color: brandColor }}>l</span></span>
+            )}
+            <span style={{ fontSize: 11, color: "#9CA3AF" }}>20 mars 2026</span>
+          </div>
+          {/* Subject */}
+          <div style={{ padding: "16px 20px 12px", background: bgColor }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: textColor, margin: 0 }}>Titre de votre newsletter</h3>
+            <p style={{ fontSize: 11, color: "#9CA3AF", margin: "4px 0 0" }}>Votre veille sectorielle personnalisée</p>
+          </div>
+          {/* Article phare */}
+          <div style={{ padding: "0 20px 16px", background: bgColor }}>
+            <div style={{ background: `${brandColor}11`, borderRadius: 8, padding: 16, border: `1px solid ${brandColor}33` }}>
+              <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 4, background: brandColor, color: "white", fontSize: 9, fontWeight: 700, textTransform: "uppercase" }}>Article phare</span>
+              <p style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0 4px" }}>Un exemple d&apos;article mis en avant</p>
+              <p style={{ fontSize: 12, color: "#4B5563", fontStyle: "italic", margin: "0 0 6px" }}>Accroche de l&apos;article en gris italique</p>
+              <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>Contenu de l&apos;article avec des détails concrets...</p>
+            </div>
+          </div>
+          {/* Article normal */}
+          <div style={{ padding: "0 20px 16px", background: bgColor }}>
+            <div style={{ borderTop: "1px solid #E5E7EB", paddingTop: 12 }}>
+              <span style={{ display: "inline-block", padding: "2px 6px", borderRadius: 4, background: "#F3F4F6", color: "#374151", fontSize: 9, fontWeight: 600, textTransform: "uppercase" }}>Catégorie</span>
+              <p style={{ fontSize: 13, fontWeight: 600, color: textColor, margin: "6px 0 4px" }}>Un autre article de la semaine</p>
+              <a style={{ fontSize: 11, color: brandColor, textDecoration: "none" }}>Lire l&apos;article</a>
+            </div>
+          </div>
+          {/* Footer */}
+          <div style={{ padding: "12px 20px", borderTop: "1px solid #E5E7EB", background: "#F9FAFB" }}>
+            {customLogo ? (
+              <img src={logoPreview || customLogo} alt="Logo" style={{ maxHeight: 20, maxWidth: 100 }} />
+            ) : (
+              <span style={{ fontSize: 12, fontWeight: 700, color: textColor }}>Sorel<span style={{ color: brandColor }}>l</span></span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Save button */}
@@ -561,13 +577,7 @@ export default function CustomizationPage() {
           {uploading ? "Upload en cours..." : saving ? "Sauvegarde..." : t("custom.save")}
         </button>
         {saveSuccess && (
-          <span
-            style={{
-              fontSize: 13,
-              color: "#059669",
-              fontWeight: 500,
-            }}
-          >
+          <span style={{ fontSize: 13, color: "#059669", fontWeight: 500 }}>
             ✓ {t("custom.saved")}
           </span>
         )}

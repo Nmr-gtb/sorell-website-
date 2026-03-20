@@ -24,12 +24,14 @@ export async function POST(request: Request) {
 
     const { data: config } = await supabase
       .from("newsletter_config")
-      .select("brand_color, custom_logo_url")
+      .select("brand_color, custom_logo_url, text_color, bg_color")
       .eq("user_id", newsletter.user_id)
       .single();
 
     const brandColor = config?.brand_color || "#2563EB";
     const customLogo = config?.custom_logo_url || null;
+    const textColor = config?.text_color || "#111827";
+    const bgColor = config?.bg_color || "#FFFFFF";
 
     const { data: recipients } = await supabase
       .from("recipients")
@@ -65,7 +67,7 @@ export async function POST(request: Request) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin:0;padding:0;background:#F3F4F6;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
+  <div style="max-width:620px;margin:0 auto;background:${bgColor};">
 
     <!-- Header -->
     <div style="padding:28px 32px;border-bottom:2px solid ${brandColor};">
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
           <td>
             ${customLogo
               ? `<img src="${customLogo}" alt="Logo" style="max-height:36px;max-width:180px;" />`
-              : `<span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:${brandColor};">l</span></span>`
+              : `<span style="font-size:20px;font-weight:700;color:${textColor};letter-spacing:-0.02em;">Sorel<span style="color:${brandColor};">l</span></span>`
             }
           </td>
           <td align="right">
@@ -86,7 +88,7 @@ export async function POST(request: Request) {
 
     <!-- Subject -->
     <div style="padding:28px 32px 20px;">
-      <h1 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;letter-spacing:-0.02em;line-height:1.3;">${newsletter.subject}</h1>
+      <h1 style="font-size:22px;font-weight:700;color:${textColor};margin:0 0 6px;letter-spacing:-0.02em;line-height:1.3;">${newsletter.subject}</h1>
       <p style="font-size:13px;color:#9CA3AF;margin:0;">Votre veille sectorielle personnalisée par IA</p>
     </div>
 
@@ -129,7 +131,7 @@ export async function POST(request: Request) {
           </tr>
         </table>
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(featuredArticle.title)}&url=${encodeURIComponent(featuredArticle.url || "https://sorell.fr")}" style="text-decoration:none;">
-          <h2 style="font-size:18px;font-weight:700;color:#111827;margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
+          <h2 style="font-size:18px;font-weight:700;color:${textColor};margin:12px 0 8px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
         </a>
         ${featuredArticle.hook ? `<p style="font-size:14px;color:#4B5563;margin:0 0 10px;font-weight:500;font-style:italic;">${featuredArticle.hook}</p>` : ""}
         <p style="font-size:14px;color:#4B5563;line-height:1.65;margin:0 0 10px;">${featuredArticle.content || featuredArticle.summary || ""}</p>
@@ -151,7 +153,7 @@ export async function POST(request: Request) {
           </tr>
         </table>
         <a href="https://www.sorell.fr/api/track/click?nid=${newsletter.id}&email=${encodeURIComponent(recipient.email)}&article=${encodeURIComponent(a.title)}&url=${encodeURIComponent(a.url || "https://sorell.fr")}" style="text-decoration:none;">
-          <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 6px;line-height:1.35;">${a.title}</h3>
+          <h3 style="font-size:16px;font-weight:600;color:${textColor};margin:0 0 6px;line-height:1.35;">${a.title}</h3>
         </a>
         ${a.hook ? `<p style="font-size:13px;color:#4B5563;margin:0 0 8px;font-weight:500;font-style:italic;">${a.hook}</p>` : ""}
         <p style="font-size:13px;color:#6B7280;line-height:1.6;margin:0 0 6px;">${a.content || a.summary || ""}</p>
@@ -174,7 +176,7 @@ export async function POST(request: Request) {
           <td>
             ${customLogo
               ? `<img src="${customLogo}" alt="Logo" style="max-height:28px;max-width:140px;" />`
-              : `<span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:${brandColor};">l</span></span>`
+              : `<span style="font-size:14px;font-weight:700;color:${textColor};letter-spacing:-0.01em;">Sorel<span style="color:${brandColor};">l</span></span>`
             }
           </td>
           <td align="right">

@@ -99,6 +99,8 @@ export default function GeneratePage() {
 
   const [brandColor, setBrandColor] = useState("#2563EB");
   const [customLogo, setCustomLogo] = useState<string | null>(null);
+  const [textColor, setTextColor] = useState("#111827");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
 
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<SendResult[] | null>(null);
@@ -122,6 +124,8 @@ export default function GeneratePage() {
         }
         if (configResult.data.brand_color) setBrandColor(configResult.data.brand_color);
         if (configResult.data.custom_logo_url) setCustomLogo(configResult.data.custom_logo_url);
+        if (configResult.data.text_color) setTextColor(configResult.data.text_color);
+        if (configResult.data.bg_color) setBgColor(configResult.data.bg_color);
       }
       setRecipientCount(recipientsResult.data.length);
       if (profileResult.data?.plan) {
@@ -513,7 +517,7 @@ export default function GeneratePage() {
             >
               Article phare · {featuredArticle.tag}
             </span>
-            <h2 style={{ fontSize: 17, fontWeight: 600, color: "var(--text)", margin: "8px 0 6px", lineHeight: 1.35 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 600, color: textColor, margin: "8px 0 6px", lineHeight: 1.35 }}>
               {featuredArticle.title}
             </h2>
             {featuredArticle.hook && (
@@ -565,7 +569,7 @@ export default function GeneratePage() {
                 >
                   {article.tag}
                 </span>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "4px 0", lineHeight: 1.35 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: textColor, margin: "4px 0", lineHeight: 1.35 }}>
                   {article.title}
                 </h3>
                 {article.hook && (
