@@ -1005,8 +1005,26 @@ export default function ConfigPage() {
             disabled={saving}
             style={{ width: "100%", fontSize: 15 }}
           >
-            {saving ? "Sauvegarde..." : saved ? "✓ Sauvegardé !" : "Sauvegarder les modifications"}
+            {saving ? "Sauvegarde..." : "Sauvegarder les modifications"}
           </button>
+          {saved && (
+            <div style={{
+              marginTop: 16,
+              padding: "16px 20px",
+              background: "rgba(16,185,129,0.08)",
+              border: "1px solid rgba(16,185,129,0.2)",
+              borderRadius: 10,
+              fontSize: 14,
+              color: "#059669",
+              lineHeight: 1.6,
+              textAlign: "center",
+            }}>
+              <p style={{ fontWeight: 600, margin: "0 0 4px" }}>Configuration sauvegardée</p>
+              <p style={{ margin: 0, fontSize: 13 }}>
+                Votre newsletter sera envoyée automatiquement. Vous n&apos;avez plus rien à faire.
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>

@@ -208,10 +208,10 @@ export default function GeneratePage() {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
-          Générer une newsletter
+          Aperçu de votre newsletter
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          L&apos;IA analyse vos sources et génère votre briefing
+          Prévisualisez votre prochaine newsletter ou générez-en une manuellement
         </p>
       </div>
 
@@ -294,10 +294,10 @@ export default function GeneratePage() {
             </svg>
             <div>
               <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                Vos newsletters sont envoyées automatiquement
+                Tout est automatique
               </p>
               <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
-                Une fois configuré, Sorell génère et envoie votre newsletter au jour et à l&apos;heure choisis dans l&apos;onglet Newsletter. Vous pouvez aussi en générer une manuellement ici.
+                Votre newsletter est envoyée automatiquement chaque semaine selon votre configuration. Cette page vous permet de prévisualiser le résultat ou d&apos;en générer une manuellement si besoin.
               </p>
             </div>
           </div>
@@ -341,7 +341,7 @@ export default function GeneratePage() {
                 ) : (
                   <>
                     <IconSparkles />
-                    Générer ma newsletter
+                    Générer un aperçu
                   </>
                 )}
               </button>
@@ -394,31 +394,36 @@ export default function GeneratePage() {
                 }}
               />
             </div>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-              <button
-                className="btn-ghost"
-                onClick={handleGenerate}
-                disabled={generating}
-                style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, padding: "7px 14px" }}
-              >
-                {generating ? <Spinner /> : <IconRefresh />}
-                Régénérer
-              </button>
-              <button
-                className="btn-primary"
-                onClick={handleSend}
-                disabled={sending || recipientCount === 0}
-                style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, padding: "8px 16px" }}
-              >
-                {sending ? (
-                  <>
-                    <Spinner />
-                    Envoi en cours à {recipientCount} destinataire{recipientCount > 1 ? "s" : ""}...
-                  </>
-                ) : (
-                  `Envoyer à ${recipientCount} destinataire${recipientCount > 1 ? "s" : ""}`
-                )}
-              </button>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flexShrink: 0 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <button
+                  className="btn-ghost"
+                  onClick={handleGenerate}
+                  disabled={generating}
+                  style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, padding: "7px 14px" }}
+                >
+                  {generating ? <Spinner /> : <IconRefresh />}
+                  Régénérer
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={handleSend}
+                  disabled={sending || recipientCount === 0}
+                  style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, padding: "8px 16px" }}
+                >
+                  {sending ? (
+                    <>
+                      <Spinner />
+                      Envoi en cours à {recipientCount} destinataire{recipientCount > 1 ? "s" : ""}...
+                    </>
+                  ) : (
+                    `Envoyer à ${recipientCount} destinataire${recipientCount > 1 ? "s" : ""}`
+                  )}
+                </button>
+              </div>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0, textAlign: "right" }}>
+                Cet envoi est en plus de l&apos;envoi automatique programmé.
+              </p>
             </div>
           </div>
 

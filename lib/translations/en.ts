@@ -149,8 +149,8 @@ const en: Record<string, string> = {
 
   // Dashboard sidebar
   "dash.overview": "Overview",
-  "dash.newsletter": "Newsletter",
-  "dash.generate": "Generate",
+  "dash.newsletter": "Settings",
+  "dash.generate": "Preview",
   "dash.analytics": "Analytics",
   "dash.profile": "Profile",
   "dash.upgrade_text": "Upgrade to Pro to send to your team (up to 10 recipients)",
