@@ -37,6 +37,13 @@ type SendResult = {
   error?: string;
 };
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function IconSparkles() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -90,6 +97,9 @@ export default function GeneratePage() {
   const [subject, setSubject] = useState("");
   const [generateError, setGenerateError] = useState("");
 
+  const [brandColor, setBrandColor] = useState("#2563EB");
+  const [customLogo, setCustomLogo] = useState<string | null>(null);
+
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<SendResult[] | null>(null);
   const [sendError, setSendError] = useState("");
@@ -110,6 +120,8 @@ export default function GeneratePage() {
         if (configResult.data.custom_brief) {
           setCustomBrief(configResult.data.custom_brief);
         }
+        if (configResult.data.brand_color) setBrandColor(configResult.data.brand_color);
+        if (configResult.data.custom_logo_url) setCustomLogo(configResult.data.custom_logo_url);
       }
       setRecipientCount(recipientsResult.data.length);
       if (profileResult.data?.plan) {
@@ -278,8 +290,8 @@ export default function GeneratePage() {
 
           {/* Automation info */}
           <div style={{
-            background: "rgba(37,99,235,0.04)",
-            border: "1px solid rgba(37,99,235,0.12)",
+            background: hexToRgba(brandColor, 0.04),
+            border: `1px solid ${hexToRgba(brandColor, 0.12)}`,
             borderRadius: 10,
             padding: "16px 20px",
             marginBottom: 24,
@@ -490,7 +502,7 @@ export default function GeneratePage() {
                 display: "inline-block",
                 padding: "2px 8px",
                 borderRadius: 4,
-                background: "rgba(37,99,235,0.08)",
+                background: hexToRgba(brandColor, 0.08),
                 color: "var(--accent)",
                 fontSize: 11,
                 fontWeight: 600,
@@ -518,7 +530,7 @@ export default function GeneratePage() {
                 href={featuredArticle.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "block", fontSize: 12, color: "#2563EB", textDecoration: "none", fontWeight: 500, marginTop: 4 }}
+                style={{ display: "block", fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}
               >
                 Lire l&apos;article →
               </a>
@@ -570,7 +582,7 @@ export default function GeneratePage() {
                     href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: "block", fontSize: 11, color: "#2563EB", textDecoration: "none", fontWeight: 500, marginTop: 4 }}
+                    style={{ display: "block", fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}
                   >
                     Lire l&apos;article →
                   </a>
