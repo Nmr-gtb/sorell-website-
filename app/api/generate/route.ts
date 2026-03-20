@@ -59,6 +59,7 @@ GÉNÈRE un JSON avec cette structure exacte :
 }
 
 CONSIGNES :
+- OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${topicsList} actualités ${new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les 5 articles.
 - Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
 - Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3).
@@ -71,7 +72,7 @@ IMPORTANT : Réponds UNIQUEMENT avec le JSON valide, sans texte autour, sans bac
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 4000,
+      max_tokens: 1500,
       tools: [
         {
           type: "web_search_20250305" as "web_search_20250305",

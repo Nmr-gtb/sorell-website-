@@ -64,11 +64,13 @@ Pour CHAQUE article, génère :
 - url : URL COMPLÈTE de l'article original (https://...)
 - featured : true pour le 1er article, false pour les autres
 
+OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${SECTOR_PROMPTS[sector]} actualités ${new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les 5 articles.
+
 IMPORTANT : Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans backticks markdown.`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 4000,
+      max_tokens: 1500,
       tools: [
         {
           type: "web_search_20250305" as "web_search_20250305",
