@@ -48,6 +48,14 @@ function IconChart() {
   );
 }
 
+function CrownIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1.5">
+      <path d="M2 20h20L19 9l-5 4-2-6-2 6-5-4z"/>
+    </svg>
+  );
+}
+
 function IconPalette() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -110,12 +118,12 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const plan = getEffectivePlan(realPlan);
 
   const navItems = [
-    { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid /> },
-    { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail /> },
-    { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles /> },
-    { label: t("dash.customization"), href: "/dashboard/customization", icon: <IconPalette /> },
-    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart /> },
-    { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser /> },
+    { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
+    { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false },
+    { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
+    { label: t("dash.customization"), href: plan === "free" ? "/tarifs" : "/dashboard/customization", icon: <IconPalette />, crown: plan === "free" },
+    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: false },
+    { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
   ];
 
   useEffect(() => {
@@ -203,7 +211,10 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
             }}
           >
             <span style={{ opacity: isActive(item.href) ? 1 : 0.7, display: "flex" }}>{item.icon}</span>
-            {item.label}
+            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {item.label}
+              {item.crown && <CrownIcon />}
+            </span>
           </Link>
         ))}
       </nav>
