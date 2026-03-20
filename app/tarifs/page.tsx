@@ -11,28 +11,44 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const FAQ = [
   {
+    q: "Quelle est la différence avec ChatGPT ?",
+    a: "ChatGPT est un outil généraliste que vous devez relancer chaque semaine avec un prompt. Sorell est automatique : vous configurez une fois, et chaque semaine votre newsletter arrive toute seule dans votre boîte mail. En plus, Sorell utilise de vraies sources web (Les Echos, Bloomberg, Reuters...) avec des liens cliquables, là où ChatGPT peut inventer des informations. Enfin, Sorell envoie à toute votre équipe et vous montre qui lit quoi — impossible avec ChatGPT.",
+  },
+  {
+    q: "Quelle est la différence avec Google Alerts ?",
+    a: "Google Alerts vous envoie des liens bruts sans résumé — vous devez tout lire vous-même. Sorell analyse les articles, les résume et vous livre un briefing éditorial prêt à lire en 5 minutes. C'est la différence entre recevoir 30 liens et recevoir un résumé clair de ce qui compte vraiment.",
+  },
+  {
+    q: "Est-ce que les informations sont fiables ?",
+    a: "Oui. Chaque article de votre newsletter est basé sur une vraie source trouvée sur le web (presse, médias spécialisés, rapports). Chaque article contient un lien direct vers la source originale pour que vous puissiez vérifier. Sorell ne génère pas de fausses informations.",
+  },
+  {
     q: "Le plan gratuit est-il vraiment gratuit ?",
-    a: "Oui, totalement. Pas de carte bancaire requise. Vous bénéficiez de 4 newsletters par mois pour tester le produit. Passez à Pro quand vous êtes prêt.",
+    a: "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée — c'est la même qualité que le plan Pro.",
   },
   {
-    q: "Comment fonctionne la génération de contenu ?",
-    a: "Sorell utilise des modèles de langage de dernière génération pour analyser des centaines de sources d'actualité chaque semaine. L'IA sélectionne, synthétise et formate les contenus les plus pertinents selon les thématiques et profils configurés.",
+    q: "Combien de temps faut-il pour configurer Sorell ?",
+    a: "5 minutes. Vous décrivez votre activité en quelques lignes, vous choisissez vos thématiques, et c'est tout. Votre première newsletter peut être générée immédiatement.",
   },
   {
-    q: "Mes données sont-elles sécurisées ?",
-    a: "Absolument. Sorell est 100% conforme au RGPD. Vos données sont hébergées exclusivement sur des serveurs européens, chiffrées en transit et au repos (AES-256). Nous ne revendons jamais vos données.",
+    q: "Pourquoi payer 9€/mois alors que le plan gratuit existe ?",
+    a: "Le plan gratuit est limité à 1 destinataire (vous). Le plan Pro permet d'envoyer la newsletter à votre équipe (jusqu'à 10 personnes), avec des newsletters illimitées et des analytics complets pour savoir qui lit et quels sujets intéressent le plus.",
+  },
+  {
+    q: "Mon stagiaire peut faire la même chose, non ?",
+    a: "Un stagiaire passe en moyenne 2 à 4 heures par semaine pour compiler une veille sectorielle. Sorell le fait en 12 secondes, chaque semaine, sans oubli, sans absence, sans formation. Et le coût est de 9€/mois contre un salaire de stagiaire.",
   },
   {
     q: "Puis-je annuler à tout moment ?",
-    a: "Oui, sans engagement et sans frais de résiliation. Vous pouvez annuler votre abonnement en un clic depuis votre dashboard. L'accès reste actif jusqu'à la fin de la période payée.",
+    a: "Oui, en un clic depuis votre profil. Pas de préavis, pas de frais. L'accès est maintenu jusqu'à la fin de la période en cours.",
+  },
+  {
+    q: "Mes données sont-elles sécurisées ?",
+    a: "Oui. Hébergement sur serveurs européens, chiffrement AES-256, conforme RGPD. Nous ne revendons jamais vos données. Les paiements sont sécurisés par Stripe.",
   },
   {
     q: "L'IA peut-elle se tromper ?",
-    a: "Nos algorithmes sélectionnent uniquement des sources vérifiées (presse reconnue, sites officiels, publications académiques). Chaque article inclut un lien vers la source originale.",
-  },
-  {
-    q: "Proposez-vous une période d'essai ?",
-    a: "Oui. Le plan gratuit vous permet de tester le produit sans carte bancaire. Passez à Pro quand vous êtes prêt, annulation à tout moment.",
+    a: "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale — vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
   },
 ];
 
