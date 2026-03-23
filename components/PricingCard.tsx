@@ -148,13 +148,8 @@ export default function PricingCard({
             </span>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-                /mois
+                {period === "annual" ? "/an" : "/mois"}
               </span>
-              {period === "annual" && annualPrice !== null && (
-                <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-                  {Math.round(annualPrice * 12)}€/an
-                </span>
-              )}
               {period === "annual" && (
                 <span
                   style={{

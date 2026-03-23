@@ -224,7 +224,7 @@ export default function PricingPage() {
             <PricingCard
               name={t("pricing.pro")}
               price={19}
-              annualPrice={190 / 12}
+              annualPrice={190}
               period={period}
               tagline={t("pricing.pro_desc")}
               features={proFeatures}
@@ -235,7 +235,7 @@ export default function PricingPage() {
             <PricingCard
               name={t("pricing.business")}
               price={49}
-              annualPrice={490 / 12}
+              annualPrice={490}
               period={period}
               tagline={t("pricing.biz_desc")}
               features={businessFeatures}
