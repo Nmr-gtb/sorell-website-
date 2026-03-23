@@ -34,7 +34,7 @@ export default function NewsletterPreview() {
             Sorel<span style={{ color: "var(--accent)" }}>l</span>
           </span>
           <span style={{ color: "var(--border-hover)", fontSize: "0.875rem" }}>·</span>
-          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>NovaTech</span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>Groupe Verdier</span>
         </div>
         <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
           Semaine du 17 mars 2026
@@ -94,10 +94,10 @@ export default function NewsletterPreview() {
               letterSpacing: "-0.01em",
             }}
           >
-            Claude 4.6 Opus : Anthropic repousse les limites du raisonnement IA
+            Emballages : les nouvelles normes PPWR entrent en vigueur cet été
           </p>
           <span style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.7)" }}>
-            techcrunch.com · 2j
+            lesechos.fr · 2j
           </span>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function NewsletterPreview() {
         }}
       >
         <p style={{ fontSize: "0.8125rem", color: "var(--text)", lineHeight: 1.6 }}>
-          <span style={{ fontWeight: 600 }}>Bonjour Marie,</span>{" "}
+          <span style={{ fontWeight: 600 }}>Bonjour Anne-Claire,</span>{" "}
           <span style={{ color: "var(--text-secondary)" }}>
             voici les 5 actualités clés de votre secteur cette semaine, sélectionnées et résumées par Sorell.
           </span>
@@ -155,7 +155,7 @@ export default function NewsletterPreview() {
                 color: "#065F46",
               }}
             >
-              RÉGLEMENTATION
+              MARCHÉ
             </span>
             <p
               style={{
@@ -167,10 +167,10 @@ export default function NewsletterPreview() {
                 letterSpacing: "-0.01em",
               }}
             >
-              IA Act : premières sanctions pour non-conformité en Europe
+              Le packaging durable dépasse les 400Mds$ en 2026
             </p>
             <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-              euractiv.fr · 3j
+              businessinsights.com · 3j
             </span>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function NewsletterPreview() {
                 color: "#1E40AF",
               }}
             >
-              CONCURRENT
+              INNOVATION
             </span>
             <p
               style={{
@@ -216,10 +216,10 @@ export default function NewsletterPreview() {
                 letterSpacing: "-0.01em",
               }}
             >
-              Mistral AI lève 500M€ et accélère sur le B2B en Europe
+              Quadpack lance un flacon 100% recyclé pour le premium
             </p>
             <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-              lesechos.fr · 1j
+              premiumbeautynews.com · 1j
             </span>
           </div>
         </div>
@@ -272,7 +272,7 @@ export default function NewsletterPreview() {
                 letterSpacing: "-0.01em",
               }}
             >
-              Les agents autonomes arrivent en entreprise
+              Les marques accélèrent sur le vrac : +35% de références
             </p>
             <p
               style={{
@@ -282,7 +282,7 @@ export default function NewsletterPreview() {
                 marginBottom: 4,
               }}
             >
-              Les organisations pilotent des agents IA capables d&apos;agir sans supervision humaine.
+              La grande distribution et les marques cosmétiques multiplient les formats rechargeables.
             </p>
             <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
               mckinsey.com · 4j
@@ -348,7 +348,7 @@ export default function NewsletterPreview() {
         <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
           Généré automatiquement par Sorel
           <span style={{ color: "var(--accent)" }}>l</span>
-          {" · "}Personnalisé pour Marie Dupont, Direction Marketing
+          {" · "}Personnalisé pour Anne-Claire Duval, Direction des opérations
         </span>
       </div>
     </div>
