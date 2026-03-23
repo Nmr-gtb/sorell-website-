@@ -451,31 +451,68 @@ export default function GeneratePage() {
           <div style={{ background: bgColor, border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
 
             {/* Header */}
-            <div style={{ padding: "24px 32px", borderBottom: `2px solid ${brandColor}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ padding: "24px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               {customLogo ? (
-                <img src={customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 160 }} />
+                <img src={customLogo} alt="Logo" style={{ maxHeight: 36, maxWidth: 180 }} />
               ) : (
-                <span style={{ fontSize: 18, fontWeight: 600, color: textColor, letterSpacing: "-0.02em" }}>
+                <span style={{ fontSize: 20, fontWeight: 700, color: textColor, letterSpacing: "-0.02em" }}>
                   Sorel<span style={{ color: brandColor }}>l</span>
                 </span>
               )}
               <span style={{ fontSize: 12, color: "#9CA3AF" }}>
-                {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
               </span>
             </div>
 
-            {/* Subject */}
-            <div style={{ padding: "24px 32px 20px" }}>
-              <h1 style={{ fontSize: 20, fontWeight: 600, color: textColor, margin: "0 0 6px", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
-                {subject}
-              </h1>
-              <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>Votre veille sectorielle personnalisée par IA</p>
+            {/* Article phare avec bandeau décoratif */}
+            <div style={{ padding: "0 32px 24px" }}>
+              <div style={{ border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden" }}>
+                <div style={{ background: "#1F2937", height: 120 }}></div>
+                <div style={{ padding: "20px 24px", background: bgColor }}>
+                  <span style={{
+                    display: "inline-block",
+                    padding: "4px 12px",
+                    borderRadius: 4,
+                    background: brandColor,
+                    color: "white",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                  }}>
+                    Article phare
+                  </span>
+                  <h2 style={{ fontSize: 18, fontWeight: 700, color: textColor, margin: "12px 0 8px", lineHeight: 1.35, letterSpacing: "-0.01em" }}>
+                    {featuredArticle.title}
+                  </h2>
+                  {featuredArticle.hook && (
+                    <p style={{ fontSize: 14, color: bodyTextColor, margin: "0 0 10px", fontStyle: "italic", lineHeight: 1.5 }}>
+                      {featuredArticle.hook}
+                    </p>
+                  )}
+                  <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 12px" }}>
+                    {featuredArticle.content || featuredArticle.summary}
+                  </p>
+                  <a href={featuredArticle.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
+                    {featuredArticle.source} →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Intro personnalisée */}
+            <div style={{ padding: "0 32px 20px" }}>
+              <p style={{ fontSize: 14, color: textColor, lineHeight: 1.6, margin: 0 }}>
+                <span style={{ fontWeight: 600 }}>Bonjour,</span>
+                <span style={{ color: "#6B7280" }}> voici les {otherArticles.length + 1} actualités clés de votre secteur cette semaine, sélectionnées et résumées par Sorell.</span>
+              </p>
             </div>
 
             {/* Editorial */}
             {editorial && (
               <div style={{ padding: "0 32px 24px" }}>
-                <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "16px 20px", background: "#F8FAFC", borderRadius: "0 8px 8px 0" }}>
+                <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "16px 20px", background: "#F8FAFC" }}>
                   <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
                     Éditorial
                   </p>
@@ -504,92 +541,121 @@ export default function GeneratePage() {
               </div>
             )}
 
-            {/* Featured article */}
-            <div style={{ padding: "0 32px 24px" }}>
-              <div style={{ background: hexToRgba(brandColor, 0.06), borderRadius: 10, padding: 24, border: `1px solid ${hexToRgba(brandColor, 0.18)}` }}>
-                <span style={{
-                  display: "inline-block",
-                  padding: "3px 10px",
-                  borderRadius: 4,
-                  background: brandColor,
-                  color: "white",
-                  fontSize: 10,
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                }}>
-                  Article phare · {featuredArticle.tag}
-                </span>
-                <h2 style={{ fontSize: 17, fontWeight: 600, color: textColor, margin: "12px 0 8px", lineHeight: 1.35, letterSpacing: "-0.01em" }}>
-                  {featuredArticle.title}
-                </h2>
-                {featuredArticle.hook && (
-                  <p style={{ fontSize: 14, color: bodyTextColor, margin: "0 0 8px", fontWeight: 400, fontStyle: "italic" }}>
-                    {featuredArticle.hook}
-                  </p>
-                )}
-                <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 10px" }}>
-                  {featuredArticle.content || featuredArticle.summary}
-                </p>
-                <span style={{ fontSize: 12, color: "#9CA3AF" }}>Source : {featuredArticle.source}</span>
-                {featuredArticle.url && (
-                  <a href={featuredArticle.url} target="_blank" rel="noopener noreferrer"
-                    style={{ display: "block", fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}>
-                    Lire l&apos;article →
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Other articles */}
+            {/* Articles secondaires */}
             <div style={{ padding: "0 32px 16px" }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 16px" }}>
                 Les actus de la semaine
               </p>
-              {otherArticles.map((article, i) => (
-                <div key={i} style={{ padding: "20px 0", borderBottom: i < otherArticles.length - 1 ? "1px solid #E5E7EB" : "none" }}>
-                  <span style={{
-                    display: "inline-block",
-                    padding: "2px 8px",
-                    borderRadius: 4,
-                    background: "#F3F4F6",
-                    color: "#374151",
-                    fontSize: 10,
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    marginBottom: 6,
-                  }}>
-                    {article.tag}
-                  </span>
-                  <h3 style={{ fontSize: 15, fontWeight: 500, color: textColor, margin: "4px 0", lineHeight: 1.35 }}>
-                    {article.title}
-                  </h3>
-                  {article.hook && (
-                    <p style={{ fontSize: 13, color: bodyTextColor, margin: "0 0 6px", fontWeight: 400, fontStyle: "italic" }}>
-                      {article.hook}
+
+              {/* 2 premiers articles en grille */}
+              {otherArticles.length >= 2 && (
+                <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                  {otherArticles.slice(0, 2).map((article, i) => (
+                    <div key={i} style={{ flex: 1, border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden" }}>
+                      <div style={{ background: "#374151", height: 80 }}></div>
+                      <div style={{ padding: 14, background: bgColor }}>
+                        <span style={{
+                          display: "inline-block",
+                          padding: "3px 8px",
+                          borderRadius: 4,
+                          background: "#F3F4F6",
+                          color: "#374151",
+                          fontSize: 9,
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}>
+                          {article.tag}
+                        </span>
+                        <h3 style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0", lineHeight: 1.35 }}>
+                          {article.title}
+                        </h3>
+                        <p style={{ fontSize: 12, color: bodyTextColor, lineHeight: 1.5, margin: "0 0 8px" }}>
+                          {(article.content || article.summary || "").length > 120
+                            ? (article.content || article.summary || "").substring(0, 120) + "..."
+                            : (article.content || article.summary || "")}
+                        </p>
+                        <a href={article.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
+                          style={{ fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
+                          {article.source} →
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Articles restants */}
+              {otherArticles.slice(2).map((article, i) => (
+                <div key={i} style={{ border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden", marginBottom: 16 }}>
+                  <div style={{ background: "#374151", height: 60 }}></div>
+                  <div style={{ padding: "16px 20px", background: bgColor }}>
+                    <span style={{
+                      display: "inline-block",
+                      padding: "3px 8px",
+                      borderRadius: 4,
+                      background: "#F3F4F6",
+                      color: "#374151",
+                      fontSize: 9,
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}>
+                      {article.tag}
+                    </span>
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: textColor, margin: "8px 0", lineHeight: 1.35 }}>
+                      {article.title}
+                    </h3>
+                    {article.hook && (
+                      <p style={{ fontSize: 13, color: bodyTextColor, margin: "0 0 8px", fontStyle: "italic" }}>
+                        {article.hook}
+                      </p>
+                    )}
+                    <p style={{ fontSize: 13, color: bodyTextColor, lineHeight: 1.6, margin: "0 0 10px" }}>
+                      {article.content || article.summary}
                     </p>
-                  )}
-                  <p style={{ fontSize: 13, color: bodyTextColor, lineHeight: 1.6, margin: "0 0 6px" }}>
-                    {article.content || article.summary}
-                  </p>
-                  <span style={{ fontSize: 11, color: "#9CA3AF" }}>Source : {article.source}</span>
-                  {article.url && (
-                    <a href={article.url} target="_blank" rel="noopener noreferrer"
-                      style={{ display: "block", fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500, marginTop: 4 }}>
-                      Lire l&apos;article →
+                    <a href={article.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
+                      style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
+                      {article.source} →
                     </a>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
 
+            {/* Statistiques */}
+            <div style={{ padding: "8px 32px 24px" }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>147</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Sources analysées</p>
+                </div>
+                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>{otherArticles.length + 1}</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Articles retenus</p>
+                </div>
+                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
+                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>3min</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Temps de lecture</p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div style={{ padding: "0 32px 24px", textAlign: "center" }}>
+              <p style={{ fontSize: 14, color: "#6B7280", margin: "0 0 12px" }}>Cette newsletter vous a été utile ?</p>
+              <a href="https://sorell.fr/tarifs"
+                style={{ display: "inline-block", padding: "10px 24px", background: brandColor, color: "white", fontSize: 13, fontWeight: 600, textDecoration: "none", borderRadius: 6 }}>
+                Partager avec votre équipe
+              </a>
+            </div>
+
             {/* Footer */}
-            <div style={{ padding: "24px 32px", borderTop: "2px solid #E5E7EB", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ padding: "20px 32px", borderTop: "1px solid #E5E7EB", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               {customLogo ? (
                 <img src={customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 140 }} />
               ) : (
-                <span style={{ fontSize: 14, fontWeight: 600, color: textColor, letterSpacing: "-0.01em" }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: textColor, letterSpacing: "-0.01em" }}>
                   Sorel<span style={{ color: brandColor }}>l</span>
                 </span>
               )}
