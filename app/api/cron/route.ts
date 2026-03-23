@@ -44,14 +44,29 @@ export async function GET(request: Request) {
 
   for (const config of configs) {
     try {
-      if (currentHour !== (config.send_hour ?? 9)) continue;
+      const configHour = config.send_hour ?? 9;
+      const currentMinutes = franceTime.getMinutes();
+      if (Number.isInteger(configHour)) {
+        if (currentHour !== configHour) continue;
+      } else {
+        const wholeHour = Math.floor(configHour);
+        if (currentHour !== wholeHour || currentMinutes < 30) continue;
+      }
 
       const freq = config.frequency ?? "weekly";
       const sendDay = config.send_day ?? "monday";
 
-      if (freq === "weekly") {
+      if (freq === "bimonthly") {
+        if (currentDate !== 1 && currentDate !== 15) continue;
+      } else if (freq === "weekly") {
         const targetDay = DAY_MAP[sendDay];
         if (targetDay === undefined || currentDay !== targetDay) continue;
+      } else if (freq === "biweekly") {
+        const days = sendDay.split(",").map((d: string) => d.trim());
+        const matchDay = days.some((d: string) => DAY_MAP[d] === currentDay);
+        if (!matchDay) continue;
+      } else if (freq === "daily") {
+        if (currentDay === 0 || currentDay === 6) continue;
       } else if (freq === "monthly") {
         if (sendDay === "1st" && currentDate !== 1) continue;
         if (sendDay === "15th" && currentDate !== 15) continue;
@@ -66,7 +81,10 @@ export async function GET(request: Request) {
       const { data: profile } = await supabase.from("profiles").select("plan").eq("id", config.user_id).single();
       const userPlan = profile?.plan || "free";
 
-      if (userPlan === "free") {
+      const autoLimits: Record<string, number> = { free: 2, pro: 4, business: -1, enterprise: -1 };
+      const maxAuto = autoLimits[userPlan] ?? 2;
+
+      if (maxAuto !== -1) {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
@@ -78,7 +96,7 @@ export async function GET(request: Request) {
           .eq("status", "sent")
           .gte("generated_at", startOfMonth.toISOString());
 
-        if ((count || 0) >= 4) continue;
+        if ((count || 0) >= maxAuto) continue;
       }
 
       const topics = (config.topics ?? []).filter((t: { enabled: boolean }) => t.enabled).map((t: { label: string }) => t.label).join(", ");

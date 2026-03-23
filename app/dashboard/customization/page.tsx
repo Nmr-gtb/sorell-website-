@@ -49,7 +49,8 @@ export default function CustomizationPage() {
   const [saving, setSaving] = useState(false);
 
   const plan = getEffectivePlan(realPlan);
-  const isPro = plan === "pro" || plan === "enterprise";
+  const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
+  const canUseLogo = plan === "business" || plan === "enterprise";
 
   useEffect(() => {
     if (!user) return;
@@ -186,7 +187,7 @@ export default function CustomizationPage() {
     );
   }
 
-  const customLogo = logoUrl;
+  const customLogo = canUseLogo ? logoUrl : null;
 
   return (
     <div style={{ padding: "40px 32px", maxWidth: 720 }}>
@@ -417,12 +418,21 @@ export default function CustomizationPage() {
       <div
         style={{
           background: "var(--surface)",
-          border: "1px solid var(--border)",
+          border: canUseLogo ? "1px solid var(--border)" : "1px solid var(--border)",
           borderRadius: 12,
           padding: 24,
           marginBottom: 24,
+          opacity: canUseLogo ? 1 : 0.5,
+          pointerEvents: canUseLogo ? "auto" : "none",
+          position: "relative",
         }}
       >
+        {!canUseLogo && (
+          <div style={{ position: "absolute", top: 12, right: 12, display: "flex", alignItems: "center", gap: 6, background: "var(--surface-alt)", border: "1px solid var(--border)", borderRadius: 6, padding: "3px 8px", fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1.5"><path d="M2 20h20L19 9l-5 4-2-6-2 6-5-4z"/></svg>
+            Business
+          </div>
+        )}
         <p
           style={{
             fontSize: 11,

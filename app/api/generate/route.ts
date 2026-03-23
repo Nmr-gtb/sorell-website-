@@ -24,7 +24,10 @@ export async function POST(request: Request) {
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", userId).single();
     const plan = profile?.plan || "free";
 
-    if (plan === "free") {
+    const previewLimits: Record<string, number> = { free: 1, pro: 4, business: -1, enterprise: -1 };
+    const maxPreviews = previewLimits[plan] ?? 1;
+
+    if (maxPreviews !== -1) {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);
@@ -36,9 +39,9 @@ export async function POST(request: Request) {
         .eq("status", "draft")
         .gte("generated_at", startOfMonth.toISOString());
 
-      if ((count || 0) >= 4) {
+      if ((count || 0) >= maxPreviews) {
         return NextResponse.json(
-          { error: "Limite de 4 aperçus par mois atteinte. Passez au plan Pro pour des aperçus illimités." },
+          { error: `Limite de ${maxPreviews} aperçu(s) par mois atteinte. Passez au plan supérieur pour plus d'aperçus.` },
           { status: 403 }
         );
       }

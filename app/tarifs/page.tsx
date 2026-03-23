@@ -12,8 +12,10 @@ import { useLanguage } from "@/lib/LanguageContext";
 // Features arrays and FAQ are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
-  "pro-monthly": "price_1TCdgv7A2mOEJEeWEEsDD5pM",
-  "pro-annual": "price_1TCdh67A2mOEJEeWsknZ5cx6",
+  "pro-monthly": "price_1TE3pa7A2mOEJEeWltqInvgW",
+  "pro-annual": "price_1TE3ps7A2mOEJEeW4m1wm00z",
+  "business-monthly": "price_1TE3qf7A2mOEJEeWiTAz8oWd",
+  "business-annual": "price_1TE3qv7A2mOEJEeWEB04fuCE",
 };
 
 export default function PricingPage() {
@@ -44,7 +46,6 @@ export default function PricingPage() {
     t("pricing.free_f4"),
     t("pricing.free_f5"),
     t("pricing.free_f6"),
-    t("pricing.free_f7"),
   ];
 
   const proFeatures = [
@@ -56,17 +57,27 @@ export default function PricingPage() {
     t("pricing.pro_f6"),
   ];
 
+  const businessFeatures = [
+    t("pricing.biz_f1"),
+    t("pricing.biz_f2"),
+    t("pricing.biz_f3"),
+    t("pricing.biz_f4"),
+    t("pricing.biz_f5"),
+    t("pricing.biz_f6"),
+  ];
+
   const enterpriseFeatures = [
     t("pricing.ent_f1"),
     t("pricing.ent_f2"),
     t("pricing.ent_f3"),
     t("pricing.ent_f4"),
     t("pricing.ent_f5"),
+    t("pricing.ent_f6"),
   ];
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (plan: string) => {
+  const handleCheckout = async (plan: "pro" | "business") => {
     if (!user) {
       router.push("/connexion");
       return;
@@ -189,13 +200,13 @@ export default function PricingPage() {
 
       {/* Pricing cards */}
       <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
               gap: 20,
-              maxWidth: 960,
+              maxWidth: 1160,
               margin: "0 auto",
             }}
           >
@@ -212,14 +223,25 @@ export default function PricingPage() {
             />
             <PricingCard
               name={t("pricing.pro")}
-              price={9}
-              annualPrice={7.5}
+              price={19}
+              annualPrice={190 / 12}
               period={period}
               tagline={t("pricing.pro_desc")}
               features={proFeatures}
               cta={t("pricing.cta_pro")}
               onClick={() => handleCheckout("pro")}
               loading={checkoutLoading === "pro"}
+            />
+            <PricingCard
+              name={t("pricing.business")}
+              price={49}
+              annualPrice={490 / 12}
+              period={period}
+              tagline={t("pricing.biz_desc")}
+              features={businessFeatures}
+              cta={t("pricing.cta_pro")}
+              onClick={() => handleCheckout("business")}
+              loading={checkoutLoading === "business"}
               popular
             />
             <PricingCard
@@ -227,7 +249,7 @@ export default function PricingPage() {
               price={null}
               annualPrice={null}
               period={period}
-              tagline={t("pricing.enterprise_desc")}
+              tagline={t("pricing.ent_desc")}
               features={enterpriseFeatures}
               cta={t("pricing.cta_enterprise")}
               ctaHref="mailto:noe@sorell.fr"

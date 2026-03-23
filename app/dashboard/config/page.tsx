@@ -10,6 +10,7 @@ import {
   deleteRecipient,
   getProfile,
 } from "@/lib/database";
+import { supabase } from "@/lib/supabase";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
@@ -148,6 +149,10 @@ export default function ConfigPage() {
   const [realPlan, setRealPlan] = useState<string>("free");
   const { getEffectivePlan } = useDevMode();
 
+  const [sendDay2, setSendDay2] = useState("thursday");
+  const [instantSending, setInstantSending] = useState(false);
+  const [instantSent, setInstantSent] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -192,7 +197,13 @@ export default function ConfigPage() {
           setFrequency(cfg.frequency);
         }
         if (cfg.send_day) {
-          setSendDay(cfg.send_day);
+          if (cfg.frequency === "biweekly" && cfg.send_day.includes(",")) {
+            const parts = cfg.send_day.split(",");
+            setSendDay(parts[0].trim());
+            setSendDay2(parts[1].trim());
+          } else {
+            setSendDay(cfg.send_day);
+          }
         }
         if (cfg.send_hour !== undefined && cfg.send_hour !== null) {
           setSendHour(cfg.send_hour);
@@ -252,9 +263,23 @@ export default function ConfigPage() {
     if (!user) return;
     setSaving(true);
     setSaveError("");
+
+    let savedFrequency = frequency;
+    let savedSendDay = sendDay;
+    let savedSendHour = sendHour;
+
+    if (plan === "free") {
+      savedFrequency = "bimonthly";
+      savedSendDay = "1st-15th";
+    } else if (plan === "pro") {
+      savedFrequency = "weekly";
+    } else if ((plan === "business" || plan === "enterprise") && frequency === "biweekly") {
+      savedSendDay = `${sendDay},${sendDay2}`;
+    }
+
     const { error } = await upsertNewsletterConfig(user.id, {
-      topics, sources, frequency, custom_brief: customBrief,
-      send_day: sendDay, send_hour: sendHour,
+      topics, sources, frequency: savedFrequency, custom_brief: customBrief,
+      send_day: savedSendDay, send_hour: savedSendHour,
     });
     setSaving(false);
     if (error) {
@@ -262,6 +287,36 @@ export default function ConfigPage() {
     } else {
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+
+      // Instant newsletter on first configuration
+      const { count } = await supabase
+        .from("newsletters")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      if (count === 0) {
+        setInstantSending(true);
+        try {
+          const enabledTopics = topics.filter((t) => t.enabled);
+          const genRes = await fetch("/api/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id, topics: enabledTopics, sources, customBrief }),
+          });
+          const genData = await genRes.json();
+          if (genData.newsletter) {
+            await fetch("/api/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+            });
+            setInstantSent(true);
+          }
+        } catch (e) {
+          console.error("Instant newsletter failed:", e);
+        }
+        setInstantSending(false);
+      }
     }
   };
 
@@ -272,7 +327,9 @@ export default function ConfigPage() {
     if (maxR !== -1 && recipients.length >= maxR) {
       setRecipientLimitMsg(
         plan === "free"
-          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 10.`
+          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 5.`
+          : plan === "pro"
+          ? `Limite de ${maxR} destinataires atteinte. Passez au plan Business pour en ajouter jusqu'à 25.`
           : `Limite de ${maxR} destinataires atteinte. Passez au plan supérieur pour en ajouter plus.`
       );
       return;
@@ -303,7 +360,6 @@ export default function ConfigPage() {
     }
   };
 
-  const frequencyLocked = !limits.frequency.includes("weekly");
   const maxR = limits.maxRecipients;
   const recipientsLabel = maxR === -1
     ? `${recipients.length} destinataire${recipients.length > 1 ? "s" : ""}`
@@ -772,37 +828,34 @@ export default function ConfigPage() {
             >
               Planification de l&apos;envoi
             </h2>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
-                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6 }}>
-                  Fréquence
-                  {frequencyLocked && <CrownBadge tooltip="Hebdomadaire disponible avec le plan Pro" />}
-                </label>
-                <select
-                  className="select-field"
-                  value={frequency}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setFrequency(val);
-                    if (val === "monthly") setSendDay("1st");
-                    if (val === "weekly") setSendDay("monday");
-                  }}
-                >
-                  <option value="monthly">Mensuel</option>
-                  {limits.frequency.includes("weekly") && (
-                    <option value="weekly">Hebdomadaire</option>
-                  )}
-                </select>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
-                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Jour</label>
-                <select
-                  className="select-field"
-                  value={sendDay}
-                  onChange={(e) => setSendDay(e.target.value)}
-                >
-                  {frequency === "weekly" ? (
-                    <>
+
+            {plan === "free" ? (
+              <>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  Vos newsletters sont envoyées le 1er et le 15 de chaque mois.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 200 }}>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Créneau d&apos;envoi</label>
+                  <select
+                    className="select-field"
+                    value={sendHour}
+                    onChange={(e) => setSendHour(Number(e.target.value))}
+                  >
+                    <option value={8}>Matin (8h)</option>
+                    <option value={12}>Midi (12h)</option>
+                    <option value={18}>Soir (18h)</option>
+                  </select>
+                </div>
+              </>
+            ) : plan === "pro" ? (
+              <>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  Choisissez votre jour et heure d&apos;envoi.
+                </p>
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Jour</label>
+                    <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
                       <option value="monday">Lundi</option>
                       <option value="tuesday">Mardi</option>
                       <option value="wednesday">Mercredi</option>
@@ -810,51 +863,113 @@ export default function ConfigPage() {
                       <option value="friday">Vendredi</option>
                       <option value="saturday">Samedi</option>
                       <option value="sunday">Dimanche</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="1st">1er du mois</option>
-                      <option value="15th">15 du mois</option>
-                    </>
-                  )}
-                </select>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
-                <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
-                <select
-                  className="select-field"
-                  value={sendHour}
-                  onChange={(e) => setSendHour(Number(e.target.value))}
-                >
-                  {Array.from({ length: 16 }, (_, i) => i + 6).map((h) => (
-                    <option key={h} value={h}>{h}h00</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            {(() => {
-              const dayLabels: Record<string, string> = {
-                monday: "lundi", tuesday: "mardi", wednesday: "mercredi",
-                thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche",
-              };
-              const dayText = frequency === "weekly"
-                ? dayLabels[sendDay] || sendDay
-                : `le ${sendDay === "1st" ? "1er" : "15"} de chaque mois`;
-              return (
-                <div style={{
-                  marginTop: 12,
-                  padding: "10px 14px",
-                  background: "rgba(16,185,129,0.06)",
-                  border: "1px solid rgba(16,185,129,0.15)",
-                  borderRadius: 8,
-                  fontSize: 13,
-                  color: "#059669",
-                  lineHeight: 1.5,
-                }}>
-                  ✓ Votre newsletter sera générée et envoyée automatiquement chaque {dayText} à {sendHour}h00. Aucune action requise.
+                    </select>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
+                    <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))}>
+                      {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
+                        <option key={h} value={h}>{h}h00</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              );
-            })()}
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  Planification avancée
+                </p>
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 160px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Fréquence</label>
+                    <select
+                      className="select-field"
+                      value={frequency}
+                      onChange={(e) => {
+                        setFrequency(e.target.value);
+                        if (e.target.value === "weekly" || e.target.value === "biweekly") setSendDay("monday");
+                      }}
+                    >
+                      <option value="weekly">1 fois par semaine</option>
+                      <option value="biweekly">2 fois par semaine</option>
+                      <option value="daily">Tous les jours (lun-ven)</option>
+                    </select>
+                  </div>
+                  {(frequency === "weekly" || frequency === "biweekly") && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
+                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>
+                        {frequency === "biweekly" ? "1er jour" : "Jour"}
+                      </label>
+                      <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
+                        <option value="monday">Lundi</option>
+                        <option value="tuesday">Mardi</option>
+                        <option value="wednesday">Mercredi</option>
+                        <option value="thursday">Jeudi</option>
+                        <option value="friday">Vendredi</option>
+                      </select>
+                    </div>
+                  )}
+                  {frequency === "biweekly" && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
+                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>2e jour</label>
+                      <select className="select-field" value={sendDay2} onChange={(e) => setSendDay2(e.target.value)}>
+                        <option value="monday">Lundi</option>
+                        <option value="tuesday">Mardi</option>
+                        <option value="wednesday">Mercredi</option>
+                        <option value="thursday">Jeudi</option>
+                        <option value="friday">Vendredi</option>
+                      </select>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
+                    <select
+                      className="select-field"
+                      value={sendHour}
+                      onChange={(e) => setSendHour(Number(e.target.value))}
+                    >
+                      {Array.from({ length: 29 }, (_, i) => 6 + i * 0.5).map((h) => (
+                        <option key={h} value={h}>
+                          {Math.floor(h)}h{h % 1 === 0.5 ? "30" : "00"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div style={{
+              marginTop: 12,
+              padding: "10px 14px",
+              background: "rgba(16,185,129,0.06)",
+              border: "1px solid rgba(16,185,129,0.15)",
+              borderRadius: 8,
+              fontSize: 13,
+              color: "#059669",
+              lineHeight: 1.5,
+            }}>
+              {plan === "free"
+                ? `✓ Votre newsletter sera envoyée le 1er et le 15 de chaque mois à ${sendHour}h00. Aucune action requise.`
+                : plan === "pro"
+                ? (() => {
+                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche" };
+                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} à ${sendHour}h00. Aucune action requise.`;
+                  })()
+                : frequency === "daily"
+                ? `✓ Votre newsletter sera envoyée chaque jour (lun-ven) à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`
+                : frequency === "biweekly"
+                ? (() => {
+                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi" };
+                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} et ${dayLabels[sendDay2] || sendDay2} à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`;
+                  })()
+                : (() => {
+                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi" };
+                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`;
+                  })()
+              }
+            </div>
           </div>
 
           {/* Recipients card */}
@@ -1036,6 +1151,16 @@ export default function ConfigPage() {
               <p style={{ margin: 0, fontSize: 13 }}>
                 Votre newsletter sera envoyée automatiquement. Vous n&apos;avez plus rien à faire.
               </p>
+            </div>
+          )}
+          {instantSending && (
+            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(37,99,235,0.04)", border: "1px solid rgba(37,99,235,0.1)", borderRadius: 10, fontSize: 14, color: "var(--text-secondary)", textAlign: "center" }}>
+              Génération de votre première newsletter en cours...
+            </div>
+          )}
+          {instantSent && (
+            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, fontSize: 14, color: "#059669", textAlign: "center" }}>
+              Votre première newsletter a été envoyée ! Vérifiez votre boîte mail.
             </div>
           )}
         </>
