@@ -202,6 +202,8 @@ const fr: Record<string, string> = {
   "home.feat5_desc": "Sachez quels collaborateurs ouvrent la newsletter et quels sujets les intéressent le plus.",
   "home.feat6_title": "Partagez avec vos collègues",
   "home.feat6_desc": "Ajoutez jusqu'à 10 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
+  "home.feature_flexible": "Modifiable à tout moment",
+  "home.feature_flexible_desc": "Changez vos thématiques, vos sources ou votre brief quand vous voulez. Votre prochaine newsletter s'adapte immédiatement.",
   "home.steps_title": "En ligne en 10 minutes",
   "home.step1_title": "Décrivez votre activité",
   "home.step1_desc": "En quelques lignes, dites-nous votre secteur et ce qui vous intéresse. Ça prend 2 minutes.",
@@ -234,6 +236,8 @@ const fr: Record<string, string> = {
   "hiw.step1_title": "Configurez votre veille",
   "hiw.step2_title": "L'IA recherche et rédige",
   "hiw.step3_title": "Vos équipes reçoivent le briefing",
+  "hiw.step_modify": "Modifiez quand vous voulez",
+  "hiw.step_modify_desc": "Vos besoins évoluent ? Changez vos thématiques, sources ou brief en un clic. Votre prochaine newsletter s'adapte.",
   "hiw.vs_title": "Pourquoi Sorell plutôt que ChatGPT ?",
   "hiw.vs_subtitle": "ChatGPT est un outil généraliste. Sorell est conçu spécifiquement pour la veille sectorielle automatique.",
   "hiw.faq_title": "Questions fréquentes",
@@ -264,6 +268,8 @@ const fr: Record<string, string> = {
   "faq.a9": "Oui. Hébergement sur serveurs européens, chiffrement AES-256, conforme RGPD. Nous ne revendons jamais vos données. Les paiements sont sécurisés par Stripe.",
   "faq.q10": "L'IA peut-elle se tromper ?",
   "faq.a10": "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
+  "faq.q11": "Puis-je modifier ma newsletter après l'avoir configurée ?",
+  "faq.a11": "Oui, à tout moment. Vous pouvez changer vos thématiques, vos sources, votre brief et votre fréquence d'envoi quand vous le souhaitez. Les modifications sont prises en compte dès la prochaine newsletter. Aucun engagement, aucune limite de modifications.",
 };
 
 export default fr;

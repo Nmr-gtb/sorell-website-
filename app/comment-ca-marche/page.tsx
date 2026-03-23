@@ -535,6 +535,84 @@ export default function CommentCaMarchePage() {
               </div>
             </div>
           </div>
+
+          {/* Étape 4 */}
+          <div
+            className="hiw-step-grid"
+            style={{
+              marginBottom: 96,
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "4rem",
+              alignItems: "center",
+            }}
+          >
+            <div className="hiw-step-illustration" style={{ display: "flex", justifyContent: "center", order: -1 }}>
+              <div
+                style={{
+                  width: 220,
+                  height: 220,
+                  borderRadius: 20,
+                  background: "var(--accent-subtle)",
+                  border: "1px solid var(--accent-border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <svg
+                  width="80"
+                  height="80"
+                  viewBox="0 0 80 80"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <rect x="12" y="16" width="56" height="48" rx="6" stroke="var(--accent)" strokeWidth="2.5" />
+                  <line x1="24" y1="30" x2="56" y2="30" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" />
+                  <line x1="24" y1="40" x2="56" y2="40" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" />
+                  <line x1="24" y1="50" x2="44" y2="50" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" />
+                  <circle cx="62" cy="54" r="10" fill="var(--accent)" fillOpacity="0.15" stroke="var(--accent)" strokeWidth="2" />
+                  <path d="M58 54 L61 57 L66 51" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div
+                style={{
+                  fontSize: 72,
+                  fontWeight: 700,
+                  color: "var(--accent)",
+                  opacity: 0.12,
+                  lineHeight: 1,
+                  marginBottom: "-1.5rem",
+                  userSelect: "none",
+                }}
+              >
+                04
+              </div>
+              <h2
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "var(--text)",
+                  marginBottom: "1.25rem",
+                }}
+              >
+                {t("hiw.step_modify")}
+              </h2>
+              <p
+                style={{
+                  fontSize: "0.9375rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.75,
+                  maxWidth: 560,
+                }}
+              >
+                {t("hiw.step_modify_desc")}
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Comparison table */}

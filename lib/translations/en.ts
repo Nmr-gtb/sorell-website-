@@ -202,6 +202,8 @@ const en: Record<string, string> = {
   "home.feat5_desc": "Know which team members open the newsletter and which topics interest them most.",
   "home.feat6_title": "Share with your colleagues",
   "home.feat6_desc": "Add up to 10 email addresses. Your whole team gets the same summary, effortlessly.",
+  "home.feature_flexible": "Editable anytime",
+  "home.feature_flexible_desc": "Change your topics, sources or brief whenever you want. Your next newsletter adapts immediately.",
   "home.steps_title": "Online in 10 minutes",
   "home.step1_title": "Describe your business",
   "home.step1_desc": "In a few lines, tell us your industry and what interests you. Takes 2 minutes.",
@@ -234,6 +236,8 @@ const en: Record<string, string> = {
   "hiw.step1_title": "Set up your monitoring",
   "hiw.step2_title": "AI searches and writes",
   "hiw.step3_title": "Your teams receive the briefing",
+  "hiw.step_modify": "Modify whenever you want",
+  "hiw.step_modify_desc": "Your needs evolve? Change your topics, sources or brief in one click. Your next newsletter adapts.",
   "hiw.vs_title": "Why Sorell over ChatGPT?",
   "hiw.vs_subtitle": "ChatGPT is a general-purpose tool. Sorell is built specifically for automatic industry monitoring.",
   "hiw.faq_title": "Frequently asked questions",
@@ -264,6 +268,8 @@ const en: Record<string, string> = {
   "faq.a9": "Yes. Hosted on European servers, AES-256 encryption, GDPR compliant. We never resell your data. Payments are secured by Stripe.",
   "faq.q10": "Can the AI make mistakes?",
   "faq.a10": "Like any tool, AI can sometimes lack precision. That's why each article contains a link to the original source - you can always verify. The content does not constitute professional advice.",
+  "faq.q11": "Can I modify my newsletter after setting it up?",
+  "faq.a11": "Yes, anytime. You can change your topics, sources, brief and send frequency whenever you want. Changes take effect from the next newsletter. No commitment, no limit on modifications.",
 };
 
 export default en;

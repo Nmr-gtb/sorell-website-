@@ -329,6 +329,19 @@ export default function ConfigPage() {
         </p>
       </div>
 
+      <div style={{
+        padding: "12px 16px",
+        background: "rgba(37,99,235,0.04)",
+        border: "1px solid rgba(37,99,235,0.1)",
+        borderRadius: 8,
+        marginBottom: 20,
+        fontSize: 13,
+        color: "var(--text-secondary)",
+        lineHeight: 1.5,
+      }}>
+        Vous pouvez modifier votre configuration à tout moment. Les changements seront appliqués dès votre prochaine newsletter.
+      </div>
+
       {loading ? (
         <div style={{ fontSize: 14, color: "var(--text-muted)", padding: "24px 0" }}>
           Chargement...
