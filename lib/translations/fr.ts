@@ -77,8 +77,9 @@ const fr: Record<string, string> = {
   "pricing.ent_desc": "Pour les organisations",
   "pricing.enterprise_price": "Sur devis",
   "pricing.cta_free": "Commencer gratuitement",
-  "pricing.cta_pro": "S'abonner",
+  "pricing.cta_pro": "Essayer gratuitement 15 jours",
   "pricing.cta_enterprise": "Nous contacter",
+  "pricing.trial_badge": "15 jours d'essai gratuit",
   "pricing.popular": "Populaire",
   "pricing.per_month": "/mois",
 
@@ -282,6 +283,8 @@ const fr: Record<string, string> = {
   "faq.a10": "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel.",
   "faq.q11": "Puis-je modifier ma newsletter après l'avoir configurée ?",
   "faq.a11": "Oui, à tout moment. Vous pouvez changer vos thématiques, vos sources, votre brief et votre fréquence d'envoi quand vous le souhaitez. Les modifications sont prises en compte dès la prochaine newsletter. Aucun engagement, aucune limite de modifications.",
+  "faq.q12": "Comment fonctionne l'essai gratuit ?",
+  "faq.a12": "Vous avez 15 jours pour tester toutes les fonctionnalités du plan choisi. Votre carte bancaire est demandée mais vous n'êtes pas débité pendant la période d'essai. Vous pouvez annuler à tout moment avant la fin des 15 jours sans aucun frais.",
 };
 
 export default fr;

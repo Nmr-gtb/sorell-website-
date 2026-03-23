@@ -35,6 +35,7 @@ export default function PricingPage() {
     { q: t("faq.q9"), a: t("faq.a9") },
     { q: t("faq.q10"), a: t("faq.a10") },
     { q: t("faq.q11"), a: t("faq.a11") },
+    { q: t("faq.q12"), a: t("faq.a12") },
   ];
 
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
@@ -231,6 +232,7 @@ export default function PricingPage() {
               cta={t("pricing.cta_pro")}
               onClick={() => handleCheckout("pro")}
               loading={checkoutLoading === "pro"}
+              trialBadge={t("pricing.trial_badge")}
             />
             <PricingCard
               name={t("pricing.business")}
@@ -243,6 +245,7 @@ export default function PricingPage() {
               onClick={() => handleCheckout("business")}
               loading={checkoutLoading === "business"}
               popular
+              trialBadge={t("pricing.trial_badge")}
             />
             <PricingCard
               name={t("pricing.enterprise")}

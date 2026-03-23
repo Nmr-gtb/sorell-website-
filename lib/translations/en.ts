@@ -77,8 +77,9 @@ const en: Record<string, string> = {
   "pricing.ent_desc": "For organizations",
   "pricing.enterprise_price": "Custom",
   "pricing.cta_free": "Start for free",
-  "pricing.cta_pro": "Subscribe",
+  "pricing.cta_pro": "Try free for 15 days",
   "pricing.cta_enterprise": "Contact us",
+  "pricing.trial_badge": "15-day free trial",
   "pricing.popular": "Popular",
   "pricing.per_month": "/mo",
 
@@ -282,6 +283,8 @@ const en: Record<string, string> = {
   "faq.a10": "Like any tool, AI can sometimes lack precision. That's why each article contains a link to the original source - you can always verify. The content does not constitute professional advice.",
   "faq.q11": "Can I modify my newsletter after setting it up?",
   "faq.a11": "Yes, anytime. You can change your topics, sources, brief and send frequency whenever you want. Changes take effect from the next newsletter. No commitment, no limit on modifications.",
+  "faq.q12": "How does the free trial work?",
+  "faq.a12": "You get 15 days to test all features of your chosen plan. Your credit card is required but you won't be charged during the trial period. You can cancel anytime before the end of the 15 days at no cost.",
 };
 
 export default en;

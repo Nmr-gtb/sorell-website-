@@ -17,6 +17,7 @@ interface PricingCardProps {
   enterprise?: boolean;
   free?: boolean;
   badge?: string;
+  trialBadge?: string;
 }
 
 export default function PricingCard({
@@ -34,6 +35,7 @@ export default function PricingCard({
   enterprise,
   free,
   badge,
+  trialBadge,
 }: PricingCardProps) {
   const displayPrice =
     period === "annual" && annualPrice !== null ? annualPrice : price;
@@ -200,6 +202,13 @@ export default function PricingCard({
           </li>
         ))}
       </ul>
+
+      {/* Trial badge */}
+      {trialBadge && (
+        <p style={{ fontSize: 12, color: "#059669", fontWeight: 500, textAlign: "center", margin: "0 0 0" }}>
+          {trialBadge}
+        </p>
+      )}
 
       {/* CTA */}
       {onClick ? (
