@@ -1,9 +1,21 @@
 "use client";
 import { useAuth } from "@/lib/AuthContext";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function TrialBanner() {
   const { user } = useAuth();
-  if (user) return null;
+  const [plan, setPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("plan").eq("id", user.id).single().then(({ data }) => {
+      setPlan(data?.plan || "free");
+    });
+  }, [user]);
+
+  // Afficher si non connecté OU si connecté en plan free
+  if (user && plan !== null && plan !== "free") return null;
 
   return (
     <div
