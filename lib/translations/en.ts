@@ -14,7 +14,7 @@ const en: Record<string, string> = {
   "hero.subtitle": "Sorell automatically sends you a summary of your industry news. Nothing to do - you receive, you read, you're up to date.",
   "hero.cta_primary": "Try for free",
   "hero.cta_secondary": "See an example",
-  "hero.no_card": "Free · No credit card · Ready in 5 minutes",
+  "hero.no_card": "Free · 15-day Pro trial · No credit card · Ready in 5 minutes",
 
   // Features
   "features.title": "How it helps you",
@@ -30,7 +30,7 @@ const en: Record<string, string> = {
   "features.analytics_title": "See who reads in your team",
   "features.analytics_desc": "Know which team members open the newsletter and which topics interest them most.",
   "features.team_title": "Share with your colleagues",
-  "features.team_desc": "Add up to 10 email addresses. Your whole team gets the same summary, effortlessly.",
+  "features.team_desc": "Add up to 25 email addresses. Your whole team gets the same summary, effortlessly.",
 
   // How it works
   "how.title": "How it works",
@@ -168,7 +168,7 @@ const en: Record<string, string> = {
   "dash.customization": "Customization",
   "dash.analytics": "Analytics",
   "dash.profile": "Profile",
-  "dash.upgrade_text": "Upgrade to Pro to send to your team (up to 10 recipients)",
+  "dash.upgrade_text": "Upgrade to Pro to send to your team (up to 5 recipients)",
   "dash.upgrade_btn": "See plans →",
 
   // Customization page
@@ -214,7 +214,7 @@ const en: Record<string, string> = {
   "home.feat5_title": "See who reads in your team",
   "home.feat5_desc": "Know which team members open the newsletter and which topics interest them most.",
   "home.feat6_title": "Share with your colleagues",
-  "home.feat6_desc": "Add up to 10 email addresses. Your whole team gets the same summary, effortlessly.",
+  "home.feat6_desc": "Add up to 25 email addresses. Your whole team gets the same summary, effortlessly.",
   "home.feature_flexible": "Editable anytime",
   "home.feature_flexible_desc": "Change your topics, sources or brief whenever you want. Your next newsletter adapts immediately.",
   "home.steps_title": "Online in 10 minutes",
@@ -226,8 +226,8 @@ const en: Record<string, string> = {
   "home.step3_desc": "Every week, a clean and clear email lands in your inbox. You don't have to do anything.",
   "home.pricing_title": "Simple pricing, no commitment",
   "home.pricing_link": "See all details →",
-  "home.cta_title": "Ready to transform your team's intelligence gathering?",
-  "home.cta_subtitle": "Start for free. Your first briefing in 48 hours.",
+  "home.cta_title": "Ready to automate your industry monitoring?",
+  "home.cta_subtitle": "Your first newsletter in 5 minutes. Free, no commitment.",
   "home.cta_note": "Free, no commitment.",
 
   // Login extra
@@ -268,7 +268,7 @@ const en: Record<string, string> = {
   "faq.q3": "Is the information reliable?",
   "faq.a3": "Yes. Every article in your newsletter is based on a real source found on the web (press, specialized media, reports). Each article contains a direct link to the original source so you can verify. Sorell does not generate false information.",
   "faq.q4": "Is the free plan really free?",
-  "faq.a4": "Yes, no credit card and no commitment. You get 4 newsletters per month, fully personalized with web search. No features are degraded - it's the same quality as the Pro plan.",
+  "faq.a4": "Yes, no credit card and no commitment. You get 2 newsletters per month, fully personalized with web search. No features are degraded - it's the same quality as the Pro plan.",
   "faq.q5": "How long does it take to set up Sorell?",
   "faq.a5": "5 minutes. Describe your business in a few lines, choose your topics, and that's it. Your first newsletter can be generated immediately.",
   "faq.q6": "Why pay 19€/month when the free plan exists?",

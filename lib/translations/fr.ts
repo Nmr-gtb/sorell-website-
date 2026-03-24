@@ -14,7 +14,7 @@ const fr: Record<string, string> = {
   "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire - vous recevez, vous lisez, vous êtes à jour.",
   "hero.cta_primary": "Essayer gratuitement",
   "hero.cta_secondary": "Voir un exemple",
-  "hero.no_card": "Gratuit · Sans carte bancaire · Prêt en 5 minutes",
+  "hero.no_card": "Gratuit · 15 jours d'essai Pro · Sans carte bancaire · Prêt en 5 minutes",
 
   // Features
   "features.title": "Comment ça vous aide",
@@ -30,7 +30,7 @@ const fr: Record<string, string> = {
   "features.analytics_title": "Voyez qui lit dans votre équipe",
   "features.analytics_desc": "Sachez quels collaborateurs ouvrent la newsletter et quels sujets les intéressent le plus.",
   "features.team_title": "Partagez avec vos collègues",
-  "features.team_desc": "Ajoutez jusqu'à 10 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
+  "features.team_desc": "Ajoutez jusqu'à 25 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
 
   // How it works
   "how.title": "Comment ça marche",
@@ -168,7 +168,7 @@ const fr: Record<string, string> = {
   "dash.customization": "Personnalisation",
   "dash.analytics": "Analytics",
   "dash.profile": "Profil",
-  "dash.upgrade_text": "Passez à Pro pour envoyer à votre équipe (jusqu'à 10 destinataires)",
+  "dash.upgrade_text": "Passez à Pro pour envoyer à votre équipe (jusqu'à 5 destinataires)",
   "dash.upgrade_btn": "Voir les plans →",
 
   // Customization page
@@ -214,7 +214,7 @@ const fr: Record<string, string> = {
   "home.feat5_title": "Voyez qui lit dans votre équipe",
   "home.feat5_desc": "Sachez quels collaborateurs ouvrent la newsletter et quels sujets les intéressent le plus.",
   "home.feat6_title": "Partagez avec vos collègues",
-  "home.feat6_desc": "Ajoutez jusqu'à 10 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
+  "home.feat6_desc": "Ajoutez jusqu'à 25 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
   "home.feature_flexible": "Modifiable à tout moment",
   "home.feature_flexible_desc": "Changez vos thématiques, vos sources ou votre brief quand vous voulez. Votre prochaine newsletter s'adapte immédiatement.",
   "home.steps_title": "En ligne en 10 minutes",
@@ -226,8 +226,8 @@ const fr: Record<string, string> = {
   "home.step3_desc": "Chaque semaine, un email propre et clair arrive dans votre boîte. Vous n'avez rien à faire.",
   "home.pricing_title": "Tarifs simples, sans engagement",
   "home.pricing_link": "Voir tous les détails →",
-  "home.cta_title": "Prêt à transformer la veille de vos équipes ?",
-  "home.cta_subtitle": "Commencez gratuitement. Votre premier briefing en 48h.",
+  "home.cta_title": "Prêt à automatiser votre veille sectorielle ?",
+  "home.cta_subtitle": "Votre première newsletter en 5 minutes. Gratuit, sans engagement.",
   "home.cta_note": "Gratuit, sans engagement.",
 
   // Login extra
@@ -268,7 +268,7 @@ const fr: Record<string, string> = {
   "faq.q3": "Est-ce que les informations sont fiables ?",
   "faq.a3": "Oui. Chaque article de votre newsletter est basé sur une vraie source trouvée sur le web (presse, médias spécialisés, rapports). Chaque article contient un lien direct vers la source originale pour que vous puissiez vérifier. Sorell ne génère pas de fausses informations.",
   "faq.q4": "Le plan gratuit est-il vraiment gratuit ?",
-  "faq.a4": "Oui, sans carte bancaire et sans engagement. Vous recevez 4 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée - c'est la même qualité que le plan Pro.",
+  "faq.a4": "Oui, sans carte bancaire et sans engagement. Vous recevez 2 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée - c'est la même qualité que le plan Pro.",
   "faq.q5": "Combien de temps faut-il pour configurer Sorell ?",
   "faq.a5": "5 minutes. Vous décrivez votre activité en quelques lignes, vous choisissez vos thématiques, et c'est tout. Votre première newsletter peut être générée immédiatement.",
   "faq.q6": "Pourquoi payer 19€/mois alors que le plan gratuit existe ?",

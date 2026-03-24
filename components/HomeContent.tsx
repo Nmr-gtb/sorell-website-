@@ -214,10 +214,7 @@ export default function HomeContent() {
           </div>
 
           <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-            {t("hero.no_card")} ·{" "}
-            <Link href="/comment-ca-marche" className="link-accent">
-              {t("nav.how_it_works")} ?
-            </Link>
+            {t("hero.no_card")}
           </p>
         </div>
       </section>

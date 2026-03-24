@@ -7,6 +7,7 @@ import SorellLogo from "./SorellLogo";
 import { useAuth } from "@/lib/AuthContext";
 import LanguageToggle from "./LanguageToggle";
 import { useLanguage } from "@/lib/LanguageContext";
+import TrialBanner from "./TrialBanner";
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -97,11 +98,9 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const navLinks = [
-    { href: "/#fonctionnalites", label: t("nav.features") },
     { href: "/comment-ca-marche", label: t("nav.how_it_works") },
     { href: "/tarifs", label: t("nav.pricing") },
     { href: "/demo", label: t("nav.demo") },
-    { href: "/contact", label: t("nav.contact") },
   ];
 
   const isActive = (href: string) =>
@@ -111,6 +110,7 @@ export default function Navbar() {
 
   return (
     <>
+      <TrialBanner />
       <style>{`
         [data-theme="dark"] header.sorell-navbar {
           background: ${scrolled ? "rgba(15,17,23,0.92)" : "transparent"} !important;
