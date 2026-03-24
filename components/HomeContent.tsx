@@ -133,10 +133,10 @@ export default function HomeContent() {
   ];
 
   const metrics = [
-    { value: "30+", label: t("social.metric_newsletters") },
-    { value: "98%", label: t("social.metric_satisfaction") },
-    { value: "12 sec", label: t("social.metric_generation") },
-    { value: "24/7", label: t("social.metric_auto") },
+    { value: t("home.stat1_value"), label: t("home.stat1_label") },
+    { value: t("home.stat2_value"), label: t("home.stat2_label") },
+    { value: t("home.stat3_value"), label: t("home.stat3_label") },
+    { value: t("home.stat4_value"), label: t("home.stat4_label") },
   ];
 
   return (
@@ -218,6 +218,21 @@ export default function HomeContent() {
           </p>
         </div>
       </section>
+
+      {/* ─── DÉFINITION GEO ───────────────────────────────────── */}
+      <div style={{ background: "var(--bg)", paddingBottom: 40 }}>
+        <p style={{
+          maxWidth: 700,
+          margin: "0 auto",
+          padding: "0 1.5rem",
+          fontSize: "0.875rem",
+          color: "var(--text-muted)",
+          lineHeight: 1.7,
+          textAlign: "center",
+        }}>
+          {t("home.definition")}
+        </p>
+      </div>
 
       {/* ─── APERÇU NEWSLETTER ────────────────────────────────── */}
       <section

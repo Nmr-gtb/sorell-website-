@@ -16,6 +16,21 @@ export default function CommentCaMarchePage() {
         flexDirection: "column",
       }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              { "@type": "Question", "name": "Est-ce que Sorell utilise de vraies sources d'information ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Sorell utilise une technologie de recherche web intégrée qui parcourt les médias en temps réel. Chaque article cite sa source et propose un lien direct vers le contenu original. Nous utilisons des sources vérifiées comme Les Echos, Bloomberg, Reuters, TechCrunch et des dizaines d'autres médias spécialisés." } },
+              { "@type": "Question", "name": "Combien de temps faut-il pour configurer Sorell ?", "acceptedAnswer": { "@type": "Answer", "text": "5 minutes suffisent. Créez votre compte gratuitement, décrivez votre activité dans le brief personnalisé, choisissez vos thématiques et votre fréquence d'envoi. Votre première newsletter peut être générée dans la minute." } },
+              { "@type": "Question", "name": "Sorell est-il gratuit ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, le plan gratuit vous permet de recevoir jusqu'à 2 newsletters par mois, entièrement personnalisées. Si vous souhaitez envoyer la newsletter à votre équipe (jusqu'à 5 personnes avec le Pro, 25 avec le Business), le plan Pro est à 19€ par mois." } },
+              { "@type": "Question", "name": "Puis-je personnaliser le contenu de ma newsletter ?", "acceptedAnswer": { "@type": "Answer", "text": "Absolument. Le brief personnalisé vous permet de décrire exactement ce que vous voulez surveiller : votre secteur, vos concurrents, les réglementations qui vous concernent, les tendances qui vous intéressent. L'IA s'adapte à votre demande." } }
+            ]
+          })
+        }}
+      />
       <style>{`
         @media (max-width: 768px) {
           .hiw-hero {

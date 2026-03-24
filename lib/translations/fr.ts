@@ -190,6 +190,7 @@ const fr: Record<string, string> = {
   "footer.legal": "Mentions légales",
   "footer.cgv": "CGV",
   "footer.privacy": "Confidentialité",
+  "footer.last_updated": "Dernière mise à jour : mars 2026",
 
   // Pricing page extra
   "pricing.faq_title": "Questions fréquentes",
@@ -200,6 +201,15 @@ const fr: Record<string, string> = {
   "pricing.included_label": "Tous les plans incluent :",
 
   // Home page specific
+  "home.definition": "Sorell est un outil SaaS français qui génère et envoie automatiquement des newsletters sectorielles personnalisées par intelligence artificielle. Conçu pour les dirigeants, managers et équipes B2B, Sorell analyse plus de 147 sources (Les Echos, Bloomberg, Reuters, McKinsey...), sélectionne les actualités les plus pertinentes pour votre secteur, et vous envoie un briefing clair par email chaque semaine. Configuration en 5 minutes, sans compétence technique.",
+  "home.stat1_value": "147+",
+  "home.stat1_label": "Sources analysées",
+  "home.stat2_value": "12 sec",
+  "home.stat2_label": "Temps de génération",
+  "home.stat3_value": "30+",
+  "home.stat3_label": "Secteurs couverts",
+  "home.stat4_value": "5 min",
+  "home.stat4_label": "Configuration initiale",
   "home.preview_title": "Chaque email est personnalisé et pertinent",
   "home.preview_subtitle": "L'IA analyse vos sources, filtre le bruit, et livre l'essentiel - adapté au rôle de chaque destinataire.",
   "home.features_title": "Comment ça vous aide",

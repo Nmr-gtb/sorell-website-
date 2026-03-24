@@ -38,9 +38,14 @@ export default function Footer() {
           <Link href="/confidentialite" className="footer-link">{t("footer.privacy")}</Link>
         </div>
 
-        <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-          © 2026 Sorell
-        </p>
+        <div style={{ textAlign: "right" }}>
+          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+            © 2026 Sorell
+          </p>
+          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4, opacity: 0.7 }}>
+            {t("footer.last_updated")}
+          </p>
+        </div>
       </div>
     </footer>
   );

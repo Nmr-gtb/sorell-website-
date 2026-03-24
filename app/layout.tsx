@@ -70,27 +70,105 @@ export default function RootLayout({
     <html lang="fr" className={inter.variable}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body className="antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              "name": "Sorell",
-              "applicationCategory": "BusinessApplication",
-              "operatingSystem": "Web",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "EUR",
-              },
-              "description": "Newsletter IA automatisée pour la veille sectorielle B2B",
-              "url": "https://sorell.fr",
-            }),
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "name": "Sorell",
+                  "url": "https://sorell.fr",
+                  "logo": "https://sorell.fr/icon.svg",
+                  "description": "Sorell génère et envoie automatiquement des newsletters sectorielles personnalisées par IA aux entreprises B2B.",
+                  "email": "noe@sorell.fr",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "315, Chemin des Ventarelles",
+                    "addressLocality": "Aix-en-Provence",
+                    "postalCode": "13090",
+                    "addressCountry": "FR"
+                  },
+                  "sameAs": []
+                },
+                {
+                  "@type": "SoftwareApplication",
+                  "name": "Sorell",
+                  "url": "https://sorell.fr",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Web",
+                  "description": "Outil SaaS de newsletter automatique par IA. Sorell analyse plus de 147 sources, génère des newsletters sectorielles personnalisées en 12 secondes et les envoie automatiquement à vos équipes chaque semaine. Couvre plus de 30 secteurs d'activité.",
+                  "offers": [
+                    {
+                      "@type": "Offer",
+                      "name": "Free",
+                      "price": "0",
+                      "priceCurrency": "EUR",
+                      "description": "2 newsletters par mois, 1 destinataire, brief personnalisé"
+                    },
+                    {
+                      "@type": "Offer",
+                      "name": "Pro",
+                      "price": "19",
+                      "priceCurrency": "EUR",
+                      "priceValidUntil": "2026-12-31",
+                      "description": "4 newsletters par mois, 5 destinataires, sources au choix, analytics complets, personnalisation couleur"
+                    },
+                    {
+                      "@type": "Offer",
+                      "name": "Business",
+                      "price": "49",
+                      "priceCurrency": "EUR",
+                      "priceValidUntil": "2026-12-31",
+                      "description": "Newsletters illimitées, 25 destinataires, logo personnalisé, planification avancée, support prioritaire"
+                    }
+                  ],
+                  "featureList": [
+                    "Newsletter automatique par IA",
+                    "Analyse de 147+ sources en temps réel",
+                    "Génération en 12 secondes",
+                    "30+ secteurs couverts",
+                    "Brief personnalisé",
+                    "Envoi automatique hebdomadaire ou mensuel",
+                    "Analytics de lecture",
+                    "Personnalisation visuelle",
+                    "Multi-destinataires"
+                  ],
+                  "screenshot": "https://sorell.fr/og-image.png"
+                },
+                {
+                  "@type": "HowTo",
+                  "name": "Comment utiliser Sorell pour automatiser sa veille sectorielle",
+                  "description": "Configurez votre newsletter automatique en 5 minutes avec Sorell.",
+                  "totalTime": "PT5M",
+                  "step": [
+                    {
+                      "@type": "HowToStep",
+                      "position": 1,
+                      "name": "Décrivez votre activité",
+                      "text": "En quelques lignes, décrivez votre secteur et ce qui vous intéresse. Sorell comprend votre besoin et adapte le contenu."
+                    },
+                    {
+                      "@type": "HowToStep",
+                      "position": 2,
+                      "name": "L'IA recherche et rédige",
+                      "text": "Sorell analyse plus de 147 sources web, sélectionne les actualités pertinentes et rédige un briefing éditorial complet en 12 secondes."
+                    },
+                    {
+                      "@type": "HowToStep",
+                      "position": 3,
+                      "name": "Recevez votre newsletter par email",
+                      "text": "Chaque semaine, un email professionnel arrive dans votre boîte avec les actualités de votre secteur. Partagez-le avec votre équipe."
+                    }
+                  ]
+                }
+              ]
+            })
           }}
         />
+      </head>
+      <body className="antialiased">
         <ThemeProvider>
           <AuthProvider>
             <LanguageProvider>
