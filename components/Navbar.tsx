@@ -98,6 +98,7 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const navLinks = [
+    { href: "/", label: t("nav.home") },
     { href: "/comment-ca-marche", label: t("nav.how_it_works") },
     { href: "/tarifs", label: t("nav.pricing") },
     { href: "/demo", label: t("nav.demo") },

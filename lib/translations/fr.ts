@@ -1,5 +1,6 @@
 const fr: Record<string, string> = {
   // Navbar
+  "nav.home": "Accueil",
   "nav.features": "Fonctionnalités",
   "nav.how_it_works": "Comment ça marche",
   "nav.pricing": "Tarifs",
