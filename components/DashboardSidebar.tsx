@@ -310,6 +310,34 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
               )}
             </div>
           </div>
+          <a
+            href="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "7px 12px",
+              fontSize: 13,
+              color: "var(--text-muted)",
+              textDecoration: "none",
+              borderRadius: 8,
+              marginBottom: 2,
+              transition: "background 0.1s ease, color 0.1s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-hover)";
+              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-secondary)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+              (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Retour au site
+          </a>
           <button
             onClick={handleSignOut}
             style={{
