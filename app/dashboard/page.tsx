@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
-import { getRecipients, getNewsletterConfig } from "@/lib/database";
+import { getRecipients, getNewsletterConfig, upsertNewsletterConfig } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
+import { DEFAULT_TOPICS } from "@/lib/topics";
 
 function IconCalendar() {
   return (
@@ -134,8 +135,34 @@ export default function DashboardPage() {
   const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
   const [loadingNewsletter, setLoadingNewsletter] = useState(true);
 
+  // Onboarding state
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(null); // null = loading
+  const [onboardingStep, setOnboardingStep] = useState(1);
+  const [brief, setBrief] = useState("");
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<number>(8);
+  const [onboardingSaving, setOnboardingSaving] = useState(false);
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
+
+  // Check if new user (no topics configured)
   useEffect(() => {
     if (!user) return;
+    supabase
+      .from("newsletter_config")
+      .select("topics, custom_brief")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data && data.topics && data.topics.length > 0) {
+          setIsNewUser(false);
+        } else {
+          setIsNewUser(true);
+        }
+      });
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || isNewUser !== false) return;
 
     async function loadData() {
       const [recipientsResult, configResult] = await Promise.all([
@@ -154,10 +181,10 @@ export default function DashboardPage() {
     }
 
     loadData();
-  }, [user]);
+  }, [user, isNewUser]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isNewUser !== false) return;
 
     supabase
       .from("newsletters")
@@ -171,7 +198,67 @@ export default function DashboardPage() {
         }
         setLoadingNewsletter(false);
       });
-  }, [user]);
+  }, [user, isNewUser]);
+
+  function toggleTopic(id: string) {
+    setSelectedTopics((prev) =>
+      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
+    );
+  }
+
+  async function handleOnboardingComplete() {
+    if (!user) return;
+    setOnboardingSaving(true);
+
+    // 1. Save config
+    const topicsArray = DEFAULT_TOPICS.map((t) => ({
+      id: t.id,
+      label: t.label,
+      enabled: selectedTopics.includes(t.id),
+    }));
+
+    await upsertNewsletterConfig(user.id, {
+      topics: topicsArray,
+      sources: [],
+      frequency: "bimonthly",
+      custom_brief: brief,
+      send_day: "1st-15th",
+      send_hour: selectedSlot,
+    });
+
+    // 2. Add user email as recipient
+    await supabase.from("recipients").upsert(
+      {
+        user_id: user.id,
+        email: user.email,
+        name: user.user_metadata?.full_name || "",
+      },
+      { onConflict: "user_id,email" }
+    );
+
+    // 3. Generate and send first newsletter
+    try {
+      const genRes = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const genData = await genRes.json();
+
+      if (genData.newsletter) {
+        await fetch("/api/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+        });
+      }
+    } catch (e) {
+      console.error("First newsletter failed:", e);
+    }
+
+    setOnboardingSaving(false);
+    setOnboardingComplete(true);
+  }
 
   const firstName =
     user?.user_metadata?.full_name?.split(" ")[0] ||
@@ -212,6 +299,248 @@ export default function DashboardPage() {
     },
   ];
 
+  // Loading state while checking if new user
+  if (isNewUser === null) {
+    return (
+      <div style={{ padding: "32px", maxWidth: 900 }}>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+      </div>
+    );
+  }
+
+  // ── ONBOARDING WIZARD ────────────────────────────────────────────
+  if (isNewUser) {
+    // Success screen
+    if (onboardingComplete) {
+      return (
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(16,185,129,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+            C&apos;est tout bon !
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
+            Votre première newsletter a été envoyée. Vérifiez votre boîte mail.<br/>
+            Les prochaines arriveront automatiquement le 1er et le 15 de chaque mois.
+          </p>
+          <button
+            onClick={() => setIsNewUser(false)}
+            style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+          >
+            Voir mon tableau de bord
+          </button>
+        </div>
+      );
+    }
+
+    // Step 1 – Brief
+    if (onboardingStep === 1) {
+      return (
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>1/4</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+            Décrivez votre activité
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
+            En quelques lignes, dites-nous ce que vous faites et ce que vous voulez suivre. Plus c&apos;est précis, plus votre newsletter sera pertinente.
+          </p>
+          <textarea
+            value={brief}
+            onChange={(e) => setBrief(e.target.value)}
+            placeholder="Ex : Je dirige un cabinet de conseil en stratégie. Je veux suivre les tendances du marché du consulting en France, les levées de fonds des cabinets concurrents, et les nouvelles réglementations qui affectent nos clients."
+            style={{
+              width: "100%",
+              minHeight: 120,
+              padding: 16,
+              fontSize: 14,
+              borderRadius: 10,
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              color: "var(--text)",
+              resize: "vertical",
+              lineHeight: 1.6,
+              boxSizing: "border-box",
+            }}
+          />
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left" }}>
+            Exemples : votre secteur, vos concurrents, les réglementations, les innovations qui vous intéressent
+          </p>
+          <button
+            onClick={() => setOnboardingStep(2)}
+            disabled={!brief.trim()}
+            style={{
+              marginTop: 24,
+              padding: "12px 32px",
+              background: brief.trim() ? "var(--accent)" : "var(--border)",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: brief.trim() ? "pointer" : "not-allowed",
+            }}
+          >
+            Continuer
+          </button>
+        </div>
+      );
+    }
+
+    // Step 2 – Topics
+    if (onboardingStep === 2) {
+      return (
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>2/4</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+            Choisissez vos thématiques
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
+            Sélectionnez les sujets qui vous intéressent. Vous pourrez les modifier à tout moment.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 24 }}>
+            {DEFAULT_TOPICS.map((topic) => (
+              <button
+                key={topic.id}
+                onClick={() => toggleTopic(topic.id)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 20,
+                  border: selectedTopics.includes(topic.id) ? "2px solid var(--accent)" : "1px solid var(--border)",
+                  background: selectedTopics.includes(topic.id) ? "rgba(37,99,235,0.08)" : "var(--surface)",
+                  color: selectedTopics.includes(topic.id) ? "var(--accent)" : "var(--text-secondary)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                }}
+              >
+                {topic.label}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <button
+              onClick={() => setOnboardingStep(1)}
+              style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
+            >
+              Retour
+            </button>
+            <button
+              onClick={() => setOnboardingStep(3)}
+              disabled={selectedTopics.length === 0}
+              style={{ padding: "12px 32px", background: selectedTopics.length > 0 ? "var(--accent)" : "var(--border)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: selectedTopics.length > 0 ? "pointer" : "not-allowed" }}
+            >
+              Continuer
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Step 3 – Recipient email
+    if (onboardingStep === 3) {
+      return (
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>3/4</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+            Où envoyer votre newsletter ?
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
+            Votre email est déjà ajouté. Vous recevrez votre première newsletter dans quelques instants.
+          </p>
+          <div style={{
+            padding: "12px 16px",
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            fontSize: 14,
+            color: "var(--text)",
+            marginBottom: 24,
+          }}>
+            {user?.email}
+          </div>
+          <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
+            Vous pourrez ajouter d&apos;autres destinataires plus tard depuis votre tableau de bord.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
+            <button
+              onClick={() => setOnboardingStep(2)}
+              style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
+            >
+              Retour
+            </button>
+            <button
+              onClick={() => setOnboardingStep(4)}
+              style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+            >
+              Continuer
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Step 4 – Send slot + launch
+    if (onboardingStep === 4) {
+      return (
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>4/4</div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+            Quand voulez-vous recevoir votre newsletter ?
+          </h1>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
+            Choisissez un créneau. Vous pourrez le modifier à tout moment.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 24 }}>
+            {[
+              { label: "Matin (8h)", value: 8 },
+              { label: "Midi (12h)", value: 12 },
+              { label: "Soir (18h)", value: 18 },
+            ].map((slot) => (
+              <button
+                key={slot.value}
+                onClick={() => setSelectedSlot(slot.value)}
+                style={{
+                  padding: "16px 24px",
+                  borderRadius: 10,
+                  border: selectedSlot === slot.value ? "2px solid var(--accent)" : "1px solid var(--border)",
+                  background: selectedSlot === slot.value ? "rgba(37,99,235,0.08)" : "var(--surface)",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  color: "var(--text)",
+                }}
+              >
+                {slot.label}
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
+            Vos newsletters seront envoyées le 1er et le 15 de chaque mois à l&apos;heure choisie.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <button
+              onClick={() => setOnboardingStep(3)}
+              style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
+            >
+              Retour
+            </button>
+            <button
+              onClick={handleOnboardingComplete}
+              disabled={onboardingSaving}
+              style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: onboardingSaving ? "not-allowed" : "pointer", opacity: onboardingSaving ? 0.7 : 1 }}
+            >
+              {onboardingSaving ? "Génération en cours…" : "Recevoir ma première newsletter"}
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // ── NORMAL DASHBOARD ─────────────────────────────────────────────
   return (
     <div style={{ padding: "32px", maxWidth: 900 }}>
       {/* Page header */}

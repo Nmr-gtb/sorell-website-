@@ -14,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
+import { DEFAULT_TOPICS } from "@/lib/topics";
 
 const ALL_SOURCES = [
   "Les Echos",
@@ -73,16 +74,7 @@ const BRIEF_EXAMPLES = [
   },
 ];
 
-const defaultTopics = [
-  { id: "ai", label: "Intelligence artificielle", enabled: true },
-  { id: "reg", label: "Réglementation & conformité", enabled: true },
-  { id: "market", label: "Concurrents & marché", enabled: false },
-  { id: "cyber", label: "Cybersécurité", enabled: true },
-  { id: "innov", label: "Innovation & tendances", enabled: true },
-  { id: "finance", label: "Finance & investissement", enabled: false },
-  { id: "rh", label: "RH & management", enabled: false },
-  { id: "green", label: "Développement durable", enabled: false },
-];
+const defaultTopics = DEFAULT_TOPICS;
 
 const defaultSources = ["Les Echos", "TechCrunch", "McKinsey Insights"];
 
