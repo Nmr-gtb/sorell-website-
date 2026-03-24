@@ -101,6 +101,7 @@ export default function Navbar() {
     { href: "/comment-ca-marche", label: t("nav.how_it_works") },
     { href: "/tarifs", label: t("nav.pricing") },
     { href: "/demo", label: t("nav.demo") },
+    { href: "/contact", label: t("nav.contact") },
   ];
 
   const isActive = (href: string) =>
@@ -110,7 +111,8 @@ export default function Navbar() {
 
   return (
     <>
-      <TrialBanner />
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50 }}>
+        <TrialBanner />
       <style>{`
         [data-theme="dark"] header.sorell-navbar {
           background: ${scrolled ? "rgba(15,17,23,0.92)" : "transparent"} !important;
@@ -134,11 +136,6 @@ export default function Navbar() {
       <header
         className="sorell-navbar"
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
           background: scrolled ? "rgba(255,255,255,0.92)" : "transparent",
           backdropFilter: scrolled ? "blur(12px)" : "none",
           borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
@@ -275,6 +272,7 @@ export default function Navbar() {
           </div>
         </nav>
       </header>
+      </div>
 
       {/* Overlay */}
       <div

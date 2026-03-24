@@ -226,7 +226,7 @@ const en: Record<string, string> = {
   "home.step3_desc": "Every week, a clean and clear email lands in your inbox. You don't have to do anything.",
   "home.pricing_title": "Simple pricing, no commitment",
   "home.pricing_link": "See all details →",
-  "home.cta_title": "Ready to automate your industry monitoring?",
+  "home.cta_title": "Ready to get the news that matters, every week?",
   "home.cta_subtitle": "Your first newsletter in 5 minutes. Free, no commitment.",
   "home.cta_note": "Free, no commitment.",
 
