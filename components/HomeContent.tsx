@@ -642,9 +642,6 @@ export default function HomeContent() {
             <p style={{ fontSize: "1rem", color: "var(--text-secondary)", marginBottom: 8, lineHeight: 1.7 }}>
               {t("home.cta_subtitle")}
             </p>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 36 }}>
-              {t("home.cta_note")}
-            </p>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <WaitlistForm buttonText={t("hero.cta_primary")} />
             </div>

@@ -228,7 +228,7 @@ const fr: Record<string, string> = {
   "home.feat6_desc": "Ajoutez jusqu'à 25 adresses email. Toute votre équipe reçoit le même résumé, sans effort.",
   "home.feature_flexible": "Modifiable à tout moment",
   "home.feature_flexible_desc": "Changez vos thématiques, vos sources ou votre brief quand vous voulez. Votre prochaine newsletter s'adapte immédiatement.",
-  "home.steps_title": "En ligne en 10 minutes",
+  "home.steps_title": "En ligne en 5 minutes",
   "home.step1_title": "Décrivez votre activité",
   "home.step1_desc": "En quelques lignes, dites-nous votre secteur et ce qui vous intéresse. Ça prend 2 minutes.",
   "home.step2_title": "On s'occupe du reste",
