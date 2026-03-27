@@ -510,7 +510,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               className="input-field"
               value={customBrief}
               onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
-              placeholder={`Ex : Nous fabriquons des emballages cosmétiques. Concurrents : Autajon, ILEOS, CCL Industries. Clients : L'Oréal, LVMH.\nJe veux suivre : réglementations PPWR et INCI, innovations packaging durable, marché du rechargeable, résultats financiers de nos concurrents, lancements produits de nos clients.`}
+              placeholder={`Ex : Nous sommes un cabinet de recrutement spécialisé IT en Île-de-France. Concurrents : Hays, Michael Page, Robert Half. Clients : PME et ETI du secteur tech.\nJe veux suivre : marché de l'emploi tech en France, nouvelles réglementations RH et droit du travail, levées de fonds des startups qui recrutent, tendances télétravail et salaires, IA appliquée au recrutement.`}
               style={{ width: "100%", minHeight: 160, resize: "vertical", boxSizing: "border-box" }}
             />
             <div style={{

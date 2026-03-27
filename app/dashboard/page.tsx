@@ -350,7 +350,7 @@ export default function DashboardPage() {
           <textarea
             value={brief}
             onChange={(e) => setBrief(e.target.value)}
-            placeholder={`Ex : Nous sommes une PME spécialisée dans la surimpression de packaging cosmétique. Nos principaux concurrents sont Autajon, ILEOS et CCL Industries. Nos clients sont des marques comme L'Oréal, LVMH et Estée Lauder.\nJe veux suivre :\n\nLes réglementations européennes (PPWR, INCI, REACH)\nLes innovations en impression durable et encres sans solvants\nLe marché du packaging rechargeable et éco-responsable\nLes résultats financiers et acquisitions de nos concurrents\nLes appels d'offres et lancements de nos clients grands comptes`}
+            placeholder={`Ex : Nous sommes un cabinet de recrutement spécialisé IT en Île-de-France. Concurrents : Hays, Michael Page, Robert Half. Clients : PME et ETI du secteur tech.\nJe veux suivre : marché de l'emploi tech en France, nouvelles réglementations RH et droit du travail, levées de fonds des startups qui recrutent, tendances télétravail et salaires, IA appliquée au recrutement.`}
             style={{
               width: "100%",
               minHeight: 160,
