@@ -629,9 +629,13 @@ export default function ConfigPage() {
               className="input-field"
               value={customBrief}
               onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
-              placeholder="Ex : Je veux suivre les changements de réglementation autour des listes INCI en cosmétique, les nouvelles normes EU, les innovations en formulation clean beauty, et les lancements produits de nos concurrents (L'Oréal, Estée Lauder, Caudalie)."
-              style={{ width: "100%", minHeight: 120, resize: "vertical", boxSizing: "border-box" }}
+              placeholder={`Ex : Nous sommes une PME spécialisée dans la surimpression de packaging cosmétique. Nos principaux concurrents sont Autajon, ILEOS et CCL Industries. Nos clients sont des marques comme L'Oréal, LVMH et Estée Lauder.\nJe veux suivre :\n\nLes réglementations européennes (PPWR, INCI, REACH)\nLes innovations en impression durable et encres sans solvants\nLe marché du packaging rechargeable et éco-responsable\nLes résultats financiers et acquisitions de nos concurrents\nLes appels d'offres et lancements de nos clients grands comptes`}
+              style={{ width: "100%", minHeight: 160, resize: "vertical", boxSizing: "border-box" }}
             />
+            <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left", lineHeight: 1.6 }}>
+              <p style={{ marginBottom: 6, fontWeight: 600, color: "var(--text-secondary)" }}>Plus votre brief est détaillé, plus votre newsletter sera riche et variée :</p>
+              <p style={{ margin: 0 }}>Mentionnez vos concurrents par nom, vos clients importants, les réglementations qui vous concernent, les innovations qui vous intéressent, les marchés géographiques que vous suivez, les salons ou événements de votre secteur.</p>
+            </div>
             <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
               {customBrief.length} / 1000
             </div>

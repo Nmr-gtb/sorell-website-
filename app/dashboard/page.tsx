@@ -345,15 +345,15 @@ export default function DashboardPage() {
             Décrivez votre activité
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
-            En quelques lignes, dites-nous ce que vous faites et ce que vous voulez suivre. Plus c&apos;est précis, plus votre newsletter sera pertinente.
+            Décrivez votre entreprise, vos concurrents, vos clients et les sujets qui vous intéressent. Plus c&apos;est détaillé, plus chaque newsletter vous apprendra quelque chose de nouveau.
           </p>
           <textarea
             value={brief}
             onChange={(e) => setBrief(e.target.value)}
-            placeholder="Ex : Je dirige un cabinet de conseil en stratégie. Je veux suivre les tendances du marché du consulting en France, les levées de fonds des cabinets concurrents, et les nouvelles réglementations qui affectent nos clients."
+            placeholder={`Ex : Nous sommes une PME spécialisée dans la surimpression de packaging cosmétique. Nos principaux concurrents sont Autajon, ILEOS et CCL Industries. Nos clients sont des marques comme L'Oréal, LVMH et Estée Lauder.\nJe veux suivre :\n\nLes réglementations européennes (PPWR, INCI, REACH)\nLes innovations en impression durable et encres sans solvants\nLe marché du packaging rechargeable et éco-responsable\nLes résultats financiers et acquisitions de nos concurrents\nLes appels d'offres et lancements de nos clients grands comptes`}
             style={{
               width: "100%",
-              minHeight: 120,
+              minHeight: 160,
               padding: 16,
               fontSize: 14,
               borderRadius: 10,
@@ -365,9 +365,10 @@ export default function DashboardPage() {
               boxSizing: "border-box",
             }}
           />
-          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left" }}>
-            Exemples : votre secteur, vos concurrents, les réglementations, les innovations qui vous intéressent
-          </p>
+          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left", lineHeight: 1.6 }}>
+            <p style={{ marginBottom: 6, fontWeight: 600, color: "var(--text-secondary)" }}>Plus votre brief est détaillé, plus votre newsletter sera riche et variée :</p>
+            <p style={{ margin: 0 }}>Mentionnez vos concurrents par nom, vos clients importants, les réglementations qui vous concernent, les innovations qui vous intéressent, les marchés géographiques que vous suivez, les salons ou événements de votre secteur.</p>
+          </div>
           <button
             onClick={() => setOnboardingStep(2)}
             disabled={!brief.trim()}
