@@ -54,6 +54,40 @@ export async function POST(request: Request) {
 
     const sourcesList = sources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${sources.join(", ")}` : "";
 
+    // --- ANTI-DOUBLON : récupérer les titres des 3 dernières newsletters ---
+    const { data: recentNewsletters } = await supabase
+      .from("newsletters")
+      .select("content")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    let previousTopicsBlock = "";
+    if (recentNewsletters && recentNewsletters.length > 0) {
+      const allTitles: string[] = [];
+      for (const nl of recentNewsletters) {
+        try {
+          const parsed = typeof nl.content === "string" ? JSON.parse(nl.content) : nl.content;
+          if (parsed.featuredArticle?.title) allTitles.push(parsed.featuredArticle.title);
+          if (parsed.articles) {
+            for (const a of parsed.articles) {
+              if (a.title) allTitles.push(a.title);
+            }
+          }
+        } catch (e) {
+          // ignore parsing errors
+        }
+      }
+      if (allTitles.length > 0) {
+        previousTopicsBlock = `
+
+=== SUJETS DÉJÀ TRAITÉS DANS LES NEWSLETTERS PRÉCÉDENTES ===
+NE PAS reprendre ces sujets. NE PAS reformuler les mêmes informations. Chercher des actualités COMPLÈTEMENT DIFFÉRENTES.
+${allTitles.map(t => "- " + t).join("\n")}
+=== FIN DES SUJETS DÉJÀ TRAITÉS ===`;
+      }
+    }
+
     const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger une newsletter basée sur de VRAIES actualités récentes trouvées sur le web.
 
 ${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
@@ -98,6 +132,37 @@ CONSIGNES :
 - Le premier article est "featured": true.
 - Sois factuel : ne déforme pas les informations des articles sources.
 - L'éditorial doit faire le lien entre les différentes actus trouvées.
+
+RÈGLES DE DIVERSITÉ DU CONTENU (OBLIGATOIRE) :
+
+1. JAMAIS de doublons : Si un sujet a été traité dans les newsletters précédentes (voir liste ci-dessous si elle existe), NE PAS le reprendre. Chercher des actualités NOUVELLES publiées dans les 7 derniers jours.
+
+2. VARIER les angles : Si un sujet majeur domine l'actualité (ex: une nouvelle réglementation), traiter UN SEUL article dessus et chercher 4 autres sujets COMPLÈTEMENT DIFFÉRENTS. Si ce sujet majeur a déjà été couvert la semaine précédente, chercher plutôt : les réactions des entreprises, les cas concrets d'application, les impacts business chiffrés, les solutions adoptées par les acteurs du secteur, ou passer à un autre sujet.
+
+3. DIVERSIFIER les catégories : Les 5 articles doivent couvrir AU MINIMUM 3 catégories différentes parmi :
+   - Réglementation / Conformité
+   - Innovation produit / R&D
+   - Marché / Business / Chiffres
+   - International / Export
+   - Tendances consommateurs
+   - Concurrence / Fusions-acquisitions
+   - Digital / Tech / IA
+   - RH / Emploi / Formation
+   - Développement durable / RSE
+   - Événements / Salons / Congrès
+
+4. PRIORISER la nouveauté : Privilégier les articles publiés dans les 3-4 derniers jours. Éviter les articles qui datent de plus de 7 jours. Si la recherche web ne retourne que des résultats anciens, élargir les termes de recherche pour trouver des actualités fraîches.
+
+5. FORMAT des tags : Chaque article doit avoir un tag de catégorie DIFFÉRENT (pas 3 articles avec le tag "RÉGLEMENTATION"). Utiliser des tags variés et spécifiques.
+
+STRATÉGIE DE RECHERCHE WEB :
+- Effectuer au moins 3 recherches web avec des termes DIFFÉRENTS
+- Recherche 1 : actualités récentes du secteur (cette semaine)
+- Recherche 2 : innovations, nouveaux produits, lancements récents
+- Recherche 3 : chiffres marché, business, levées de fonds, résultats financiers
+- NE PAS chercher les mêmes termes que la semaine précédente
+- Varier les mots-clés : ne pas toujours chercher "réglementation [secteur]" mais aussi "innovation [secteur]", "marché [secteur]", "tendance [secteur] 2026", "entreprise [secteur] actualité"
+${previousTopicsBlock}
 
 CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks, pas d'explication. UNIQUEMENT le JSON brut.`;
 
