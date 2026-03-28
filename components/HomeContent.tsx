@@ -207,7 +207,8 @@ export default function HomeContent() {
                 color: "#2563EB",
                 display: "inline-block",
                 minWidth: "14ch",
-                textAlign: "left",
+                textAlign: "center",
+                marginLeft: "-2ch",
                 transition: "opacity 0.4s ease",
                 opacity: sectorVisible ? 1 : 0,
               }}
@@ -261,7 +262,7 @@ export default function HomeContent() {
                   height: 10,
                   borderRadius: "50%",
                   background: "#2563EB",
-                  animation: "flowDot 3s ease-in-out infinite",
+                  animation: "flowDot 6s ease-in-out infinite",
                 }}
               />
             </div>
