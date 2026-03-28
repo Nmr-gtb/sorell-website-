@@ -171,12 +171,8 @@ export default function HomeContent() {
     <main style={{ background: "var(--bg)" }}>
       <style>{`
         @keyframes flowDot {
-          0%, 8%  { left: 0; }
-          82%, 100% { left: calc(100% - 10px); }
-        }
-        @keyframes flowDot2 {
-          0%, 8%  { left: 0; }
-          82%, 100% { left: calc(100% - 10px); }
+          0%, 5%  { left: 0; }
+          85%, 100% { left: calc(100% - 10px); }
         }
       `}</style>
       <Navbar />
@@ -199,26 +195,24 @@ export default function HomeContent() {
               fontFamily: "var(--font-inter, 'Inter', sans-serif)",
               fontSize: "clamp(2.5rem, 5vw, 4rem)",
               fontWeight: 700,
-              lineHeight: 1.2,
+              lineHeight: 1.15,
               letterSpacing: "-0.03em",
               color: "var(--text)",
               marginBottom: 24,
             }}
           >
-            <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
-            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
-            <span style={{ display: "block", minHeight: "1.2em" }}>
-              <span
-                style={{
-                  color: "#2563EB",
-                  display: "inline-block",
-                  minWidth: "12ch",
-                  transition: "opacity 0.4s ease",
-                  opacity: sectorVisible ? 1 : 0,
-                }}
-              >
-                {sectors[sectorIdx]}
-              </span>
+            {t("hero.title_before")}
+            <span
+              style={{
+                color: "#2563EB",
+                display: "inline-block",
+                minWidth: "14ch",
+                textAlign: "left",
+                transition: "opacity 0.4s ease",
+                opacity: sectorVisible ? 1 : 0,
+              }}
+            >
+              {sectors[sectorIdx]}
             </span>
           </h1>
 
@@ -247,13 +241,13 @@ export default function HomeContent() {
               width: "100%",
             }}
           >
-            {/* Segment 1: between icon 1 and icon 2 */}
+            {/* Full-width connecting line + single dot */}
             <div
               style={{
                 position: "absolute",
                 top: 20,
-                left: "calc(16.666% + 22px)",
-                right: "calc(50% + 22px)",
+                left: "16.666%",
+                right: "16.666%",
                 height: 2,
                 background: "var(--border)",
                 zIndex: 0,
@@ -272,31 +266,6 @@ export default function HomeContent() {
               />
             </div>
 
-            {/* Segment 2: between icon 2 and icon 3 */}
-            <div
-              style={{
-                position: "absolute",
-                top: 20,
-                left: "calc(50% + 22px)",
-                right: "calc(16.666% + 22px)",
-                height: 2,
-                background: "var(--border)",
-                zIndex: 0,
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: -4,
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  background: "#2563EB",
-                  animation: "flowDot2 3s ease-in-out 1.5s infinite",
-                }}
-              />
-            </div>
-
             {/* Steps */}
             {flowSteps.map((step, i) => (
               <div
@@ -307,7 +276,8 @@ export default function HomeContent() {
                   flexDirection: "column",
                   alignItems: "center",
                   gap: 8,
-                  zIndex: 1,
+                  position: "relative",
+                  zIndex: 2,
                   padding: "0 4px",
                 }}
               >
@@ -316,11 +286,14 @@ export default function HomeContent() {
                     width: 40,
                     height: 40,
                     borderRadius: "50%",
-                    background: "rgba(37, 99, 235, 0.1)",
+                    background: "var(--bg)",
+                    boxShadow: "inset 0 0 0 40px rgba(37, 99, 235, 0.1)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    position: "relative",
+                    zIndex: 2,
                   }}
                 >
                   {step.icon}
