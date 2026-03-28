@@ -207,8 +207,7 @@ export default function HomeContent() {
                 color: "#2563EB",
                 display: "inline-block",
                 minWidth: "14ch",
-                textAlign: "center",
-                marginLeft: "-2ch",
+                textAlign: "left",
                 transition: "opacity 0.4s ease",
                 opacity: sectorVisible ? 1 : 0,
               }}
