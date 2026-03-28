@@ -43,8 +43,8 @@ const fr: Record<string, string> = {
   "how.step3_desc": "Chaque semaine, un email propre et clair arrive dans votre boîte. Vous n'avez rien à faire.",
 
   // Social proof
-  "social.title": "Ils gagnent du temps chaque semaine",
-  "social.subtitle": "Des dirigeants et managers utilisent Sorell pour rester informés sans effort.",
+  "social.title": "Un retour qui en dit long",
+  "social.subtitle": "Découvrez pourquoi nos utilisateurs adoptent Sorell.",
   "social.trust": "Ils nous font confiance",
   "social.metric_newsletters": "Secteurs couverts",
   "social.metric_satisfaction": "Satisfaction",

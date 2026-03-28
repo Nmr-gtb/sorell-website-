@@ -43,8 +43,8 @@ const en: Record<string, string> = {
   "how.step3_desc": "Every week, a clean and clear email lands in your inbox. You don't have to do anything.",
 
   // Social proof
-  "social.title": "They save time every week",
-  "social.subtitle": "Executives and managers use Sorell to stay informed effortlessly.",
+  "social.title": "A review that speaks for itself",
+  "social.subtitle": "See why our users are adopting Sorell.",
   "social.trust": "They trust us",
   "social.metric_newsletters": "Sectors covered",
   "social.metric_satisfaction": "Satisfaction",
