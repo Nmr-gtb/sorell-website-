@@ -202,8 +202,9 @@ export default function HomeContent() {
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
+            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
             <span style={{ display: "block" }}>
-              {t("hero.title_line2")} {t("hero.title_prep")}{" "}
+              {t("hero.title_prep")}{" "}
               <span
                 style={{
                   color: "#2563EB",
