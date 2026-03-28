@@ -201,18 +201,22 @@ export default function HomeContent() {
               marginBottom: 24,
             }}
           >
-            {t("hero.title_before")}
-            <span
-              style={{
-                color: "#2563EB",
-                display: "inline-block",
-                minWidth: "14ch",
-                textAlign: "left",
-                transition: "opacity 0.4s ease",
-                opacity: sectorVisible ? 1 : 0,
-              }}
-            >
-              {sectors[sectorIdx]}
+            <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
+            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
+            <span style={{ display: "block", paddingLeft: "1em" }}>
+              {t("hero.title_prep")}{" "}
+              <span
+                style={{
+                  color: "#2563EB",
+                  display: "inline-block",
+                  minWidth: "14ch",
+                  textAlign: "left",
+                  transition: "opacity 0.4s ease",
+                  opacity: sectorVisible ? 1 : 0,
+                }}
+              >
+                {sectors[sectorIdx]}
+              </span>
             </span>
           </h1>
 
