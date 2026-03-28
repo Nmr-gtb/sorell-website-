@@ -174,6 +174,10 @@ export default function HomeContent() {
           0%, 8%  { left: 0; }
           82%, 100% { left: calc(100% - 10px); }
         }
+        @keyframes flowDot2 {
+          0%, 8%  { left: 0; }
+          82%, 100% { left: calc(100% - 10px); }
+        }
       `}</style>
       <Navbar />
 
@@ -195,24 +199,27 @@ export default function HomeContent() {
               fontFamily: "var(--font-inter, 'Inter', sans-serif)",
               fontSize: "clamp(2.5rem, 5vw, 4rem)",
               fontWeight: 700,
-              lineHeight: 1.1,
+              lineHeight: 1.2,
               letterSpacing: "-0.03em",
               color: "var(--text)",
               marginBottom: 24,
             }}
           >
-            {t("hero.title_before")}
-            <span
-              style={{
-                color: "#2563EB",
-                display: "inline-block",
-                transition: "opacity 0.4s ease",
-                opacity: sectorVisible ? 1 : 0,
-              }}
-            >
-              {sectors[sectorIdx]}
+            <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
+            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
+            <span style={{ display: "block", minHeight: "1.2em" }}>
+              <span
+                style={{
+                  color: "#2563EB",
+                  display: "inline-block",
+                  minWidth: "12ch",
+                  transition: "opacity 0.4s ease",
+                  opacity: sectorVisible ? 1 : 0,
+                }}
+              >
+                {sectors[sectorIdx]}
+              </span>
             </span>
-            {"."}
           </h1>
 
           <p
@@ -240,20 +247,18 @@ export default function HomeContent() {
               width: "100%",
             }}
           >
-            {/* Connecting line */}
+            {/* Segment 1: between icon 1 and icon 2 */}
             <div
               style={{
                 position: "absolute",
                 top: 20,
-                left: "16.666%",
-                right: "16.666%",
+                left: "calc(16.666% + 22px)",
+                right: "calc(50% + 22px)",
                 height: 2,
                 background: "var(--border)",
                 zIndex: 0,
-                overflow: "visible",
               }}
             >
-              {/* Animated dot */}
               <div
                 style={{
                   position: "absolute",
@@ -263,6 +268,31 @@ export default function HomeContent() {
                   borderRadius: "50%",
                   background: "#2563EB",
                   animation: "flowDot 3s ease-in-out infinite",
+                }}
+              />
+            </div>
+
+            {/* Segment 2: between icon 2 and icon 3 */}
+            <div
+              style={{
+                position: "absolute",
+                top: 20,
+                left: "calc(50% + 22px)",
+                right: "calc(16.666% + 22px)",
+                height: 2,
+                background: "var(--border)",
+                zIndex: 0,
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: "#2563EB",
+                  animation: "flowDot2 3s ease-in-out 1.5s infinite",
                 }}
               />
             </div>
