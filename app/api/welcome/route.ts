@@ -71,6 +71,31 @@ export async function POST(request: Request) {
 </html>`
     });
 
+    try {
+      const now = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
+      await resend.emails.send({
+        from: "Sorell <noe@sorell.fr>",
+        to: "noe@sorell.fr",
+        subject: `Nouvel inscrit Sorell - ${email}`,
+        html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family:'Segoe UI',Roboto,Arial,sans-serif;background:#F3F4F6;margin:0;padding:0;">
+  <div style="max-width:480px;margin:40px auto;background:white;border-radius:10px;padding:28px;border:1px solid #E5E7EB;">
+    <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 16px;">Nouvel inscrit sur Sorell</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;color:#374151;">
+      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${name || "Non renseigne"}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${email}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Date</td><td style="padding:8px 0;">${now}</td></tr>
+    </table>
+  </div>
+</body>
+</html>`
+      });
+    } catch (notifError) {
+      console.error("Admin notification email error:", notifError);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Welcome email error:", error);
