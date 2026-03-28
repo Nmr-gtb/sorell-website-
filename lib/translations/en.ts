@@ -166,6 +166,7 @@ const en: Record<string, string> = {
   "dash.overview": "Overview",
   "dash.newsletter": "Settings",
   "dash.generate": "Preview",
+  "dash.history": "History",
   "dash.customization": "Customization",
   "dash.analytics": "Analytics",
   "dash.profile": "Profile",

@@ -68,6 +68,15 @@ function IconPalette() {
   );
 }
 
+function IconHistory() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
 function IconUser() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -121,6 +130,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
     { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false },
     { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
+    { label: t("dash.history"), href: "/dashboard/historique", icon: <IconHistory />, crown: false },
     { label: t("dash.customization"), href: (plan === "free") ? "/tarifs" : "/dashboard/customization", icon: <IconPalette />, crown: plan === "free" },
     { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: false },
     { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
