@@ -180,7 +180,7 @@ export default function HomeContent() {
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          padding: "140px 1.5rem 120px",
+          padding: "168px 1.5rem 144px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -198,7 +198,7 @@ export default function HomeContent() {
               lineHeight: 1.15,
               letterSpacing: "-0.03em",
               color: "var(--text)",
-              marginBottom: 24,
+              marginBottom: 40,
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
@@ -228,7 +228,7 @@ export default function HomeContent() {
               color: "var(--text-secondary)",
               lineHeight: 1.7,
               maxWidth: 560,
-              margin: "0 auto 32px",
+              margin: "0 auto 48px",
             }}
           >
             {t("hero.subtitle")}
@@ -240,7 +240,7 @@ export default function HomeContent() {
               position: "relative",
               display: "flex",
               justifyContent: "center",
-              margin: "0 auto 40px",
+              margin: "0 auto 56px",
               maxWidth: 460,
               width: "100%",
             }}
@@ -324,7 +324,7 @@ export default function HomeContent() {
               gap: 12,
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: 16,
+              marginBottom: 24,
             }}
           >
             <a
@@ -343,7 +343,7 @@ export default function HomeContent() {
             </Link>
           </div>
 
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 24 }}>
             {t("hero.no_card")}
           </p>
         </div>
