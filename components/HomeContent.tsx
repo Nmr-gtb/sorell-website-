@@ -180,7 +180,7 @@ export default function HomeContent() {
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          padding: "168px 1.5rem 144px",
+          padding: "96px 1.5rem 144px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -190,6 +190,41 @@ export default function HomeContent() {
         }}
       >
         <div style={{ maxWidth: 720, width: "100%" }}>
+          {/* Badge pill */}
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "6px 16px",
+              borderRadius: 999,
+              border: "1px solid var(--border)",
+              marginBottom: 32,
+            }}
+          >
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#2563EB",
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontSize: 12,
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontWeight: 500,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                color: "var(--text-secondary)",
+              }}
+            >
+              {t("hero.badge")}
+            </span>
+          </div>
+
           <h1
             style={{
               fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -198,7 +233,7 @@ export default function HomeContent() {
               lineHeight: 1.15,
               letterSpacing: "-0.03em",
               color: "var(--text)",
-              marginBottom: 40,
+              marginBottom: 48,
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
@@ -228,7 +263,7 @@ export default function HomeContent() {
               color: "var(--text-secondary)",
               lineHeight: 1.7,
               maxWidth: 560,
-              margin: "0 auto 48px",
+              margin: "0 auto 56px",
             }}
           >
             {t("hero.subtitle")}
@@ -240,7 +275,7 @@ export default function HomeContent() {
               position: "relative",
               display: "flex",
               justifyContent: "center",
-              margin: "0 auto 56px",
+              margin: "0 auto 64px",
               maxWidth: 460,
               width: "100%",
             }}
@@ -324,7 +359,7 @@ export default function HomeContent() {
               gap: 12,
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: 24,
+              marginBottom: 32,
             }}
           >
             <a

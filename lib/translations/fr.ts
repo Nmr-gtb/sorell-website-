@@ -11,7 +11,8 @@ const fr: Record<string, string> = {
   "nav.start": "Commencer",
 
   // Hero
-  "hero.title": "Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+  "hero.badge": "Newsletter IA automatique pour les entreprises",
+  "hero.title":"Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
   "hero.title_before": "Un email par semaine. Tout ce qu'il faut savoir sur ",
   "hero.title_line1": "Un email par semaine.",
   "hero.title_line2": "Tout ce qu'il faut savoir",

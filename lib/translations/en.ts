@@ -11,7 +11,8 @@ const en: Record<string, string> = {
   "nav.start": "Get started",
 
   // Hero
-  "hero.title": "One email per week. Everything you need to know about your industry.",
+  "hero.badge": "Automatic AI newsletter for businesses",
+  "hero.title":"One email per week. Everything you need to know about your industry.",
   "hero.title_before": "One email per week. Everything you need to know about ",
   "hero.title_line1": "One email per week.",
   "hero.title_line2": "Everything you need to know",
