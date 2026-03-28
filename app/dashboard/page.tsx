@@ -258,6 +258,17 @@ export default function DashboardPage() {
       console.error("First newsletter failed:", e);
     }
 
+    // 4. Send welcome email
+    try {
+      await fetch("/api/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
+      });
+    } catch (e) {
+      console.error("Welcome email failed:", e);
+    }
+
     setOnboardingSaving(false);
     setOnboardingComplete(true);
   }
