@@ -202,25 +202,19 @@ export default function HomeContent() {
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
-            <span
-              style={{
-                display: "inline-flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <span>{t("hero.title_line2")}</span>
-              <span style={{ whiteSpace: "nowrap" }}>
-                {t("hero.title_prep")}&nbsp;
-                <span
-                  style={{
-                    color: "#2563EB",
-                    transition: "opacity 0.4s",
-                    opacity: sectorVisible ? 1 : 0,
-                  }}
-                >
-                  {sectors[sectorIdx]}
-                </span>
+            <span style={{ display: "block" }}>
+              {t("hero.title_line2")} {t("hero.title_prep")}{" "}
+              <span
+                style={{
+                  color: "#2563EB",
+                  display: "inline-block",
+                  width: "14ch",
+                  textAlign: "left",
+                  transition: "opacity 0.4s",
+                  opacity: sectorVisible ? 1 : 0,
+                }}
+              >
+                {sectors[sectorIdx]}
               </span>
             </span>
           </h1>
