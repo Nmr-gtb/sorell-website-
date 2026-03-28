@@ -154,34 +154,44 @@ export default function CustomizationPage() {
 
   if (!isPro) {
     return (
-      <div style={{ padding: "40px 32px" }}>
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginTop: 16, color: "var(--text)" }}>
-            {t("custom.locked_title")}
+      <div style={{ padding: 32, maxWidth: 600 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+          Personnalisation
+        </h1>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
+          Personnalisez les couleurs et le logo de vos newsletters.
+        </p>
+
+        <div style={{
+          padding: 24,
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          textAlign: "center",
+        }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>🎨</div>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+            Disponible avec le plan Pro
           </h2>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 8, maxWidth: 400, margin: "8px auto 0" }}>
-            {t("custom.locked_desc")}
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 20, lineHeight: 1.6 }}>
+            Changez les couleurs de vos newsletters avec le plan Pro (19€/mois).<br/>
+            Ajoutez votre logo avec le plan Business (49€/mois).
           </p>
-          <a
-            href="/tarifs"
-            style={{
-              display: "inline-block",
-              marginTop: 20,
-              padding: "10px 24px",
-              background: "var(--accent)",
-              color: "white",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              textDecoration: "none",
-            }}
-          >
-            {t("custom.upgrade")}
+          <a href="/tarifs" style={{
+            display: "inline-block",
+            padding: "10px 24px",
+            background: "var(--accent)",
+            color: "white",
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 600,
+            textDecoration: "none",
+          }}>
+            Voir les plans →
           </a>
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 12 }}>
+            15 jours d&apos;essai gratuit, sans engagement.
+          </p>
         </div>
       </div>
     );
