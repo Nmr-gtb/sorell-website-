@@ -147,6 +147,7 @@ export default function DashboardPage() {
   const [selectedSlot, setSelectedSlot] = useState<number>(8);
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
 
   // Check if new user (no topics configured)
   useEffect(() => {
@@ -375,11 +376,308 @@ export default function DashboardPage() {
       );
     }
 
-    // Step 1 – Brief
+    // Step 1 – Plan selection
     if (onboardingStep === 1) {
+      const plans = [
+        {
+          key: "free",
+          name: "Free",
+          price: 0,
+          annualPrice: 0,
+          tagline: "Pour decouvrir Sorell",
+          features: [
+            "1 destinataire",
+            "2 newsletters / mois",
+            "Brief personnalise",
+            "1 apercu / mois",
+          ],
+          cta: "Commencer gratuitement",
+          free: true,
+          popular: false,
+          enterprise: false,
+        },
+        {
+          key: "pro",
+          name: "Pro",
+          price: 19,
+          annualPrice: 15,
+          tagline: "Pour les equipes qui veulent aller plus loin",
+          features: [
+            "Jusqu'a 5 destinataires",
+            "4 newsletters / mois",
+            "Sources personnalisees",
+            "4 apercus / mois",
+            "Analytique complete",
+          ],
+          cta: "Essayer 15 jours gratuit",
+          free: false,
+          popular: true,
+          enterprise: false,
+        },
+        {
+          key: "business",
+          name: "Business",
+          price: 49,
+          annualPrice: 39,
+          tagline: "Pour les organisations exigeantes",
+          features: [
+            "Jusqu'a 25 destinataires",
+            "Newsletters illimitees",
+            "Sources personnalisees",
+            "Logo personnalise",
+            "Analytique complete",
+          ],
+          cta: "Essayer 15 jours gratuit",
+          free: false,
+          popular: false,
+          enterprise: false,
+        },
+        {
+          key: "enterprise",
+          name: "Enterprise",
+          price: null,
+          annualPrice: null,
+          tagline: "Pour les grandes structures",
+          features: [
+            "Destinataires illimites",
+            "Newsletters illimitees",
+            "Integrations sur mesure",
+            "SLA et support dedie",
+          ],
+          cta: "Nous contacter",
+          free: false,
+          popular: false,
+          enterprise: true,
+        },
+      ];
+
+      return (
+        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "60px 20px" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>1/5</div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+              Choisissez votre plan
+            </h1>
+            <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              Commencez gratuitement ou essayez Pro/Business pendant 15 jours sans engagement.
+            </p>
+          </div>
+
+          {/* Billing toggle */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
+            <div style={{
+              display: "inline-flex",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              padding: 4,
+              gap: 4,
+            }}>
+              <button
+                onClick={() => setBillingPeriod("monthly")}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 6,
+                  border: "none",
+                  background: billingPeriod === "monthly" ? "var(--accent)" : "transparent",
+                  color: billingPeriod === "monthly" ? "white" : "var(--text-secondary)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                }}
+              >
+                Mensuel
+              </button>
+              <button
+                onClick={() => setBillingPeriod("annual")}
+                style={{
+                  padding: "6px 16px",
+                  borderRadius: 6,
+                  border: "none",
+                  background: billingPeriod === "annual" ? "var(--accent)" : "transparent",
+                  color: billingPeriod === "annual" ? "white" : "var(--text-secondary)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                Annuel
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: "1px 6px",
+                  borderRadius: 4,
+                  background: billingPeriod === "annual" ? "rgba(255,255,255,0.25)" : "var(--success-bg)",
+                  color: billingPeriod === "annual" ? "white" : "var(--success)",
+                }}>
+                  -20%
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Plan cards */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 16,
+          }}>
+            {plans.map((plan) => {
+              const displayPrice =
+                billingPeriod === "annual" && plan.annualPrice !== null
+                  ? plan.annualPrice
+                  : plan.price;
+
+              const isEnterprise = plan.enterprise;
+              const isFree = plan.free || plan.price === 0;
+
+              return (
+                <div
+                  key={plan.key}
+                  style={{
+                    position: "relative",
+                    borderRadius: 12,
+                    padding: "24px 20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 16,
+                    background: "var(--surface)",
+                    border: plan.popular
+                      ? "1.5px solid var(--accent)"
+                      : "1px solid var(--border)",
+                  }}
+                >
+                  {/* Popular badge */}
+                  {plan.popular && (
+                    <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)" }}>
+                      <span style={{
+                        display: "inline-block",
+                        padding: "2px 12px",
+                        borderRadius: 999,
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        background: "var(--accent)",
+                        color: "white",
+                        whiteSpace: "nowrap",
+                      }}>
+                        Populaire
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Plan name + tagline */}
+                  <div>
+                    <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text)", marginBottom: 4, letterSpacing: "-0.01em" }}>
+                      {plan.name}
+                    </h3>
+                    <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
+                      {plan.tagline}
+                    </p>
+                  </div>
+
+                  {/* Price */}
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                    {isEnterprise ? (
+                      <span style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+                        Sur devis
+                      </span>
+                    ) : isFree ? (
+                      <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.03em" }}>
+                        Gratuit
+                      </span>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.03em" }}>
+                          {typeof displayPrice === "number"
+                            ? Number.isInteger(displayPrice)
+                              ? displayPrice
+                              : displayPrice.toFixed(1).replace(".", ",")
+                            : displayPrice}€
+                        </span>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                            {billingPeriod === "annual" ? "/an" : "/mois"}
+                          </span>
+                          {billingPeriod === "annual" && (
+                            <span style={{
+                              fontSize: "0.6875rem",
+                              fontWeight: 600,
+                              padding: "1px 6px",
+                              borderRadius: 4,
+                              background: "var(--success-bg)",
+                              color: "var(--success)",
+                            }}>
+                              -20%
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Features */}
+                  <ul style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, margin: 0, padding: 0, listStyle: "none" }}>
+                    {plan.features.map((feature, i) => (
+                      <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.8125rem" }}>
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.popular ? "var(--accent)" : "var(--success)" }}>
+                          <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span style={{ color: "var(--text-secondary)" }}>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Trial note for paid plans */}
+                  {!isFree && !isEnterprise && (
+                    <p style={{ fontSize: 11, color: "var(--success)", fontWeight: 500, textAlign: "center", margin: 0 }}>
+                      15 jours gratuits, sans engagement
+                    </p>
+                  )}
+
+                  {/* CTA */}
+                  {isEnterprise ? (
+                    <a
+                      href="/contact"
+                      className="btn-ghost"
+                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", textDecoration: "none" }}
+                    >
+                      {plan.cta}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => setOnboardingStep(2)}
+                      className={plan.popular ? "btn-primary" : "btn-ghost"}
+                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: "pointer" }}
+                    >
+                      {plan.cta}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Responsive styles */}
+          <style>{`
+            @media (max-width: 800px) {
+              .plan-grid { grid-template-columns: 1fr 1fr !important; }
+            }
+            @media (max-width: 500px) {
+              .plan-grid { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </div>
+      );
+    }
+
+    // Step 2 – Brief
+    if (onboardingStep === 2) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>1/4</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>2/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             Décrivez votre activité
           </h1>
@@ -409,7 +707,7 @@ export default function DashboardPage() {
             <p style={{ margin: 0 }}>Mentionnez vos concurrents par nom, vos clients importants, les réglementations qui vous concernent, les innovations qui vous intéressent, les marchés géographiques que vous suivez, les salons ou événements de votre secteur.</p>
           </div>
           <button
-            onClick={() => setOnboardingStep(2)}
+            onClick={() => setOnboardingStep(3)}
             disabled={!brief.trim()}
             style={{
               marginTop: 24,
@@ -429,11 +727,11 @@ export default function DashboardPage() {
       );
     }
 
-    // Step 2 – Topics
-    if (onboardingStep === 2) {
+    // Step 3 – Topics
+    if (onboardingStep === 3) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>2/4</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>3/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             Choisissez vos thématiques
           </h1>
@@ -536,13 +834,13 @@ export default function DashboardPage() {
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
-              onClick={() => setOnboardingStep(1)}
+              onClick={() => setOnboardingStep(2)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
               Retour
             </button>
             <button
-              onClick={() => setOnboardingStep(3)}
+              onClick={() => setOnboardingStep(4)}
               disabled={selectedTopics.length === 0}
               style={{ padding: "12px 32px", background: selectedTopics.length > 0 ? "var(--accent)" : "var(--border)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: selectedTopics.length > 0 ? "pointer" : "not-allowed" }}
             >
@@ -553,11 +851,11 @@ export default function DashboardPage() {
       );
     }
 
-    // Step 3 – Recipient email
-    if (onboardingStep === 3) {
+    // Step 4 – Recipient email
+    if (onboardingStep === 4) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>3/4</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>4/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             Où envoyer votre newsletter ?
           </h1>
@@ -580,13 +878,13 @@ export default function DashboardPage() {
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
             <button
-              onClick={() => setOnboardingStep(2)}
+              onClick={() => setOnboardingStep(3)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
               Retour
             </button>
             <button
-              onClick={() => setOnboardingStep(4)}
+              onClick={() => setOnboardingStep(5)}
               style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
             >
               Continuer
@@ -596,11 +894,11 @@ export default function DashboardPage() {
       );
     }
 
-    // Step 4 – Send slot + launch
-    if (onboardingStep === 4) {
+    // Step 5 – Send slot + launch
+    if (onboardingStep === 5) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>4/4</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>5/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             Quand voulez-vous recevoir votre newsletter ?
           </h1>
@@ -636,7 +934,7 @@ export default function DashboardPage() {
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
-              onClick={() => setOnboardingStep(3)}
+              onClick={() => setOnboardingStep(4)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
               Retour
