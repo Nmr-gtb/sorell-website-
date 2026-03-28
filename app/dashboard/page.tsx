@@ -134,6 +134,7 @@ export default function DashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
   const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
   const [loadingNewsletter, setLoadingNewsletter] = useState(true);
+  const [config, setConfig] = useState<{ custom_brief?: string } | null>(null);
 
   // Onboarding state
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null); // null = loading
@@ -171,6 +172,7 @@ export default function DashboardPage() {
       ]);
 
       setRecipientCount(recipientsResult.data.length);
+      setConfig(configResult.data);
 
       const freq = configResult.data?.frequency ?? "weekly";
       const day = configResult.data?.send_day ?? "monday";
@@ -561,6 +563,114 @@ export default function DashboardPage() {
           Voici un résumé de votre activité
         </p>
       </div>
+
+      {/* Guidance messages */}
+      {!loadingData && !loadingNewsletter && (
+        <>
+          {(!config?.custom_brief || config.custom_brief.length < 20) && (
+            <div style={{
+              padding: "16px 20px",
+              background: "rgba(37,99,235,0.06)",
+              border: "1px solid rgba(37,99,235,0.15)",
+              borderRadius: 10,
+              marginBottom: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+                  Complétez votre brief pour des newsletters pertinentes
+                </p>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
+                  Plus votre brief est détaillé, plus chaque newsletter vous apprendra quelque chose de nouveau.
+                </p>
+              </div>
+              <a href="/dashboard/config" style={{
+                padding: "8px 16px",
+                background: "var(--accent)",
+                color: "white",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                marginLeft: 16,
+              }}>
+                Compléter →
+              </a>
+            </div>
+          )}
+          {config?.custom_brief && config.custom_brief.length >= 20 && recipientCount === 0 && (
+            <div style={{
+              padding: "16px 20px",
+              background: "rgba(245,158,11,0.06)",
+              border: "1px solid rgba(245,158,11,0.15)",
+              borderRadius: 10,
+              marginBottom: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+                  Ajoutez un destinataire pour recevoir vos newsletters
+                </p>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
+                  Votre newsletter est configurée mais personne ne la reçoit encore.
+                </p>
+              </div>
+              <a href="/dashboard/config" style={{
+                padding: "8px 16px",
+                background: "#F59E0B",
+                color: "white",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                marginLeft: 16,
+              }}>
+                Ajouter →
+              </a>
+            </div>
+          )}
+          {config?.custom_brief && config.custom_brief.length >= 20 && (recipientCount ?? 0) > 0 && !lastNewsletter && (
+            <div style={{
+              padding: "16px 20px",
+              background: "rgba(16,185,129,0.06)",
+              border: "1px solid rgba(16,185,129,0.15)",
+              borderRadius: 10,
+              marginBottom: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
+                  Générez votre première newsletter
+                </p>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
+                  Tout est configuré. Testez le résultat en générant un aperçu.
+                </p>
+              </div>
+              <a href="/dashboard/generate" style={{
+                padding: "8px 16px",
+                background: "#10B981",
+                color: "white",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                marginLeft: 16,
+              }}>
+                Générer →
+              </a>
+            </div>
+          )}
+        </>
+      )}
 
       {/* Metric cards */}
       <div
