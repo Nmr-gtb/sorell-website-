@@ -15,7 +15,7 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { userId, topics, sources, customBrief } = await request.json();
+    const { userId, userEmail, topics, sources, customBrief } = await request.json();
 
     if (!userId || !topics?.length) {
       return NextResponse.json({ error: "Missing userId or topics" }, { status: 400 });
@@ -43,6 +43,21 @@ export async function POST(request: Request) {
         return NextResponse.json(
           { error: `Limite de ${maxPreviews} aperçu(s) par mois atteinte. Passez au plan supérieur pour plus d'aperçus.` },
           { status: 403 }
+        );
+      }
+    }
+
+    // Auto-add user as recipient if they have none
+    if (userEmail) {
+      const { data: existingRecipients } = await supabase
+        .from("recipients")
+        .select("email")
+        .eq("user_id", userId);
+
+      if (!existingRecipients || existingRecipients.length === 0) {
+        await supabase.from("recipients").upsert(
+          { user_id: userId, email: userEmail, name: "" },
+          { onConflict: "user_id,email" }
         );
       }
     }

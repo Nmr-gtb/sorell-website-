@@ -11,6 +11,9 @@ function cleanCiteTags(text: string): string {
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY)
+  : null;
 
 const DAY_MAP: Record<string, number> = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
@@ -316,7 +319,29 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         .select("*")
         .eq("user_id", config.user_id);
 
-      if (!recipients?.length) continue;
+      if (!recipients?.length) {
+        // Try to auto-add user email as recipient
+        if (supabaseAdmin) {
+          const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(config.user_id);
+          const userEmail = authUser?.user?.email;
+          if (userEmail) {
+            await supabase.from("recipients").upsert(
+              { user_id: config.user_id, email: userEmail, name: "" },
+              { onConflict: "user_id,email" }
+            );
+            const { data: refreshed } = await supabase
+              .from("recipients")
+              .select("*")
+              .eq("user_id", config.user_id);
+            if (!refreshed?.length) continue;
+            recipients.push(...(refreshed as typeof recipients));
+          } else {
+            continue;
+          }
+        } else {
+          continue;
+        }
+      }
 
       const { data: brandConfig } = await supabase
         .from("newsletter_config")

@@ -115,6 +115,14 @@ export default function ProfilePage() {
 
   const planLabel = plan ? capitalize(plan) : "Free";
 
+  const planDescriptions: Record<string, string> = {
+    free: "2 newsletters par mois, 1 destinataire, brief personnalisé.",
+    pro: "4 newsletters par mois, jusqu'à 5 destinataires, sources au choix, analytics complets.",
+    business: "Newsletters illimitées, jusqu'à 25 destinataires, logo personnalisé, planification avancée.",
+    enterprise: "Tout illimité, multi-newsletters, white-label, intégration CRM.",
+  };
+  const planDescription = planDescriptions[plan ?? "free"] ?? planDescriptions.free;
+
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
       {/* Upgrade success banner */}
@@ -269,7 +277,7 @@ export default function ProfilePage() {
               </span>
             </div>
             <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-              Accès aux fonctionnalités de base. Jusqu&apos;à 3 destinataires, 1 newsletter par semaine.
+              {loadingProfile ? "..." : planDescription}
             </p>
           </div>
         </div>

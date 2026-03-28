@@ -182,9 +182,26 @@ const [showAddTopic, setShowAddTopic] = useState(false);
         }
       }
 
-      if (recipientsResult.data) {
-        setRecipients(recipientsResult.data);
+      let loadedRecipients = recipientsResult.data ?? [];
+
+      if (loadedRecipients.length === 0 && user?.email) {
+        await supabase.from("recipients").upsert(
+          {
+            user_id: user.id,
+            email: user.email,
+            name: user.user_metadata?.full_name || "",
+            role: "",
+          },
+          { onConflict: "user_id,email" }
+        );
+        const { data: refreshed } = await supabase
+          .from("recipients")
+          .select("*")
+          .eq("user_id", user.id);
+        loadedRecipients = refreshed ?? [];
       }
+
+      setRecipients(loadedRecipients);
 
       setLoading(false);
     }
@@ -270,7 +287,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
           const genRes = await fetch("/api/generate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user.id, topics: enabledTopics, sources, customBrief }),
+            body: JSON.stringify({ userId: user.id, userEmail: user.email, topics: enabledTopics, sources, customBrief }),
           });
           const genData = await genRes.json();
           if (genData.newsletter) {

@@ -241,7 +241,7 @@ export default function DashboardPage() {
       const genRes = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user.id, userEmail: user.email }),
       });
       const genData = await genRes.json();
 

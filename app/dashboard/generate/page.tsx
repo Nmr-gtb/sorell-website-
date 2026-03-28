@@ -162,7 +162,7 @@ export default function GeneratePage() {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, topics, sources, customBrief }),
+        body: JSON.stringify({ userId: user.id, userEmail: user.email, topics, sources, customBrief }),
       });
       const data = await response.json();
       if (!response.ok) {
