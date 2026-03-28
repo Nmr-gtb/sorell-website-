@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import DashboardSidebar from "@/components/DashboardSidebar";
+import DashboardHeader from "@/components/DashboardHeader";
 import { DevModeProvider } from "@/lib/DevModeContext";
 import DevModeToggle from "@/components/DevModeToggle";
 
@@ -35,15 +36,6 @@ function Spinner() {
   );
 }
 
-function IconMenu() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  );
-}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -63,63 +55,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <DashboardSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main style={{ flex: 1, background: "var(--bg)", overflow: "auto", minWidth: 0 }}>
-        {/* Mobile header */}
-        <header
-          className="dashboard-mobile-header"
-          style={{
-            borderBottom: "1px solid var(--border)",
-            background: "var(--surface)",
-            padding: "0 16px",
-            height: 56,
-            display: "none",
-            alignItems: "center",
-            justifyContent: "space-between",
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-              fontSize: "1.125rem",
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
-              color: "var(--text)",
-            }}
-          >
-            Sorel<span style={{ color: "var(--accent)" }}>l</span>
-          </span>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "var(--text)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 4,
-            }}
-          >
-            <IconMenu />
-          </button>
-        </header>
-
+      <main style={{ flex: 1, background: "var(--bg)", overflow: "auto", minWidth: 0, display: "flex", flexDirection: "column" }}>
+        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
         {children}
       </main>
 
       <DevModeToggle />
-
-      <style>{`
-        @media (max-width: 768px) {
-          .dashboard-mobile-header {
-            display: flex !important;
-          }
-        }
-      `}</style>
     </div>
     </DevModeProvider>
   );
