@@ -141,6 +141,9 @@ export default function DashboardPage() {
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [brief, setBrief] = useState("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [customTopics, setCustomTopics] = useState<{ id: string; label: string }[]>([]);
+  const [newTopicLabel, setNewTopicLabel] = useState("");
+  const [showAddTopic, setShowAddTopic] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<number>(8);
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
@@ -208,16 +211,38 @@ export default function DashboardPage() {
     );
   }
 
+  function addCustomTopic() {
+    const trimmed = newTopicLabel.trim();
+    if (!trimmed) return;
+    const id = `custom-${Date.now()}`;
+    setCustomTopics((prev) => [...prev, { id, label: trimmed }]);
+    setSelectedTopics((prev) => [...prev, id]);
+    setNewTopicLabel("");
+    setShowAddTopic(false);
+  }
+
+  function removeCustomTopic(id: string) {
+    setCustomTopics((prev) => prev.filter((t) => t.id !== id));
+    setSelectedTopics((prev) => prev.filter((t) => t !== id));
+  }
+
   async function handleOnboardingComplete() {
     if (!user) return;
     setOnboardingSaving(true);
 
     // 1. Save config
-    const topicsArray = DEFAULT_TOPICS.map((t) => ({
-      id: t.id,
-      label: t.label,
-      enabled: selectedTopics.includes(t.id),
-    }));
+    const topicsArray = [
+      ...DEFAULT_TOPICS.map((t) => ({
+        id: t.id,
+        label: t.label,
+        enabled: selectedTopics.includes(t.id),
+      })),
+      ...customTopics.map((t) => ({
+        id: t.id,
+        label: t.label,
+        enabled: true,
+      })),
+    ];
 
     await upsertNewsletterConfig(user.id, {
       topics: topicsArray,
@@ -415,7 +440,7 @@ export default function DashboardPage() {
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
             Sélectionnez les sujets qui vous intéressent. Vous pourrez les modifier à tout moment.
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 24 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 16 }}>
             {DEFAULT_TOPICS.map((topic) => (
               <button
                 key={topic.id}
@@ -434,6 +459,80 @@ export default function DashboardPage() {
                 {topic.label}
               </button>
             ))}
+            {customTopics.map((topic) => (
+              <span
+                key={topic.id}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  padding: "8px 12px",
+                  borderRadius: 20,
+                  border: "2px solid var(--accent)",
+                  background: "rgba(37,99,235,0.08)",
+                  color: "var(--accent)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              >
+                {topic.label}
+                <button
+                  onClick={() => removeCustomTopic(topic.id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    lineHeight: 1,
+                    color: "var(--accent)",
+                    fontSize: 14,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  aria-label="Supprimer"
+                >
+                  x
+                </button>
+              </span>
+            ))}
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            {showAddTopic ? (
+              <div style={{ display: "flex", gap: 8, justifyContent: "center", alignItems: "center" }}>
+                <input
+                  className="input-field"
+                  value={newTopicLabel}
+                  onChange={(e) => setNewTopicLabel(e.target.value)}
+                  placeholder="Ex: Blockchain, Supply Chain, IoT..."
+                  onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
+                  autoFocus
+                  style={{ maxWidth: 260, fontSize: 13 }}
+                />
+                <button
+                  className="btn-primary"
+                  onClick={addCustomTopic}
+                  disabled={!newTopicLabel.trim()}
+                  style={{ fontSize: 13, padding: "6px 14px" }}
+                >
+                  Ajouter
+                </button>
+                <button
+                  className="btn-ghost"
+                  onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
+                  style={{ fontSize: 13, padding: "6px 14px" }}
+                >
+                  Annuler
+                </button>
+              </div>
+            ) : (
+              <button
+                className="btn-ghost"
+                onClick={() => setShowAddTopic(true)}
+                style={{ fontSize: 13, padding: "6px 14px" }}
+              >
+                + Ajouter une thematique
+              </button>
+            )}
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
