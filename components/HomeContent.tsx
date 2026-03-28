@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -53,8 +54,49 @@ const IconEdit = () => (
   </svg>
 );
 
+const IconClock = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+const IconLayers = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+    <polyline points="2 17 12 22 22 17" />
+    <polyline points="2 12 12 17 22 12" />
+  </svg>
+);
+const IconMail = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+);
+
 export default function HomeContent() {
   const { t } = useLanguage();
+
+  const sectors = t("hero.sectors").split(",").map((s) => s.trim());
+  const [sectorIdx, setSectorIdx] = useState(0);
+  const [sectorVisible, setSectorVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSectorVisible(false);
+      setTimeout(() => {
+        setSectorIdx((prev) => (prev + 1) % sectors.length);
+        setSectorVisible(true);
+      }, 400);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [sectors.length]);
+
+  const flowSteps = [
+    { icon: <IconClock />, label: t("hero.flow_step1") },
+    { icon: <IconLayers />, label: t("hero.flow_step2") },
+    { icon: <IconMail />, label: t("hero.flow_step3") },
+  ];
 
   const features = [
     { icon: <IconBolt />, title: t("home.feat1_title"), description: t("home.feat1_desc") },
@@ -127,13 +169,17 @@ export default function HomeContent() {
 
   return (
     <main style={{ background: "var(--bg)" }}>
+      <style>{`
+        @keyframes flowDot {
+          0%, 8%  { left: 0; }
+          82%, 100% { left: calc(100% - 10px); }
+        }
+      `}</style>
       <Navbar />
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          paddingTop: "140px",
-          paddingBottom: "120px",
           padding: "140px 1.5rem 120px",
           display: "flex",
           flexDirection: "column",
@@ -155,7 +201,18 @@ export default function HomeContent() {
               marginBottom: 24,
             }}
           >
-            {t("hero.title")}
+            {t("hero.title_before")}
+            <span
+              style={{
+                color: "#2563EB",
+                display: "inline-block",
+                transition: "opacity 0.4s ease",
+                opacity: sectorVisible ? 1 : 0,
+              }}
+            >
+              {sectors[sectorIdx]}
+            </span>
+            {"."}
           </h1>
 
           <p
@@ -165,14 +222,94 @@ export default function HomeContent() {
               fontWeight: 400,
               color: "var(--text-secondary)",
               lineHeight: 1.7,
-              marginBottom: 40,
               maxWidth: 560,
-              margin: "0 auto 40px",
+              margin: "0 auto 32px",
             }}
           >
             {t("hero.subtitle")}
           </p>
 
+          {/* ─── MINI-FLOW ─────────────────────────────────────── */}
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              margin: "0 auto 40px",
+              maxWidth: 460,
+              width: "100%",
+            }}
+          >
+            {/* Connecting line */}
+            <div
+              style={{
+                position: "absolute",
+                top: 20,
+                left: "16.666%",
+                right: "16.666%",
+                height: 2,
+                background: "var(--border)",
+                zIndex: 0,
+                overflow: "visible",
+              }}
+            >
+              {/* Animated dot */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: "#2563EB",
+                  animation: "flowDot 3s ease-in-out infinite",
+                }}
+              />
+            </div>
+
+            {/* Steps */}
+            {flowSteps.map((step, i) => (
+              <div
+                key={i}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                  zIndex: 1,
+                  padding: "0 4px",
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    background: "rgba(37, 99, 235, 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {step.icon}
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    color: "var(--text-secondary)",
+                    textAlign: "center",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {step.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* ─── CTA ───────────────────────────────────────────── */}
           <div
             style={{
               display: "flex",

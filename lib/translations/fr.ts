@@ -12,10 +12,15 @@ const fr: Record<string, string> = {
 
   // Hero
   "hero.title": "Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
+  "hero.title_before": "Un email par semaine. Tout ce qu'il faut savoir sur ",
+  "hero.sectors": "votre secteur,la fintech,le BTP,la santé,le SaaS,l'énergie,le retail,la logistique",
   "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire - vous recevez, vous lisez, vous êtes à jour.",
   "hero.cta_primary": "Essayer gratuitement",
   "hero.cta_secondary": "Voir un exemple",
-  "hero.no_card": "Gratuit · 15 jours d'essai Pro · Sans carte bancaire · Prêt en 5 minutes",
+  "hero.no_card": "Gratuit - 15 jours d'essai Pro - Sans carte bancaire - Pret en 5 minutes",
+  "hero.flow_step1": "5 min config",
+  "hero.flow_step2": "L'IA analyse 147+ sources",
+  "hero.flow_step3": "Newsletter recue",
 
   // Features
   "features.title": "Comment ça vous aide",
