@@ -111,26 +111,12 @@ export default function HomeContent() {
     },
   ];
 
-  const testimonials = [
-    {
-      quote: t("social.testimonial1"),
-      name: t("social.testimonial1_name"),
-      title: t("social.testimonial1_role"),
-      initials: "MT",
-    },
-    {
-      quote: t("social.testimonial2"),
-      name: t("social.testimonial2_name"),
-      title: t("social.testimonial2_role"),
-      initials: "AD",
-    },
-    {
-      quote: t("social.testimonial3"),
-      name: t("social.testimonial3_name"),
-      title: t("social.testimonial3_role"),
-      initials: "LM",
-    },
-  ];
+  const testimonial = {
+    quote: t("social.testimonial3"),
+    name: t("social.testimonial3_name"),
+    title: t("social.testimonial3_role"),
+    initials: "LM",
+  };
 
   const metrics = [
     { value: t("home.stat1_value"), label: t("home.stat1_label") },
@@ -434,68 +420,60 @@ export default function HomeContent() {
             </p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
-              gap: 16,
-            }}
-          >
-            {testimonials.map((item) => (
-              <div
-                key={item.name}
+          <div style={{ maxWidth: 520, margin: "0 auto" }}>
+            <div
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                gap: 20,
+              }}
+            >
+              <p
                 style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 12,
-                  padding: 24,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: 20,
+                  fontStyle: "italic",
+                  fontSize: "0.875rem",
+                  lineHeight: 1.6,
+                  color: "var(--text-secondary)",
+                  margin: 0,
                 }}
               >
-                <p
+                {testimonial.quote}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div
                   style={{
-                    fontStyle: "italic",
-                    fontSize: "0.875rem",
-                    lineHeight: 1.6,
-                    color: "var(--text-secondary)",
-                    margin: 0,
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    background: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    color: "white",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.02em",
                   }}
                 >
-                  {item.quote}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background: "var(--accent)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                      color: "white",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.02em",
-                    }}
-                  >
-                    {item.initials}
+                  {testimonial.initials}
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)" }}>
+                    {testimonial.name}
                   </div>
-                  <div>
-                    <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)" }}>
-                      {item.name}
-                    </div>
-                    <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-                      {item.title}
-                    </div>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+                    {testimonial.title}
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
