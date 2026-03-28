@@ -3,11 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { priceId, userId, userEmail } = await request.json();
+    const { priceId, userId, userEmail, fromOnboarding } = await request.json();
 
     if (!priceId || !userId) {
       return NextResponse.json({ error: "Missing priceId or userId" }, { status: 400 });
     }
+
+    const base = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
+    const successUrl = fromOnboarding
+      ? `${base}/dashboard?onboarding=true`
+      : `${base}/dashboard/profile?upgraded=true`;
+    const cancelUrl = fromOnboarding
+      ? `${base}/dashboard`
+      : `${base}/tarifs`;
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -17,8 +25,8 @@ export async function POST(request: Request) {
       subscription_data: {
         trial_period_days: 15,
       },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr"}/dashboard/profile?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr"}/tarifs`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: { userId },
     });
 

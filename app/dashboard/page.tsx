@@ -1,11 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 import { getRecipients, getNewsletterConfig, upsertNewsletterConfig } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
 import { DEFAULT_TOPICS } from "@/lib/topics";
+
+const PRICE_IDS: Record<string, Record<string, string>> = {
+  pro: {
+    monthly: "price_1TE3pa7A2mOEJEeWltqInvgW",
+    annual: "price_1TE3ps7A2mOEJEeW4m1wm00z",
+  },
+  business: {
+    monthly: "price_1TE3qf7A2mOEJEeWiTAz8oWd",
+    annual: "price_1TE3qv7A2mOEJEeWEB04fuCE",
+  },
+};
 
 function IconCalendar() {
   return (
@@ -148,23 +160,43 @@ export default function DashboardPage() {
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Check if new user (no topics configured)
+  const searchParams = useSearchParams();
+
+  // Check if new user (no topics configured), and skip plan step if returning from checkout or already on paid plan
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("newsletter_config")
-      .select("topics, custom_brief")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (data && data.topics && data.topics.length > 0) {
-          setIsNewUser(false);
-        } else {
-          setIsNewUser(true);
+
+    const fromCheckout = searchParams.get("onboarding") === "true";
+
+    Promise.all([
+      supabase
+        .from("newsletter_config")
+        .select("topics, custom_brief")
+        .eq("user_id", user.id)
+        .single(),
+      supabase
+        .from("profiles")
+        .select("plan")
+        .eq("id", user.id)
+        .single(),
+    ]).then(([configResult, profileResult]) => {
+      const hasTopics = !!(configResult.data?.topics && configResult.data.topics.length > 0);
+      const plan = profileResult.data?.plan || "free";
+      const hasPaidPlan = plan === "pro" || plan === "business" || plan === "enterprise";
+
+      if (hasTopics) {
+        setIsNewUser(false);
+      } else {
+        setIsNewUser(true);
+        // Skip plan step if returning from Stripe checkout or already on a paid plan
+        if (fromCheckout || hasPaidPlan) {
+          setOnboardingStep(2);
         }
-      });
-  }, [user]);
+      }
+    });
+  }, [user, searchParams]);
 
   useEffect(() => {
     if (!user || isNewUser !== false) return;
@@ -225,6 +257,32 @@ export default function DashboardPage() {
   function removeCustomTopic(id: string) {
     setCustomTopics((prev) => prev.filter((t) => t.id !== id));
     setSelectedTopics((prev) => prev.filter((t) => t !== id));
+  }
+
+  async function handlePlanCheckout(planKey: "pro" | "business") {
+    if (!user) return;
+    const priceId = PRICE_IDS[planKey][billingPeriod];
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceId,
+          userId: user.id,
+          userEmail: user.email,
+          fromOnboarding: true,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setCheckoutLoading(false);
+      }
+    } catch {
+      setCheckoutLoading(false);
+    }
   }
 
   async function handleOnboardingComplete() {
@@ -646,13 +704,22 @@ export default function DashboardPage() {
                     >
                       {plan.cta}
                     </a>
-                  ) : (
+                  ) : isFree ? (
                     <button
                       onClick={() => setOnboardingStep(2)}
-                      className={plan.popular ? "btn-primary" : "btn-ghost"}
+                      className="btn-ghost"
                       style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: "pointer" }}
                     >
                       {plan.cta}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handlePlanCheckout(plan.key as "pro" | "business")}
+                      disabled={checkoutLoading}
+                      className={plan.popular ? "btn-primary" : "btn-ghost"}
+                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: checkoutLoading ? "wait" : "pointer", opacity: checkoutLoading ? 0.7 : 1 }}
+                    >
+                      {checkoutLoading ? "Chargement..." : plan.cta}
                     </button>
                   )}
                 </div>
