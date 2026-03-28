@@ -202,16 +202,13 @@ export default function HomeContent() {
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
-            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
-            <span style={{ display: "block", paddingLeft: "1em" }}>
-              {t("hero.title_prep")}{" "}
+            <span style={{ display: "block" }}>
+              {t("hero.title_line2")} {t("hero.title_prep")}{" "}
               <span
                 style={{
                   color: "#2563EB",
-                  display: "inline-block",
-                  minWidth: "14ch",
-                  textAlign: "left",
-                  transition: "opacity 0.4s ease",
+                  display: "inline",
+                  transition: "opacity 0.4s",
                   opacity: sectorVisible ? 1 : 0,
                 }}
               >
