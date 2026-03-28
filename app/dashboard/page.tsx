@@ -286,6 +286,7 @@ export default function DashboardPage() {
       value: loadingData ? "..." : String(recipientCount ?? 0),
       sublabel: "collaborateurs",
       label: "Destinataires",
+      link: "/dashboard/config",
     },
     {
       icon: <IconEye />,
@@ -682,30 +683,41 @@ export default function DashboardPage() {
         }}
         className="dashboard-metrics-grid"
       >
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 20,
-            }}
-          >
-            <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
-              {m.icon}
-            </div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
-              <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-                {m.value}
-              </span>
-              {m.sublabel && (
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{m.sublabel}</span>
+        {metrics.map((m) => {
+          const cardStyle = {
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 20,
+            cursor: m.link ? "pointer" as const : undefined,
+          };
+          const cardContent = (
+            <>
+              <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
+                {m.icon}
+              </div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+                  {m.value}
+                </span>
+                {m.sublabel && (
+                  <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{m.sublabel}</span>
+                )}
+              </div>
+              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{m.label}</div>
+              {m.link && (
+                <span style={{ fontSize: 11, color: "var(--accent)", marginTop: 4, display: "block" }}>Gérer →</span>
               )}
-            </div>
-            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{m.label}</div>
-          </div>
-        ))}
+            </>
+          );
+          return m.link ? (
+            <a key={m.label} href={m.link} style={{ textDecoration: "none", color: "inherit" }}>
+              <div style={cardStyle}>{cardContent}</div>
+            </a>
+          ) : (
+            <div key={m.label} style={cardStyle}>{cardContent}</div>
+          );
+        })}
       </div>
 
       {/* Last newsletter */}
