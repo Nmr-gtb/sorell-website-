@@ -164,7 +164,7 @@ export default function HomeContent() {
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          padding: "160px 1.5rem 144px",
+          padding: "180px 1.5rem 200px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -183,7 +183,7 @@ export default function HomeContent() {
               padding: "6px 16px",
               borderRadius: 999,
               border: "1px solid var(--border)",
-              marginBottom: 32,
+              marginBottom: 56,
             }}
           >
             <span
@@ -217,7 +217,7 @@ export default function HomeContent() {
               lineHeight: 1.15,
               letterSpacing: "-0.03em",
               color: "var(--text)",
-              marginBottom: 48,
+              marginBottom: 72,
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
@@ -232,7 +232,7 @@ export default function HomeContent() {
               color: "var(--text-secondary)",
               lineHeight: 1.7,
               maxWidth: 560,
-              margin: "0 auto 56px",
+              margin: "0 auto 80px",
             }}
           >
             {t("hero.subtitle")}
@@ -244,7 +244,7 @@ export default function HomeContent() {
               position: "relative",
               display: "flex",
               justifyContent: "center",
-              margin: "0 auto 64px",
+              margin: "0 auto 88px",
               maxWidth: 460,
               width: "100%",
             }}
@@ -328,7 +328,7 @@ export default function HomeContent() {
               gap: 12,
               justifyContent: "center",
               alignItems: "center",
-              marginBottom: 32,
+              marginBottom: 48,
             }}
           >
             <a
@@ -354,7 +354,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── DÉFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", paddingBottom: 40 }}>
+      <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
         <p style={{
           maxWidth: 700,
           margin: "0 auto",
@@ -372,12 +372,12 @@ export default function HomeContent() {
       <section
         style={{
           background: "var(--surface-alt)",
-          padding: "120px 1.5rem",
+          padding: "160px 1.5rem",
         }}
       >
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ textAlign: "center", marginBottom: 80 }}>
               <h2
                 style={{
                   fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -411,10 +411,10 @@ export default function HomeContent() {
       </section>
 
       {/* ─── FONCTIONNALITÉS ──────────────────────────────────── */}
-      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ textAlign: "center", marginBottom: 80 }}>
               <h2
                 style={{
                   fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -437,7 +437,7 @@ export default function HomeContent() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))",
-              gap: 16,
+              gap: 24,
             }}
           >
             {features.map((f, i) => (
@@ -450,10 +450,10 @@ export default function HomeContent() {
       </section>
 
       {/* ─── COMMENT ÇA MARCHE ────────────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "120px 1.5rem" }}>
+      <section style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: 840, margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <div style={{ textAlign: "center", marginBottom: 96 }}>
               <h2
                 style={{
                   fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -472,13 +472,13 @@ export default function HomeContent() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 240px), 1fr))",
-              gap: 32,
+              gap: 56,
             }}
           >
             {steps.map((step, i) => (
               <AnimateOnScroll key={step.num} delay={i * 80}>
                 <div>
-                  <div style={{ height: 1, background: "var(--border)", marginBottom: 24 }} />
+                  <div style={{ height: 1, background: "var(--border)", marginBottom: 32 }} />
                   <p
                     style={{
                       fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -514,14 +514,14 @@ export default function HomeContent() {
       </section>
 
       {/* ─── MÉTRIQUES DE CONFIANCE ───────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "48px 1.5rem" }}>
+      <section style={{ background: "var(--surface-alt)", padding: "96px 1.5rem" }}>
         <div
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 200px), 1fr))",
-            gap: 32,
+            gap: 48,
             textAlign: "center",
           }}
         >
@@ -548,9 +548,9 @@ export default function HomeContent() {
       </section>
 
       {/* ─── TÉMOIGNAGES ──────────────────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+      <section style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{ textAlign: "center", marginBottom: 80 }}>
             <h2
               style={{
                 fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -627,10 +627,10 @@ export default function HomeContent() {
       </section>
 
       {/* ─── PRICING TEASER ───────────────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+      <section style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{ textAlign: "center", marginBottom: 72 }}>
               <h2
                 style={{
                   fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -650,9 +650,9 @@ export default function HomeContent() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-              gap: 20,
+              gap: 28,
               maxWidth: 960,
-              margin: "0 auto 32px",
+              margin: "0 auto 56px",
             }}
           >
             {pricingPlans.map((plan) => (
@@ -749,7 +749,7 @@ export default function HomeContent() {
       {/* ─── CTA FINAL ────────────────────────────────────────── */}
       <section
         id="waitlist"
-        style={{ background: "var(--surface-alt)", padding: "100px 1.5rem" }}
+        style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}
       >
         <AnimateOnScroll>
           <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
@@ -760,12 +760,12 @@ export default function HomeContent() {
                 fontWeight: 700,
                 letterSpacing: "-0.03em",
                 color: "var(--text)",
-                marginBottom: 16,
+                marginBottom: 24,
               }}
             >
               {t("home.cta_title")}
             </h2>
-            <p style={{ fontSize: "1rem", color: "var(--text-secondary)", marginBottom: 8, lineHeight: 1.7 }}>
+            <p style={{ fontSize: "1rem", color: "var(--text-secondary)", marginBottom: 32, lineHeight: 1.7 }}>
               {t("home.cta_subtitle")}
             </p>
             <div style={{ display: "flex", justifyContent: "center" }}>
