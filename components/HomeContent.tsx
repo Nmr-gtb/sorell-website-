@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -76,21 +75,6 @@ const IconMail = () => (
 
 export default function HomeContent() {
   const { t } = useLanguage();
-
-  const sectors = t("hero.sectors").split(",").map((s) => s.trim());
-  const [sectorIdx, setSectorIdx] = useState(0);
-  const [sectorVisible, setSectorVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSectorVisible(false);
-      setTimeout(() => {
-        setSectorIdx((prev) => (prev + 1) % sectors.length);
-        setSectorVisible(true);
-      }, 400);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [sectors.length]);
 
   const flowSteps = [
     { icon: <IconClock />, label: t("hero.flow_step1") },
@@ -180,7 +164,7 @@ export default function HomeContent() {
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          padding: "96px 1.5rem 144px",
+          padding: "160px 1.5rem 144px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -237,22 +221,7 @@ export default function HomeContent() {
             }}
           >
             <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
-            <span style={{ display: "block" }}>{t("hero.title_line2")}</span>
-            <span style={{ display: "block" }}>
-              {t("hero.title_prep")}{" "}
-              <span
-                style={{
-                  color: "#2563EB",
-                  display: "inline-block",
-                  width: "7em",
-                  textAlign: "left",
-                  transition: "opacity 0.4s",
-                  opacity: sectorVisible ? 1 : 0,
-                }}
-              >
-                {sectors[sectorIdx]}
-              </span>
-            </span>
+            <span style={{ display: "block", color: "#2563EB" }}>{t("hero.title_line2")}</span>
           </h1>
 
           <p

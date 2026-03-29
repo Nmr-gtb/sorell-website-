@@ -12,12 +12,8 @@ const en: Record<string, string> = {
 
   // Hero
   "hero.badge": "Automatic AI newsletter for businesses",
-  "hero.title":"One email per week. Everything you need to know about your industry.",
-  "hero.title_before": "One email per week. Everything you need to know about ",
-  "hero.title_line1": "One email per week.",
-  "hero.title_line2": "Everything you need to know",
-  "hero.title_prep": "about",
-  "hero.sectors": "your industry,fintech,construction,healthcare,SaaS,energy,retail,logistics",
+  "hero.title_line1": "No more manual monitoring.",
+  "hero.title_line2": "Sorell already did it.",
   "hero.subtitle": "Sorell automatically sends you a summary of your industry news. Nothing to do - you receive, you read, you're up to date.",
   "hero.cta_primary": "Try for free",
   "hero.cta_secondary": "See an example",
