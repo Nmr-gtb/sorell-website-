@@ -20,7 +20,7 @@ import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PRESET_COLORS = [
-  { label: "Bleu Sorell", value: "#005058" },
+  { label: "Teal Sorell", value: "#005058" },
   { label: "Bleu foncé", value: "#1E40AF" },
   { label: "Vert", value: "#059669" },
   { label: "Violet", value: "#7C3AED" },

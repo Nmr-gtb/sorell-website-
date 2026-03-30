@@ -1,8 +1,8 @@
 <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#FFFFFF"/>
-  <rect x="0" y="0" width="1200" height="4" fill="#2563EB"/>
+  <rect x="0" y="0" width="1200" height="4" fill="#005058"/>
   <text x="100" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="#111827" letter-spacing="-2">
-    Sorel<tspan fill="#2563EB">l</tspan>
+    Sorel<tspan fill="#005058">l</tspan>
   </text>
   <text x="100" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#6B7280">
     La newsletter IA que vos équipes
@@ -13,5 +13,5 @@
   <text x="100" y="460" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="#9CA3AF">
     sorell.fr — Veille sectorielle automatisée par IA
   </text>
-  <rect x="0" y="626" width="1200" height="4" fill="#2563EB"/>
+  <rect x="0" y="626" width="1200" height="4" fill="#005058"/>
 </svg>

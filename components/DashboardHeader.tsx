@@ -60,7 +60,7 @@ export default function DashboardHeader({ onMenuClick }: Props) {
             lineHeight: 1,
           }}
         >
-          Sorel<span style={{ color: "#2563EB" }}>l</span>
+          Sorel<span style={{ color: "#005058" }}>l</span>
         </span>
       </Link>
 
@@ -78,7 +78,7 @@ export default function DashboardHeader({ onMenuClick }: Props) {
               style={{
                 fontSize: 14,
                 fontWeight: active ? 600 : 400,
-                color: active ? "#2563EB" : "var(--text-secondary)",
+                color: active ? "#005058" : "var(--text-secondary)",
                 textDecoration: "none",
                 padding: "5px 10px",
                 borderRadius: 6,

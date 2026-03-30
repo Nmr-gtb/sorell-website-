@@ -150,17 +150,19 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="footer-bottom">
-          <span
+          <img
+            src="/icone.png"
+            alt=""
+            aria-hidden="true"
             style={{
-              fontFamily: "'Quiglet', sans-serif",
-              fontSize: "clamp(40px, 6vw, 60px)",
-              color: "rgba(255,255,255,0.12)",
-              lineHeight: 1,
+              height: 56,
+              width: "auto",
+              opacity: 0.15,
+              filter: "brightness(0) invert(1)",
               userSelect: "none",
+              display: "block",
             }}
-          >
-            Sorell
-          </span>
+          />
           <div className="footer-bottom-right">
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>
               &copy; 2026 Sorell
