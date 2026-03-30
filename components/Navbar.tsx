@@ -175,7 +175,9 @@ export default function Navbar() {
           }}
         >
           {/* Logo */}
-          <SorellLogo />
+          <div style={{ flex: 1 }}>
+            <SorellLogo />
+          </div>
 
           {/* Desktop center links */}
           <div style={{ alignItems: "center", gap: 32 }} className="nav-desktop">
@@ -207,7 +209,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right */}
-          <div style={{ alignItems: "center", gap: 12 }} className="nav-desktop">
+          <div style={{ flex: 1, alignItems: "center", gap: 12, justifyContent: "flex-end" }} className="nav-desktop">
             <LanguageToggle />
             <ThemeToggle />
             <Link
