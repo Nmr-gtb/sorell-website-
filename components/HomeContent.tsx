@@ -133,12 +133,12 @@ export default function HomeContent() {
       <section
         style={{
           background: "var(--bg)",
-          padding: "80px 16px 80px",
+          padding: "120px 16px 80px",
         }}
       >
         <div
           style={{
-            background: "#00404A",
+            background: "#0f2b31",
             borderRadius: 20,
             maxWidth: "100%",
             overflow: "hidden",
