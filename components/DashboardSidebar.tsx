@@ -169,18 +169,18 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     >
       {/* Logo */}
       <div style={{ padding: "4px 16px 16px" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "inline-block" }}>
+        <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <img src="/icone.png" alt="" width={24} height={24} style={{ display: "block", flexShrink: 0 }} />
           <span
             style={{
-              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-              fontSize: "1.125rem",
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
+              fontFamily: "'Quiglet', sans-serif",
+              fontSize: "1rem",
+              fontWeight: "normal",
               color: "var(--text)",
               lineHeight: 1,
             }}
           >
-            Sorel<span style={{ color: "var(--accent)" }}>l</span>
+            Sorell
           </span>
         </Link>
       </div>

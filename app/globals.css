@@ -2,3 +2,11 @@
 @source "../app/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
 @import "./theme.css";
+
+@font-face {
+  font-family: 'Quiglet';
+  src: url('/fonts/quiglet.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
