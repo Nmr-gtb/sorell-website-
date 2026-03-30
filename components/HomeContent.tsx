@@ -365,26 +365,8 @@ export default function HomeContent() {
       </section>
 
       {/* ─── FONCTIONNALITES ──────────────────────────────────── */}
-      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "160px 1.5rem", position: "relative", overflow: "hidden" }}>
-        <img
-          src="/icone.png"
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            height: 460,
-            width: "auto",
-            opacity: 0.04,
-            filter: "grayscale(1)",
-            pointerEvents: "none",
-            zIndex: 0,
-            userSelect: "none",
-          }}
-          className="features-watermark"
-        />
-        <div style={{ maxWidth: "72rem", margin: "0 auto", position: "relative", zIndex: 1 }}>
+      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
+        <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 80 }}>
               <h2
@@ -422,7 +404,25 @@ export default function HomeContent() {
       </section>
 
       {/* ─── DEFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
+      <div style={{ background: "var(--bg)", paddingBottom: 80, position: "relative", overflow: "hidden" }}>
+        <img
+          src="/icone.png"
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            height: 460,
+            width: "auto",
+            opacity: 0.04,
+            filter: "grayscale(1)",
+            pointerEvents: "none",
+            zIndex: 0,
+            userSelect: "none",
+          }}
+          className="features-watermark"
+        />
         <p style={{
           maxWidth: 700,
           margin: "0 auto",
@@ -431,6 +431,8 @@ export default function HomeContent() {
           color: "var(--text-muted)",
           lineHeight: 1.7,
           textAlign: "center",
+          position: "relative",
+          zIndex: 1,
         }}>
           {t("home.definition")}
         </p>
