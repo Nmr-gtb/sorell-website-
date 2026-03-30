@@ -33,9 +33,9 @@ function ThemeToggle() {
       onClick={toggle}
       aria-label="Basculer le thème"
       style={{
-        width: 32,
-        height: 32,
-        borderRadius: 6,
+        width: 28,
+        height: 28,
+        borderRadius: 5,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -120,7 +120,7 @@ export default function Navbar() {
         }
         [data-theme="dark"] header.sorell-navbar {
           background: ${scrolled ? "rgba(15,17,23,0.92)" : "transparent"} !important;
-          border-bottom: 1px solid rgba(255,255,255,0.06);
+          border-bottom: 1px solid rgba(255,255,255,0.05) !important;
         }
         .nav-desktop { display: none !important; }
         .nav-mobile-controls { display: flex !important; }
@@ -137,12 +137,12 @@ export default function Navbar() {
           color: var(--text) !important;
         }
         .nav-cta-btn {
-          background: #111827 !important;
+          background: #0a0c0d !important;
           color: #FFFFFF !important;
-          border-radius: 20px !important;
+          border-radius: 6px !important;
         }
         .nav-cta-btn:hover {
-          background: #1F2937 !important;
+          background: #1a1c1f !important;
           opacity: 1 !important;
         }
         [data-theme="dark"] .nav-cta-btn {
@@ -159,7 +159,7 @@ export default function Navbar() {
         style={{
           background: scrolled ? "rgba(255,255,255,0.92)" : "transparent",
           backdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid var(--border)" : undefined,
+          borderBottom: scrolled ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(0,0,0,0.05)",
           transition: "background 0.2s ease, border-color 0.2s ease",
         }}
       >
@@ -167,8 +167,7 @@ export default function Navbar() {
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
-            padding: "0 1.5rem",
-            height: 60,
+            padding: "13px 1.5rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -180,26 +179,27 @@ export default function Navbar() {
           </div>
 
           {/* Desktop center links */}
-          <div style={{ alignItems: "center", gap: 32 }} className="nav-desktop">
+          <div style={{ alignItems: "center", gap: 30 }} className="nav-desktop">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 style={{
-                  padding: "5px 12px",
-                  borderRadius: 6,
-                  fontSize: "0.875rem",
+                  fontSize: 14,
                   fontWeight: 400,
-                  color: isActive(href) ? "var(--text)" : "var(--text-secondary)",
-                  transition: "color 0.15s ease",
+                  color: isActive(href) ? "#6B7280" : "#9CA3AF",
+                  transition: "color 0.2s ease",
                   textDecoration: "none",
+                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.color = "var(--text)";
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive(href)) {
-                    (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                    (e.currentTarget as HTMLElement).style.color = "#9CA3AF";
+                  } else {
+                    (e.currentTarget as HTMLElement).style.color = "#6B7280";
                   }
                 }}
               >
@@ -209,25 +209,24 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right */}
-          <div style={{ flex: 1, alignItems: "center", gap: 12, justifyContent: "flex-end" }} className="nav-desktop">
+          <div style={{ flex: 1, alignItems: "center", gap: 10, justifyContent: "flex-end" }} className="nav-desktop">
             <LanguageToggle />
             <ThemeToggle />
             <Link
               href={user ? "/dashboard" : "/connexion"}
               style={{
-                padding: "6px 14px",
-                borderRadius: 6,
-                fontSize: "0.875rem",
+                padding: "4px 10px",
+                fontSize: 14,
                 fontWeight: 400,
-                color: "var(--text-secondary)",
+                color: "#9CA3AF",
                 textDecoration: "none",
-                transition: "color 0.15s ease",
+                transition: "color 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = "var(--text)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                (e.currentTarget as HTMLElement).style.color = "#9CA3AF";
               }}
             >
               {user ? t("nav.dashboard") : t("nav.login")}
@@ -235,10 +234,10 @@ export default function Navbar() {
             <Link
               href="/connexion"
               className="btn-primary nav-cta-btn"
-              style={{ padding: "7px 18px", fontSize: "0.875rem" }}
+              style={{ padding: "8px 18px", fontSize: 13 }}
             >
               {t("nav.start")}
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M2 6.5h9M7 2l4.5 4.5L7 11"/>
               </svg>
             </Link>
