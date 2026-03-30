@@ -287,6 +287,10 @@ body {
   border-color: var(--border);
 }
 
+[data-theme="dark"] .features-watermark {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
 /* ============================================================
    SECTION LABEL
    ============================================================ */
