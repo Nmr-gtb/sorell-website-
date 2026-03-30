@@ -404,15 +404,15 @@ export default function HomeContent() {
       </section>
 
       {/* ─── DEFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative" }}>
+      <div style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative", overflow: "hidden" }}>
         <img
           src="/icone.png"
           aria-hidden="true"
           style={{
             position: "absolute",
-            top: "50%",
+            bottom: 0,
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translateX(-50%)",
             height: 320,
             width: "auto",
             opacity: 0.06,
