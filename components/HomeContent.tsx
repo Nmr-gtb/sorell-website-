@@ -470,39 +470,59 @@ export default function HomeContent() {
       </section>
 
       {/* ─── METRIQUES DE CONFIANCE ───────────────────────────── */}
-      <section style={{ background: "#0f2b31", padding: "96px 1.5rem" }}>
-        <div
-          style={{
-            maxWidth: "72rem",
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 200px), 1fr))",
-            gap: 24,
-            textAlign: "center",
-          }}
-        >
+      <section style={{ background: "var(--bg)", padding: "96px 1.5rem" }}>
+        <style>{`
+          .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 900px;
+            margin: 0 auto;
+          }
+          .metric-item {
+            padding: 0 2.5rem;
+            border-left: 1px solid var(--border);
+          }
+          .metric-item:first-child {
+            border-left: none;
+            padding-left: 0;
+          }
+          .metric-item:last-child {
+            padding-right: 0;
+          }
+          @media (max-width: 640px) {
+            .metrics-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+            .metric-item {
+              padding: 2rem 1rem;
+              border-left: none;
+              border-top: 1px solid var(--border);
+            }
+            .metric-item:first-child {
+              border-top: none;
+              padding-left: 1rem;
+            }
+            .metric-item:nth-child(2) {
+              border-top: none;
+            }
+          }
+        `}</style>
+        <div className="metrics-grid">
           {metrics.map((metric) => (
-            <div
-              key={metric.label}
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                borderRadius: 12,
-                padding: "24px 16px",
-              }}
-            >
+            <div key={metric.label} className="metric-item">
               <div
                 style={{
-                  fontSize: "1.75rem",
+                  fontSize: "clamp(2.5rem, 4vw, 3.5rem)",
                   fontWeight: 700,
-                  color: "#FFFFFF",
+                  color: "#005058",
                   letterSpacing: "-0.03em",
-                  lineHeight: 1.2,
-                  marginBottom: 6,
+                  lineHeight: 1,
+                  marginBottom: 8,
                 }}
               >
                 {metric.value}
               </div>
-              <div style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.5)" }}>
+              <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                 {metric.label}
               </div>
             </div>
