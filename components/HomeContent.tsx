@@ -416,20 +416,19 @@ export default function HomeContent() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 240px), 1fr))",
-              gap: 56,
+              gap: 24,
             }}
           >
             {steps.map((step, i) => (
               <AnimateOnScroll key={step.num} delay={i * 80}>
-                <div>
-                  <div style={{ height: 1, background: "var(--border)", marginBottom: 32 }} />
+                <div className="step-card">
                   <p
                     style={{
                       fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-                      fontSize: "0.8125rem",
+                      fontSize: "0.875rem",
                       fontWeight: 600,
-                      color: "var(--text-muted)",
-                      marginBottom: 10,
+                      color: "#005058",
+                      marginBottom: 14,
                       letterSpacing: "0.04em",
                     }}
                   >
@@ -439,7 +438,7 @@ export default function HomeContent() {
                     style={{
                       fontFamily: "var(--font-inter, 'Inter', sans-serif)",
                       fontSize: "1rem",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       color: "var(--text)",
                       marginBottom: 8,
                       letterSpacing: "-0.01em",
@@ -454,28 +453,49 @@ export default function HomeContent() {
               </AnimateOnScroll>
             ))}
           </div>
+          <style>{`
+            .step-card {
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 24px;
+              transition: box-shadow 0.2s ease, border-color 0.2s ease;
+              height: 100%;
+            }
+            .step-card:hover {
+              border-color: #005058;
+              box-shadow: 0 4px 16px rgba(0, 80, 88, 0.08);
+            }
+          `}</style>
         </div>
       </section>
 
       {/* ─── METRIQUES DE CONFIANCE ───────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "96px 1.5rem" }}>
+      <section style={{ background: "#0f2b31", padding: "96px 1.5rem" }}>
         <div
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 200px), 1fr))",
-            gap: 48,
+            gap: 24,
             textAlign: "center",
           }}
         >
           {metrics.map((metric) => (
-            <div key={metric.label}>
+            <div
+              key={metric.label}
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: 12,
+                padding: "24px 16px",
+              }}
+            >
               <div
                 style={{
                   fontSize: "1.75rem",
                   fontWeight: 700,
-                  color: "var(--accent)",
+                  color: "#FFFFFF",
                   letterSpacing: "-0.03em",
                   lineHeight: 1.2,
                   marginBottom: 6,
@@ -483,7 +503,7 @@ export default function HomeContent() {
               >
                 {metric.value}
               </div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+              <div style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.5)" }}>
                 {metric.label}
               </div>
             </div>
