@@ -131,9 +131,9 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
     { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false },
     { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
-    { label: t("dash.history"), href: "/dashboard/historique", icon: <IconHistory />, crown: false },
+    { label: t("dash.history"), href: "/dashboard/historique", icon: <IconHistory />, crown: plan === "free" },
     { label: t("dash.customization"), href: "/dashboard/customization", icon: <IconPalette />, crown: plan === "free" },
-    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: false },
+    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: plan === "free" },
     { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
   ];
 
@@ -202,7 +202,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
               borderRadius: 6,
               fontSize: 14,
               fontWeight: isActive(item.href) ? 500 : 400,
-              color: isActive(item.href) ? "var(--accent)" : "var(--text-secondary)",
+              color: isActive(item.href) ? "var(--accent)" : item.crown && !isActive(item.href) ? "var(--text-muted)" : "var(--text-secondary)",
               background: isActive(item.href) ? "var(--accent-subtle)" : "transparent",
               textDecoration: "none",
               transition: "background 0.1s ease, color 0.1s ease",

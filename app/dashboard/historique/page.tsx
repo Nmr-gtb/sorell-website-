@@ -2,6 +2,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { getProfile } from "@/lib/database";
+import { getPlanLimits } from "@/lib/plans";
+import { useDevMode } from "@/lib/DevModeContext";
+import { useLanguage } from "@/lib/LanguageContext";
+import { useRouter } from "next/navigation";
 
 interface Newsletter {
   id: string;
@@ -13,12 +18,24 @@ interface Newsletter {
 
 export default function HistoriquePage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const { t } = useLanguage();
+  const { getEffectivePlan } = useDevMode();
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [planLoaded, setPlanLoaded] = useState(false);
+  const [realPlan, setRealPlan] = useState<string>("free");
   const [selectedNewsletter, setSelectedNewsletter] = useState<Newsletter | null>(null);
+
+  const plan = getEffectivePlan(realPlan);
+  const limits = getPlanLimits(plan);
 
   useEffect(() => {
     if (!user) return;
+    getProfile(user.id).then(({ data }) => {
+      if (data?.plan) setRealPlan(data.plan);
+      setPlanLoaded(true);
+    });
     supabase
       .from("newsletters")
       .select("id, created_at, subject, status, content")
@@ -29,6 +46,62 @@ export default function HistoriquePage() {
         setLoading(false);
       });
   }, [user]);
+
+  // Gate plan
+  if (!planLoaded) {
+    return (
+      <div style={{ padding: 32, maxWidth: 800 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>Historique</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Chargement...</p>
+      </div>
+    );
+  }
+
+  if (limits.analytics === "none") {
+    return (
+      <div style={{ padding: 32, maxWidth: 800 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 24 }}>Historique</h1>
+        <div
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 48,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ marginBottom: 16 }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-muted)" }}>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 10 }}>
+            {t("history.locked_title")}
+          </div>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", maxWidth: 420, margin: "0 auto 24px" }}>
+            {t("history.locked_desc")}
+          </p>
+          <button
+            onClick={() => router.push("/tarifs")}
+            style={{
+              display: "inline-block",
+              background: "var(--accent)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 500,
+              padding: "10px 20px",
+              borderRadius: 8,
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {t("dash.see_plans")} →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Vue détail d'une newsletter
   if (selectedNewsletter) {

@@ -8,6 +8,7 @@ import { getProfile } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 type AnalyticsData = {
   openRate: number;
@@ -46,8 +47,10 @@ function formatDateFr(dateStr: string) {
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [planLoaded, setPlanLoaded] = useState(false);
   const [realPlan, setRealPlan] = useState<string>("free");
   const { getEffectivePlan } = useDevMode();
 
@@ -58,6 +61,7 @@ export default function AnalyticsPage() {
       const profileResult = await getProfile(user!.id);
       const userPlan = profileResult.data?.plan || "free";
       setRealPlan(userPlan);
+      setPlanLoaded(true);
 
       fetch(`/api/analytics?userId=${user!.id}`)
         .then((res) => res.json())
@@ -73,6 +77,66 @@ export default function AnalyticsPage() {
 
   const plan = getEffectivePlan(realPlan);
   const limits = getPlanLimits(plan);
+
+  if (!planLoaded) {
+    return (
+      <div style={{ padding: 32, maxWidth: 900 }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
+            Analytics
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (limits.analytics === "none") {
+    return (
+      <div style={{ padding: 32, maxWidth: 900 }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
+            Analytics
+          </h1>
+        </div>
+        <div
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 48,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ marginBottom: 16 }}>
+            <IconChart />
+          </div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 10 }}>
+            {t("analytics.locked_title")}
+          </div>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24, maxWidth: 420, margin: "0 auto 24px" }}>
+            {t("analytics.locked_desc")}
+          </p>
+          <button
+            onClick={() => router.push("/tarifs")}
+            style={{
+              display: "inline-block",
+              background: "var(--accent)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 500,
+              padding: "10px 20px",
+              borderRadius: 8,
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {t("dash.see_plans")} →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

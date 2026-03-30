@@ -169,8 +169,17 @@ const en: Record<string, string> = {
   "dash.customization": "Customization",
   "dash.analytics": "Analytics",
   "dash.profile": "Profile",
-  "dash.upgrade_text": "Upgrade to Pro to send to your team (up to 5 recipients)",
+  "dash.upgrade_text": "Upgrade to Pro to access analytics, history, and send to your team.",
   "dash.upgrade_btn": "See plans →",
+  "dash.see_plans": "See plans",
+
+  // Analytics locked page
+  "analytics.locked_title": "Analytics available with the Pro plan",
+  "analytics.locked_desc": "Track your newsletter open rates and click rates. Upgrade to Pro or Business to access analytics.",
+
+  // History locked page
+  "history.locked_title": "History available with the Pro plan",
+  "history.locked_desc": "Find all your past newsletters with their full content. Upgrade to Pro or Business to access your history.",
 
   // Customization page
   "custom.title": "Customization",
