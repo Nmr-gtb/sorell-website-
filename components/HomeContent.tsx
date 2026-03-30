@@ -404,7 +404,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── DEFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", paddingBottom: 80, position: "relative", overflow: "hidden" }}>
+      <div style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative" }}>
         <img
           src="/icone.png"
           aria-hidden="true"
@@ -413,9 +413,9 @@ export default function HomeContent() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            height: 460,
+            height: 320,
             width: "auto",
-            opacity: 0.04,
+            opacity: 0.06,
             filter: "grayscale(1)",
             pointerEvents: "none",
             zIndex: 0,
