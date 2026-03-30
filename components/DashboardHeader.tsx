@@ -50,18 +50,7 @@ export default function DashboardHeader({ onMenuClick }: Props) {
     >
       {/* Logo */}
       <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-        <span
-          style={{
-            fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-            fontSize: "1.125rem",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "var(--text)",
-            lineHeight: 1,
-          }}
-        >
-          Sorel<span style={{ color: "#005058" }}>l</span>
-        </span>
+        <img src="/icone.png" alt="Sorell" style={{ height: 30, width: "auto", display: "block" }} />
       </Link>
 
       {/* Nav links - desktop */}
