@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       .eq("user_id", newsletter.user_id)
       .single();
 
-    const brandColor = config?.brand_color || "#2563EB";
+    const brandColor = config?.brand_color || "#005058";
     const customLogo = config?.custom_logo_url || null;
     const textColor = config?.text_color || "#111827";
     const bgColor = config?.bg_color || "#FFFFFF";

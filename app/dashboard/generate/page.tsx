@@ -98,7 +98,7 @@ export default function GeneratePage() {
   const [subject, setSubject] = useState("");
   const [generateError, setGenerateError] = useState("");
 
-  const [brandColor, setBrandColor] = useState("#2563EB");
+  const [brandColor, setBrandColor] = useState("#005058");
   const [customLogo, setCustomLogo] = useState<string | null>(null);
   const [textColor, setTextColor] = useState("#111827");
   const [bgColor, setBgColor] = useState("#FFFFFF");

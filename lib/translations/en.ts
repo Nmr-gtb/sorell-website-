@@ -14,7 +14,7 @@ const en: Record<string, string> = {
   "hero.badge": "Automatic AI newsletter for businesses",
   "hero.title_line1": "No more manual monitoring.",
   "hero.title_line2": "Sorell already did it.",
-  "hero.subtitle": "Sorell automatically sends you a summary of your industry news. Nothing to do - you receive, you read, you're up to date.",
+  "hero.subtitle": "Receive a weekly summary of key news from your industry. Automatically.",
   "hero.cta_primary": "Try for free",
   "hero.cta_secondary": "See an example",
   "hero.no_card": "Free - 15-day Pro trial - No credit card - Ready in 5 minutes",

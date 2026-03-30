@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     <div style="background:white;border-radius:12px;padding:32px;border:1px solid #E5E7EB;">
 
       <div style="margin-bottom:24px;">
-        <span style="font-size:20px;font-weight:700;color:#111827;">Sorel<span style="color:#2563EB;">l</span></span>
+        <span style="font-size:20px;font-weight:700;color:#111827;">Sorel<span style="color:#005058;">l</span></span>
       </div>
 
       <h1 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 8px;">Bienvenue sur Sorell</h1>
@@ -35,26 +35,26 @@ export async function POST(request: Request) {
         <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Ce que vous pouvez faire maintenant :</p>
 
         <div style="margin-bottom:12px;">
-          <span style="display:inline-block;width:22px;height:22px;background:#2563EB;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">1</span>
+          <span style="display:inline-block;width:22px;height:22px;background:#005058;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">1</span>
           <span style="font-size:14px;color:#374151;font-weight:500;">Enrichissez votre brief</span>
           <p style="font-size:13px;color:#6B7280;margin:4px 0 0 30px;">Plus il est détaillé, plus vos newsletters seront variées et pertinentes.</p>
         </div>
 
         <div style="margin-bottom:12px;">
-          <span style="display:inline-block;width:22px;height:22px;background:#2563EB;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">2</span>
+          <span style="display:inline-block;width:22px;height:22px;background:#005058;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">2</span>
           <span style="font-size:14px;color:#374151;font-weight:500;">Ajoutez vos collaborateurs</span>
           <p style="font-size:13px;color:#6B7280;margin:4px 0 0 30px;">Partagez la newsletter avec votre équipe depuis la page Configuration.</p>
         </div>
 
         <div>
-          <span style="display:inline-block;width:22px;height:22px;background:#2563EB;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">3</span>
+          <span style="display:inline-block;width:22px;height:22px;background:#005058;color:white;border-radius:50%;text-align:center;line-height:22px;font-size:12px;font-weight:600;margin-right:8px;">3</span>
           <span style="font-size:14px;color:#374151;font-weight:500;">Laissez faire</span>
           <p style="font-size:13px;color:#6B7280;margin:4px 0 0 30px;">Votre newsletter arrive automatiquement. Vous n'avez rien à faire.</p>
         </div>
       </div>
 
       <div style="text-align:center;margin-bottom:24px;">
-        <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:12px 28px;background:#2563EB;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">Accéder à mon dashboard</a>
+        <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:12px 28px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">Accéder à mon dashboard</a>
       </div>
 
       <p style="font-size:13px;color:#9CA3AF;text-align:center;margin:0;">

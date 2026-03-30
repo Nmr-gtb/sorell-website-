@@ -349,7 +349,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         .eq("user_id", config.user_id)
         .single();
 
-      const brandColor = brandConfig?.brand_color || "#2563EB";
+      const brandColor = brandConfig?.brand_color || "#005058";
       const customLogo = brandConfig?.custom_logo_url || null;
       const textColor = brandConfig?.text_color || "#111827";
       const bgColor = brandConfig?.bg_color || "#FFFFFF";

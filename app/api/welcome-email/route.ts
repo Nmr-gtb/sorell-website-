@@ -25,8 +25,8 @@ export async function POST(request: Request) {
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
 
     <!-- Header -->
-    <div style="padding:28px 32px;border-bottom:2px solid #2563EB;">
-      <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#2563EB;">l</span></span>
+    <div style="padding:28px 32px;border-bottom:2px solid #005058;">
+      <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#005058;">l</span></span>
     </div>
 
     <!-- Welcome -->
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     <!-- Step 1 -->
     <div style="padding:0 32px 20px;">
       <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;border-radius:50%;background:#2563EB;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        <div style="width:32px;height:32px;border-radius:50%;background:#005058;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
         <div>
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Décrivez votre activité</h3>
           <p style="font-size:14px;color:#6B7280;line-height:1.6;margin:0;">
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     <!-- Step 2 -->
     <div style="padding:0 32px 20px;">
       <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;border-radius:50%;background:#2563EB;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        <div style="width:32px;height:32px;border-radius:50%;background:#005058;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
         <div>
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Choisissez vos thématiques et sources</h3>
           <p style="font-size:14px;color:#6B7280;line-height:1.6;margin:0;">
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     <!-- Step 3 -->
     <div style="padding:0 32px 28px;">
       <div style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="width:32px;height:32px;border-radius:50%;background:#2563EB;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+        <div style="width:32px;height:32px;border-radius:50%;background:#005058;color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
         <div>
           <h3 style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Générez votre première newsletter</h3>
           <p style="font-size:14px;color:#6B7280;line-height:1.6;margin:0;">
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
     <!-- CTA -->
     <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#2563EB;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
+      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
         Configurer ma newsletter →
       </a>
     </div>
@@ -97,10 +97,10 @@ export async function POST(request: Request) {
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td>
-            <span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:#2563EB;">l</span></span>
+            <span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:#005058;">l</span></span>
           </td>
           <td align="right">
-            <a href="https://sorell.fr" style="font-size:12px;color:#2563EB;text-decoration:none;">sorell.fr</a>
+            <a href="https://sorell.fr" style="font-size:12px;color:#005058;text-decoration:none;">sorell.fr</a>
           </td>
         </tr>
       </table>

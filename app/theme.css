@@ -18,11 +18,11 @@
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
 
-  /* Accent — Blue */
-  --accent: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-subtle: rgba(37, 99, 235, 0.06);
-  --accent-border: rgba(37, 99, 235, 0.2);
+  /* Accent — Teal */
+  --accent: #005058;
+  --accent-hover: #00404A;
+  --accent-subtle: rgba(0, 80, 88, 0.06);
+  --accent-border: rgba(0, 80, 88, 0.2);
   --accent-text: #FFFFFF;
 
   /* Borders */
@@ -55,7 +55,7 @@
   --text-muted: #6B7280;
 
   --accent: #3B82F6;
-  --accent-hover: #2563EB;
+  --accent-hover: #005058;
   --accent-subtle: rgba(59, 130, 246, 0.08);
   --accent-border: rgba(59, 130, 246, 0.25);
   --accent-text: #FFFFFF;

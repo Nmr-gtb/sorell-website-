@@ -14,7 +14,7 @@ const fr: Record<string, string> = {
   "hero.badge": "Newsletter IA automatique pour les entreprises",
   "hero.title_line1": "Plus besoin de faire votre veille.",
   "hero.title_line2": "Sorell l'a deja faite.",
-  "hero.subtitle": "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Rien à faire - vous recevez, vous lisez, vous êtes à jour.",
+  "hero.subtitle": "Recevez chaque semaine un résumé des actualités clés de votre secteur. Automatiquement.",
   "hero.cta_primary": "Essayer gratuitement",
   "hero.cta_secondary": "Voir un exemple",
   "hero.no_card": "Gratuit - 15 jours d'essai Pro - Sans carte bancaire - Pret en 5 minutes",

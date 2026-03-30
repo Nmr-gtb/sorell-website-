@@ -1,5 +1,5 @@
 // NOTE: Run in Supabase SQL Editor BEFORE using this page:
-// ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS brand_color text DEFAULT '#2563EB';
+// ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS brand_color text DEFAULT '#005058';
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS custom_logo_url text DEFAULT NULL;
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS text_color text DEFAULT '#111827';
 // ALTER TABLE public.newsletter_config ADD COLUMN IF NOT EXISTS bg_color text DEFAULT '#FFFFFF';
@@ -20,7 +20,7 @@ import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PRESET_COLORS = [
-  { label: "Bleu Sorell", value: "#2563EB" },
+  { label: "Bleu Sorell", value: "#005058" },
   { label: "Bleu foncé", value: "#1E40AF" },
   { label: "Vert", value: "#059669" },
   { label: "Violet", value: "#7C3AED" },
@@ -36,7 +36,7 @@ export default function CustomizationPage() {
   const { t } = useLanguage();
   const { getEffectivePlan } = useDevMode();
 
-  const [brandColor, setBrandColor] = useState("#2563EB");
+  const [brandColor, setBrandColor] = useState("#005058");
   const [textColor, setTextColor] = useState("#111827");
   const [bgColor, setBgColor] = useState("#FFFFFF");
   const [bodyTextColor, setBodyTextColor] = useState("#4B5563");
@@ -302,7 +302,7 @@ export default function CustomizationPage() {
                     const val = e.target.value;
                     if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBrandColor(val);
                   }}
-                  placeholder="#2563EB"
+                  placeholder="#005058"
                   style={{
                     width: "100%",
                     padding: "5px 8px",

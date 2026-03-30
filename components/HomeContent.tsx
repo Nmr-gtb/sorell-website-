@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FeatureCard from "@/components/FeatureCard";
-import NewsletterPreview from "@/components/NewsletterPreview";
 import WaitlistForm from "@/components/WaitlistForm";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -53,34 +53,8 @@ const IconEdit = () => (
   </svg>
 );
 
-const IconClock = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </svg>
-);
-const IconLayers = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-    <polyline points="2 17 12 22 22 17" />
-    <polyline points="2 12 12 17 22 12" />
-  </svg>
-);
-const IconMail = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-);
-
 export default function HomeContent() {
   const { t } = useLanguage();
-
-  const flowSteps = [
-    { icon: <IconClock />, label: t("hero.flow_step1") },
-    { icon: <IconLayers />, label: t("hero.flow_step2") },
-    { icon: <IconMail />, label: t("hero.flow_step3") },
-  ];
 
   const features = [
     { icon: <IconBolt />, title: t("home.feat1_title"), description: t("home.feat1_desc") },
@@ -153,264 +127,219 @@ export default function HomeContent() {
 
   return (
     <main style={{ background: "var(--bg)" }}>
-      <style>{`
-        @keyframes flowDot {
-          0%, 5%  { left: 0; }
-          85%, 100% { left: calc(100% - 10px); }
-        }
-      `}</style>
       <Navbar />
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
-          padding: "180px 1.5rem 200px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
           background: "var(--bg)",
+          padding: "80px 16px 80px",
         }}
       >
-        <div style={{ maxWidth: 720, width: "100%" }}>
-          {/* Badge pill */}
+        <div
+          style={{
+            background: "#00404A",
+            borderRadius: 20,
+            maxWidth: "100%",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "stretch",
+            minHeight: 520,
+          }}
+          className="hero-split"
+        >
+          {/* Left: text */}
           <div
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "6px 16px",
-              borderRadius: 999,
-              border: "1px solid var(--border)",
-              marginBottom: 56,
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#2563EB",
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontSize: 12,
-                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-                fontWeight: 500,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                color: "var(--text-secondary)",
-              }}
-            >
-              {t("hero.badge")}
-            </span>
-          </div>
-
-          <h1
-            style={{
-              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-              fontSize: "clamp(2.5rem, 5vw, 4rem)",
-              fontWeight: 700,
-              lineHeight: 1.15,
-              letterSpacing: "-0.03em",
-              color: "var(--text)",
-              marginBottom: 72,
-            }}
-          >
-            <span style={{ display: "block" }}>{t("hero.title_line1")}</span>
-            <span style={{ display: "block", color: "#2563EB" }}>{t("hero.title_line2")}</span>
-          </h1>
-
-          <p
-            style={{
-              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-              fontSize: "1.125rem",
-              fontWeight: 400,
-              color: "var(--text-secondary)",
-              lineHeight: 1.7,
-              maxWidth: 560,
-              margin: "0 auto 80px",
-            }}
-          >
-            {t("hero.subtitle")}
-          </p>
-
-          {/* ─── MINI-FLOW ─────────────────────────────────────── */}
-          <div
-            style={{
-              position: "relative",
+              flex: "1 1 50%",
+              padding: "64px 48px 64px 56px",
               display: "flex",
+              flexDirection: "column",
               justifyContent: "center",
-              margin: "0 auto 88px",
-              maxWidth: 460,
-              width: "100%",
+              gap: 0,
             }}
+            className="hero-text-col"
           >
-            {/* Full-width connecting line + single dot */}
+            {/* Badge pill */}
             <div
               style={{
-                position: "absolute",
-                top: 20,
-                left: "16.666%",
-                right: "16.666%",
-                height: 2,
-                background: "var(--border)",
-                zIndex: 0,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "6px 14px",
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(255,255,255,0.07)",
+                marginBottom: 32,
+                alignSelf: "flex-start",
               }}
             >
-              <div
+              <span
                 style={{
-                  position: "absolute",
-                  top: -4,
-                  width: 10,
-                  height: 10,
+                  width: 6,
+                  height: 6,
                   borderRadius: "50%",
-                  background: "#2563EB",
-                  animation: "flowDot 6s ease-in-out infinite",
+                  background: "#5EEAD4",
+                  flexShrink: 0,
                 }}
               />
-            </div>
-
-            {/* Steps */}
-            {flowSteps.map((step, i) => (
-              <div
-                key={i}
+              <span
                 style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 8,
-                  position: "relative",
-                  zIndex: 2,
-                  padding: "0 4px",
+                  fontSize: 12,
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontWeight: 500,
+                  letterSpacing: "0.04em",
+                  color: "rgba(255,255,255,0.85)",
                 }}
               >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    background: "var(--bg)",
-                    boxShadow: "inset 0 0 0 40px rgba(37, 99, 235, 0.1)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    position: "relative",
-                    zIndex: 2,
-                  }}
-                >
-                  {step.icon}
-                </div>
-                <span
-                  style={{
-                    fontSize: "0.6875rem",
-                    color: "var(--text-secondary)",
-                    textAlign: "center",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {step.label}
-                </span>
-              </div>
-            ))}
+                {t("hero.badge")}
+              </span>
+            </div>
+
+            <h1
+              style={{
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "clamp(2rem, 3.5vw, 3rem)",
+                fontWeight: 700,
+                lineHeight: 1.15,
+                letterSpacing: "-0.03em",
+                marginBottom: 24,
+              }}
+            >
+              <span style={{ display: "block", color: "#FFFFFF" }}>{t("hero.title_line1")}</span>
+              <span style={{ display: "block", color: "#5EEAD4" }}>{t("hero.title_line2")}</span>
+            </h1>
+
+            <p
+              style={{
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "1.0625rem",
+                fontWeight: 400,
+                color: "rgba(255,255,255,0.7)",
+                lineHeight: 1.65,
+                marginBottom: 36,
+                maxWidth: 420,
+              }}
+            >
+              {t("hero.subtitle")}
+            </p>
+
+            {/* CTAs */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 12,
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <a
+                href="/connexion"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "13px 26px",
+                  borderRadius: 8,
+                  background: "#FFFFFF",
+                  color: "#005058",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontWeight: 600,
+                  fontSize: "0.9375rem",
+                  textDecoration: "none",
+                  letterSpacing: "-0.01em",
+                  transition: "opacity 0.15s ease",
+                  flexShrink: 0,
+                }}
+              >
+                {t("hero.cta_primary")}
+              </a>
+              <Link
+                href="/demo"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "13px 26px",
+                  borderRadius: 8,
+                  background: "transparent",
+                  color: "#FFFFFF",
+                  border: "1px solid rgba(255,255,255,0.35)",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontWeight: 500,
+                  fontSize: "0.9375rem",
+                  textDecoration: "none",
+                  letterSpacing: "-0.01em",
+                  transition: "border-color 0.15s ease",
+                  flexShrink: 0,
+                }}
+              >
+                {t("hero.cta_secondary")}
+              </Link>
+            </div>
+
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: "rgba(255,255,255,0.4)",
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              }}
+            >
+              {t("hero.no_card")}
+            </p>
           </div>
 
-          {/* ─── CTA ───────────────────────────────────────────── */}
+          {/* Right: image */}
           <div
             style={{
+              flex: "0 0 47%",
               display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
+              alignItems: "flex-end",
               justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 48,
+              padding: "0 0 0 0",
+              overflow: "hidden",
             }}
+            className="hero-image-col"
           >
-            <a
-              href="/connexion"
-              className="btn-primary"
-              style={{ padding: "14px 28px", fontSize: "0.9375rem", fontWeight: 500 }}
-            >
-              {t("hero.cta_primary")}
-            </a>
-            <Link
-              href="/demo"
-              className="btn-ghost"
-              style={{ padding: "14px 28px", fontSize: "0.9375rem", fontWeight: 500 }}
-            >
-              {t("hero.cta_secondary")}
-            </Link>
+            <Image
+              src="/hero-visual.png"
+              alt="Sorell newsletter preview"
+              width={620}
+              height={520}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "top center",
+                display: "block",
+              }}
+              priority
+            />
           </div>
-
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 24 }}>
-            {t("hero.no_card")}
-          </p>
         </div>
+
+        <style>{`
+          @media (max-width: 767px) {
+            .hero-split {
+              flex-direction: column !important;
+            }
+            .hero-text-col {
+              padding: 40px 28px 36px !important;
+            }
+            .hero-image-col {
+              flex: 0 0 auto !important;
+              max-height: 280px;
+            }
+            .hero-image-col img {
+              object-position: top center !important;
+            }
+          }
+        `}</style>
       </section>
 
-      {/* ─── DÉFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
-        <p style={{
-          maxWidth: 700,
-          margin: "0 auto",
-          padding: "0 1.5rem",
-          fontSize: "0.875rem",
-          color: "var(--text-muted)",
-          lineHeight: 1.7,
-          textAlign: "center",
-        }}>
-          {t("home.definition")}
-        </p>
-      </div>
-
-      {/* ─── APERÇU NEWSLETTER ────────────────────────────────── */}
-      <section
-        style={{
-          background: "var(--surface-alt)",
-          padding: "160px 1.5rem",
-        }}
-      >
-        <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
-          <AnimateOnScroll>
-            <div style={{ textAlign: "center", marginBottom: 80 }}>
-              <h2
-                style={{
-                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.03em",
-                  color: "var(--text)",
-                  marginBottom: 16,
-                }}
-              >
-                {t("home.preview_title")}
-              </h2>
-              <p
-                style={{
-                  fontSize: "1rem",
-                  color: "var(--text-secondary)",
-                  maxWidth: 520,
-                  margin: "0 auto",
-                  lineHeight: 1.7,
-                }}
-              >
-                {t("home.preview_subtitle")}
-              </p>
-            </div>
-          </AnimateOnScroll>
-
-          <AnimateOnScroll delay={100}>
-            <NewsletterPreview />
-          </AnimateOnScroll>
-        </div>
-      </section>
-
-      {/* ─── FONCTIONNALITÉS ──────────────────────────────────── */}
+      {/* ─── FONCTIONNALITES ──────────────────────────────────── */}
       <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
@@ -449,7 +378,22 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ─── COMMENT ÇA MARCHE ────────────────────────────────── */}
+      {/* ─── DEFINITION GEO ───────────────────────────────────── */}
+      <div style={{ background: "var(--bg)", paddingBottom: 80 }}>
+        <p style={{
+          maxWidth: 700,
+          margin: "0 auto",
+          padding: "0 1.5rem",
+          fontSize: "0.875rem",
+          color: "var(--text-muted)",
+          lineHeight: 1.7,
+          textAlign: "center",
+        }}>
+          {t("home.definition")}
+        </p>
+      </div>
+
+      {/* ─── COMMENT CA MARCHE ────────────────────────────────── */}
       <section style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: 840, margin: "0 auto" }}>
           <AnimateOnScroll>
@@ -513,7 +457,7 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ─── MÉTRIQUES DE CONFIANCE ───────────────────────────── */}
+      {/* ─── METRIQUES DE CONFIANCE ───────────────────────────── */}
       <section style={{ background: "var(--surface-alt)", padding: "96px 1.5rem" }}>
         <div
           style={{
@@ -547,7 +491,7 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ─── TÉMOIGNAGES ──────────────────────────────────────── */}
+      {/* ─── TEMOIGNAGES ──────────────────────────────────────── */}
       <section style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 80 }}>
