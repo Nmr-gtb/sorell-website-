@@ -2,6 +2,22 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000;
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
 function cleanCiteTags(text: string): string {
   if (!text) return text;
   return text.replace(/<cite[^>]*>/g, "").replace(/<\/cite>/g, "").trim();
@@ -19,6 +35,13 @@ export async function POST(request: Request) {
 
     if (!userId || !topics?.length) {
       return NextResponse.json({ error: "Missing userId or topics" }, { status: 400 });
+    }
+
+    if (!checkRateLimit(userId)) {
+      return NextResponse.json(
+        { error: "Trop de requetes. Reessayez dans une heure." },
+        { status: 429 }
+      );
     }
 
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", userId).single();

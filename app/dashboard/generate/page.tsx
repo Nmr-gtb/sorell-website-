@@ -173,7 +173,9 @@ export default function GeneratePage() {
         body: JSON.stringify({ userId: user.id, userEmail: user.email, topics, sources, customBrief }),
       });
       const data = await response.json();
-      if (!response.ok) {
+      if (response.status === 429) {
+        setGenerateError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+      } else if (!response.ok) {
         setGenerateError(data.error || "Erreur lors de la génération");
       } else {
         setNewsletter(data.newsletter);
@@ -203,7 +205,9 @@ export default function GeneratePage() {
         body: JSON.stringify({ newsletterId: newsletter.id, userId: user.id }),
       });
       const data = await response.json();
-      if (!response.ok) {
+      if (response.status === 429) {
+        setSendError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+      } else if (!response.ok) {
         setSendError(data.error || "Erreur lors de l'envoi");
       } else {
         setSendResults(data.results);

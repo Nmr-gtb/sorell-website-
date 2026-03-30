@@ -159,6 +159,7 @@ export default function DashboardPage() {
   const [selectedSlot, setSelectedSlot] = useState<number>(8);
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [onboardingError, setOnboardingError] = useState("");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
@@ -329,14 +330,17 @@ export default function DashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.id, userEmail: user.email }),
       });
-      const genData = await genRes.json();
-
-      if (genData.newsletter) {
-        await fetch("/api/send", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ newsletterId: genData.newsletter.id }),
-        });
+      if (genRes.status === 429) {
+        setOnboardingError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+      } else {
+        const genData = await genRes.json();
+        if (genData.newsletter) {
+          await fetch("/api/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+          });
+        }
       }
     } catch (e) {
       console.error("First newsletter failed:", e);
@@ -420,10 +424,16 @@ export default function DashboardPage() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             C&apos;est tout bon !
           </h1>
-          <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
-            Votre première newsletter a été envoyée. Vérifiez votre boîte mail.<br/>
-            Les prochaines arriveront automatiquement le 1er et le 15 de chaque mois.
-          </p>
+          {onboardingError ? (
+            <p style={{ fontSize: 15, color: "#EF4444", marginBottom: 24, lineHeight: 1.6 }}>
+              {onboardingError}
+            </p>
+          ) : (
+            <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
+              Votre première newsletter a été envoyée. Vérifiez votre boîte mail.<br/>
+              Les prochaines arriveront automatiquement le 1er et le 15 de chaque mois.
+            </p>
+          )}
           <button
             onClick={() => setIsNewUser(false)}
             style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}

@@ -122,6 +122,7 @@ export default function ConfigPage() {
   const [sendDay2, setSendDay2] = useState("thursday");
   const [instantSending, setInstantSending] = useState(false);
   const [instantSent, setInstantSent] = useState(false);
+  const [instantError, setInstantError] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -282,6 +283,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
       if (count === 0) {
         setInstantSending(true);
+        setInstantError("");
         try {
           const enabledTopics = topics.filter((t) => t.enabled);
           const genRes = await fetch("/api/generate", {
@@ -289,14 +291,18 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: user.id, userEmail: user.email, topics: enabledTopics, sources, customBrief }),
           });
-          const genData = await genRes.json();
-          if (genData.newsletter) {
-            await fetch("/api/send", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ newsletterId: genData.newsletter.id }),
-            });
-            setInstantSent(true);
+          if (genRes.status === 429) {
+            setInstantError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+          } else {
+            const genData = await genRes.json();
+            if (genData.newsletter) {
+              await fetch("/api/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+              });
+              setInstantSent(true);
+            }
           }
         } catch (e) {
           console.error("Instant newsletter failed:", e);
@@ -1069,6 +1075,11 @@ const [showAddTopic, setShowAddTopic] = useState(false);
           {instantSent && (
             <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, fontSize: 14, color: "#059669", textAlign: "center" }}>
               Votre première newsletter a été envoyée ! Vérifiez votre boîte mail.
+            </div>
+          )}
+          {instantError && (
+            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, fontSize: 14, color: "#EF4444", textAlign: "center" }}>
+              {instantError}
             </div>
           )}
         </>
