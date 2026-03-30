@@ -190,7 +190,14 @@ const en: Record<string, string> = {
   "footer.legal": "Legal notice",
   "footer.cgv": "Terms",
   "footer.privacy": "Privacy",
-  "footer.last_updated": "Last updated: March 2026",
+  "footer.col_product": "Product",
+  "footer.col_company": "Company",
+  "footer.col_legal": "Legal",
+  "footer.col_resources": "Resources",
+  "footer.about": "About",
+  "footer.cta_title": "Ready to automate your monitoring?",
+  "footer.cta_subtitle": "Your first newsletter in 5 minutes.",
+  "footer.cta_btn": "Try for free",
 
   // Pricing page extra
   "pricing.faq_title": "Frequently asked questions",
