@@ -169,8 +169,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     >
       {/* Logo */}
       <div style={{ padding: "4px 16px 16px" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
-          <img src="/icone.png" alt="" width={24} height={24} style={{ display: "block", flexShrink: 0 }} />
+        <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
           <span
             style={{
               fontFamily: "'Quiglet', sans-serif",
