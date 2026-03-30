@@ -130,6 +130,7 @@ export default function HomeContent() {
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
+        className="hero-section"
         style={{
           background: "var(--bg)",
           padding: "120px 16px 80px",
@@ -226,6 +227,7 @@ export default function HomeContent() {
 
             {/* CTAs */}
             <div
+              className="hero-cta-row"
               style={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -321,18 +323,42 @@ export default function HomeContent() {
 
         <style>{`
           @media (max-width: 767px) {
+            .hero-section {
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+            }
             .hero-split {
               flex-direction: column !important;
+              border-radius: 0 !important;
+              margin: 0 !important;
             }
             .hero-text-col {
-              padding: 40px 28px 36px !important;
+              padding: 32px 24px 28px !important;
+            }
+            .hero-text-col h1 {
+              font-size: clamp(1.5rem, 6vw, 2rem) !important;
+            }
+            .hero-cta-row {
+              flex-direction: column !important;
+              align-items: stretch !important;
+            }
+            .hero-cta-row a {
+              width: 100% !important;
+              padding: 12px 20px !important;
+              font-size: 14px !important;
+              box-sizing: border-box !important;
             }
             .hero-image-col {
               flex: 0 0 auto !important;
-              max-height: 280px;
+              padding: 0 !important;
             }
             .hero-image-col img {
+              width: 100% !important;
+              max-height: 350px !important;
+              object-fit: cover !important;
               object-position: top center !important;
+              border-radius: 0 0 20px 20px !important;
+              display: block !important;
             }
           }
         `}</style>
