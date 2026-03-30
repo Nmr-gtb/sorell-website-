@@ -63,7 +63,6 @@ export default function HomeContent() {
     { icon: <IconEye />, title: t("home.feat4_title"), description: t("home.feat4_desc") },
     { icon: <IconChart />, title: t("home.feat5_title"), description: t("home.feat5_desc") },
     { icon: <IconShield />, title: t("home.feat6_title"), description: t("home.feat6_desc") },
-    { icon: <IconEdit />, title: t("home.feature_flexible"), description: t("home.feature_flexible_desc") },
   ];
 
   const steps = [
