@@ -64,7 +64,7 @@ export default function BlogArticlePage() {
             <span key={tag} style={{
               padding: "2px 8px",
               borderRadius: 4,
-              background: "rgba(37,99,235,0.08)",
+              background: "rgba(0,80,88,0.08)",
               color: "var(--accent)",
               fontSize: 11,
               fontWeight: 600,

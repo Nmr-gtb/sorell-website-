@@ -86,7 +86,7 @@ const SECTOR_LABELS: Record<string, string> = {
 };
 
 const SECTOR_COLORS: Record<string, { hero: string; grid1: string; grid2: string; highlight: string }> = {
-  tech:       { hero: "#1E293B", grid1: "#0F172A", grid2: "#1E3A5F", highlight: "#334155" },
+  tech:       { hero: "#1E293B", grid1: "#0F172A", grid2: "#004A52", highlight: "#334155" },
   finance:    { hero: "#1A2744", grid1: "#162032", grid2: "#1B3A4B", highlight: "#1E2D47" },
   sante:      { hero: "#0F2E1C", grid1: "#162E2E", grid2: "#1A2744", highlight: "#143524" },
   rh:         { hero: "#2D1B35", grid1: "#1F1135", grid2: "#2D1B22", highlight: "#28162A" },
@@ -107,8 +107,8 @@ function getTagStyle(tag: string): React.CSSProperties {
   if (t.includes("réglem") || t.includes("loi") || t.includes("norme") || t.includes("légis") || t.includes("compliance"))
     return { background: "#ECFDF5", color: "#065F46" };
   if (t.includes("concurrent") || t.includes("marché") || t.includes("business") || t.includes("levée") || t.includes("financement"))
-    return { background: "#EFF6FF", color: "#1E40AF" };
-  return { background: "rgba(37,99,235,0.08)", color: "var(--accent)" };
+    return { background: "#F0FDFA", color: "#005058" };
+  return { background: "rgba(0,80,88,0.08)", color: "var(--accent)" };
 }
 
 function DemoNewsletterResult({
@@ -289,7 +289,7 @@ function DemoNewsletterResult({
                 fontWeight: 700,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase" as const,
-                background: "rgba(37,99,235,0.9)",
+                background: "rgba(0,80,88,0.9)",
                 color: "white",
               }}
             >
@@ -596,7 +596,7 @@ export default function DemoGenerator() {
                   padding: "16px",
                   borderRadius: 10,
                   border: isActive ? "1.5px solid var(--accent)" : "1px solid var(--border)",
-                  background: isActive ? "rgba(37,99,235,0.06)" : "var(--surface)",
+                  background: isActive ? "rgba(0,80,88,0.06)" : "var(--surface)",
                   cursor: "pointer",
                   textAlign: "left",
                   transition: "border-color 0.15s, background 0.15s",

@@ -33,7 +33,7 @@ export default function TrialBanner() {
       <a
         href="/tarifs"
         style={{
-          color: "#60A5FA",
+          color: "#0D9488",
           marginLeft: 12,
           textDecoration: "underline",
           fontWeight: 600,

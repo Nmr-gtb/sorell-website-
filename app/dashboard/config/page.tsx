@@ -373,8 +373,8 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
       <div style={{
         padding: "12px 16px",
-        background: "rgba(37,99,235,0.04)",
-        border: "1px solid rgba(37,99,235,0.1)",
+        background: "rgba(0,80,88,0.04)",
+        border: "1px solid rgba(0,80,88,0.1)",
         borderRadius: 8,
         marginBottom: 20,
         fontSize: 13,
@@ -690,7 +690,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                           alignItems: "center",
                           justifyContent: "space-between",
                           padding: "8px 14px",
-                          background: isSelected ? "rgba(37,99,235,0.04)" : "transparent",
+                          background: isSelected ? "rgba(0,80,88,0.04)" : "transparent",
                           border: "none",
                           borderBottom: index < ALL_SOURCES.length - 1 ? "1px solid var(--border)" : "none",
                           cursor: "pointer",
@@ -1062,7 +1062,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             </div>
           )}
           {instantSending && (
-            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(37,99,235,0.04)", border: "1px solid rgba(37,99,235,0.1)", borderRadius: 10, fontSize: 14, color: "var(--text-secondary)", textAlign: "center" }}>
+            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(0,80,88,0.04)", border: "1px solid rgba(0,80,88,0.1)", borderRadius: 10, fontSize: 14, color: "var(--text-secondary)", textAlign: "center" }}>
               Génération de votre première newsletter en cours...
             </div>
           )}

@@ -78,7 +78,7 @@ export default function NewsletterPreview() {
               fontWeight: 700,
               letterSpacing: "0.1em",
               textTransform: "uppercase" as const,
-              background: "rgba(37,99,235,0.9)",
+              background: "rgba(0,80,88,0.9)",
               color: "white",
             }}
           >
@@ -186,7 +186,7 @@ export default function NewsletterPreview() {
           <div
             style={{
               height: 90,
-              background: "#1E3A5F",
+              background: "#004A52",
               backgroundImage:
                 "repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px)",
             }}
@@ -200,8 +200,8 @@ export default function NewsletterPreview() {
                 borderRadius: 4,
                 fontSize: "0.5625rem",
                 fontWeight: 600,
-                background: "#EFF6FF",
-                color: "#1E40AF",
+                background: "#F0FDFA",
+                color: "#005058",
               }}
             >
               INNOVATION
@@ -256,7 +256,7 @@ export default function NewsletterPreview() {
                 borderRadius: 4,
                 fontSize: "0.5625rem",
                 fontWeight: 600,
-                background: "rgba(37,99,235,0.08)",
+                background: "rgba(0,80,88,0.08)",
                 color: "var(--accent)",
               }}
             >

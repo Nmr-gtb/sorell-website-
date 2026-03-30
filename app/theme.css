@@ -54,10 +54,10 @@
   --text-secondary: #9CA3AF;
   --text-muted: #6B7280;
 
-  --accent: #3B82F6;
-  --accent-hover: #005058;
-  --accent-subtle: rgba(59, 130, 246, 0.08);
-  --accent-border: rgba(59, 130, 246, 0.25);
+  --accent: #0D9488;
+  --accent-hover: #14B8A6;
+  --accent-subtle: rgba(0, 80, 88, 0.08);
+  --accent-border: rgba(0, 80, 88, 0.25);
   --accent-text: #FFFFFF;
 
   --border: #2A2D38;
