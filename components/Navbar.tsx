@@ -115,8 +115,12 @@ export default function Navbar() {
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50 }}>
         <TrialBanner />
       <style>{`
+        header.sorell-navbar {
+          border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
         [data-theme="dark"] header.sorell-navbar {
           background: ${scrolled ? "rgba(15,17,23,0.92)" : "transparent"} !important;
+          border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .nav-desktop { display: none !important; }
         .nav-mobile-controls { display: flex !important; }
@@ -132,6 +136,22 @@ export default function Navbar() {
           background: var(--surface-hover) !important;
           color: var(--text) !important;
         }
+        .nav-cta-btn {
+          background: #111827 !important;
+          color: #FFFFFF !important;
+          border-radius: 20px !important;
+        }
+        .nav-cta-btn:hover {
+          background: #1F2937 !important;
+          opacity: 1 !important;
+        }
+        [data-theme="dark"] .nav-cta-btn {
+          background: #E5E7EB !important;
+          color: #111827 !important;
+        }
+        [data-theme="dark"] .nav-cta-btn:hover {
+          background: #D1D5DB !important;
+        }
       `}</style>
 
       <header
@@ -139,7 +159,7 @@ export default function Navbar() {
         style={{
           background: scrolled ? "rgba(255,255,255,0.92)" : "transparent",
           backdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+          borderBottom: scrolled ? "1px solid var(--border)" : undefined,
           transition: "background 0.2s ease, border-color 0.2s ease",
         }}
       >
@@ -158,7 +178,7 @@ export default function Navbar() {
           <SorellLogo />
 
           {/* Desktop center links */}
-          <div style={{ alignItems: "center", gap: 4 }} className="nav-desktop">
+          <div style={{ alignItems: "center", gap: 32 }} className="nav-desktop">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
@@ -187,7 +207,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right */}
-          <div style={{ alignItems: "center", gap: 8 }} className="nav-desktop">
+          <div style={{ alignItems: "center", gap: 12 }} className="nav-desktop">
             <LanguageToggle />
             <ThemeToggle />
             <Link
@@ -212,10 +232,13 @@ export default function Navbar() {
             </Link>
             <Link
               href="/connexion"
-              className="btn-primary"
-              style={{ padding: "7px 16px", fontSize: "0.875rem" }}
+              className="btn-primary nav-cta-btn"
+              style={{ padding: "7px 18px", fontSize: "0.875rem" }}
             >
               {t("nav.start")}
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2 6.5h9M7 2l4.5 4.5L7 11"/>
+              </svg>
             </Link>
           </div>
 
