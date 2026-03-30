@@ -217,6 +217,8 @@ const fr: Record<string, string> = {
   "home.stat3_label": "Secteurs couverts",
   "home.stat4_value": "5 min",
   "home.stat4_label": "Configuration initiale",
+  "home.metrics_title": "Sorell en chiffres",
+  "home.metrics_subtitle": "Des résultats concrets, dès la première newsletter.",
   "home.preview_title": "Chaque email est personnalisé et pertinent",
   "home.preview_subtitle": "L'IA analyse vos sources, filtre le bruit, et livre l'essentiel - adapté au rôle de chaque destinataire.",
   "home.features_title": "Comment ça vous aide",

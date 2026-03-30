@@ -553,6 +553,23 @@ export default function HomeContent() {
             }
           }
         `}</style>
+        <div style={{ textAlign: "center", marginBottom: 64 }}>
+          <h2
+            style={{
+              fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+              fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              color: "var(--text)",
+              marginBottom: 16,
+            }}
+          >
+            {t("home.metrics_title")}
+          </h2>
+          <p style={{ fontSize: "1rem", color: "var(--text-secondary)" }}>
+            {t("home.metrics_subtitle")}
+          </p>
+        </div>
         <div className="metrics-grid">
           {metrics.map((metric) => (
             <div key={metric.label} className="metric-item">
@@ -564,6 +581,7 @@ export default function HomeContent() {
                   letterSpacing: "-0.03em",
                   lineHeight: 1,
                   marginBottom: 8,
+                  whiteSpace: "nowrap",
                 }}
               >
                 {metric.value}

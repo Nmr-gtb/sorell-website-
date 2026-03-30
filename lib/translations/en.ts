@@ -217,6 +217,8 @@ const en: Record<string, string> = {
   "home.stat3_label": "Industries covered",
   "home.stat4_value": "5 min",
   "home.stat4_label": "Initial setup",
+  "home.metrics_title": "Sorell in numbers",
+  "home.metrics_subtitle": "Concrete results, from the very first newsletter.",
   "home.preview_title": "Every email is personalized and relevant",
   "home.preview_subtitle": "AI analyzes your sources, filters the noise, and delivers the essentials - tailored to each recipient's role.",
   "home.features_title": "How it helps you",
