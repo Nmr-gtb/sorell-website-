@@ -209,7 +209,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right */}
-          <div style={{ flex: 1, alignItems: "center", gap: 12, justifyContent: "flex-end" }} className="nav-desktop">
+          <div style={{ flex: 1, alignItems: "center", gap: 18, justifyContent: "flex-end", marginLeft: 28 }} className="nav-desktop">
             <LanguageToggle />
             <ThemeToggle />
             <Link
