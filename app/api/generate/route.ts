@@ -2,22 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 30;
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000;
-
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(userId);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return false;
-  entry.count++;
-  return true;
-}
+import { apiRateLimit } from "@/lib/ratelimit";
 
 function cleanCiteTags(text: string): string {
   if (!text) return text;
@@ -45,7 +30,8 @@ export async function POST(request: Request) {
 
     const verifiedUserId = authUser.id;
 
-    if (!checkRateLimit(verifiedUserId)) {
+    const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
+    if (!rateLimitOk) {
       return NextResponse.json(
         { error: "Trop de requetes. Reessayez dans une heure." },
         { status: 429 }
@@ -334,7 +320,6 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
     return NextResponse.json({ newsletter, articles: newsletterContent.articles, editorial: newsletterContent.editorial, keyFigures: newsletterContent.key_figures });
   } catch (err: unknown) {
-    console.error("Generate error:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

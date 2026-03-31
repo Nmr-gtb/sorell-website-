@@ -342,7 +342,7 @@ export default function DashboardPage() {
         }
       }
     } catch (e) {
-      console.error("First newsletter failed:", e);
+      // silently ignore
     }
 
     // 4. Send welcome email
@@ -353,7 +353,7 @@ export default function DashboardPage() {
         body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
       });
     } catch (e) {
-      console.error("Welcome email failed:", e);
+      // silently ignore
     }
 
     setOnboardingSaving(false);

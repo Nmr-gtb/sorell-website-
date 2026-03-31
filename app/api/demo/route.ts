@@ -137,7 +137,6 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
     return NextResponse.json({ articles, fromCache: false, generatedAt });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error("Demo generate error:", msg);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

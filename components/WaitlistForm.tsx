@@ -27,33 +27,26 @@ export default function WaitlistForm({
 
     try {
       if (!supabase) {
-        console.error("Supabase client not initialized. URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "SET" : "MISSING", "KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "SET" : "MISSING");
         setError("Erreur de configuration. Veuillez réessayer plus tard.");
         setLoading(false);
         return;
       }
 
-      console.log("Sending email to Supabase:", email.trim().toLowerCase());
-
-      const { data, error: dbError } = await supabase
+      const { error: dbError } = await supabase
         .from("waitlist")
         .insert([{ email: email.trim().toLowerCase() }])
         .select();
-
-      console.log("Supabase response - data:", data, "error:", dbError);
 
       if (dbError) {
         if (dbError.code === "23505" || dbError.message?.includes("duplicate")) {
           setSubmitted(true);
         } else {
-          console.error("Supabase error:", dbError);
-          setError("Une erreur est survenue : " + dbError.message);
+          setError("Une erreur est survenue. Veuillez réessayer.");
         }
       } else {
         setSubmitted(true);
       }
-    } catch (err) {
-      console.error("Unexpected error:", err);
+    } catch {
       setError("Une erreur inattendue est survenue.");
     }
 

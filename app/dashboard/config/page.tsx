@@ -304,7 +304,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             }
           }
         } catch (e) {
-          console.error("Instant newsletter failed:", e);
+          // silently ignore
         }
         setInstantSending(false);
       }

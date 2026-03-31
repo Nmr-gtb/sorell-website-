@@ -111,7 +111,6 @@ export default function CustomizationPage() {
     setUploading(false);
 
     if (error) {
-      console.error("Upload error:", error);
       return null;
     }
 

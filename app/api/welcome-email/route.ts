@@ -1,23 +1,8 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { emailRateLimit } from "@/lib/ratelimit";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000;
-
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return false;
-  entry.count++;
-  return true;
-}
 
 export async function POST(request: Request) {
   try {
@@ -27,7 +12,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email requis" }, { status: 400 });
     }
 
-    if (!checkRateLimit(email)) {
+    const { success: rateLimitOk } = await emailRateLimit.limit(email);
+    if (!rateLimitOk) {
       return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
     }
 
@@ -137,7 +123,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    console.error("Welcome email error:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

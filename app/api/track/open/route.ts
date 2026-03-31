@@ -39,7 +39,7 @@ export async function GET(request: Request) {
       }
     }
   } catch (err) {
-    console.error("Track open error:", err);
+    // silently ignore
   }
 
   return new NextResponse(PIXEL, {

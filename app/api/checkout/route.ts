@@ -38,7 +38,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
-    console.error("Checkout error:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

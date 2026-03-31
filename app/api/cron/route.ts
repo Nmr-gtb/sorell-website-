@@ -498,7 +498,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
             html: emailHtml,
           });
         } catch (e) {
-          console.error(`Failed to send to ${recipient.email}:`, e);
+          // silently ignore
         }
       }
 
@@ -507,7 +507,6 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
       results.push({ userId: config.user_id, status: "sent", recipients: recipients.length });
     } catch (err) {
-      console.error(`Error processing config ${config.user_id}:`, err);
       results.push({ userId: config.user_id, status: "error", error: String(err) });
     }
   }

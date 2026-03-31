@@ -2,22 +2,7 @@ import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 30;
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000;
-
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(userId);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return false;
-  entry.count++;
-  return true;
-}
+import { apiRateLimit } from "@/lib/ratelimit";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const supabase = createClient(
@@ -40,7 +25,8 @@ export async function POST(request: Request) {
 
     const verifiedUserId = authUser.id;
 
-    if (verifiedUserId && !checkRateLimit(verifiedUserId)) {
+    const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
+    if (!rateLimitOk) {
       return NextResponse.json(
         { error: "Trop de requetes. Reessayez dans une heure." },
         { status: 429 }
@@ -243,7 +229,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, results });
   } catch (err: unknown) {
-    console.error("Send error:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

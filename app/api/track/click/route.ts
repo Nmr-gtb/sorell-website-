@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       await supabase.rpc("increment_click_count", { nid });
     }
   } catch (err) {
-    console.error("Track click error:", err);
+    // silently ignore
   }
 
   return NextResponse.redirect(url || "https://sorell.fr", { status: 302 });
