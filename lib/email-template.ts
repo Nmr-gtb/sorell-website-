@@ -1,5 +1,5 @@
-// ─── Template Email Newsletter V3 ────────────────────────────────
-// Fichier unique pour cron/route.ts et send/route.ts
+// ─── Template Email Newsletter V4 ────────────────────────────────
+// Design premium crème/teal — référence Mayur Bhuva
 // Inline HTML compatible Gmail, Outlook, Apple Mail, Yahoo
 
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
@@ -77,31 +77,44 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
   const articleCount = otherArticles.length + 1;
   const preheaderText = `${articleCount} actualités clés de votre secteur - ${subject}`;
 
+  // Palette premium
+  const warmBorder = "#E8E0D8";
+  const warmBg = "#F5F0EB";
+  const secondaryText = "#7A7267";
+  const cardBg = bgColor === "#FFFFFF" ? "#FFFFFF" : bgColor;
+
   // ─── Header ────────────────────────────────────────────────────
   const headerHtml = `
-    <div style="padding:24px 32px;border-bottom:3px solid ${brandColor};">
+    <div style="padding:20px 32px;border-bottom:1px solid ${warmBorder};">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td>
+          <td style="width:36px;">
             ${customLogo
-              ? '<img src="' + customLogo + '" alt="Logo" style="max-height:36px;max-width:180px;" />'
-              : '<span style="font-size:22px;font-weight:700;color:' + textColor + ';letter-spacing:-0.02em;">Sorel<span style="color:' + brandColor + ';">l</span></span>'
+              ? '<img src="' + customLogo + '" alt="Logo" style="max-height:32px;max-width:160px;" />'
+              : '<img src="https://www.sorell.fr/icone.png" alt="S." style="width:32px;height:32px;" />'
             }
           </td>
           <td align="right">
-            <span style="font-size:12px;color:#9CA3AF;">${date}</span>
+            <span style="font-size:12px;color:${secondaryText};font-family:Georgia,\'Times New Roman\',serif;">${date}</span>
           </td>
         </tr>
       </table>
     </div>`;
 
-  // ─── Salutation ────────────────────────────────────────────────
-  const introHtml = `
-    <div style="padding:28px 32px 20px;">
-      <p style="font-size:15px;color:${textColor};line-height:1.6;margin:0;">
-        <span style="font-weight:600;">Bonjour,</span>
-        <span style="color:${bodyTextColor};"> voici les ${articleCount} actualités clés de votre secteur, sélectionnées et résumées par IA.</span>
-      </p>
+  // ─── Hero ──────────────────────────────────────────────────────
+  const heroHtml = `
+    <div style="background:${brandColor};padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">${date} &middot; ${escapeHtml(subject)}</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Ce qui change dans votre secteur cette semaine</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
     </div>`;
 
   // ─── Article phare ─────────────────────────────────────────────
@@ -110,91 +123,99 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
   const featuredContent = featuredArticle.content || featuredArticle.summary || "";
 
   const featuredHtml = `
-    <div style="padding:0 32px 24px;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;">
+    <div style="padding:28px 32px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td style="background:${brandColor};height:6px;font-size:0;line-height:0;">&nbsp;</td>
-        </tr>
-        <tr>
-          <td style="padding:24px;background:${bgColor};">
-            <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;">
+          <td>
+            <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;">
               <tr>
                 <td>
-                  <span style="display:inline-block;padding:4px 12px;border-radius:4px;background:${brandColor};color:white;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">A la une</span>
-                  ${featuredArticle.tag ? '<span style="display:inline-block;padding:4px 10px;border-radius:4px;background:#F3F4F6;color:#374151;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-left:8px;">' + escapeHtml(featuredArticle.tag) + '</span>' : ''}
+                  <span style="display:inline-block;padding:4px 12px;border-radius:4px;background:${brandColor};color:white;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;font-family:'Segoe UI',Roboto,Arial,sans-serif;">A la une</span>
+                  ${featuredArticle.tag ? '<span style="display:inline-block;padding:4px 10px;border-radius:4px;background:' + warmBg + ';color:' + secondaryText + ';font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-left:8px;font-family:\'Segoe UI\',Roboto,Arial,sans-serif;">' + escapeHtml(featuredArticle.tag) + '</span>' : ''}
                 </td>
               </tr>
             </table>
             <a href="${featuredClickUrl}" style="text-decoration:none;">
-              <h2 style="font-size:20px;font-weight:700;color:${textColor};margin:0 0 10px;line-height:1.35;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
+              <h2 style="font-size:22px;font-weight:700;color:${textColor};margin:0 0 10px;line-height:1.35;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">${featuredArticle.title}</h2>
             </a>
-            ${featuredArticle.hook ? '<p style="font-size:14px;color:' + bodyTextColor + ';margin:0 0 12px;font-style:italic;line-height:1.55;">' + featuredArticle.hook + '</p>' : ''}
-            <p style="font-size:14px;color:${bodyTextColor};line-height:1.65;margin:0 0 16px;">${featuredContent}</p>
-            <a href="${featuredClickUrl}" style="display:inline-block;padding:8px 18px;background:${brandColor};color:white;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;">Lire l'article →</a>
-            <span style="font-size:12px;color:#9CA3AF;margin-left:12px;">via ${escapeHtml(featuredArticle.source)}</span>
+            ${featuredArticle.hook ? '<p style="font-size:14px;color:' + secondaryText + ';margin:0 0 14px;font-style:italic;line-height:1.55;font-family:Georgia,\'Times New Roman\',serif;">' + featuredArticle.hook + '</p>' : ''}
+            <p style="font-size:14px;color:${bodyTextColor};line-height:1.7;margin:0 0 18px;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">${featuredContent}</p>
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td>
+                  <a href="${featuredClickUrl}" style="display:inline-block;padding:10px 22px;background:${brandColor};color:white;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">Lire l'article &rarr;</a>
+                </td>
+                <td style="padding-left:14px;">
+                  <span style="font-size:12px;color:${secondaryText};font-family:'Segoe UI',Roboto,Arial,sans-serif;">via ${escapeHtml(featuredArticle.source)}</span>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
-    </div>`;
+    </div>
+    <div style="padding:0 32px;"><div style="border-top:1px solid ${warmBorder};"></div></div>`;
 
   // ─── Éditorial ─────────────────────────────────────────────────
   const editorialHtml = editorial
     ? `
-    <div style="padding:0 32px 24px;">
-      <div style="border-left:3px solid ${brandColor};padding:16px 20px;background:#F8FAFC;border-radius:0 8px 8px 0;">
-        <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px;">Le point de vue</p>
-        <p style="font-size:14px;color:${bodyTextColor};line-height:1.65;margin:0;font-style:italic;">${editorial}</p>
+    <div style="padding:24px 32px;">
+      <div style="border-left:3px solid ${brandColor};padding:18px 22px;background:${warmBg};border-radius:0 8px 8px 0;">
+        <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">Le point de vue</p>
+        <p style="font-size:15px;color:${bodyTextColor};line-height:1.7;margin:0;font-style:italic;font-family:Georgia,'Times New Roman',serif;">${editorial}</p>
       </div>
-    </div>`
+    </div>
+    <div style="padding:0 32px;"><div style="border-top:1px solid ${warmBorder};"></div></div>`
     : "";
 
   // ─── Chiffres clés ────────────────────────────────────────────
   const keyFiguresHtml = keyFigures.length > 0
     ? `
-    <div style="padding:0 32px 24px;">
-      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Chiffres clés</p>
+    <div style="padding:24px 32px;">
+      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">Chiffres cl&eacute;s</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           ${keyFigures.map((fig) => `
-          <td style="padding:14px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;text-align:center;width:${Math.floor(100 / keyFigures.length)}%;">
-            <div style="font-size:24px;font-weight:700;color:${brandColor};margin-bottom:4px;">${escapeHtml(fig.value)}</div>
-            <div style="font-size:12px;color:${textColor};font-weight:500;margin-bottom:2px;">${escapeHtml(fig.label)}</div>
-            <div style="font-size:11px;color:#9CA3AF;">${escapeHtml(fig.context)}</div>
-          </td>`).join('<td style="width:8px;"></td>')}
+          <td style="padding:16px;background:${warmBg};border:1px solid ${warmBorder};border-radius:8px;text-align:center;width:${Math.floor(100 / keyFigures.length)}%;">
+            <div style="font-size:26px;font-weight:700;color:${brandColor};margin-bottom:6px;font-family:Georgia,'Times New Roman',serif;">${escapeHtml(fig.value)}</div>
+            <div style="font-size:12px;color:${textColor};font-weight:600;margin-bottom:3px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">${escapeHtml(fig.label)}</div>
+            <div style="font-size:11px;color:${secondaryText};font-family:'Segoe UI',Roboto,Arial,sans-serif;">${escapeHtml(fig.context)}</div>
+          </td>`).join('<td style="width:10px;"></td>')}
         </tr>
       </table>
-    </div>`
+    </div>
+    <div style="padding:0 32px;"><div style="border-top:1px solid ${warmBorder};"></div></div>`
     : "";
 
-  // ─── Articles secondaires (single column) ─────────────────────
+  // ─── Articles secondaires ─────────────────────────────────────
   const articlesHtml = otherArticles.length > 0
     ? `
-    <div style="padding:0 32px 8px;">
-      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px;">A lire aussi</p>
+    <div style="padding:24px 32px 8px;">
+      <p style="font-size:11px;font-weight:600;color:${brandColor};text-transform:uppercase;letter-spacing:0.08em;margin:0 0 18px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">A lire aussi</p>
       ${otherArticles.map((a) => {
         const articleUrl = a.url || "https://sorell.fr";
         const clickUrl = trackClick(newsletterId, recipientEmail, a.title, articleUrl);
         const articleContent = truncate(a.content || a.summary || "", 180);
         return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:18px;border:1px solid ${warmBorder};border-radius:10px;overflow:hidden;">
         <tr>
-          <td style="padding:20px;background:${bgColor};">
+          <td style="padding:22px;background:${cardBg};">
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td>
-                  <span style="display:inline-block;padding:3px 8px;border-radius:4px;background:#F3F4F6;color:#374151;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">${escapeHtml(a.tag)}</span>
+                  <span style="display:inline-block;padding:3px 10px;border-radius:4px;background:${warmBg};color:${secondaryText};font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-family:'Segoe UI',Roboto,Arial,sans-serif;">${escapeHtml(a.tag)}</span>
                 </td>
                 <td align="right">
-                  <span style="font-size:11px;color:#9CA3AF;">${escapeHtml(a.source)}</span>
+                  <span style="font-size:11px;color:${secondaryText};font-family:'Segoe UI',Roboto,Arial,sans-serif;">${escapeHtml(a.source)}</span>
                 </td>
               </tr>
             </table>
             <a href="${clickUrl}" style="text-decoration:none;">
-              <h3 style="font-size:16px;font-weight:600;color:${textColor};margin:10px 0 6px;line-height:1.35;">${a.title}</h3>
+              <h3 style="font-size:17px;font-weight:600;color:${textColor};margin:12px 0 8px;line-height:1.35;font-family:Georgia,'Times New Roman',serif;">${a.title}</h3>
             </a>
-            ${a.hook ? '<p style="font-size:13px;color:' + bodyTextColor + ';margin:0 0 6px;font-style:italic;line-height:1.5;">' + a.hook + '</p>' : ''}
-            <p style="font-size:13px;color:${bodyTextColor};line-height:1.6;margin:0 0 12px;">${articleContent}</p>
-            <a href="${clickUrl}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:600;">Lire la suite →</a>
+            ${a.hook ? '<p style="font-size:13px;color:' + secondaryText + ';margin:0 0 8px;font-style:italic;line-height:1.5;font-family:Georgia,\'Times New Roman\',serif;">' + a.hook + '</p>' : ''}
+            <p style="font-size:13px;color:${bodyTextColor};line-height:1.65;margin:0 0 14px;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">${articleContent}</p>
+            <a href="${clickUrl}" style="font-size:12px;color:${brandColor};text-decoration:none;font-weight:600;font-family:'Segoe UI',Roboto,Arial,sans-serif;">Lire la suite &rarr;</a>
           </td>
         </tr>
       </table>`;
@@ -208,15 +229,29 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
     <div style="padding:8px 32px 28px;">
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;">
         <tr>
-          <td style="background:${brandColor};padding:24px 28px;text-align:center;">
-            <p style="font-size:15px;color:rgba(255,255,255,0.9);margin:0 0 14px;line-height:1.5;">
-              ${isFreePlan
-                ? "Envoyez cette veille à toute votre équipe - passez au plan Pro."
-                : "Cette newsletter vous a été utile ? Partagez-la avec un collègue."}
-            </p>
-            <a href="${isFreePlan ? 'https://sorell.fr/tarifs' : 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent('Découvre cette newsletter sectorielle générée par IA : https://sorell.fr')}" style="display:inline-block;padding:11px 28px;background:white;color:${brandColor};font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
-              ${isFreePlan ? "Voir les plans →" : "Transférer à un collègue →"}
-            </a>
+          <td style="background:${brandColor};padding:0;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding:28px 28px 28px 32px;vertical-align:middle;width:65%;">
+                  <p style="font-size:16px;font-weight:600;color:#FFFFFF;margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;line-height:1.4;">
+                    ${isFreePlan
+                      ? "Partagez cette veille avec votre &eacute;quipe"
+                      : "Cette newsletter vous a &eacute;t&eacute; utile ?"}
+                  </p>
+                  <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 18px;line-height:1.5;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+                    ${isFreePlan
+                      ? "Passez au plan Pro pour envoyer cette veille &agrave; vos collaborateurs."
+                      : "Transf&eacute;rez-la &agrave; un coll&egrave;gue qui devrait la lire."}
+                  </p>
+                  <a href="${isFreePlan ? 'https://sorell.fr/tarifs' : 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent('Découvre cette newsletter sectorielle : https://sorell.fr')}" style="display:inline-block;padding:11px 26px;background:white;color:${brandColor};font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+                    ${isFreePlan ? "Voir les plans &rarr;" : "Transf&eacute;rer &rarr;"}
+                  </a>
+                </td>
+                <td style="width:35%;vertical-align:bottom;padding:0;">
+                  <div style="height:120px;background:rgba(255,255,255,0.06);border-radius:8px 0 0 0;"></div>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
@@ -224,23 +259,23 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
 
   // ─── Footer ───────────────────────────────────────────────────
   const footerHtml = `
-    <div style="padding:20px 32px;border-top:1px solid #E5E7EB;background:#F9FAFB;">
+    <div style="padding:22px 32px;border-top:1px solid ${warmBorder};background:${warmBg};">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td>
+          <td style="width:32px;">
             ${customLogo
-              ? '<img src="' + customLogo + '" alt="Logo" style="max-height:28px;max-width:140px;" />'
-              : '<span style="font-size:14px;font-weight:700;color:' + textColor + ';letter-spacing:-0.01em;">Sorel<span style="color:' + brandColor + ';">l</span></span>'
+              ? '<img src="' + customLogo + '" alt="Logo" style="max-height:24px;max-width:120px;" />'
+              : '<img src="https://www.sorell.fr/icone.png" alt="S." style="width:24px;height:24px;" />'
             }
           </td>
           <td align="right">
-            <a href="https://sorell.fr" style="font-size:12px;color:${brandColor};text-decoration:none;">sorell.fr</a>
+            <a href="https://sorell.fr" style="font-size:12px;color:${brandColor};text-decoration:none;font-family:'Segoe UI',Roboto,Arial,sans-serif;">sorell.fr</a>
           </td>
         </tr>
       </table>
-      <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
-        Généré par Sorell · Votre veille sectorielle par IA<br/>
-        <a href="${buildUnsubscribeUrl(recipientEmail)}" style="color:#9CA3AF;">Se désabonner</a>
+      <p style="font-size:11px;color:${secondaryText};margin:14px 0 0;line-height:1.5;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+        G&eacute;n&eacute;r&eacute; par Sorell &middot; Votre veille sectorielle par IA<br/>
+        <a href="${buildUnsubscribeUrl(recipientEmail)}" style="color:${secondaryText};">Se d&eacute;sabonner</a>
       </p>
     </div>`;
 
@@ -257,15 +292,15 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
   <meta name="supported-color-schemes" content="light">
   <title>${escapeHtml(subject)}</title>
 </head>
-<body style="margin:0;padding:0;background:#F3F4F6;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+<body style="margin:0;padding:0;background:${warmBg};font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
   <!-- Preheader -->
   <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
     ${escapeHtml(preheaderText)}
     ${"&nbsp;&zwnj;".repeat(30)}
   </div>
-  <div style="max-width:620px;margin:0 auto;background:${bgColor};">
+  <div style="max-width:620px;margin:0 auto;background:${cardBg};">
     ${headerHtml}
-    ${introHtml}
+    ${heroHtml}
     ${featuredHtml}
     ${editorialHtml}
     ${keyFiguresHtml}
