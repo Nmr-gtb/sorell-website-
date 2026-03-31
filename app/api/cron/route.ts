@@ -45,6 +45,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "No configs to process", error });
   }
 
+  // Batch fetch all profiles to avoid N+1 queries
+  const userIds = configs.map((c: { user_id: string }) => c.user_id);
+  const { data: allProfiles } = await supabase.from("profiles").select("id, plan").in("id", userIds);
+  const profileMap = new Map((allProfiles || []).map((p: { id: string; plan: string }) => [p.id, p.plan]));
+
   const results = [];
 
   for (const config of configs) {
@@ -83,7 +88,7 @@ export async function GET(request: Request) {
         if (lastSentFrance.toDateString() === franceTime.toDateString()) continue;
       }
 
-      const { data: profile } = await supabase.from("profiles").select("plan").eq("id", config.user_id).single();
+      const profile = { plan: profileMap.get(config.user_id) || "free" };
       const userPlan = profile?.plan || "free";
 
       const autoLimits: Record<string, number> = { free: 2, pro: 4, business: -1, enterprise: -1 };
@@ -345,17 +350,12 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         }
       }
 
-      const { data: brandConfig } = await supabase
-        .from("newsletter_config")
-        .select("brand_color, custom_logo_url, text_color, bg_color, body_text_color")
-        .eq("user_id", config.user_id)
-        .single();
-
-      const brandColor = brandConfig?.brand_color || "#005058";
-      const customLogo = brandConfig?.custom_logo_url || null;
-      const textColor = brandConfig?.text_color || "#111827";
-      const bgColor = brandConfig?.bg_color || "#FFFFFF";
-      const bodyTextColor = brandConfig?.body_text_color || "#4B5563";
+      // Brand config already available from initial config query (select *)
+      const brandColor = config.brand_color || "#005058";
+      const customLogo = config.custom_logo_url || null;
+      const textColor = config.text_color || "#111827";
+      const bgColor = config.bg_color || "#FFFFFF";
+      const bodyTextColor = config.body_text_color || "#4B5563";
 
       const featuredArticle = articles.find((a: { featured: boolean; url?: string }) => a.featured) || articles[0];
       const otherArticles = articles.filter((a: { featured: boolean; url?: string }) => a !== featuredArticle);

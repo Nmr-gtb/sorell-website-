@@ -8,6 +8,7 @@ export default function CrownBadge({ tooltip }: { tooltip?: string }) {
   return (
     <button
       onClick={() => router.push("/tarifs")}
+      aria-label={tooltip || "Disponible avec un abonnement payant - voir les tarifs"}
       title={tooltip || "Disponible avec un abonnement payant"}
       style={{
         display: "inline-flex",

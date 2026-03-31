@@ -12,6 +12,7 @@ const inter = Inter({
   display: "swap",
 });
 
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://sorell.fr"),
   title: {
@@ -69,6 +70,13 @@ export default function RootLayout({
   return (
     <html lang="fr" className={inter.variable}>
       <head>
+        <link
+          rel="preload"
+          href="/fonts/quiglet.otf"
+          as="font"
+          type="font/otf"
+          crossOrigin="anonymous"
+        />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"

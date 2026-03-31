@@ -3,10 +3,30 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000;
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
 export async function POST(request: Request) {
   try {
     const { email, name } = await request.json();
     if (!email) return NextResponse.json({ error: "Missing email" }, { status: 400 });
+
+    if (!checkRateLimit(email)) {
+      return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+    }
 
     const firstName = name?.split(" ")[0] || "";
     const greeting = firstName ? `Bonjour ${firstName},` : "Bonjour,";

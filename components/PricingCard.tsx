@@ -215,6 +215,7 @@ export default function PricingCard({
         <button
           onClick={onClick}
           disabled={loading}
+          aria-label={loading ? "Chargement en cours" : `${cta} - plan ${name}`}
           className={popular ? "btn-primary" : "btn-ghost"}
           style={{
             textAlign: "center",
@@ -231,6 +232,7 @@ export default function PricingCard({
       ) : (
         <Link
           href={ctaHref || "/"}
+          aria-label={`${cta} - plan ${name}`}
           className={popular ? "btn-primary" : "btn-ghost"}
           style={{
             textAlign: "center",
