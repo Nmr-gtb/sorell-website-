@@ -105,6 +105,28 @@ export default function PricingPage() {
 
   return (
     <div style={{ background: "var(--bg)" }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .tarifs-header {
+            padding-top: 80px !important;
+            padding-bottom: 48px !important;
+          }
+          .tarifs-cards {
+            padding-bottom: 48px !important;
+          }
+          .tarifs-included {
+            padding-bottom: 48px !important;
+          }
+          .tarifs-faq {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          .tarifs-bottom-cta {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+        }
+      `}</style>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -132,6 +154,7 @@ export default function PricingPage() {
 
       {/* Header */}
       <section
+        className="tarifs-header"
         style={{
           paddingTop: "120px",
           padding: "120px 1.5rem 80px",
@@ -223,7 +246,7 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing cards */}
-      <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
+      <section className="tarifs-cards" style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div
             style={{
@@ -286,7 +309,7 @@ export default function PricingPage() {
       </section>
 
       {/* Included note */}
-      <section style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
+      <section className="tarifs-included" style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>
           <div
             style={{
@@ -306,7 +329,7 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section style={{ background: "var(--surface-alt)", padding: "80px 1.5rem" }}>
+      <section className="tarifs-faq" style={{ background: "var(--surface-alt)", padding: "80px 1.5rem" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <AnimateOnScroll>
             <h2
@@ -398,7 +421,7 @@ export default function PricingPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section style={{ padding: "80px 1.5rem", textAlign: "center", background: "var(--bg)" }}>
+      <section className="tarifs-bottom-cta" style={{ padding: "80px 1.5rem", textAlign: "center", background: "var(--bg)" }}>
         <AnimateOnScroll>
           <h2
             style={{

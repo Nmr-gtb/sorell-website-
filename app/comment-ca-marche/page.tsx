@@ -53,6 +53,27 @@ export default function CommentCaMarchePage() {
           .hiw-faq-grid {
             grid-template-columns: 1fr !important;
           }
+          .hiw-step-grid {
+            margin-bottom: 48px !important;
+          }
+          .hiw-step-grid > div:first-child > div:first-child {
+            font-size: 48px !important;
+          }
+          .hiw-steps-section {
+            padding-bottom: 64px !important;
+          }
+          .hiw-comparison-section {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          .hiw-faq-section {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          .hiw-cta-section {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
         }
       `}</style>
       <Navbar />
@@ -110,6 +131,7 @@ export default function CommentCaMarchePage() {
 
         {/* Steps */}
         <section
+          className="hiw-steps-section"
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
@@ -632,6 +654,7 @@ export default function CommentCaMarchePage() {
 
         {/* Comparison table */}
         <section
+          className="hiw-comparison-section"
           style={{
             background: "var(--surface-alt)",
             borderTop: "1px solid var(--border)",
@@ -806,6 +829,7 @@ export default function CommentCaMarchePage() {
 
         {/* FAQ */}
         <section
+          className="hiw-faq-section"
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
@@ -888,6 +912,7 @@ export default function CommentCaMarchePage() {
 
         {/* CTA */}
         <section
+          className="hiw-cta-section"
           style={{
             background: "var(--accent-subtle)",
             borderTop: "1px solid var(--accent-border)",

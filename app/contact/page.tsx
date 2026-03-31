@@ -41,9 +41,24 @@ export default function ContactPage() {
 
   return (
     <div style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .contact-main {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          .contact-main > div:first-child {
+            padding-top: 24px !important;
+          }
+          .contact-form-card {
+            padding: 20px !important;
+          }
+        }
+      `}</style>
       <Navbar />
 
       <main
+        className="contact-main"
         style={{
           flex: 1,
           paddingTop: 80,
@@ -130,6 +145,7 @@ export default function ContactPage() {
 
         {/* Form card */}
         <div
+          className="contact-form-card"
           style={{
             border: "1px solid var(--border)",
             borderRadius: 12,

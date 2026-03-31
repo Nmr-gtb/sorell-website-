@@ -317,6 +317,8 @@ export default function HomeContent() {
         <style>{`
           @media (max-width: 767px) {
             .hero-section {
+              padding-top: 80px !important;
+              padding-bottom: 40px !important;
               padding-left: 0 !important;
               padding-right: 0 !important;
             }
@@ -347,18 +349,21 @@ export default function HomeContent() {
             }
             .hero-image-col img {
               width: 100% !important;
-              max-height: 350px !important;
+              max-height: 260px !important;
               object-fit: cover !important;
               object-position: top center !important;
-              border-radius: 0 0 20px 20px !important;
+              border-radius: 0 !important;
               display: block !important;
+            }
+            .hero-text-col p {
+              margin-bottom: 24px !important;
             }
           }
         `}</style>
       </section>
 
       {/* ─── FONCTIONNALITES ──────────────────────────────────── */}
-      <section id="fonctionnalites" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
+      <section id="fonctionnalites" className="section-features" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 80 }}>
@@ -397,7 +402,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── DEFINITION GEO ───────────────────────────────────── */}
-      <div style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative", overflow: "hidden" }}>
+      <div className="section-definition" style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative", overflow: "hidden" }}>
         <Image
           src="/icone.png"
           alt=""
@@ -435,7 +440,7 @@ export default function HomeContent() {
       </div>
 
       {/* ─── COMMENT CA MARCHE ────────────────────────────────── */}
-      <section style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}>
+      <section className="section-steps" style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: 840, margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 96 }}>
@@ -512,7 +517,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── METRIQUES DE CONFIANCE ───────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "96px 1.5rem" }}>
+      <section className="section-metrics" style={{ background: "var(--bg)", padding: "96px 1.5rem" }}>
         <style>{`
           .metrics-grid {
             display: grid;
@@ -591,7 +596,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── SOCIAL PROOF ──────────────────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "100px 1.5rem" }}>
+      <section className="section-social" style={{ background: "var(--bg)", padding: "100px 1.5rem" }}>
         <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
             {t("social.proof")}
@@ -600,7 +605,7 @@ export default function HomeContent() {
       </section>
 
       {/* ─── PRICING TEASER ───────────────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
+      <section className="section-pricing" style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <AnimateOnScroll>
             <div style={{ textAlign: "center", marginBottom: 72 }}>
@@ -722,6 +727,7 @@ export default function HomeContent() {
       {/* ─── CTA FINAL ────────────────────────────────────────── */}
       <section
         id="waitlist"
+        className="section-cta"
         style={{ background: "var(--surface-alt)", padding: "160px 1.5rem" }}
       >
         <AnimateOnScroll>
@@ -747,6 +753,52 @@ export default function HomeContent() {
           </div>
         </AnimateOnScroll>
       </section>
+
+      {/* ─── MOBILE RESPONSIVE OVERRIDES ─────────────────────── */}
+      <style>{`
+        @media (max-width: 767px) {
+          .section-definition {
+            padding-top: 40px !important;
+            padding-bottom: 40px !important;
+          }
+          .section-features {
+            padding-top: 64px !important;
+            padding-bottom: 64px !important;
+          }
+          .section-features > div > div:first-child > div {
+            margin-bottom: 40px !important;
+          }
+          .section-steps {
+            padding-top: 64px !important;
+            padding-bottom: 64px !important;
+          }
+          .section-steps > div > div:first-child > div {
+            margin-bottom: 48px !important;
+          }
+          .section-metrics {
+            padding-top: 56px !important;
+            padding-bottom: 56px !important;
+          }
+          .section-metrics > div:first-child {
+            margin-bottom: 40px !important;
+          }
+          .section-social {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+          }
+          .section-pricing {
+            padding-top: 64px !important;
+            padding-bottom: 64px !important;
+          }
+          .section-pricing > div > div:first-child > div {
+            margin-bottom: 40px !important;
+          }
+          .section-cta {
+            padding-top: 64px !important;
+            padding-bottom: 64px !important;
+          }
+        }
+      `}</style>
 
       <Footer />
     </main>

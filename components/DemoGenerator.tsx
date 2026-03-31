@@ -326,6 +326,7 @@ function DemoNewsletterResult({
         {/* 2-column grid */}
         {gridArticle1 && gridArticle2 && (
           <div
+            className="demo-grid-2col demo-newsletter-content"
             style={{
               padding: "16px 24px 0",
               display: "grid",
@@ -385,8 +386,9 @@ function DemoNewsletterResult({
 
         {/* Highlight block */}
         {highlight && (
-          <div style={{ padding: "14px 24px 0" }}>
+          <div className="demo-newsletter-content" style={{ padding: "14px 24px 0" }}>
             <div
+              className="demo-highlight-block"
               style={{
                 display: "flex",
                 gap: 14,
@@ -451,6 +453,7 @@ function DemoNewsletterResult({
 
         {/* Stats bar */}
         <div
+          className="demo-stats-grid demo-newsletter-content"
           style={{
             padding: "14px 24px",
             display: "grid",
@@ -547,8 +550,20 @@ export default function DemoGenerator() {
 
   return (
     <div style={{ maxWidth: 680, margin: "0 auto" }}>
+      <style>{`
+        @media (max-width: 520px) {
+          .demo-card { padding: 20px !important; }
+          .demo-grid-2col { grid-template-columns: 1fr !important; }
+          .demo-stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .demo-sector-grid { grid-template-columns: 1fr 1fr !important; }
+          .demo-newsletter-content { padding-left: 16px !important; padding-right: 16px !important; }
+          .demo-highlight-block { flex-direction: column !important; }
+          .demo-highlight-block > div:first-child { width: 100% !important; height: 60px !important; }
+        }
+      `}</style>
       {/* Sector selector */}
       <div
+        className="demo-card"
         style={{
           background: "var(--surface)",
           border: "1px solid var(--border)",
@@ -575,6 +590,7 @@ export default function DemoGenerator() {
 
         {/* Sector grid */}
         <div
+          className="demo-sector-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(175px, 1fr))",

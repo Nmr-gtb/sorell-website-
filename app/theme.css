@@ -353,3 +353,18 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE — Global overrides
+   ============================================================ */
+@media (max-width: 767px) {
+  .feature-card {
+    padding: 20px !important;
+  }
+  .btn-primary {
+    font-size: 0.875rem;
+  }
+  .btn-ghost {
+    font-size: 0.875rem;
+  }
+}

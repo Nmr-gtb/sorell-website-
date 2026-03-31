@@ -7,8 +7,14 @@ import { BLOG_ARTICLES } from "@/lib/blog-articles";
 export default function BlogPage() {
   return (
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .blog-list-wrapper { padding-top: 80px !important; padding-bottom: 40px !important; }
+          .blog-article-card { padding: 16px !important; }
+        }
+      `}</style>
       <Navbar />
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "120px 1.5rem 60px" }}>
+      <div className="blog-list-wrapper" style={{ maxWidth: 800, margin: "0 auto", padding: "120px 1.5rem 60px" }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>Blog</h1>
         <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 40 }}>
           Guides, comparatifs et conseils pour automatiser votre veille sectorielle.
@@ -19,6 +25,7 @@ export default function BlogPage() {
             <Link
               key={article.slug}
               href={`/blog/${article.slug}`}
+              className="blog-article-card"
               style={{
                 textDecoration: "none",
                 padding: 24,

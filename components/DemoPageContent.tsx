@@ -10,10 +10,17 @@ export default function DemoPageContent() {
 
   return (
     <div style={{ background: "var(--bg)" }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .demo-hero { padding-top: 80px !important; padding-bottom: 40px !important; }
+          .demo-generator-section { padding-bottom: 64px !important; }
+        }
+      `}</style>
       <Navbar />
 
       {/* Hero */}
       <section
+        className="demo-hero"
         style={{
           paddingTop: "120px",
           padding: "120px 1.5rem 64px",
@@ -49,7 +56,7 @@ export default function DemoPageContent() {
       </section>
 
       {/* Generator */}
-      <section style={{ padding: "0 1.5rem 120px", background: "var(--bg)" }}>
+      <section className="demo-generator-section" style={{ padding: "0 1.5rem 120px", background: "var(--bg)" }}>
         <DemoGenerator />
       </section>
 

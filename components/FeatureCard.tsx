@@ -9,6 +9,7 @@ interface FeatureCardProps {
 export default function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
     <div
+      className="feature-card"
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border)",

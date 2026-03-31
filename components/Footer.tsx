@@ -26,6 +26,8 @@ export default function Footer() {
         }
         @media (max-width: 560px) {
           .footer-cols { grid-template-columns: 1fr; }
+          .footer-inner { padding: 48px 1.25rem 32px !important; }
+          .footer-cols { margin-bottom: 32px !important; }
         }
         .footer-col-title {
           font-size: 12px;

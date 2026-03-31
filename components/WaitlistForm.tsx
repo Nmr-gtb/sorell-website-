@@ -81,8 +81,17 @@ export default function WaitlistForm({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", maxWidth: compact ? 320 : 480 }}>
+      <style>{`
+        @media (max-width: 520px) {
+          .waitlist-form {
+            flex-direction: column !important;
+            gap: 10px !important;
+          }
+        }
+      `}</style>
       <form
         onSubmit={handleSubmit}
+        className="waitlist-form"
         style={{
           display: "flex",
           flexDirection: compact ? "column" : "row",
