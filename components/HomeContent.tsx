@@ -275,8 +275,8 @@ export default function HomeContent() {
             </div>
 
             <p
+              className="text-[0.6rem] sm:text-xs"
               style={{
-                fontSize: "0.75rem",
                 color: "rgba(255,255,255,0.4)",
                 fontFamily: "var(--font-inter, 'Inter', sans-serif)",
               }}
