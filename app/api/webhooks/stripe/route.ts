@@ -1,11 +1,6 @@
 import { stripe, PRICE_TO_PLAN } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabaseAdminAdmin } from "@/lib/supabaseAdmin-admin";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -28,7 +23,7 @@ export async function POST(request: Request) {
       const priceId = subscription.items.data[0]?.price.id;
       const plan = PRICE_TO_PLAN[priceId] || "free";
 
-      await supabase
+      await supabaseAdmin
         .from("profiles")
         .update({
           plan,
@@ -46,14 +41,14 @@ export async function POST(request: Request) {
     const plan = PRICE_TO_PLAN[priceId] || "free";
     const customerId = subscription.customer as string;
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("id")
       .eq("stripe_customer_id", customerId)
       .single();
 
     if (profile) {
-      await supabase
+      await supabaseAdmin
         .from("profiles")
         .update({ plan, updated_at: new Date().toISOString() })
         .eq("id", profile.id);
@@ -64,14 +59,14 @@ export async function POST(request: Request) {
     const subscription = event.data.object;
     const customerId = subscription.customer as string;
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("id")
       .eq("stripe_customer_id", customerId)
       .single();
 
     if (profile) {
-      await supabase
+      await supabaseAdmin
         .from("profiles")
         .update({ plan: "free", stripe_subscription_id: null, updated_at: new Date().toISOString() })
         .eq("id", profile.id);

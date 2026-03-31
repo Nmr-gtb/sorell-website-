@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 
 function cleanCiteTags(text: string): string {
@@ -8,10 +8,6 @@ function cleanCiteTags(text: string): string {
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 const SECTOR_PROMPTS: Record<string, string> = {
   tech: "Technologies, IA, startups, innovation digitale, cloud computing",

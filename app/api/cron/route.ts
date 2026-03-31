@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 function cleanCiteTags(text: string): string {
   if (!text) return text;
@@ -10,10 +10,6 @@ function cleanCiteTags(text: string): string {
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const resend = new Resend(process.env.RESEND_API_KEY!);
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-const supabaseAdmin = process.env.SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY)
-  : null;
 
 const DAY_MAP: Record<string, number> = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
@@ -36,7 +32,7 @@ export async function GET(request: Request) {
   const currentDay = franceTime.getDay();
   const currentDate = franceTime.getDate();
 
-  const { data: configs, error } = await supabase
+  const { data: configs, error } = await supabaseAdmin
     .from("newsletter_config")
     .select("*")
     .not("topics", "eq", "[]");
@@ -47,7 +43,7 @@ export async function GET(request: Request) {
 
   // Batch fetch all profiles to avoid N+1 queries
   const userIds = configs.map((c: { user_id: string }) => c.user_id);
-  const { data: allProfiles } = await supabase.from("profiles").select("id, plan").in("id", userIds);
+  const { data: allProfiles } = await supabaseAdmin.from("profiles").select("id, plan").in("id", userIds);
   const profileMap = new Map((allProfiles || []).map((p: { id: string; plan: string }) => [p.id, p.plan]));
 
   const results = [];
@@ -99,7 +95,7 @@ export async function GET(request: Request) {
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        const { count } = await supabase
+        const { count } = await supabaseAdmin
           .from("newsletters")
           .select("id", { count: "exact", head: true })
           .eq("user_id", config.user_id)
@@ -114,7 +110,7 @@ export async function GET(request: Request) {
       const customBrief = config.custom_brief ?? "";
 
       // --- ANTI-DOUBLON : récupérer les titres des 3 dernières newsletters ---
-      const { data: recentNewsletters } = await supabase
+      const { data: recentNewsletters } = await supabaseAdmin
         .from("newsletters")
         .select("content")
         .eq("user_id", config.user_id)
@@ -313,7 +309,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         subject = subject.substring(0, 62) + "...";
       }
 
-      const { data: newsletter } = await supabase
+      const { data: newsletter } = await supabaseAdmin
         .from("newsletters")
         .insert({ user_id: config.user_id, subject, content: newsletterContent, status: "draft" })
         .select()
@@ -321,30 +317,26 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
       if (!newsletter) continue;
 
-      let recipients = (await supabase
+      let recipients = (await supabaseAdmin
         .from("recipients")
         .select("*")
         .eq("user_id", config.user_id)).data || [];
 
       if (!recipients.length) {
         // Try to auto-add user email as recipient
-        if (supabaseAdmin) {
-          const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(config.user_id);
-          const userEmail = authUser?.user?.email;
-          if (userEmail) {
-            await supabase.from("recipients").upsert(
-              { user_id: config.user_id, email: userEmail, name: "" },
-              { onConflict: "user_id,email" }
-            );
-            const { data: refreshed } = await supabase
-              .from("recipients")
-              .select("*")
-              .eq("user_id", config.user_id);
-            if (!refreshed?.length) continue;
-            recipients = refreshed;
-          } else {
-            continue;
-          }
+        const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(config.user_id);
+        const userEmail = authUser?.user?.email;
+        if (userEmail) {
+          await supabaseAdmin.from("recipients").upsert(
+            { user_id: config.user_id, email: userEmail, name: "" },
+            { onConflict: "user_id,email" }
+          );
+          const { data: refreshed } = await supabaseAdmin
+            .from("recipients")
+            .select("*")
+            .eq("user_id", config.user_id);
+          if (!refreshed?.length) continue;
+          recipients = refreshed;
         } else {
           continue;
         }
@@ -502,8 +494,8 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
         }
       }
 
-      await supabase.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length }).eq("id", newsletter.id);
-      await supabase.from("newsletter_config").update({ last_sent_at: new Date().toISOString() }).eq("user_id", config.user_id);
+      await supabaseAdmin.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length }).eq("id", newsletter.id);
+      await supabaseAdmin.from("newsletter_config").update({ last_sent_at: new Date().toISOString() }).eq("user_id", config.user_id);
 
       results.push({ userId: config.user_id, status: "sent", recipients: recipients.length });
     } catch (err) {
