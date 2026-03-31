@@ -17,9 +17,8 @@
 }
 
 /* Page transition fade-in */
-body > div > main,
-body > div > div,
-body > div > section,
+[data-page-content],
+main,
 [data-page-transition] {
   animation: pageFadeIn 0.35s ease-out both;
 }

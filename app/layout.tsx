@@ -180,7 +180,9 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <LanguageProvider>
-              {children}
+              <div data-page-content="">
+                {children}
+              </div>
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
