@@ -275,7 +275,7 @@ export default function HomeContent() {
             </div>
 
             <p
-              className="text-[0.6rem] sm:text-xs"
+              className="text-[0.5rem] sm:text-xs"
               style={{
                 color: "rgba(255,255,255,0.4)",
                 fontFamily: "var(--font-inter, 'Inter', sans-serif)",
