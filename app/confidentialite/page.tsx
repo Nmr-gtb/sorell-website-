@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           Politique de confidentialité
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 18 mars 2026
+          Dernière mise à jour : 31 mars 2026
         </p>
 
         <Section title="1. Responsable du traitement">
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
             <li><strong>Données de configuration</strong> : thématiques, sources, fréquence, brief personnalisé</li>
             <li><strong>Données des destinataires</strong> : noms et adresses email des destinataires configurés par l'utilisateur</li>
             <li><strong>Données de paiement</strong> : traitées directement par Stripe (nous ne stockons pas les numéros de carte)</li>
-            <li><strong>Données d'utilisation</strong> : statistiques d'ouverture et de clic des newsletters, pages visitées</li>
+            <li><strong>Données d'utilisation</strong> : statistiques d'ouverture et de clic des newsletters (via pixel de tracking et redirection de liens), pages visitées</li>
             <li><strong>Données de connexion</strong> : adresse IP, type de navigateur (via les logs serveur)</li>
           </ul>
         </Section>
@@ -84,6 +84,7 @@ export default function PrivacyPage() {
             <li><strong>Stripe</strong> (États-Unis) : traitement des paiements</li>
             <li><strong>Resend</strong> (États-Unis) : envoi des emails</li>
             <li><strong>Anthropic</strong> (États-Unis) : génération de contenu par IA</li>
+            <li><strong>Upstash</strong> (États-Unis) : limitation de requêtes (rate limiting)</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Des garanties appropriées (clauses contractuelles types) encadrent les transferts de données

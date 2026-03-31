@@ -31,7 +31,7 @@ export default function CGVPage() {
           Conditions Générales de Vente
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 18 mars 2026
+          Dernière mise à jour : 31 mars 2026
         </p>
 
         <Section title="1. Objet">
@@ -57,9 +57,10 @@ export default function CGVPage() {
           </p>
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>
           <ul>
-            <li><strong>Free</strong> : gratuit - 4 newsletters par mois, 1 destinataire, brief personnalisable, thématiques et sources au choix, web search IA, analytics basiques</li>
-            <li><strong>Pro</strong> : 9€/mois ou 90€/an - newsletters illimitées, jusqu'à 10 destinataires, brief personnalisé, thématiques et sources custom, analytics complets, support prioritaire</li>
-            <li><strong>Enterprise</strong> : sur devis - fonctionnalités illimitées, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
+            <li><strong>Free</strong> : gratuit - 2 newsletters automatiques par mois, 1 aperçu manuel, 1 destinataire</li>
+            <li><strong>Pro</strong> : 19€/mois ou 190€/an - 4 newsletters automatiques par mois, 4 aperçus manuels, jusqu'à 5 destinataires, sources custom, analytics complets, historique des envois. Essai gratuit de 15 jours.</li>
+            <li><strong>Business</strong> : 49€/mois ou 490€/an - newsletters et aperçus illimités, jusqu'à 25 destinataires, logo personnalisé, toutes les fonctionnalités Pro incluses. Essai gratuit de 15 jours.</li>
+            <li><strong>Enterprise</strong> : sur devis - destinataires illimités, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Sorell se réserve le droit de modifier ses tarifs à tout moment. Les modifications
@@ -67,14 +68,23 @@ export default function CGVPage() {
           </p>
         </Section>
 
-        <Section title="4. Paiement">
+        <Section title="4. Essai gratuit">
+          <p>
+            Les plans Pro et Business incluent un essai gratuit de 15 jours. Durant cette période,
+            l'utilisateur bénéficie de l'intégralité des fonctionnalités du plan choisi. À l'issue des
+            15 jours, l'abonnement est automatiquement activé et le premier prélèvement effectué, sauf
+            si l'utilisateur résilie avant la fin de la période d'essai.
+          </p>
+        </Section>
+
+        <Section title="5. Paiement">
           <p>
             Les paiements sont effectués par carte bancaire via la plateforme sécurisée Stripe.
             L'abonnement est facturé de manière récurrente (mensuelle ou annuelle) selon le plan choisi.
           </p>
         </Section>
 
-        <Section title="5. Droit de rétractation">
+        <Section title="6. Droit de rétractation">
           <p>
             Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne
             s'applique pas aux contrats de fourniture de contenu numérique non fourni sur un support
@@ -86,7 +96,7 @@ export default function CGVPage() {
           </p>
         </Section>
 
-        <Section title="6. Résiliation">
+        <Section title="7. Résiliation">
           <p>
             L'utilisateur peut résilier son abonnement à tout moment via le portail de gestion
             d'abonnement accessible depuis son profil. La résiliation prend effet à la fin de la période
@@ -94,7 +104,7 @@ export default function CGVPage() {
           </p>
         </Section>
 
-        <Section title="7. Responsabilité">
+        <Section title="8. Responsabilité">
           <p>
             Le contenu des newsletters est généré par intelligence artificielle (Claude, Anthropic).
             Sorell ne garantit pas l'exactitude, l'exhaustivité ou la pertinence du contenu généré.
@@ -106,21 +116,21 @@ export default function CGVPage() {
           </p>
         </Section>
 
-        <Section title="8. Force majeure">
+        <Section title="9. Force majeure">
           <p>
             Sorell ne pourra être tenu responsable en cas de non-exécution due à un cas de force
             majeure (panne technique, interruption de service des sous-traitants, etc.).
           </p>
         </Section>
 
-        <Section title="9. Modification des CGV">
+        <Section title="10. Modification des CGV">
           <p>
             Sorell se réserve le droit de modifier les présentes CGV. Les utilisateurs seront informés
             par email de toute modification substantielle.
           </p>
         </Section>
 
-        <Section title="10. Droit applicable et litiges">
+        <Section title="11. Droit applicable et litiges">
           <p>
             Les présentes CGV sont régies par le droit français. En cas de litige, les parties
             s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut, les

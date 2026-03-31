@@ -31,7 +31,7 @@ export default function LegalPage() {
           Mentions légales
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 18 mars 2026
+          Dernière mise à jour : 31 mars 2026
         </p>
 
         <Section title="1. Éditeur du site">
