@@ -23,14 +23,21 @@ export async function POST(request: Request) {
       const priceId = subscription.items.data[0]?.price.id;
       const plan = PRICE_TO_PLAN[priceId] || "free";
 
+      const updateData: Record<string, unknown> = {
+        plan,
+        stripe_customer_id: session.customer as string,
+        stripe_subscription_id: subscriptionId,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Stocker la date de fin de trial si applicable
+      if (subscription.trial_end) {
+        updateData.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
+      }
+
       await supabaseAdmin
         .from("profiles")
-        .update({
-          plan,
-          stripe_customer_id: session.customer as string,
-          stripe_subscription_id: subscriptionId,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", userId);
     }
   }

@@ -82,7 +82,8 @@ UPSTASH_REDIS_REST_TOKEN
 ## Base de données (Supabase)
 
 ### Tables principales
-- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, created_at
+- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, stripe_subscription_id, trial_ends_at, created_at
+- **lifecycle_emails** : id, user_id, email_type, sent_at (tracking des emails lifecycle envoyés, UNIQUE user_id+email_type)
 - **newsletter_config** : user_id, topics (array), custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics (array)
 - **newsletters** (historique) : id, user_id, content, subject, created_at, sent_at
 
@@ -123,6 +124,7 @@ sorell-website/
 │   │   ├── delete-account/route.ts   # Suppression de compte
 │   │   ├── portal/route.ts           # Portail Stripe
 │   │   ├── unsubscribe/route.ts      # Désabonnement
+│   │   ├── cron/lifecycle/route.ts    # CRON lifecycle emails (onboarding, trial, limites)
 │   │   └── track/                    # Tracking opens et clicks
 │   ├── auth/                         # Pages d'authentification
 │   ├── blog/                         # Blog (listing + [slug])
@@ -316,9 +318,9 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 ### Priorité moyenne (produit)
 - [x] Corriger les failles de sécurité (fait le 31/03/2026)
 - [x] Remplacer le témoignage fictif (supprimé, social proof neutre)
-- [ ] Emails de cycle de vie (relance onboarding J+1, limite atteinte, fin de trial)
+- [x] Emails de cycle de vie (onboarding J+1, trial J-3/J-1/J0, limite atteinte, alerte admin)
+- [x] Alerte email si l'API de génération échoue (intégré au lifecycle CRON)
 - [ ] Template email éditorial V3
-- [ ] Alerte email si l'API de génération échoue
 - [ ] Collecter de vrais avis clients pour remplacer le social proof
 
 ### Priorité basse (évolution)
