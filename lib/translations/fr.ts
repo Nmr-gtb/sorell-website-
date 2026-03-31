@@ -618,6 +618,21 @@ const fr: Record<string, string> = {
   "profile.plan_desc_pro": "4 newsletters par mois, jusqu'\u00e0 5 destinataires, sources au choix, analytics complets.",
   "profile.plan_desc_business": "Newsletters illimit\u00e9es, jusqu'\u00e0 25 destinataires, logo personnalis\u00e9, planification avanc\u00e9e.",
   "profile.plan_desc_enterprise": "Tout illimit\u00e9, multi-newsletters, white-label, int\u00e9gration CRM.",
+
+  // WaitlistForm
+  "waitlist.error_config": "Erreur de configuration. Veuillez r\u00e9essayer plus tard.",
+  "waitlist.error_generic": "Une erreur est survenue. Veuillez r\u00e9essayer.",
+  "waitlist.error_unexpected": "Une erreur inattendue est survenue.",
+  "waitlist.success": "Vous \u00eates sur la liste ! Email de confirmation envoy\u00e9.",
+  "waitlist.sending": "Envoi...",
+
+  // TrialBanner
+  "trial.text": "Essayez Pro gratuitement pendant 15 jours - Sans engagement",
+  "trial.cta": "D\u00e9couvrir les offres \u2192",
+
+  // DashboardSidebar
+  "sidebar.back_to_site": "Retour au site",
+  "sidebar.sign_out": "Se d\u00e9connecter",
 };
 
 export default fr;

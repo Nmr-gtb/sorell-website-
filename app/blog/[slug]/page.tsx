@@ -32,30 +32,6 @@ export default function BlogArticlePage() {
         article a { color: var(--accent); text-decoration: underline; }
         article strong { color: var(--text); font-weight: 600; }
       `}</style>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": article.title,
-            "description": article.description,
-            "datePublished": article.date,
-            "dateModified": article.date,
-            "author": {
-              "@type": "Organization",
-              "name": "Sorell",
-              "url": "https://sorell.fr"
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "Sorell",
-              "url": "https://sorell.fr"
-            },
-            "mainEntityOfPage": `https://sorell.fr/blog/${article.slug}`
-          })
-        }}
-      />
       <article style={{ maxWidth: 700, margin: "0 auto", padding: "120px 1.5rem 60px" }}>
         <Link href="/blog" style={{ fontSize: 13, color: "var(--accent)", textDecoration: "none", marginBottom: 24, display: "inline-block" }}>← Retour au blog</Link>
 

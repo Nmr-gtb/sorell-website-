@@ -2,6 +2,8 @@
 // Fichier unique pour cron/route.ts et send/route.ts
 // Inline HTML compatible Gmail, Outlook, Apple Mail, Yahoo
 
+import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+
 export interface Article {
   tag: string;
   title: string;
@@ -238,7 +240,7 @@ export function buildNewsletterHtml(params: EmailTemplateParams): string {
       </table>
       <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
         Généré par Sorell · Votre veille sectorielle par IA<br/>
-        <a href="https://www.sorell.fr/desabonnement?email=${encodeURIComponent(recipientEmail)}" style="color:#9CA3AF;">Se désabonner</a>
+        <a href="${buildUnsubscribeUrl(recipientEmail)}" style="color:#9CA3AF;">Se désabonner</a>
       </p>
     </div>`;
 

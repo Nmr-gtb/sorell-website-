@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface WaitlistFormProps {
   placeholder?: string;
@@ -14,6 +15,7 @@ export default function WaitlistForm({
   buttonText = "Commencer gratuitement",
   compact = false,
 }: WaitlistFormProps) {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function WaitlistForm({
 
     try {
       if (!supabase) {
-        setError("Erreur de configuration. Veuillez réessayer plus tard.");
+        setError(t("waitlist.error_config"));
         setLoading(false);
         return;
       }
@@ -41,13 +43,13 @@ export default function WaitlistForm({
         if (dbError.code === "23505" || dbError.message?.includes("duplicate")) {
           setSubmitted(true);
         } else {
-          setError("Une erreur est survenue. Veuillez réessayer.");
+          setError(t("waitlist.error_generic"));
         }
       } else {
         setSubmitted(true);
       }
     } catch {
-      setError("Une erreur inattendue est survenue.");
+      setError(t("waitlist.error_unexpected"));
     }
 
     setLoading(false);
@@ -71,7 +73,7 @@ export default function WaitlistForm({
           <path d="M6.5 10l2.5 2.5 4-4" stroke="var(--success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--success)" }}>
-          Vous êtes sur la liste ! Email de confirmation envoyé.
+          {t("waitlist.success")}
         </p>
       </div>
     );
@@ -118,7 +120,7 @@ export default function WaitlistForm({
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
                 <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              Envoi...
+              {t("waitlist.sending")}
             </span>
           ) : (
             buttonText

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface PricingCardProps {
   name: string;
@@ -37,6 +38,7 @@ export default function PricingCard({
   badge,
   trialBadge,
 }: PricingCardProps) {
+  const { t } = useLanguage();
   const displayPrice =
     period === "annual" && annualPrice !== null ? annualPrice : price;
 
@@ -227,7 +229,7 @@ export default function PricingCard({
             cursor: loading ? "wait" : "pointer",
           }}
         >
-          {loading ? "Chargement..." : cta}
+          {loading ? t("common.loading") : cta}
         </button>
       ) : (
         <Link

@@ -2,9 +2,11 @@
 import { useAuth } from "@/lib/AuthContext";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function TrialBanner() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [plan, setPlan] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function TrialBanner() {
         letterSpacing: "0.01em",
       }}
     >
-      Essayez Pro gratuitement pendant 15 jours - Sans engagement
+      {t("trial.text")}
       <a
         href="/tarifs"
         style={{
@@ -39,7 +41,7 @@ export default function TrialBanner() {
           fontWeight: 600,
         }}
       >
-        Découvrir les offres →
+        {t("trial.cta")}
       </a>
     </div>
   );

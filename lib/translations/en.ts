@@ -618,6 +618,21 @@ const en: Record<string, string> = {
   "profile.plan_desc_pro": "4 newsletters per month, up to 5 recipients, custom sources, full analytics.",
   "profile.plan_desc_business": "Unlimited newsletters, up to 25 recipients, custom logo, advanced scheduling.",
   "profile.plan_desc_enterprise": "Everything unlimited, multi-newsletters, white-label, CRM integration.",
+
+  // WaitlistForm
+  "waitlist.error_config": "Configuration error. Please try again later.",
+  "waitlist.error_generic": "An error occurred. Please try again.",
+  "waitlist.error_unexpected": "An unexpected error occurred.",
+  "waitlist.success": "You're on the list! Confirmation email sent.",
+  "waitlist.sending": "Sending...",
+
+  // TrialBanner
+  "trial.text": "Try Pro free for 15 days - No commitment",
+  "trial.cta": "See plans \u2192",
+
+  // DashboardSidebar
+  "sidebar.back_to_site": "Back to site",
+  "sidebar.sign_out": "Sign out",
 };
 
 export default en;
