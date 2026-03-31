@@ -316,12 +316,12 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
       if (!newsletter) continue;
 
-      const { data: recipients } = await supabase
+      let recipients = (await supabase
         .from("recipients")
         .select("*")
-        .eq("user_id", config.user_id);
+        .eq("user_id", config.user_id)).data || [];
 
-      if (!recipients?.length) {
+      if (!recipients.length) {
         // Try to auto-add user email as recipient
         if (supabaseAdmin) {
           const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(config.user_id);
@@ -336,7 +336,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
               .select("*")
               .eq("user_id", config.user_id);
             if (!refreshed?.length) continue;
-            recipients.push(...(refreshed as typeof recipients));
+            recipients = refreshed;
           } else {
             continue;
           }

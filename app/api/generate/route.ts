@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     }
 
     // Auto-add user as recipient if they have none
-    if (userEmail) {
+    if (authUser.email) {
       const { data: existingRecipients } = await supabase
         .from("recipients")
         .select("email")

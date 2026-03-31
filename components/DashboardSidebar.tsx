@@ -50,7 +50,7 @@ function IconChart() {
 
 function CrownIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1.5" title="Disponible avec le plan Pro">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#EAB308" stroke="#EAB308" strokeWidth="1.5">
       <title>Disponible avec le plan Pro</title>
       <path d="M2 20h20L19 9l-5 4-2-6-2 6-5-4z"/>
     </svg>
