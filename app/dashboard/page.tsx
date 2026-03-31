@@ -8,6 +8,7 @@ import { getRecipients, getNewsletterConfig, upsertNewsletterConfig } from "@/li
 import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { DEFAULT_TOPICS } from "@/lib/topics";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
   pro: {
@@ -71,28 +72,35 @@ function IconArrow() {
   );
 }
 
-const DAYS_FR = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
-const MONTHS_FR = [
-  "janvier", "février", "mars", "avril", "mai", "juin",
-  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
-];
+const DAYS: Record<string, string[]> = {
+  fr: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
+  en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+};
+const MONTHS: Record<string, string[]> = {
+  fr: ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"],
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+};
 
 const DAY_INDEX: Record<string, number> = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
   thursday: 4, friday: 5, saturday: 6,
 };
 
-function getNextDate(frequency: string, sendDay: string, sendHour: number): { date: string; time: string } {
+function getNextDate(frequency: string, sendDay: string, sendHour: number, lang: string = "fr"): { date: string; time: string } {
   const now = new Date();
   const today = now.getDay();
-  const timeStr = `${sendHour}h00`;
+  const timeStr = lang === "en" ? `${sendHour > 12 ? sendHour - 12 : sendHour}:00 ${sendHour >= 12 ? "PM" : "AM"}` : `${sendHour}h00`;
+  const months = MONTHS[lang] || MONTHS["fr"];
+  const days = DAYS[lang] || DAYS["fr"];
 
   if (frequency === "monthly") {
     const targetDate = sendDay === "1st" ? 1 : 15;
     const next = new Date(now.getFullYear(), now.getMonth(), targetDate);
     if (next <= now) next.setMonth(next.getMonth() + 1);
     return {
-      date: `${next.getDate()} ${MONTHS_FR[next.getMonth()]} ${next.getFullYear()}`,
+      date: lang === "en"
+        ? `${months[next.getMonth()]} ${next.getDate()}, ${next.getFullYear()}`
+        : `${next.getDate()} ${months[next.getMonth()]} ${next.getFullYear()}`,
       time: timeStr,
     };
   }
@@ -103,9 +111,11 @@ function getNextDate(frequency: string, sendDay: string, sendHour: number): { da
   if (diff === 0) diff = 7;
   const next = new Date(now);
   next.setDate(now.getDate() + diff);
-  const day = DAYS_FR[next.getDay()];
+  const day = days[next.getDay()];
   return {
-    date: `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${MONTHS_FR[next.getMonth()]}`,
+    date: lang === "en"
+      ? `${day} ${months[next.getMonth()]} ${next.getDate()}`
+      : `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${months[next.getMonth()]}`,
     time: timeStr,
   };
 }
@@ -122,8 +132,8 @@ type Newsletter = {
   content: unknown;
 };
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("fr-FR", {
+function formatDate(dateStr: string, lang: string = "fr") {
+  return new Date(dateStr).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -142,6 +152,7 @@ function countArticles(content: unknown): number | null {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { t, lang } = useLanguage();
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
   const [nextNewsletter, setNextNewsletter] = useState<{ date: string; time: string } | null>(null);
   const [loadingData, setLoadingData] = useState(true);
@@ -215,13 +226,13 @@ export default function DashboardPage() {
       const freq = configResult.data?.frequency ?? "weekly";
       const day = configResult.data?.send_day ?? "monday";
       const hour = configResult.data?.send_hour ?? 9;
-      setNextNewsletter(getNextDate(freq, day, hour));
+      setNextNewsletter(getNextDate(freq, day, hour, lang));
 
       setLoadingData(false);
     }
 
     loadData();
-  }, [user, isNewUser]);
+  }, [user, isNewUser, lang]);
 
   useEffect(() => {
     if (!user || isNewUser !== false) return;
@@ -331,7 +342,7 @@ export default function DashboardPage() {
         body: JSON.stringify({ userId: user.id }),
       });
       if (genRes.status === 429) {
-        setOnboardingError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+        setOnboardingError(t("dashboard.rate_limit_error"));
       } else {
         const genData = await genRes.json();
         if (genData.newsletter) {
@@ -377,26 +388,26 @@ export default function DashboardPage() {
       icon: <IconCalendar />,
       value: loadingData ? "..." : (nextNewsletter?.date ?? "—"),
       sublabel: loadingData ? "" : (nextNewsletter?.time ?? ""),
-      label: "Prochaine newsletter",
+      label: t("dashboard.metric_next_newsletter"),
     },
     {
       icon: <IconUsers />,
       value: loadingData ? "..." : String(recipientCount ?? 0),
-      sublabel: "collaborateurs",
-      label: "Destinataires",
+      sublabel: t("dashboard.metric_collaborators"),
+      label: t("dashboard.metric_recipients"),
       link: "/dashboard/config",
     },
     {
       icon: <IconEye />,
       value: loadingNewsletter ? "..." : lastOpenRate !== null ? `${lastOpenRate}%` : "—",
       sublabel: "",
-      label: "Taux d'ouverture (dernière)",
+      label: t("dashboard.metric_open_rate"),
     },
     {
       icon: <IconDocument />,
       value: loadingNewsletter ? "..." : lastArticleCount !== null ? String(lastArticleCount) : "—",
-      sublabel: lastArticleCount !== null ? "articles" : "",
-      label: "Articles (dernière newsletter)",
+      sublabel: lastArticleCount !== null ? t("dashboard.metric_articles_sublabel") : "",
+      label: t("dashboard.metric_articles"),
     },
   ];
 
@@ -404,7 +415,7 @@ export default function DashboardPage() {
   if (isNewUser === null) {
     return (
       <div style={{ padding: "32px", maxWidth: 900 }}>
-        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
       </div>
     );
   }
@@ -421,7 +432,7 @@ export default function DashboardPage() {
             </svg>
           </div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-            C&apos;est tout bon !
+            {t("dashboard.onboarding_complete_title")}
           </h1>
           {onboardingError ? (
             <p style={{ fontSize: 15, color: "#EF4444", marginBottom: 24, lineHeight: 1.6 }}>
@@ -429,15 +440,14 @@ export default function DashboardPage() {
             </p>
           ) : (
             <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
-              Votre première newsletter a été envoyée. Vérifiez votre boîte mail.<br/>
-              Les prochaines arriveront automatiquement le 1er et le 15 de chaque mois.
+              {t("dashboard.onboarding_complete_desc")}
             </p>
           )}
           <button
             onClick={() => setIsNewUser(false)}
             style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
           >
-            Voir mon tableau de bord
+            {t("dashboard.onboarding_view_dashboard")}
           </button>
         </div>
       );
@@ -451,14 +461,14 @@ export default function DashboardPage() {
           name: "Free",
           price: 0,
           annualPrice: 0,
-          tagline: "Pour decouvrir Sorell",
+          tagline: t("dashboard.plan_free_tagline"),
           features: [
-            "1 destinataire",
-            "2 newsletters / mois",
-            "Brief personnalise",
-            "1 apercu / mois",
+            t("dashboard.plan_free_f1"),
+            t("dashboard.plan_free_f2"),
+            t("dashboard.plan_free_f3"),
+            t("dashboard.plan_free_f4"),
           ],
-          cta: "Commencer gratuitement",
+          cta: t("dashboard.plan_free_cta"),
           free: true,
           popular: false,
           enterprise: false,
@@ -468,15 +478,15 @@ export default function DashboardPage() {
           name: "Pro",
           price: 19,
           annualPrice: 15,
-          tagline: "Pour les equipes qui veulent aller plus loin",
+          tagline: t("dashboard.plan_pro_tagline"),
           features: [
-            "Jusqu'a 5 destinataires",
-            "4 newsletters / mois",
-            "Sources personnalisees",
-            "4 apercus / mois",
-            "Analytique complete",
+            t("dashboard.plan_pro_f1"),
+            t("dashboard.plan_pro_f2"),
+            t("dashboard.plan_pro_f3"),
+            t("dashboard.plan_pro_f4"),
+            t("dashboard.plan_pro_f5"),
           ],
-          cta: "Essayer 15 jours gratuit",
+          cta: t("dashboard.plan_pro_cta"),
           free: false,
           popular: true,
           enterprise: false,
@@ -486,15 +496,15 @@ export default function DashboardPage() {
           name: "Business",
           price: 49,
           annualPrice: 39,
-          tagline: "Pour les organisations exigeantes",
+          tagline: t("dashboard.plan_biz_tagline"),
           features: [
-            "Jusqu'a 25 destinataires",
-            "Newsletters illimitees",
-            "Sources personnalisees",
-            "Logo personnalise",
-            "Analytique complete",
+            t("dashboard.plan_biz_f1"),
+            t("dashboard.plan_biz_f2"),
+            t("dashboard.plan_biz_f3"),
+            t("dashboard.plan_biz_f4"),
+            t("dashboard.plan_biz_f5"),
           ],
-          cta: "Essayer 15 jours gratuit",
+          cta: t("dashboard.plan_biz_cta"),
           free: false,
           popular: false,
           enterprise: false,
@@ -504,14 +514,14 @@ export default function DashboardPage() {
           name: "Enterprise",
           price: null,
           annualPrice: null,
-          tagline: "Pour les grandes structures",
+          tagline: t("dashboard.plan_ent_tagline"),
           features: [
-            "Destinataires illimites",
-            "Newsletters illimitees",
-            "Integrations sur mesure",
-            "SLA et support dedie",
+            t("dashboard.plan_ent_f1"),
+            t("dashboard.plan_ent_f2"),
+            t("dashboard.plan_ent_f3"),
+            t("dashboard.plan_ent_f4"),
           ],
-          cta: "Nous contacter",
+          cta: t("dashboard.plan_ent_cta"),
           free: false,
           popular: false,
           enterprise: true,
@@ -523,10 +533,10 @@ export default function DashboardPage() {
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>1/5</div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-              Choisissez votre plan
+              {t("dashboard.step1_title")}
             </h1>
             <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              Commencez gratuitement ou essayez Pro/Business pendant 15 jours sans engagement.
+              {t("dashboard.step1_desc")}
             </p>
           </div>
 
@@ -553,7 +563,7 @@ export default function DashboardPage() {
                   cursor: "pointer",
                 }}
               >
-                Mensuel
+                {t("pricing.monthly")}
               </button>
               <button
                 onClick={() => setBillingPeriod("annual")}
@@ -571,7 +581,7 @@ export default function DashboardPage() {
                   gap: 6,
                 }}
               >
-                Annuel
+                {t("pricing.annual")}
                 <span style={{
                   fontSize: 11,
                   fontWeight: 600,
@@ -630,7 +640,7 @@ export default function DashboardPage() {
                         color: "white",
                         whiteSpace: "nowrap",
                       }}>
-                        Populaire
+                        {t("pricing.popular")}
                       </span>
                     </div>
                   )}
@@ -649,11 +659,11 @@ export default function DashboardPage() {
                   <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
                     {isEnterprise ? (
                       <span style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-                        Sur devis
+                        {t("pricing.enterprise_price")}
                       </span>
                     ) : isFree ? (
                       <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.03em" }}>
-                        Gratuit
+                        {t("pricing.free_price")}
                       </span>
                     ) : (
                       <>
@@ -666,7 +676,7 @@ export default function DashboardPage() {
                         </span>
                         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                           <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-                            {billingPeriod === "annual" ? "/an" : "/mois"}
+                            {billingPeriod === "annual" ? t("dashboard.per_year") : t("pricing.per_month")}
                           </span>
                           {billingPeriod === "annual" && (
                             <span style={{
@@ -700,7 +710,7 @@ export default function DashboardPage() {
                   {/* Trial note for paid plans */}
                   {!isFree && !isEnterprise && (
                     <p style={{ fontSize: 11, color: "var(--success)", fontWeight: 500, textAlign: "center", margin: 0 }}>
-                      15 jours gratuits, sans engagement
+                      {t("dashboard.trial_note")}
                     </p>
                   )}
 
@@ -728,7 +738,7 @@ export default function DashboardPage() {
                       className={plan.popular ? "btn-primary" : "btn-ghost"}
                       style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: checkoutLoading ? "wait" : "pointer", opacity: checkoutLoading ? 0.7 : 1 }}
                     >
-                      {checkoutLoading ? "Chargement..." : plan.cta}
+                      {checkoutLoading ? t("common.loading") : plan.cta}
                     </button>
                   )}
                 </div>
@@ -755,15 +765,15 @@ export default function DashboardPage() {
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>2/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-            Décrivez votre activité
+            {t("dashboard.step2_title")}
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
-            Décrivez votre entreprise, vos concurrents, vos clients et les sujets qui vous intéressent. Plus c&apos;est détaillé, plus chaque newsletter vous apprendra quelque chose de nouveau.
+            {t("dashboard.step2_desc")}
           </p>
           <textarea
             value={brief}
             onChange={(e) => setBrief(e.target.value)}
-            placeholder={`Ex : Nous sommes un cabinet de recrutement spécialisé IT en Île-de-France. Concurrents : Hays, Michael Page, Robert Half. Clients : PME et ETI du secteur tech.\nJe veux suivre : marché de l'emploi tech en France, nouvelles réglementations RH et droit du travail, levées de fonds des startups qui recrutent, tendances télétravail et salaires, IA appliquée au recrutement.`}
+            placeholder={t("dashboard.step2_placeholder")}
             style={{
               width: "100%",
               minHeight: 160,
@@ -779,8 +789,8 @@ export default function DashboardPage() {
             }}
           />
           <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left", lineHeight: 1.6 }}>
-            <p style={{ marginBottom: 6, fontWeight: 600, color: "var(--text-secondary)" }}>Plus votre brief est détaillé, plus votre newsletter sera riche et variée :</p>
-            <p style={{ margin: 0 }}>Mentionnez vos concurrents par nom, vos clients importants, les réglementations qui vous concernent, les innovations qui vous intéressent, les marchés géographiques que vous suivez, les salons ou événements de votre secteur.</p>
+            <p style={{ marginBottom: 6, fontWeight: 600, color: "var(--text-secondary)" }}>{t("dashboard.step2_tip_title")}</p>
+            <p style={{ margin: 0 }}>{t("dashboard.step2_tip_desc")}</p>
           </div>
           <button
             onClick={() => setOnboardingStep(3)}
@@ -797,7 +807,7 @@ export default function DashboardPage() {
               cursor: brief.trim() ? "pointer" : "not-allowed",
             }}
           >
-            Continuer
+            {t("dashboard.continue")}
           </button>
         </div>
       );
@@ -809,10 +819,10 @@ export default function DashboardPage() {
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>3/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-            Choisissez vos thématiques
+            {t("dashboard.step3_title")}
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Sélectionnez les sujets qui vous intéressent. Vous pourrez les modifier à tout moment.
+            {t("dashboard.step3_desc")}
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 16 }}>
             {DEFAULT_TOPICS.map((topic) => (
@@ -863,7 +873,7 @@ export default function DashboardPage() {
                     display: "flex",
                     alignItems: "center",
                   }}
-                  aria-label="Supprimer"
+                  aria-label={t("dashboard.delete")}
                 >
                   x
                 </button>
@@ -888,14 +898,14 @@ export default function DashboardPage() {
                   disabled={!newTopicLabel.trim()}
                   style={{ fontSize: 13, padding: "6px 14px" }}
                 >
-                  Ajouter
+                  {t("dashboard.add")}
                 </button>
                 <button
                   className="btn-ghost"
                   onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
                   style={{ fontSize: 13, padding: "6px 14px" }}
                 >
-                  Annuler
+                  {t("dashboard.cancel")}
                 </button>
               </div>
             ) : (
@@ -904,7 +914,7 @@ export default function DashboardPage() {
                 onClick={() => setShowAddTopic(true)}
                 style={{ fontSize: 13, padding: "6px 14px" }}
               >
-                + Ajouter une thematique
+                {t("dashboard.add_topic")}
               </button>
             )}
           </div>
@@ -913,14 +923,14 @@ export default function DashboardPage() {
               onClick={() => setOnboardingStep(2)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
-              Retour
+              {t("dashboard.back")}
             </button>
             <button
               onClick={() => setOnboardingStep(4)}
               disabled={selectedTopics.length === 0}
               style={{ padding: "12px 32px", background: selectedTopics.length > 0 ? "var(--accent)" : "var(--border)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: selectedTopics.length > 0 ? "pointer" : "not-allowed" }}
             >
-              Continuer
+              {t("dashboard.continue")}
             </button>
           </div>
         </div>
@@ -933,10 +943,10 @@ export default function DashboardPage() {
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>4/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-            Où envoyer votre newsletter ?
+            {t("dashboard.step4_title")}
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Votre email est déjà ajouté. Vous recevrez votre première newsletter dans quelques instants.
+            {t("dashboard.step4_desc")}
           </p>
           <div style={{
             padding: "12px 16px",
@@ -950,20 +960,20 @@ export default function DashboardPage() {
             {user?.email}
           </div>
           <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
-            Vous pourrez ajouter d&apos;autres destinataires plus tard depuis votre tableau de bord.
+            {t("dashboard.step4_note")}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24 }}>
             <button
               onClick={() => setOnboardingStep(3)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
-              Retour
+              {t("dashboard.back")}
             </button>
             <button
               onClick={() => setOnboardingStep(5)}
               style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
             >
-              Continuer
+              {t("dashboard.continue")}
             </button>
           </div>
         </div>
@@ -976,16 +986,16 @@ export default function DashboardPage() {
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>5/5</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-            Quand voulez-vous recevoir votre newsletter ?
+            {t("dashboard.step5_title")}
           </h1>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Choisissez un créneau. Vous pourrez le modifier à tout moment.
+            {t("dashboard.step5_desc")}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 24 }}>
             {[
-              { label: "Matin (8h)", value: 8 },
-              { label: "Midi (12h)", value: 12 },
-              { label: "Soir (18h)", value: 18 },
+              { label: t("dashboard.slot_morning"), value: 8 },
+              { label: t("dashboard.slot_noon"), value: 12 },
+              { label: t("dashboard.slot_evening"), value: 18 },
             ].map((slot) => (
               <button
                 key={slot.value}
@@ -1006,21 +1016,21 @@ export default function DashboardPage() {
             ))}
           </div>
           <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
-            Vos newsletters seront envoyées le 1er et le 15 de chaque mois à l&apos;heure choisie.
+            {t("dashboard.step5_note")}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
               onClick={() => setOnboardingStep(4)}
               style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
             >
-              Retour
+              {t("dashboard.back")}
             </button>
             <button
               onClick={handleOnboardingComplete}
               disabled={onboardingSaving}
               style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: onboardingSaving ? "not-allowed" : "pointer", opacity: onboardingSaving ? 0.7 : 1 }}
             >
-              {onboardingSaving ? "Génération en cours…" : "Recevoir ma première newsletter"}
+              {onboardingSaving ? t("dashboard.generating") : t("dashboard.receive_first")}
             </button>
           </div>
         </div>
@@ -1042,10 +1052,10 @@ export default function DashboardPage() {
             marginBottom: 6,
           }}
         >
-          Bonjour, {firstName}
+          {t("dashboard.greeting")}, {firstName}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          Voici un résumé de votre activité
+          {t("dashboard.summary")}
         </p>
       </div>
 
@@ -1065,10 +1075,10 @@ export default function DashboardPage() {
             }}>
               <div>
                 <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  Complétez votre brief pour des newsletters pertinentes
+                  {t("dashboard.guide_brief_title")}
                 </p>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  Plus votre brief est détaillé, plus chaque newsletter vous apprendra quelque chose de nouveau.
+                  {t("dashboard.guide_brief_desc")}
                 </p>
               </div>
               <a href="/dashboard/config" style={{
@@ -1082,7 +1092,7 @@ export default function DashboardPage() {
                 whiteSpace: "nowrap",
                 marginLeft: 16,
               }}>
-                Compléter →
+                {t("dashboard.guide_complete_btn")}
               </a>
             </div>
           )}
@@ -1099,10 +1109,10 @@ export default function DashboardPage() {
             }}>
               <div>
                 <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  Ajoutez un destinataire pour recevoir vos newsletters
+                  {t("dashboard.guide_recipient_title")}
                 </p>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  Votre newsletter est configurée mais personne ne la reçoit encore.
+                  {t("dashboard.guide_recipient_desc")}
                 </p>
               </div>
               <a href="/dashboard/config" style={{
@@ -1116,7 +1126,7 @@ export default function DashboardPage() {
                 whiteSpace: "nowrap",
                 marginLeft: 16,
               }}>
-                Ajouter →
+                {t("dashboard.guide_add_btn")}
               </a>
             </div>
           )}
@@ -1133,10 +1143,10 @@ export default function DashboardPage() {
             }}>
               <div>
                 <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  Générez votre première newsletter
+                  {t("dashboard.guide_generate_title")}
                 </p>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  Tout est configuré. Testez le résultat en générant un aperçu.
+                  {t("dashboard.guide_generate_desc")}
                 </p>
               </div>
               <a href="/dashboard/generate" style={{
@@ -1150,7 +1160,7 @@ export default function DashboardPage() {
                 whiteSpace: "nowrap",
                 marginLeft: 16,
               }}>
-                Générer →
+                {t("dashboard.guide_generate_btn")}
               </a>
             </div>
           )}
@@ -1190,7 +1200,7 @@ export default function DashboardPage() {
               </div>
               <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{m.label}</div>
               {m.link && (
-                <span style={{ fontSize: 11, color: "var(--accent)", marginTop: 4, display: "block" }}>Gérer →</span>
+                <span style={{ fontSize: 11, color: "var(--accent)", marginTop: 4, display: "block" }}>{t("dashboard.manage")}</span>
               )}
             </>
           );
@@ -1224,20 +1234,20 @@ export default function DashboardPage() {
             marginBottom: 16,
           }}
         >
-          Dernière newsletter
+          {t("dashboard.last_newsletter")}
         </h2>
         {loadingNewsletter ? (
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
         ) : lastNewsletter === null ? (
           <div style={{ textAlign: "center", padding: "16px 0" }}>
             <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-              Aucune newsletter envoyée
+              {t("dashboard.no_newsletter")}
             </p>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20 }}>
-              Configurez vos thématiques et générez votre première newsletter.
+              {t("dashboard.no_newsletter_desc")}
             </p>
             <Link href="/dashboard/generate" className="btn-primary" style={{ padding: "10px 20px", fontSize: 14 }}>
-              Générer ma première newsletter →
+              {t("dashboard.generate_first")}
             </Link>
           </div>
         ) : (
@@ -1245,47 +1255,47 @@ export default function DashboardPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-                  {lastNewsletter.status === "sent" ? "Date d'envoi" : "Générée le"}
+                  {lastNewsletter.status === "sent" ? t("dashboard.sent_date") : t("dashboard.generated_date")}
                 </span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
                   {lastNewsletter.sent_at
-                    ? formatDate(lastNewsletter.sent_at)
+                    ? formatDate(lastNewsletter.sent_at, lang)
                     : lastNewsletter.generated_at
-                    ? formatDate(lastNewsletter.generated_at)
+                    ? formatDate(lastNewsletter.generated_at, lang)
                     : "—"}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Sujet</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.subject")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500, textAlign: "right", maxWidth: "60%" }}>
                   {lastNewsletter.subject || "—"}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Statut</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.status")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {lastNewsletter.status === "sent" ? "Envoyée" : "Brouillon"}
+                  {lastNewsletter.status === "sent" ? t("history.sent") : t("history.draft")}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Taux d&apos;ouverture</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.open_rate")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
                   {lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Nombre de clics</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.click_count")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
                   {lastNewsletter.click_count ?? "—"}
                 </span>
               </div>
             </div>
             <Link href="/dashboard/generate" className="btn-ghost" style={{ fontSize: 13, padding: "6px 14px" }}>
-              Générer une nouvelle →
+              {t("dashboard.generate_new")}
             </Link>
           </>
         )}
@@ -1302,7 +1312,7 @@ export default function DashboardPage() {
           marginBottom: 12,
         }}
       >
-        Actions rapides
+        {t("dashboard.quick_actions")}
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="dashboard-actions-grid">
         <Link
@@ -1327,7 +1337,7 @@ export default function DashboardPage() {
           }}
         >
           <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
-            Générer ma newsletter →
+            {t("dashboard.action_generate")}
           </span>
         </Link>
         <Link
@@ -1353,7 +1363,7 @@ export default function DashboardPage() {
           }}
         >
           <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
-            Configurer ma newsletter
+            {t("dashboard.action_configure")}
           </span>
           <span style={{ color: "var(--text-muted)" }}>
             <IconArrow />
@@ -1382,7 +1392,7 @@ export default function DashboardPage() {
           }}
         >
           <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
-            Voir les analytics
+            {t("dashboard.action_analytics")}
           </span>
           <span style={{ color: "var(--text-muted)" }}>
             <IconArrow />

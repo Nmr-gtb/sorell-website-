@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface Props {
@@ -50,7 +51,7 @@ export default function DashboardHeader({ onMenuClick }: Props) {
     >
       {/* Logo */}
       <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-        <img src="/icone.png" alt="Sorell" style={{ height: 30, width: "auto", display: "block" }} />
+        <Image src="/icone.png" alt="Sorell" width={30} height={30} style={{ height: 30, width: "auto", display: "block" }} />
       </Link>
 
       {/* Nav links - desktop */}

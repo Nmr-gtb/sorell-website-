@@ -155,10 +155,10 @@ export default function CustomizationPage() {
     return (
       <div style={{ padding: 32, maxWidth: 600 }}>
         <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-          Personnalisation
+          {t("custom.title")}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
-          Personnalisez les couleurs et le logo de vos newsletters.
+          {t("custom.subtitle")}
         </p>
 
         <div style={{
@@ -170,11 +170,10 @@ export default function CustomizationPage() {
         }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>🎨</div>
           <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-            Disponible avec le plan Pro
+            {t("custom.pro_required")}
           </h2>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 20, lineHeight: 1.6 }}>
-            Changez les couleurs de vos newsletters avec le plan Pro (19€/mois).<br/>
-            Ajoutez votre logo avec le plan Business (49€/mois).
+            {t("custom.pro_desc")}
           </p>
           <a href="/tarifs" style={{
             display: "inline-block",
@@ -186,7 +185,7 @@ export default function CustomizationPage() {
             fontWeight: 600,
             textDecoration: "none",
           }}>
-            Voir les plans →
+            {t("custom.see_plans")}
           </a>
           <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 12 }}>
             15 jours d&apos;essai gratuit, sans engagement.
@@ -242,14 +241,14 @@ export default function CustomizationPage() {
             lineHeight: 1.5,
           }}
         >
-          Personnalisez les couleurs de votre newsletter.
+          {t("custom.colors_desc")}
         </p>
 
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {/* Card Couleur dominante */}
           <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
-            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur dominante</p>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Accents, liens, boutons</p>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>{t("custom.primary_color")}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>{t("custom.primary_desc")}</p>
 
             {/* Swatches */}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
@@ -320,8 +319,8 @@ export default function CustomizationPage() {
 
           {/* Card Couleur des titres */}
           <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
-            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur des titres</p>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Titres d&apos;articles et sujet</p>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>{t("custom.title_color")}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>{t("custom.title_desc")}</p>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
               <input
@@ -358,8 +357,8 @@ export default function CustomizationPage() {
 
           {/* Card Couleur de fond */}
           <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
-            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur de fond</p>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Arrière-plan de la newsletter</p>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>{t("custom.bg_color")}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>{t("custom.bg_desc")}</p>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
               <input
@@ -396,8 +395,8 @@ export default function CustomizationPage() {
 
           {/* Card Couleur des textes */}
           <div style={{ flex: "1 1 200px", padding: 16, background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)" }}>
-            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>Couleur des textes</p>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>Contenu, accroches, sources</p>
+            <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px", color: "var(--text)" }}>{t("custom.text_color")}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: "0 0 12px" }}>{t("custom.text_desc")}</p>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 40 }}>
               <input
                 type="color"
@@ -462,7 +461,7 @@ export default function CustomizationPage() {
             lineHeight: 1.5,
           }}
         >
-          {t("custom.logo_desc")} Format recommandé : PNG ou SVG, fond transparent, max 200x60px.
+          {t("custom.logo_desc")} {t("custom.logo_format")}
         </p>
 
         <div
@@ -487,7 +486,7 @@ export default function CustomizationPage() {
                 style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }}
               />
               <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>
-                Cliquez ou glissez pour remplacer
+                {t("custom.logo_replace")}
               </p>
             </div>
           ) : (
@@ -498,10 +497,10 @@ export default function CustomizationPage() {
                 <line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
               <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>
-                Glissez votre logo ici ou cliquez pour sélectionner
+                {t("custom.logo_drop")}
               </p>
               <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                PNG, SVG ou JPG - max 200x60px recommandé
+                {t("custom.logo_formats")}
               </p>
             </div>
           )}
@@ -531,13 +530,13 @@ export default function CustomizationPage() {
               padding: 0,
             }}
           >
-            Supprimer le logo
+            {t("custom.logo_delete")}
           </button>
         )}
 
         {!logoUrl && !logoPreview && (
           <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8 }}>
-            Sans logo, le texte &quot;Sorell&quot; sera utilisé par défaut.
+            {t("custom.logo_default")}
           </p>
         )}
       </div>
@@ -562,7 +561,7 @@ export default function CustomizationPage() {
             margin: "0 0 16px",
           }}
         >
-          Aperçu
+          {t("custom.preview")}
         </p>
         <div style={{ maxWidth: 500, border: "1px solid var(--border)", borderRadius: 10, overflow: "hidden" }}>
           {/* Header */}
@@ -576,16 +575,16 @@ export default function CustomizationPage() {
           </div>
           {/* Subject */}
           <div style={{ padding: "16px 20px 12px", background: bgColor }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: textColor, margin: 0 }}>Titre de votre newsletter</h3>
-            <p style={{ fontSize: 11, color: "#9CA3AF", margin: "4px 0 0" }}>Votre veille sectorielle personnalisée</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: textColor, margin: 0 }}>{t("custom.preview_title")}</h3>
+            <p style={{ fontSize: 11, color: "#9CA3AF", margin: "4px 0 0" }}>{t("custom.preview_subtitle")}</p>
           </div>
           {/* Article phare */}
           <div style={{ padding: "0 20px 16px", background: bgColor }}>
             <div style={{ background: `${brandColor}11`, borderRadius: 8, padding: 16, border: `1px solid ${brandColor}33` }}>
-              <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 4, background: brandColor, color: "white", fontSize: 9, fontWeight: 700, textTransform: "uppercase" }}>Article phare</span>
-              <p style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0 4px" }}>Un exemple d&apos;article mis en avant</p>
-              <p style={{ fontSize: 12, color: bodyTextColor, fontStyle: "italic", margin: "0 0 6px" }}>Accroche de l&apos;article en gris italique</p>
-              <p style={{ fontSize: 12, color: bodyTextColor, margin: 0 }}>Contenu de l&apos;article avec des détails concrets...</p>
+              <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 4, background: brandColor, color: "white", fontSize: 9, fontWeight: 700, textTransform: "uppercase" }}>{t("custom.preview_featured")}</span>
+              <p style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0 4px" }}>{t("custom.preview_article")}</p>
+              <p style={{ fontSize: 12, color: bodyTextColor, fontStyle: "italic", margin: "0 0 6px" }}>{t("custom.preview_hook")}</p>
+              <p style={{ fontSize: 12, color: bodyTextColor, margin: 0 }}>{t("custom.preview_content")}</p>
             </div>
           </div>
           {/* Article normal */}
@@ -624,7 +623,7 @@ export default function CustomizationPage() {
             opacity: saving || uploading ? 0.7 : 1,
           }}
         >
-          {uploading ? "Upload en cours..." : saving ? "Sauvegarde..." : t("custom.save")}
+          {uploading ? t("custom.uploading") : saving ? t("custom.saving") : t("custom.save")}
         </button>
         {saveSuccess && (
           <span style={{ fontSize: 13, color: "#059669", fontWeight: 500 }}>

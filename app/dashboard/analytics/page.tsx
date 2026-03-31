@@ -40,15 +40,16 @@ function IconChart() {
   );
 }
 
-function formatDateFr(dateStr: string) {
+function formatDateLocale(dateStr: string, lang: string) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+  const locale = lang === "en" ? "en-US" : "fr-FR";
+  return date.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
 }
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [planLoaded, setPlanLoaded] = useState(false);
@@ -86,7 +87,7 @@ export default function AnalyticsPage() {
           <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -146,7 +147,7 @@ export default function AnalyticsPage() {
           <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Chargement…</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -161,7 +162,7 @@ export default function AnalyticsPage() {
           <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>Suivez les performances de vos newsletters</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("analytics.subtitle")}</p>
         </div>
         <div
           style={{
@@ -176,10 +177,10 @@ export default function AnalyticsPage() {
             <IconChart />
           </div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-            Pas encore de données
+            {t("analytics.no_data")}
           </div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>
-            Envoyez votre première newsletter pour voir les analytics apparaître ici.
+            {t("analytics.no_data_desc")}
           </p>
           <Link
             href="/dashboard/generate"
@@ -194,7 +195,7 @@ export default function AnalyticsPage() {
               textDecoration: "none",
             }}
           >
-            Générer ma newsletter →
+            {t("analytics.generate")}
           </Link>
         </div>
       </div>
@@ -220,7 +221,7 @@ export default function AnalyticsPage() {
           Analytics
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          Suivez les performances de vos newsletters
+          {t("analytics.subtitle")}
         </p>
       </div>
 
@@ -236,13 +237,13 @@ export default function AnalyticsPage() {
       >
         {[
           {
-            label: "Taux d'ouverture",
+            label: t("analytics.open_rate"),
             value: `${data.openRate}%`,
             color: data.openRate > 50 ? "var(--success)" : "var(--text)",
           },
-          { label: "Taux de clic", value: `${data.clickRate}%`, color: "var(--text)" },
-          { label: "Newsletters envoyées", value: String(data.totalSent), color: "var(--text)" },
-          { label: "Destinataires actifs", value: String(data.activeRecipients), color: "var(--text)" },
+          { label: t("analytics.click_rate"), value: `${data.clickRate}%`, color: "var(--text)" },
+          { label: t("analytics.sent"), value: String(data.totalSent), color: "var(--text)" },
+          { label: t("analytics.recipients"), value: String(data.activeRecipients), color: "var(--text)" },
         ].map((m) => (
           <div
             key={m.label}
@@ -269,7 +270,7 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Chart section - verrouillé pour solo */}
+      {/* Chart section */}
       <div
         style={{
           background: "var(--surface)",
@@ -294,8 +295,8 @@ export default function AnalyticsPage() {
             gap: 8,
           }}
         >
-          Évolution du taux d&apos;ouverture
-          {limits.analytics === "basic" && <CrownBadge tooltip="Disponible avec le plan Pro" />}
+          {t("analytics.open_evolution")}
+          {limits.analytics === "basic" && <CrownBadge tooltip={t("analytics.available_pro")} />}
         </h2>
 
         {limits.analytics === "basic" ? (
@@ -333,13 +334,13 @@ export default function AnalyticsPage() {
                 background: "rgba(var(--surface-rgb, 255,255,255), 0.7)",
               }}
             >
-              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: 0 }}>Disponible avec le plan Pro</p>
-              <CrownBadge tooltip="Débloquer l'évolution du taux d'ouverture" />
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: 0 }}>{t("analytics.available_pro")}</p>
+              <CrownBadge tooltip={t("analytics.unlock_open_evolution")} />
             </div>
           </div>
         ) : data.weeklyData.length === 0 ? (
           <p style={{ fontSize: 14, color: "var(--text-muted)", textAlign: "center", padding: "24px 0" }}>
-            Pas encore de données
+            {t("analytics.no_data")}
           </p>
         ) : (
           <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 120 }}>
@@ -399,21 +400,21 @@ export default function AnalyticsPage() {
             gap: 8,
           }}
         >
-          Top articles
-          {limits.analytics === "basic" && <CrownBadge tooltip="Disponible avec le plan Pro" />}
+          {t("analytics.top_articles")}
+          {limits.analytics === "basic" && <CrownBadge tooltip={t("analytics.available_pro")} />}
         </h2>
         {limits.analytics === "basic" ? (
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-            Analytics complets disponibles avec le plan Pro.{" "}
+            {t("analytics.full_analytics_pro")}{" "}
             <button
               onClick={() => router.push("/tarifs")}
               style={{ background: "none", border: "none", cursor: "pointer", color: "var(--accent)", fontSize: 14, padding: 0, textDecoration: "underline" }}
             >
-              Voir les plans →
+              {t("dash.upgrade_btn")}
             </button>
           </p>
         ) : data.topArticles.length === 0 ? (
-          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Aucun clic enregistré pour le moment.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{t("analytics.no_clicks")}</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {data.topArticles.map((article, i) => (
@@ -472,7 +473,7 @@ export default function AnalyticsPage() {
                     textAlign: "right",
                   }}
                 >
-                  {article.clicks} clics
+                  {article.clicks} {t("analytics.clicks")}
                 </span>
               </div>
             ))}
@@ -500,15 +501,21 @@ export default function AnalyticsPage() {
             marginBottom: 16,
           }}
         >
-          Derniers envois
+          {t("analytics.last_sends")}
         </h2>
         {data.newsletters.length === 0 ? (
-          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Aucune newsletter envoyée.</p>
+          <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{t("analytics.no_newsletter_sent")}</p>
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
             <thead>
               <tr>
-                {["Date", "Sujet", "Destinataires", "Taux ouverture", "Taux clic"].map((col) => (
+                {[
+                  t("analytics.col_date"),
+                  t("analytics.col_subject"),
+                  t("analytics.col_recipients"),
+                  t("analytics.col_open_rate"),
+                  t("analytics.col_click_rate"),
+                ].map((col) => (
                   <th
                     key={col}
                     style={{
@@ -542,7 +549,7 @@ export default function AnalyticsPage() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {row.date ? formatDateFr(row.date) : "—"}
+                    {row.date ? formatDateLocale(row.date, lang) : "-"}
                   </td>
                   <td
                     style={{

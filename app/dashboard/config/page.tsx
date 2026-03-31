@@ -14,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
 
@@ -108,6 +109,7 @@ function IconX() {
 
 export default function ConfigPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const [topics, setTopics] = useState(defaultTopics);
   const [sources, setSources] = useState(defaultSources);
@@ -271,7 +273,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
     });
     setSaving(false);
     if (error) {
-      setSaveError("Erreur lors de la sauvegarde. Veuillez réessayer.");
+      setSaveError(t("config.save_error"));
     } else {
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -292,7 +294,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             body: JSON.stringify({ userId: user.id, topics: enabledTopics, sources, customBrief }),
           });
           if (genRes.status === 429) {
-            setInstantError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+            setInstantError(t("config.rate_limit_error"));
           } else {
             const genData = await genRes.json();
             if (genData.newsletter) {
@@ -318,10 +320,10 @@ const [showAddTopic, setShowAddTopic] = useState(false);
     if (maxR !== -1 && recipients.length >= maxR) {
       setRecipientLimitMsg(
         plan === "free"
-          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 5.`
+          ? t("config.recipient_limit_free").replace("{max}", String(maxR))
           : plan === "pro"
-          ? `Limite de ${maxR} destinataires atteinte. Passez au plan Business pour en ajouter jusqu'à 25.`
-          : `Limite de ${maxR} destinataires atteinte. Passez au plan supérieur pour en ajouter plus.`
+          ? t("config.recipient_limit_pro").replace("{max}", String(maxR))
+          : t("config.recipient_limit_upgrade").replace("{max}", String(maxR))
       );
       return;
     }
@@ -353,8 +355,8 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
   const maxR = limits.maxRecipients;
   const recipientsLabel = maxR === -1
-    ? `${recipients.length} destinataire${recipients.length > 1 ? "s" : ""}`
-    : `${recipients.length} / ${maxR} destinataire${maxR > 1 ? "s" : ""}`;
+    ? `${recipients.length} ${t("config.recipient_count")}`
+    : `${recipients.length} / ${maxR} ${t("config.recipient_count")}`;
 
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
@@ -369,10 +371,10 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             marginBottom: 6,
           }}
         >
-          Configuration newsletter
+          {t("config.title")}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          Personnalisez le contenu que vos équipes reçoivent
+          {t("config.subtitle")}
         </p>
       </div>
 
@@ -386,12 +388,12 @@ const [showAddTopic, setShowAddTopic] = useState(false);
         color: "var(--text-secondary)",
         lineHeight: 1.5,
       }}>
-        Vous pouvez modifier votre configuration à tout moment. Les changements seront appliqués dès votre prochaine newsletter.
+        {t("config.info_banner")}
       </div>
 
       {loading ? (
         <div style={{ fontSize: 14, color: "var(--text-muted)", padding: "24px 0" }}>
-          Chargement...
+          {t("common.loading")}
         </div>
       ) : (
         <>
@@ -415,7 +417,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 marginBottom: 16,
               }}
             >
-              Thématiques
+              {t("config.topics")}
             </h2>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {topics.map((topic, i) => (
@@ -464,7 +466,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     className="input-field"
                     value={newTopicLabel}
                     onChange={(e) => setNewTopicLabel(e.target.value)}
-                    placeholder="Ex: Blockchain, Supply Chain, IoT..."
+                    placeholder={t("config.topic_placeholder")}
                     onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
                     autoFocus
                     style={{ width: "100%", boxSizing: "border-box" }}
@@ -476,14 +478,14 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                       disabled={!newTopicLabel.trim()}
                       style={{ fontSize: 13, padding: "6px 14px" }}
                     >
-                      Ajouter
+                      {t("common.add")}
                     </button>
                     <button
                       className="btn-ghost"
                       onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
                       style={{ fontSize: 13, padding: "6px 14px" }}
                     >
-                      Annuler
+                      {t("common.cancel")}
                     </button>
                   </div>
                 </div>
@@ -493,7 +495,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                   onClick={() => setShowAddTopic(true)}
                   style={{ fontSize: 13, padding: "6px 14px" }}
                 >
-                  + Ajouter une thématique
+                  {t("config.add_topic")}
                 </button>
               )}
             </div>
@@ -522,17 +524,17 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 gap: 8,
               }}
             >
-              Brief personnalisé
+              {t("config.custom_brief")}
             </h2>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-              Décrivez votre entreprise et ce qui vous intéresse. Plus c&apos;est précis, plus votre newsletter sera variée.
+              {t("config.custom_brief_desc")}
             </p>
 
             <textarea
               className="input-field"
               value={customBrief}
               onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
-              placeholder={`Ex : Nous sommes un cabinet de recrutement spécialisé IT en Île-de-France. Concurrents : Hays, Michael Page, Robert Half. Clients : PME et ETI du secteur tech.\nJe veux suivre : marché de l'emploi tech en France, nouvelles réglementations RH et droit du travail, levées de fonds des startups qui recrutent, tendances télétravail et salaires, IA appliquée au recrutement.`}
+              placeholder={t("config.custom_brief_placeholder")}
               style={{ width: "100%", minHeight: 160, resize: "vertical", boxSizing: "border-box" }}
             />
             <div style={{
@@ -545,12 +547,12 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               color: "var(--text-muted)",
               lineHeight: 1.6,
             }}>
-              <span style={{ fontWeight: 600, color: "var(--text-secondary)", fontSize: 12 }}>Astuce : mentionnez...</span>
+              <span style={{ fontWeight: 600, color: "var(--text-secondary)", fontSize: 12 }}>{t("config.tip_title")}</span>
               <div style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: "4px 16px" }}>
-                <span>• Vos concurrents (par nom)</span>
-                <span>• Vos clients importants</span>
-                <span>• Les réglementations à suivre</span>
-                <span>• Les innovations qui vous intéressent</span>
+                <span>{t("config.tip_competitors")}</span>
+                <span>{t("config.tip_clients")}</span>
+                <span>{t("config.tip_regulations")}</span>
+                <span>{t("config.tip_innovations")}</span>
               </div>
             </div>
             <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
@@ -578,7 +580,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 marginBottom: 16,
               }}
             >
-              Sources préférées
+              {t("config.sources")}
             </h2>
 
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
@@ -586,7 +588,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 className="input-field"
                 value={newSource}
                 onChange={(e) => setNewSource(e.target.value)}
-                placeholder="Ajouter une source (ex: techcrunch.com)"
+                placeholder={t("config.add_source_placeholder")}
                 onKeyDown={(e) => e.key === "Enter" && addSource()}
                 style={{ flex: 1 }}
               />
@@ -595,7 +597,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 onClick={addSource}
                 style={{ fontSize: 14, padding: "7px 16px", flexShrink: 0 }}
               >
-                Ajouter
+                {t("common.add")}
               </button>
             </div>
 
@@ -655,11 +657,11 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                   color: "var(--text)",
                 }}
               >
-                <span>Sélectionner parmi nos sources vérifiées</span>
+                <span>{t("config.select_verified_sources")}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {sources.length > 0 && (
                     <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
-                      {sources.length} source{sources.length > 1 ? "s" : ""}
+                      {sources.length} {t("config.source_count")}
                     </span>
                   )}
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
@@ -739,47 +741,47 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                 marginBottom: 16,
               }}
             >
-              Planification de l&apos;envoi
+              {t("config.scheduling")}
             </h2>
 
             {plan === "free" ? (
               <>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  Vos newsletters sont envoyées le 1er et le 15 de chaque mois.
+                  {t("config.free_schedule_desc")}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 200 }}>
-                  <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Créneau d&apos;envoi</label>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.send_slot")}</label>
                   <select
                     className="select-field"
                     value={sendHour}
                     onChange={(e) => setSendHour(Number(e.target.value))}
                   >
-                    <option value={8}>Matin (8h)</option>
-                    <option value={12}>Midi (12h)</option>
-                    <option value={18}>Soir (18h)</option>
+                    <option value={8}>{t("config.morning")}</option>
+                    <option value={12}>{t("config.noon")}</option>
+                    <option value={18}>{t("config.evening")}</option>
                   </select>
                 </div>
               </>
             ) : plan === "pro" ? (
               <>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  Choisissez votre jour et heure d&apos;envoi.
+                  {t("config.pro_schedule_desc")}
                 </p>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Jour</label>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.day")}</label>
                     <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
-                      <option value="monday">Lundi</option>
-                      <option value="tuesday">Mardi</option>
-                      <option value="wednesday">Mercredi</option>
-                      <option value="thursday">Jeudi</option>
-                      <option value="friday">Vendredi</option>
-                      <option value="saturday">Samedi</option>
-                      <option value="sunday">Dimanche</option>
+                      <option value="monday">{t("config.monday")}</option>
+                      <option value="tuesday">{t("config.tuesday")}</option>
+                      <option value="wednesday">{t("config.wednesday")}</option>
+                      <option value="thursday">{t("config.thursday")}</option>
+                      <option value="friday">{t("config.friday")}</option>
+                      <option value="saturday">{t("config.saturday")}</option>
+                      <option value="sunday">{t("config.sunday")}</option>
                     </select>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
                     <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))}>
                       {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
                         <option key={h} value={h}>{h}h00</option>
@@ -791,11 +793,11 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             ) : (
               <>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  Planification avancée
+                  {t("config.advanced_scheduling")}
                 </p>
                 <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 160px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Fréquence</label>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.frequency")}</label>
                     <select
                       className="select-field"
                       value={frequency}
@@ -804,39 +806,39 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                         if (e.target.value === "weekly" || e.target.value === "biweekly") setSendDay("monday");
                       }}
                     >
-                      <option value="weekly">1 fois par semaine</option>
-                      <option value="biweekly">2 fois par semaine</option>
-                      <option value="daily">Tous les jours (lun-ven)</option>
+                      <option value="weekly">{t("config.freq_weekly")}</option>
+                      <option value="biweekly">{t("config.freq_biweekly")}</option>
+                      <option value="daily">{t("config.freq_daily")}</option>
                     </select>
                   </div>
                   {(frequency === "weekly" || frequency === "biweekly") && (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
                       <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>
-                        {frequency === "biweekly" ? "1er jour" : "Jour"}
+                        {frequency === "biweekly" ? t("config.first_day") : t("config.day")}
                       </label>
                       <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
-                        <option value="monday">Lundi</option>
-                        <option value="tuesday">Mardi</option>
-                        <option value="wednesday">Mercredi</option>
-                        <option value="thursday">Jeudi</option>
-                        <option value="friday">Vendredi</option>
+                        <option value="monday">{t("config.monday")}</option>
+                        <option value="tuesday">{t("config.tuesday")}</option>
+                        <option value="wednesday">{t("config.wednesday")}</option>
+                        <option value="thursday">{t("config.thursday")}</option>
+                        <option value="friday">{t("config.friday")}</option>
                       </select>
                     </div>
                   )}
                   {frequency === "biweekly" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
-                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>2e jour</label>
+                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.second_day")}</label>
                       <select className="select-field" value={sendDay2} onChange={(e) => setSendDay2(e.target.value)}>
-                        <option value="monday">Lundi</option>
-                        <option value="tuesday">Mardi</option>
-                        <option value="wednesday">Mercredi</option>
-                        <option value="thursday">Jeudi</option>
-                        <option value="friday">Vendredi</option>
+                        <option value="monday">{t("config.monday")}</option>
+                        <option value="tuesday">{t("config.tuesday")}</option>
+                        <option value="wednesday">{t("config.wednesday")}</option>
+                        <option value="thursday">{t("config.thursday")}</option>
+                        <option value="friday">{t("config.friday")}</option>
                       </select>
                     </div>
                   )}
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>Heure</label>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
                     <select
                       className="select-field"
                       value={sendHour}
@@ -863,25 +865,24 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               color: "#059669",
               lineHeight: 1.5,
             }}>
-              {plan === "free"
-                ? `✓ Votre newsletter sera envoyée le 1er et le 15 de chaque mois à ${sendHour}h00. Aucune action requise.`
-                : plan === "pro"
-                ? (() => {
-                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi", saturday: "samedi", sunday: "dimanche" };
-                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} à ${sendHour}h00. Aucune action requise.`;
-                  })()
-                : frequency === "daily"
-                ? `✓ Votre newsletter sera envoyée chaque jour (lun-ven) à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`
-                : frequency === "biweekly"
-                ? (() => {
-                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi" };
-                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} et ${dayLabels[sendDay2] || sendDay2} à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`;
-                  })()
-                : (() => {
-                    const dayLabels: Record<string, string> = { monday: "lundi", tuesday: "mardi", wednesday: "mercredi", thursday: "jeudi", friday: "vendredi" };
-                    return `✓ Votre newsletter sera envoyée chaque ${dayLabels[sendDay] || sendDay} à ${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}. Aucune action requise.`;
-                  })()
-              }
+              {(() => {
+                const dayKey = `config.${sendDay}` as const;
+                const dayKey2 = `config.${sendDay2}` as const;
+                const dayLabel = t(dayKey) || sendDay;
+                const dayLabel2 = t(dayKey2) || sendDay2;
+                const timeStr = `${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}`;
+                if (plan === "free") {
+                  return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
+                } else if (plan === "pro") {
+                  return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", `${sendHour}h00`);
+                } else if (frequency === "daily") {
+                  return t("config.confirm_daily").replace("{hour}", timeStr);
+                } else if (frequency === "biweekly") {
+                  return t("config.confirm_biweekly").replace("{day1}", dayLabel).replace("{day2}", dayLabel2).replace("{hour}", timeStr);
+                } else {
+                  return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", timeStr);
+                }
+              })()}
             </div>
           </div>
 
@@ -906,7 +907,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                   margin: 0,
                 }}
               >
-                Destinataires
+                {t("config.recipients")}
               </h2>
               <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{recipientsLabel}</span>
             </div>
@@ -957,7 +958,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             {recipientLimitMsg && (
               <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>{recipientLimitMsg}</p>
-                <CrownBadge tooltip="Augmentez votre limite de destinataires" />
+                <CrownBadge tooltip={t("config.upgrade_recipients_tooltip")} />
               </div>
             )}
 
@@ -968,7 +969,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     className="input-field"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    placeholder="Nom"
+                    placeholder={t("config.recipient_name")}
                     style={{ flex: "1 1 140px" }}
                   />
                   <input
@@ -976,14 +977,14 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     type="email"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="Email"
+                    placeholder={t("config.recipient_email")}
                     style={{ flex: "2 1 200px" }}
                   />
                   <input
                     className="input-field"
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
-                    placeholder="Rôle (ex: CEO, Marketing...)"
+                    placeholder={t("config.recipient_role")}
                     style={{ flex: "1 1 160px" }}
                   />
                 </div>
@@ -994,7 +995,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     disabled={addingRecipient || !newName.trim() || !newEmail.trim()}
                     style={{ fontSize: 13, padding: "6px 14px" }}
                   >
-                    {addingRecipient ? "Ajout..." : "Ajouter"}
+                    {addingRecipient ? t("config.adding") : t("common.add")}
                   </button>
                   <button
                     className="btn-ghost"
@@ -1007,7 +1008,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     }}
                     style={{ fontSize: 13, padding: "6px 14px" }}
                   >
-                    Annuler
+                    {t("common.cancel")}
                   </button>
                 </div>
               </div>
@@ -1020,8 +1021,8 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                     if (maxR !== -1 && recipients.length >= maxR) {
                       setRecipientLimitMsg(
                         plan === "free"
-                          ? `Limite de ${maxR} destinataire atteinte. Passez au plan Pro pour en ajouter jusqu'à 10.`
-                          : `Limite de ${maxR} destinataires atteinte. Passez au plan supérieur pour en ajouter plus.`
+                          ? t("config.recipient_limit_free").replace("{max}", String(maxR))
+                          : t("config.recipient_limit_upgrade").replace("{max}", String(maxR))
                       );
                     } else {
                       setShowAddForm(true);
@@ -1030,7 +1031,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                   }}
                   style={{ fontSize: 13, padding: "6px 14px" }}
                 >
-                  + Ajouter un destinataire
+                  {t("config.add_recipient")}
                 </button>
               </div>
             )}
@@ -1046,7 +1047,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             disabled={saving}
             style={{ width: "100%", fontSize: 15 }}
           >
-            {saving ? "Sauvegarde..." : "Sauvegarder les modifications"}
+            {saving ? t("common.saving") : t("common.save")}
           </button>
           {saved && (
             <div style={{
@@ -1060,20 +1061,20 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               lineHeight: 1.6,
               textAlign: "center",
             }}>
-              <p style={{ fontWeight: 600, margin: "0 0 4px" }}>Configuration sauvegardée</p>
+              <p style={{ fontWeight: 600, margin: "0 0 4px" }}>{t("config.saved_title")}</p>
               <p style={{ margin: 0, fontSize: 13 }}>
-                Votre newsletter sera envoyée automatiquement. Vous n&apos;avez plus rien à faire.
+                {t("config.saved_desc")}
               </p>
             </div>
           )}
           {instantSending && (
             <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(0,80,88,0.04)", border: "1px solid rgba(0,80,88,0.1)", borderRadius: 10, fontSize: 14, color: "var(--text-secondary)", textAlign: "center" }}>
-              Génération de votre première newsletter en cours...
+              {t("config.instant_generating")}
             </div>
           )}
           {instantSent && (
             <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, fontSize: 14, color: "#059669", textAlign: "center" }}>
-              Votre première newsletter a été envoyée ! Vérifiez votre boîte mail.
+              {t("config.instant_sent")}
             </div>
           )}
           {instantError && (

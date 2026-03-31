@@ -8,6 +8,7 @@ import { getProfile, updateProfile } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -28,6 +29,7 @@ export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const [newsletter, setNewsletter] = useState(true);
   const [plan, setPlan] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -98,7 +100,7 @@ export default function ProfilePage() {
       await signOut();
       router.push("/");
     } else {
-      setDeleteError("Erreur lors de la suppression. Contactez le support.");
+      setDeleteError(t("profile.delete_error"));
       setDeleting(false);
     }
   };
@@ -114,13 +116,13 @@ export default function ProfilePage() {
 
   const planLabel = plan ? capitalize(plan) : "Free";
 
-  const planDescriptions: Record<string, string> = {
-    free: "2 newsletters par mois, 1 destinataire, brief personnalisé.",
-    pro: "4 newsletters par mois, jusqu'à 5 destinataires, sources au choix, analytics complets.",
-    business: "Newsletters illimitées, jusqu'à 25 destinataires, logo personnalisé, planification avancée.",
-    enterprise: "Tout illimité, multi-newsletters, white-label, intégration CRM.",
+  const planDescriptionKeys: Record<string, string> = {
+    free: "profile.plan_desc_free",
+    pro: "profile.plan_desc_pro",
+    business: "profile.plan_desc_business",
+    enterprise: "profile.plan_desc_enterprise",
   };
-  const planDescription = planDescriptions[plan ?? "free"] ?? planDescriptions.free;
+  const planDescription = t(planDescriptionKeys[plan ?? "free"] ?? planDescriptionKeys.free);
 
   return (
     <div style={{ padding: 32, maxWidth: 700 }}>
@@ -138,7 +140,7 @@ export default function ProfilePage() {
             fontWeight: 500,
           }}
         >
-          Votre abonnement a bien été activé. Bienvenue sur le plan {planLabel} !
+          {t("profile.upgrade_success").replace("{plan}", planLabel)}
         </div>
       )}
 
@@ -156,7 +158,7 @@ export default function ProfilePage() {
             fontWeight: 500,
           }}
         >
-          Nom mis à jour avec succès.
+          {t("profile.name_updated")}
         </div>
       )}
 
@@ -170,7 +172,7 @@ export default function ProfilePage() {
           marginBottom: 32,
         }}
       >
-        Mon profil
+        {t("profile.title")}
       </h1>
 
       {/* Profile card */}
@@ -216,7 +218,7 @@ export default function ProfilePage() {
               {displayName}
             </div>
             <div style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-              Membre depuis le {joinDate}
+              {t("profile.member_since").replace("{date}", joinDate)}
             </div>
           </div>
           {!editing && (
@@ -225,7 +227,7 @@ export default function ProfilePage() {
               onClick={() => { setEditing(true); setEditName(displayName); }}
               style={{ fontSize: 14, padding: "6px 14px" }}
             >
-              Modifier
+              {t("profile.edit")}
             </button>
           )}
         </div>
@@ -251,7 +253,7 @@ export default function ProfilePage() {
             marginBottom: 16,
           }}
         >
-          Mon abonnement
+          {t("profile.subscription")}
         </h2>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <div>
@@ -272,7 +274,7 @@ export default function ProfilePage() {
                   textTransform: "uppercase",
                 }}
               >
-                Actif
+                {t("profile.active")}
               </span>
             </div>
             <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
@@ -288,11 +290,11 @@ export default function ProfilePage() {
               className="btn-ghost"
               style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
             >
-              {portalLoading ? "Chargement..." : "Gérer mon abonnement →"}
+              {portalLoading ? t("common.loading") : t("profile.manage_subscription")}
             </button>
           ) : (
             <Link href="/tarifs" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
-              Changer de plan →
+              {t("profile.change_plan")}
             </Link>
           )}
         </div>
@@ -317,7 +319,7 @@ export default function ProfilePage() {
             marginBottom: 20,
           }}
         >
-          Paramètres du compte
+          {t("profile.account_settings")}
         </h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -332,7 +334,7 @@ export default function ProfilePage() {
                 marginBottom: 6,
               }}
             >
-              Nom complet
+              {t("profile.full_name")}
             </label>
             {editing ? (
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -349,7 +351,7 @@ export default function ProfilePage() {
                   disabled={saving || !editName.trim()}
                   style={{ fontSize: 13, padding: "6px 14px", opacity: saving ? 0.7 : 1, cursor: saving ? "wait" : "pointer", whiteSpace: "nowrap" }}
                 >
-                  {saving ? "..." : "Sauvegarder"}
+                  {saving ? "..." : t("profile.save")}
                 </button>
                 <button
                   className="btn-ghost"
@@ -357,7 +359,7 @@ export default function ProfilePage() {
                   disabled={saving}
                   style={{ fontSize: 13, padding: "6px 14px", whiteSpace: "nowrap" }}
                 >
-                  Annuler
+                  {t("profile.cancel")}
                 </button>
               </div>
             ) : (
@@ -381,7 +383,7 @@ export default function ProfilePage() {
                 marginBottom: 6,
               }}
             >
-              Adresse email
+              {t("profile.email_label")}
             </label>
             <input
               className="input-field"
@@ -402,10 +404,10 @@ export default function ProfilePage() {
           >
             <div>
               <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginBottom: 2 }}>
-                Newsletter Sorell
+                {t("profile.newsletter_sorell")}
               </div>
               <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                Recevez nos actualités et annonces produit
+                {t("profile.newsletter_desc")}
               </div>
             </div>
             <button
@@ -455,7 +457,7 @@ export default function ProfilePage() {
               padding: 0,
             }}
           >
-            Supprimer mon compte
+            {t("profile.delete_account")}
           </button>
         </div>
       </div>
@@ -510,7 +512,7 @@ export default function ProfilePage() {
                 marginBottom: 10,
               }}
             >
-              Supprimer mon compte
+              {t("profile.delete_account")}
             </h3>
             <p
               style={{
@@ -520,7 +522,7 @@ export default function ProfilePage() {
                 lineHeight: 1.5,
               }}
             >
-              Cette action est irréversible. Toutes vos données, newsletters et configurations seront définitivement supprimées.
+              {t("profile.delete_warning")}
             </p>
 
             <label
@@ -531,9 +533,8 @@ export default function ProfilePage() {
                 color: "var(--text-secondary)",
                 marginBottom: 6,
               }}
-            >
-              Tapez <strong>SUPPRIMER</strong> pour confirmer
-            </label>
+              dangerouslySetInnerHTML={{ __html: t("profile.delete_confirm") }}
+            />
             <input
               className="input-field"
               value={confirmText}
@@ -555,7 +556,7 @@ export default function ProfilePage() {
                 disabled={deleting}
                 style={{ fontSize: 14, padding: "7px 14px" }}
               >
-                Annuler
+                {t("profile.cancel")}
               </button>
               <button
                 onClick={handleDeleteAccount}
@@ -572,7 +573,7 @@ export default function ProfilePage() {
                   transition: "background 0.2s ease",
                 }}
               >
-                {deleting ? "Suppression..." : "Supprimer définitivement"}
+                {deleting ? t("profile.deleting") : t("profile.delete_permanently")}
               </button>
             </div>
           </div>

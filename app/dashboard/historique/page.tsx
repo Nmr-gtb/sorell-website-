@@ -51,8 +51,8 @@ export default function HistoriquePage() {
   if (!planLoaded) {
     return (
       <div style={{ padding: 32, maxWidth: 800 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>Historique</h1>
-        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Chargement...</p>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{t("history.title")}</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{t("common.loading")}</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function HistoriquePage() {
   if (limits.analytics === "none") {
     return (
       <div style={{ padding: 32, maxWidth: 800 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 24 }}>Historique</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 24 }}>{t("history.title")}</h1>
         <div
           style={{
             background: "var(--surface)",
@@ -128,7 +128,7 @@ export default function HistoriquePage() {
             padding: 0,
           }}
         >
-          ← Retour à l'historique
+          {t("history.back")}
         </button>
 
         <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
@@ -151,7 +151,7 @@ export default function HistoriquePage() {
                 borderRadius: 10,
                 borderLeft: "3px solid var(--accent)",
               }}>
-                <p style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Éditorial</p>
+                <p style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>{t("history.editorial")}</p>
                 <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>{parsedContent.editorial}</p>
               </div>
             )}
@@ -163,7 +163,7 @@ export default function HistoriquePage() {
                 background: "#1F2937",
                 borderRadius: 10,
               }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "white", background: "var(--accent)", padding: "3px 8px", borderRadius: 4, textTransform: "uppercase" }}>Article phare</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "white", background: "var(--accent)", padding: "3px 8px", borderRadius: 4, textTransform: "uppercase" }}>{t("history.featured")}</span>
                 <h2 style={{ fontSize: 17, fontWeight: 600, color: "white", margin: "10px 0 6px" }}>{parsedContent.featuredArticle.title}</h2>
                 {parsedContent.featuredArticle.hook && <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", fontStyle: "italic", margin: "0 0 8px" }}>{parsedContent.featuredArticle.hook}</p>}
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: 1.6, margin: "0 0 8px" }}>{parsedContent.featuredArticle.content || parsedContent.featuredArticle.summary}</p>
@@ -208,7 +208,7 @@ export default function HistoriquePage() {
             )}
           </div>
         ) : (
-          <p style={{ color: "var(--text-muted)" }}>Contenu indisponible.</p>
+          <p style={{ color: "var(--text-muted)" }}>{t("history.unavailable")}</p>
         )}
       </div>
     );
@@ -217,11 +217,11 @@ export default function HistoriquePage() {
   // Vue liste
   return (
     <div style={{ padding: 32, maxWidth: 800 }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>Historique</h1>
-      <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>Toutes vos newsletters passées.</p>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{t("history.title")}</h1>
+      <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>{t("history.subtitle")}</p>
 
       {loading ? (
-        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Chargement...</p>
+        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{t("common.loading")}</p>
       ) : newsletters.length === 0 ? (
         <div style={{
           padding: 32,
@@ -230,8 +230,8 @@ export default function HistoriquePage() {
           borderRadius: 10,
           textAlign: "center",
         }}>
-          <p style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>Aucune newsletter pour le moment</p>
-          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>Vos newsletters apparaîtront ici après leur génération.</p>
+          <p style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>{t("history.empty_title")}</p>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>{t("history.empty_desc")}</p>
           <a href="/dashboard/generate" style={{
             display: "inline-block",
             padding: "8px 20px",
@@ -241,7 +241,7 @@ export default function HistoriquePage() {
             fontSize: 13,
             fontWeight: 600,
             textDecoration: "none",
-          }}>Générer ma première newsletter →</a>
+          }}>{t("history.generate_first")}</a>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -277,7 +277,7 @@ export default function HistoriquePage() {
                 color: nl.status === "sent" ? "#059669" : "#D97706",
                 fontWeight: 500,
               }}>
-                {nl.status === "sent" ? "Envoyée" : "Brouillon"}
+                {nl.status === "sent" ? t("history.sent") : t("history.draft")}
               </span>
             </button>
           ))}

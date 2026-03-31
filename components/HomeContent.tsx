@@ -110,13 +110,6 @@ export default function HomeContent() {
     },
   ];
 
-  const testimonial = {
-    quote: t("social.testimonial3"),
-    name: t("social.testimonial3_name"),
-    title: t("social.testimonial3_role"),
-    initials: "LM",
-  };
-
   const metrics = [
     { value: t("home.stat1_value"), label: t("home.stat1_label") },
     { value: t("home.stat2_value"), label: t("home.stat2_label") },
@@ -405,9 +398,12 @@ export default function HomeContent() {
 
       {/* ─── DEFINITION GEO ───────────────────────────────────── */}
       <div style={{ background: "var(--bg)", padding: "80px 1.5rem", position: "relative", overflow: "hidden" }}>
-        <img
+        <Image
           src="/icone.png"
-          aria-hidden="true"
+          alt=""
+          aria-hidden={true}
+          width={320}
+          height={320}
           style={{
             position: "absolute",
             bottom: 0,
@@ -594,82 +590,12 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* ─── TEMOIGNAGES ──────────────────────────────────────── */}
-      <section style={{ background: "var(--bg)", padding: "160px 1.5rem" }}>
-        <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 80 }}>
-            <h2
-              style={{
-                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
-                fontSize: "clamp(1.75rem, 3vw, 1.75rem)",
-                fontWeight: 700,
-                color: "var(--text)",
-                letterSpacing: "-0.02em",
-                marginBottom: 12,
-              }}
-            >
-              {t("social.title")}
-            </h2>
-            <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              {t("social.subtitle")}
-            </p>
-          </div>
-
-          <div style={{ maxWidth: 520, margin: "0 auto" }}>
-            <div
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: 12,
-                padding: 24,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                gap: 20,
-              }}
-            >
-              <p
-                style={{
-                  fontStyle: "italic",
-                  fontSize: "0.875rem",
-                  lineHeight: 1.6,
-                  color: "var(--text-secondary)",
-                  margin: 0,
-                }}
-              >
-                {testimonial.quote}
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    background: "var(--accent)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    color: "white",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.02em",
-                  }}
-                >
-                  {testimonial.initials}
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)" }}>
-                    {testimonial.name}
-                  </div>
-                  <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-                    {testimonial.title}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* ─── SOCIAL PROOF ──────────────────────────────────────── */}
+      <section style={{ background: "var(--bg)", padding: "100px 1.5rem" }}>
+        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
+          <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
+            {t("social.proof")}
+          </p>
         </div>
       </section>
 

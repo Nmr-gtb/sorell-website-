@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Footer() {
@@ -150,10 +151,12 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="footer-bottom">
-          <img
+          <Image
             src="/icone.png"
             alt=""
-            aria-hidden="true"
+            aria-hidden={true}
+            width={56}
+            height={56}
             style={{
               height: 56,
               width: "auto",

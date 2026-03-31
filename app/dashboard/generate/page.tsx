@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount, addRecipient } from "@/lib/database";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
@@ -81,6 +82,7 @@ function Spinner() {
 
 export default function GeneratePage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [topics, setTopics] = useState<{ id: string; label: string; enabled: boolean }[]>([]);
   const [sources, setSources] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("weekly-1");
@@ -151,10 +153,10 @@ export default function GeneratePage() {
   const previewLimit = planLimits.previewsPerMonth; // -1 = illimite
   const isAtGenerationLimit = previewLimit !== -1 && generatedThisMonth >= previewLimit;
 
-  const activeTopics = topics.filter((t) => t.enabled);
+  const activeTopics = topics.filter((tp) => tp.enabled);
 
   const frequencyLabel =
-    frequency === "daily" ? "Quotidienne" : frequency === "weekly-2" ? "2x par semaine" : "Hebdomadaire";
+    frequency === "daily" ? t("generate.freq_daily") : frequency === "weekly-2" ? t("generate.freq_twice_weekly") : t("generate.freq_weekly");
 
   async function handleGenerate() {
     if (!user) return;
@@ -174,9 +176,9 @@ export default function GeneratePage() {
       });
       const data = await response.json();
       if (response.status === 429) {
-        setGenerateError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+        setGenerateError(t("generate.error_rate_limit"));
       } else if (!response.ok) {
-        setGenerateError(data.error || "Erreur lors de la génération");
+        setGenerateError(data.error || t("generate.error_generation"));
       } else {
         setNewsletter(data.newsletter);
         setArticles(data.articles);
@@ -186,7 +188,7 @@ export default function GeneratePage() {
         setGeneratedThisMonth((prev) => prev + 1);
       }
     } catch {
-      setGenerateError("Erreur réseau");
+      setGenerateError(t("generate.error_network"));
     } finally {
       setGenerating(false);
     }
@@ -205,14 +207,14 @@ export default function GeneratePage() {
       });
       const data = await response.json();
       if (response.status === 429) {
-        setSendError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
+        setSendError(t("generate.error_rate_limit"));
       } else if (!response.ok) {
-        setSendError(data.error || "Erreur lors de l'envoi");
+        setSendError(data.error || t("generate.error_send"));
       } else {
         setSendResults(data.results);
       }
     } catch {
-      setSendError("Erreur réseau");
+      setSendError(t("generate.error_network"));
     } finally {
       setSending(false);
     }
@@ -223,8 +225,8 @@ export default function GeneratePage() {
   const successCount = sendResults?.filter((r) => r.success).length ?? 0;
 
   const generationLimitLabel = previewLimit === -1
-    ? "Aperçus : Illimite"
-    : `${generatedThisMonth} / ${previewLimit} aperçu${previewLimit > 1 ? "s" : ""} ce mois`;
+    ? t("generate.previews_unlimited")
+    : `${generatedThisMonth} / ${previewLimit} ${t("generate.previews_count")}${previewLimit > 1 ? "s" : ""}`;
 
   return (
     <div style={{ padding: "32px", maxWidth: 760 }}>
@@ -235,10 +237,10 @@ export default function GeneratePage() {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
-          Aperçu de votre newsletter
+          {t("generate.title")}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          Prévisualisez votre prochaine newsletter ou générez-en une manuellement
+          {t("generate.subtitle")}
         </p>
       </div>
 
@@ -254,41 +256,41 @@ export default function GeneratePage() {
           }}
         >
           <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>
-            Configuration actuelle
+            {t("generate.current_config")}
           </h2>
 
           {loadingConfig ? (
-            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Chargement...</p>
+            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{t("common.loading")}</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Thématiques actives</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.active_topics")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {activeTopics.length > 0 ? activeTopics.map((t) => t.label).join(", ") : "Aucune"}
+                  {activeTopics.length > 0 ? activeTopics.map((topic) => topic.label).join(", ") : t("generate.none")}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Sources</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.sources")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {sources.length > 0 ? `${sources.length} source${sources.length > 1 ? "s" : ""}` : "Toutes"}
+                  {sources.length > 0 ? `${sources.length} source${sources.length > 1 ? "s" : ""}` : t("generate.all")}
                 </span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Fréquence</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.frequency")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>{frequencyLabel}</span>
               </div>
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Destinataires</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.recipients")}</span>
                 <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>{recipientCount}</span>
               </div>
               {customBrief && (
                 <>
                   <div style={{ height: 1, background: "var(--border)" }} />
                   <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                    <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Brief</span>
+                    <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.brief")}</span>
                     <span style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
                       {customBrief.length > 100 ? `${customBrief.slice(0, 100)}...` : customBrief}
                     </span>
@@ -297,7 +299,7 @@ export default function GeneratePage() {
               )}
               <div style={{ height: 1, background: "var(--border)" }} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>Aperçus ce mois</span>
+                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("generate.previews_this_month")}</span>
                 <span style={{ fontSize: 14, color: isAtGenerationLimit ? "var(--error)" : "var(--text)", fontWeight: 500 }}>
                   {generationLimitLabel}
                 </span>
@@ -321,10 +323,10 @@ export default function GeneratePage() {
             </svg>
             <div>
               <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                Tout est automatique
+                {t("generate.auto_title")}
               </p>
               <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
-                Votre newsletter est envoyée automatiquement chaque semaine selon votre configuration. Cette page vous permet de prévisualiser le résultat ou d&apos;en générer une manuellement si besoin.
+                {t("generate.auto_desc")}
               </p>
             </div>
           </div>
@@ -336,12 +338,12 @@ export default function GeneratePage() {
           {isAtGenerationLimit ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <p style={{ fontSize: 14, color: "var(--text-muted)", margin: 0 }}>
-                Vous avez atteint votre limite de {previewLimit} aperçu{previewLimit > 1 ? "s" : ""} ce mois-ci.
+                {t("generate.limit_reached").replace("{limit}", String(previewLimit))}
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <CrownBadge tooltip="Aperçus illimités avec le plan Pro" />
+                <CrownBadge tooltip={t("generate.unlimited_tooltip")} />
                 <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>Passer au Pro</a> pour des aperçus illimités
+                  <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>{t("generate.upgrade_pro")}</a> {t("generate.for_unlimited")}
                 </span>
               </div>
             </div>
@@ -363,18 +365,18 @@ export default function GeneratePage() {
                 {generating ? (
                   <>
                     <Spinner />
-                    Analyse de vos sources en cours...
+                    {t("generate.analyzing")}
                   </>
                 ) : (
                   <>
                     <IconSparkles />
-                    Générer un aperçu
+                    {t("generate.generate_preview")}
                   </>
                 )}
               </button>
               {activeTopics.length === 0 && !loadingConfig && (
                 <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>
-                  Activez au moins une thématique dans la configuration pour générer.
+                  {t("generate.no_topics_warning")}
                 </p>
               )}
             </>
@@ -401,7 +403,7 @@ export default function GeneratePage() {
           >
             <div style={{ flex: 1, minWidth: 200 }}>
               <label style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500, display: "block", marginBottom: 6 }}>
-                SUJET
+                {t("generate.subject_label")}
               </label>
               <input
                 type="text"
@@ -430,7 +432,7 @@ export default function GeneratePage() {
                   style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, padding: "7px 14px" }}
                 >
                   {generating ? <Spinner /> : <IconRefresh />}
-                  Régénérer
+                  {t("generate.regenerate")}
                 </button>
                 <button
                   className="btn-primary"
@@ -441,15 +443,15 @@ export default function GeneratePage() {
                   {sending ? (
                     <>
                       <Spinner />
-                      Envoi en cours à {recipientCount} destinataire{recipientCount > 1 ? "s" : ""}...
+                      {t("generate.sending_to").replace("{count}", String(recipientCount))}
                     </>
                   ) : (
-                    `Envoyer à ${recipientCount} destinataire${recipientCount > 1 ? "s" : ""}`
+                    t("generate.send_to").replace("{count}", String(recipientCount))
                   )}
                 </button>
               </div>
               <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0, textAlign: "right" }}>
-                Cet envoi est en plus de l&apos;envoi automatique programmé.
+                {t("generate.manual_send_note")}
               </p>
             </div>
           </div>
@@ -471,7 +473,7 @@ export default function GeneratePage() {
                 </span>
               )}
               <span style={{ fontSize: 12, color: "#9CA3AF" }}>
-                Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
               </span>
             </div>
 
@@ -491,7 +493,7 @@ export default function GeneratePage() {
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                   }}>
-                    Article phare
+                    {t("generate.featured_article")}
                   </span>
                   <h2 style={{ fontSize: 18, fontWeight: 700, color: textColor, margin: "12px 0 8px", lineHeight: 1.35, letterSpacing: "-0.01em" }}>
                     {featuredArticle.title}
@@ -515,8 +517,8 @@ export default function GeneratePage() {
             {/* Intro personnalisée */}
             <div style={{ padding: "0 32px 20px" }}>
               <p style={{ fontSize: 14, color: textColor, lineHeight: 1.6, margin: 0 }}>
-                <span style={{ fontWeight: 600 }}>Bonjour,</span>
-                <span style={{ color: "#6B7280" }}> voici les {otherArticles.length + 1} actualités clés de votre secteur cette semaine, sélectionnées et résumées par Sorell.</span>
+                <span style={{ fontWeight: 600 }}>{t("generate.greeting")}</span>
+                <span style={{ color: "#6B7280" }}> {t("generate.intro_text").replace("{count}", String(otherArticles.length + 1))}</span>
               </p>
             </div>
 
@@ -525,7 +527,7 @@ export default function GeneratePage() {
               <div style={{ padding: "0 32px 24px" }}>
                 <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "16px 20px", background: "#F8FAFC" }}>
                   <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
-                    Éditorial
+                    {t("generate.editorial")}
                   </p>
                   <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: 0, fontStyle: "italic" }}>
                     {editorial}
@@ -538,7 +540,7 @@ export default function GeneratePage() {
             {keyFigures.length > 0 && (
               <div style={{ padding: "0 32px 24px" }}>
                 <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 12px" }}>
-                  Chiffres clés
+                  {t("generate.key_figures")}
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(keyFigures.length, 3)}, 1fr)`, gap: 8 }}>
                   {keyFigures.map((fig, i) => (
@@ -555,7 +557,7 @@ export default function GeneratePage() {
             {/* Articles secondaires */}
             <div style={{ padding: "0 32px 16px" }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 16px" }}>
-                Les actus de la semaine
+                {t("generate.weekly_news")}
               </p>
 
               {/* 2 premiers articles en grille */}
@@ -639,25 +641,25 @@ export default function GeneratePage() {
               <div style={{ display: "flex", gap: 8 }}>
                 <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
                   <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>147</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Sources analysées</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.sources_analyzed")}</p>
                 </div>
                 <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
                   <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>{otherArticles.length + 1}</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Articles retenus</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.articles_selected")}</p>
                 </div>
                 <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
                   <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>3min</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>Temps de lecture</p>
+                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.read_time")}</p>
                 </div>
               </div>
             </div>
 
             {/* CTA */}
             <div style={{ padding: "0 32px 24px", textAlign: "center" }}>
-              <p style={{ fontSize: 14, color: "#6B7280", margin: "0 0 12px" }}>Cette newsletter vous a été utile ?</p>
+              <p style={{ fontSize: 14, color: "#6B7280", margin: "0 0 12px" }}>{t("generate.cta_useful")}</p>
               <a href="https://sorell.fr/tarifs"
                 style={{ display: "inline-block", padding: "10px 24px", background: brandColor, color: "white", fontSize: 13, fontWeight: 600, textDecoration: "none", borderRadius: 6 }}>
-                Partager avec votre équipe
+                {t("generate.cta_share")}
               </a>
             </div>
 
@@ -690,7 +692,7 @@ export default function GeneratePage() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
             <span style={{ fontSize: 20 }}>✓</span>
             <h2 style={{ fontSize: 16, fontWeight: 600, color: "#16A34A", margin: 0 }}>
-              Newsletter envoyée à {successCount} destinataire{successCount > 1 ? "s" : ""}
+              {t("generate.sent_success").replace("{count}", String(successCount))}
             </h2>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
@@ -715,7 +717,7 @@ export default function GeneratePage() {
                     color: r.success ? "#16A34A" : "#EF4444",
                   }}
                 >
-                  {r.success ? "Envoyé ✓" : "Échec ✗"}
+                  {r.success ? t("generate.status_sent") : t("generate.status_failed")}
                 </span>
               </div>
             ))}
@@ -731,7 +733,7 @@ export default function GeneratePage() {
             }}
             style={{ fontSize: 14, padding: "7px 14px" }}
           >
-            Générer une nouvelle newsletter
+            {t("generate.generate_new")}
           </button>
         </div>
       )}
