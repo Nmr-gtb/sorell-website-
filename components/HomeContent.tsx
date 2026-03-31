@@ -354,9 +354,10 @@ export default function HomeContent() {
               padding: 0 16px 16px !important;
             }
             .hero-image-col img {
-              width: 100% !important;
+              width: 85% !important;
               max-height: none !important;
               height: auto !important;
+              margin: 0 auto !important;
               object-fit: contain !important;
               object-position: center !important;
               border-radius: 12px !important;
