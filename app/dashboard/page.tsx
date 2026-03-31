@@ -277,13 +277,10 @@ export default function DashboardPage() {
     const priceId = PRICE_IDS[planKey][billingPeriod];
     setCheckoutLoading(true);
     try {
-      const res = await fetch("/api/checkout", {
+      const res = await authFetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           priceId,
-          userId: user.id,
-          userEmail: user.email,
           fromOnboarding: true,
         }),
       });

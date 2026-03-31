@@ -38,6 +38,7 @@ export async function POST(request: Request) {
       .from("newsletters")
       .select("*")
       .eq("id", newsletterId)
+      .eq("user_id", verifiedUserId)
       .single();
 
     if (nlError || !newsletter) {

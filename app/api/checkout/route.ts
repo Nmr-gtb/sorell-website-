@@ -1,14 +1,22 @@
 import { stripe, PRICE_IDS } from "@/lib/stripe";
 import { NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const VALID_PRICE_IDS = new Set(Object.values(PRICE_IDS));
 
 export async function POST(request: Request) {
   try {
-    const { priceId, userId, userEmail, fromOnboarding } = await request.json();
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
 
-    if (!priceId || !userId) {
-      return NextResponse.json({ error: "Missing priceId or userId" }, { status: 400 });
+    const { priceId, fromOnboarding } = await request.json();
+    const userId = authUser.id;
+    const userEmail = authUser.email;
+
+    if (!priceId) {
+      return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
     }
 
     if (!VALID_PRICE_IDS.has(priceId)) {

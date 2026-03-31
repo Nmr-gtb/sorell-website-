@@ -8,6 +8,7 @@ import PricingCard from "@/components/PricingCard";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { authFetch } from "@/lib/api";
 
 // Features arrays and FAQ are built inside the component to use t()
 
@@ -89,10 +90,9 @@ export default function PricingPage() {
 
     setCheckoutLoading(plan);
 
-    const res = await fetch("/api/checkout", {
+    const res = await authFetch("/api/checkout", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email }),
+      body: JSON.stringify({ priceId }),
     });
 
     const data = await res.json();

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 
 export async function GET(request: Request) {
+  try {
   const authUser = await getAuthenticatedUser(request);
   if (!authUser) {
     return NextResponse.json({ error: "Non autorise" }, { status: 401 });
@@ -112,4 +113,7 @@ export async function GET(request: Request) {
     topArticles,
     weeklyData,
   });
+  } catch {
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
+  }
 }

@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
+import { emailRateLimit } from "@/lib/ratelimit";
 
 function cleanCiteTags(text: string): string {
   if (!text) return text;
@@ -26,6 +27,20 @@ export async function GET(request: Request) {
 
   if (!SECTOR_PROMPTS[sector]) {
     return NextResponse.json({ error: "Secteur invalide" }, { status: 400 });
+  }
+
+  // Rate limit by IP to prevent API cost abuse (5 req/hour)
+  const ip = request.headers.get("x-forwarded-for") || "anonymous";
+  try {
+    const { success: rateLimitOk } = await emailRateLimit.limit(`demo:${ip}`);
+    if (!rateLimitOk) {
+      return NextResponse.json(
+        { error: "Trop de requetes. Reessayez dans une heure." },
+        { status: 429 }
+      );
+    }
+  } catch {
+    // Rate limiter unavailable — fail open
   }
 
   try {
@@ -131,8 +146,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
     );
 
     return NextResponse.json({ articles, fromCache: false, generatedAt });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }
