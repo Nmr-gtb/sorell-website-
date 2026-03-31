@@ -26,12 +26,16 @@ export async function POST(request: Request) {
 
     const verifiedUserId = authUser.id;
 
-    const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
-    if (!rateLimitOk) {
-      return NextResponse.json(
-        { error: "Trop de requetes. Reessayez dans une heure." },
-        { status: 429 }
-      );
+    try {
+      const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
+      if (!rateLimitOk) {
+        return NextResponse.json(
+          { error: "Trop de requetes. Reessayez dans une heure." },
+          { status: 429 }
+        );
+      }
+    } catch {
+      // Rate limiter unavailable — fail open to avoid blocking users
     }
 
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", verifiedUserId).single();
@@ -316,6 +320,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
     return NextResponse.json({ newsletter, articles: newsletterContent.articles, editorial: newsletterContent.editorial, keyFigures: newsletterContent.key_figures });
   } catch (err: unknown) {
+    console.error("[generate] Runtime error:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

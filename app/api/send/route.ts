@@ -22,12 +22,16 @@ export async function POST(request: Request) {
 
     const verifiedUserId = authUser.id;
 
-    const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
-    if (!rateLimitOk) {
-      return NextResponse.json(
-        { error: "Trop de requetes. Reessayez dans une heure." },
-        { status: 429 }
-      );
+    try {
+      const { success: rateLimitOk } = await apiRateLimit.limit(verifiedUserId);
+      if (!rateLimitOk) {
+        return NextResponse.json(
+          { error: "Trop de requetes. Reessayez dans une heure." },
+          { status: 429 }
+        );
+      }
+    } catch {
+      // Rate limiter unavailable — fail open to avoid blocking users
     }
 
     const { data: newsletter, error: nlError } = await supabase
@@ -125,6 +129,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, results });
   } catch (err: unknown) {
+    console.error("[send] Runtime error:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }
