@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_MAX = 30;
@@ -26,9 +27,20 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
+
     const { newsletterId, userId } = await request.json();
 
-    if (userId && !checkRateLimit(userId)) {
+    if (userId && userId !== authUser.id) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 403 });
+    }
+
+    const verifiedUserId = authUser.id;
+
+    if (verifiedUserId && !checkRateLimit(verifiedUserId)) {
       return NextResponse.json(
         { error: "Trop de requetes. Reessayez dans une heure." },
         { status: 429 }
@@ -60,7 +72,7 @@ export async function POST(request: Request) {
     const { data: recipients } = await supabase
       .from("recipients")
       .select("*")
-      .eq("user_id", userId);
+      .eq("user_id", verifiedUserId);
 
     if (!recipients?.length) {
       return NextResponse.json({ error: "No recipients configured" }, { status: 400 });
@@ -231,8 +243,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, results });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Send error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Send error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

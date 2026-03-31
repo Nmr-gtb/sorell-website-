@@ -8,6 +8,7 @@ import { getProfile } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
+import { authFetch } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 
 type AnalyticsData = {
@@ -63,7 +64,7 @@ export default function AnalyticsPage() {
       setRealPlan(userPlan);
       setPlanLoaded(true);
 
-      fetch(`/api/analytics?userId=${user!.id}`)
+      authFetch(`/api/analytics?userId=${user!.id}`)
         .then((res) => res.json())
         .then((json) => {
           setData(json);

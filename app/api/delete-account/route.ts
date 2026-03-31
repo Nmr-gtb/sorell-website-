@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,13 +9,18 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await request.json();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
     }
 
-    // Supprimer dans l'ordre (à cause des foreign keys)
+    const { userId } = await request.json();
+
+    if (!userId || userId !== authUser.id) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 403 });
+    }
+
+    // Supprimer dans l'ordre (a cause des foreign keys)
     const { data: newsletters } = await supabase
       .from("newsletters")
       .select("id")
@@ -33,8 +39,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error("Delete account error:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("Delete account error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

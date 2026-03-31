@@ -6,6 +6,7 @@ import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount, 
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 import { getPlanLimits } from "@/lib/plans";
+import { authFetch } from "@/lib/api";
 
 type Article = {
   tag: string;
@@ -167,10 +168,9 @@ export default function GeneratePage() {
     setSendError("");
 
     try {
-      const response = await fetch("/api/generate", {
+      const response = await authFetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, userEmail: user.email, topics, sources, customBrief }),
+        body: JSON.stringify({ userId: user.id, topics, sources, customBrief }),
       });
       const data = await response.json();
       if (response.status === 429) {
@@ -199,9 +199,8 @@ export default function GeneratePage() {
     setSendResults(null);
 
     try {
-      const response = await fetch("/api/send", {
+      const response = await authFetch("/api/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newsletterId: newsletter.id, userId: user.id }),
       });
       const data = await response.json();

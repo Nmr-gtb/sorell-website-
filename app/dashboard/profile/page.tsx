@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { getProfile, updateProfile } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
+import { authFetch } from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
@@ -57,9 +58,8 @@ export default function ProfilePage() {
   const handlePortal = async () => {
     if (!user) return;
     setPortalLoading(true);
-    const res = await fetch("/api/portal", {
+    const res = await authFetch("/api/portal", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id }),
     });
     const data = await res.json();
@@ -89,9 +89,8 @@ export default function ProfilePage() {
     if (confirmText !== "SUPPRIMER" || !user) return;
     setDeleting(true);
 
-    const res = await fetch("/api/delete-account", {
+    const res = await authFetch("/api/delete-account", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id }),
     });
 

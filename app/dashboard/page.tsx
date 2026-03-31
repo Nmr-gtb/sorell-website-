@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 import { getRecipients, getNewsletterConfig, upsertNewsletterConfig } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
+import { authFetch } from "@/lib/api";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
@@ -325,20 +326,18 @@ export default function DashboardPage() {
 
     // 3. Generate and send first newsletter
     try {
-      const genRes = await fetch("/api/generate", {
+      const genRes = await authFetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, userEmail: user.email }),
+        body: JSON.stringify({ userId: user.id }),
       });
       if (genRes.status === 429) {
         setOnboardingError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
       } else {
         const genData = await genRes.json();
         if (genData.newsletter) {
-          await fetch("/api/send", {
+          await authFetch("/api/send", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+            body: JSON.stringify({ newsletterId: genData.newsletter.id, userId: user.id }),
           });
         }
       }

@@ -1,6 +1,7 @@
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,7 +10,16 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
+
     const { userId } = await request.json();
+
+    if (!userId || userId !== authUser.id) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 403 });
+    }
 
     const { data: profile } = await supabase
       .from("profiles")
@@ -28,7 +38,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Portal error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

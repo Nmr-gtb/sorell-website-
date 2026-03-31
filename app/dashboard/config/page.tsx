@@ -15,6 +15,7 @@ import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
+import { authFetch } from "@/lib/api";
 
 const ALL_SOURCES = [
   "Les Echos",
@@ -286,20 +287,18 @@ const [showAddTopic, setShowAddTopic] = useState(false);
         setInstantError("");
         try {
           const enabledTopics = topics.filter((t) => t.enabled);
-          const genRes = await fetch("/api/generate", {
+          const genRes = await authFetch("/api/generate", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user.id, userEmail: user.email, topics: enabledTopics, sources, customBrief }),
+            body: JSON.stringify({ userId: user.id, topics: enabledTopics, sources, customBrief }),
           });
           if (genRes.status === 429) {
             setInstantError("Vous avez atteint la limite de requetes. Reessayez dans une heure.");
           } else {
             const genData = await genRes.json();
             if (genData.newsletter) {
-              await fetch("/api/send", {
+              await authFetch("/api/send", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ newsletterId: genData.newsletter.id }),
+                body: JSON.stringify({ newsletterId: genData.newsletter.id, userId: user.id }),
               });
               setInstantSent(true);
             }

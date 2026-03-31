@@ -87,8 +87,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error("Contact form error:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("Contact form error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

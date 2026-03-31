@@ -1,5 +1,7 @@
-import { stripe } from "@/lib/stripe";
+import { stripe, PRICE_IDS } from "@/lib/stripe";
 import { NextResponse } from "next/server";
+
+const VALID_PRICE_IDS = new Set(Object.values(PRICE_IDS));
 
 export async function POST(request: Request) {
   try {
@@ -7,6 +9,10 @@ export async function POST(request: Request) {
 
     if (!priceId || !userId) {
       return NextResponse.json({ error: "Missing priceId or userId" }, { status: 400 });
+    }
+
+    if (!VALID_PRICE_IDS.has(priceId)) {
+      return NextResponse.json({ error: "Invalid price" }, { status: 400 });
     }
 
     const base = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
@@ -32,8 +38,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Checkout error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Checkout error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

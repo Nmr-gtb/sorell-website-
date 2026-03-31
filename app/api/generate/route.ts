@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_MAX = 30;
@@ -31,20 +32,27 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { userId, userEmail, topics, sources, customBrief } = await request.json();
-
-    if (!userId || !topics?.length) {
-      return NextResponse.json({ error: "Missing userId or topics" }, { status: 400 });
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
     }
 
-    if (!checkRateLimit(userId)) {
+    const { userId, topics, sources, customBrief } = await request.json();
+
+    if (userId && userId !== authUser.id) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 403 });
+    }
+
+    const verifiedUserId = authUser.id;
+
+    if (!checkRateLimit(verifiedUserId)) {
       return NextResponse.json(
         { error: "Trop de requetes. Reessayez dans une heure." },
         { status: 429 }
       );
     }
 
-    const { data: profile } = await supabase.from("profiles").select("plan").eq("id", userId).single();
+    const { data: profile } = await supabase.from("profiles").select("plan").eq("id", verifiedUserId).single();
     const plan = profile?.plan || "free";
 
     const previewLimits: Record<string, number> = { free: 1, pro: 4, business: -1, enterprise: -1 };
@@ -58,7 +66,7 @@ export async function POST(request: Request) {
       const { count } = await supabase
         .from("newsletters")
         .select("id", { count: "exact", head: true })
-        .eq("user_id", userId)
+        .eq("user_id", verifiedUserId)
         .eq("status", "draft")
         .gte("generated_at", startOfMonth.toISOString());
 
@@ -75,28 +83,46 @@ export async function POST(request: Request) {
       const { data: existingRecipients } = await supabase
         .from("recipients")
         .select("email")
-        .eq("user_id", userId);
+        .eq("user_id", verifiedUserId);
 
       if (!existingRecipients || existingRecipients.length === 0) {
         await supabase.from("recipients").upsert(
-          { user_id: userId, email: userEmail, name: "" },
+          { user_id: verifiedUserId, email: authUser.email, name: "" },
           { onConflict: "user_id,email" }
         );
       }
     }
 
-    const topicsList = topics
+    // Si pas de topics fournis, lire la config depuis la BDD
+    let resolvedTopics = topics;
+    let resolvedSources = sources;
+    let resolvedBrief = customBrief;
+    if (!resolvedTopics?.length) {
+      const { data: config } = await supabase
+        .from("newsletter_config")
+        .select("topics, sources, custom_brief")
+        .eq("user_id", verifiedUserId)
+        .single();
+      if (!config?.topics?.length) {
+        return NextResponse.json({ error: "Aucune thematique configuree" }, { status: 400 });
+      }
+      resolvedTopics = config.topics;
+      resolvedSources = resolvedSources || config.sources;
+      resolvedBrief = resolvedBrief || config.custom_brief;
+    }
+
+    const topicsList = resolvedTopics
       .filter((t: { enabled: boolean }) => t.enabled)
       .map((t: { label: string }) => t.label)
       .join(", ");
 
-    const sourcesList = sources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${sources.join(", ")}` : "";
+    const sourcesList = resolvedSources?.length ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${resolvedSources.join(", ")}` : "";
 
     // --- ANTI-DOUBLON : récupérer les titres des 3 dernières newsletters ---
     const { data: recentNewsletters } = await supabase
       .from("newsletters")
       .select("content")
-      .eq("user_id", userId)
+      .eq("user_id", verifiedUserId)
       .order("created_at", { ascending: false })
       .limit(3);
 
@@ -128,8 +154,8 @@ ${allTitles.map(t => "- " + t).join("\n")}
 
     const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger une newsletter basée sur de VRAIES actualités récentes trouvées sur le web.
 
-${customBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
-"${customBrief}"
+${resolvedBrief ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
+"${resolvedBrief}"
 Les articles doivent correspondre EXACTEMENT à cette demande.
 
 ` : ""}Thématiques : ${topicsList}
@@ -294,7 +320,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
     const { data: newsletter, error } = await supabase
       .from("newsletters")
       .insert({
-        user_id: userId,
+        user_id: verifiedUserId,
         subject,
         content: newsletterContent,
         status: "draft",
@@ -303,13 +329,12 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
     }
 
     return NextResponse.json({ newsletter, articles: newsletterContent.articles, editorial: newsletterContent.editorial, keyFigures: newsletterContent.key_figures });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Generate error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Generate error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }
