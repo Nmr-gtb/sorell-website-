@@ -317,8 +317,8 @@ export default function HomeContent() {
         <style>{`
           @media (max-width: 767px) {
             .hero-section {
-              padding-top: 80px !important;
-              padding-bottom: 40px !important;
+              padding-top: 110px !important;
+              padding-bottom: 0 !important;
               padding-left: 0 !important;
               padding-right: 0 !important;
             }
@@ -326,16 +326,22 @@ export default function HomeContent() {
               flex-direction: column !important;
               border-radius: 0 !important;
               margin: 0 !important;
+              min-height: auto !important;
             }
             .hero-text-col {
-              padding: 32px 24px 28px !important;
+              padding: 32px 20px 28px !important;
             }
             .hero-text-col h1 {
               font-size: clamp(1.5rem, 6vw, 2rem) !important;
+              margin-bottom: 16px !important;
+            }
+            .hero-text-col > div:first-child {
+              margin-bottom: 20px !important;
             }
             .hero-cta-row {
               flex-direction: column !important;
               align-items: stretch !important;
+              margin-bottom: 12px !important;
             }
             .hero-cta-row a {
               width: 100% !important;
@@ -345,18 +351,20 @@ export default function HomeContent() {
             }
             .hero-image-col {
               flex: 0 0 auto !important;
-              padding: 0 !important;
+              padding: 0 16px 16px !important;
             }
             .hero-image-col img {
               width: 100% !important;
-              max-height: 260px !important;
-              object-fit: cover !important;
-              object-position: top center !important;
-              border-radius: 0 !important;
+              max-height: none !important;
+              height: auto !important;
+              object-fit: contain !important;
+              object-position: center !important;
+              border-radius: 12px !important;
               display: block !important;
             }
             .hero-text-col p {
               margin-bottom: 24px !important;
+              font-size: 0.9375rem !important;
             }
           }
         `}</style>
