@@ -1,6 +1,6 @@
 import { stripe, PRICE_TO_PLAN } from "@/lib/stripe";
 import { NextResponse } from "next/server";
-import { supabaseAdminAdmin } from "@/lib/supabaseAdmin-admin";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: Request) {
   const body = await request.text();
