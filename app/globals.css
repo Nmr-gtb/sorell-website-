@@ -15,3 +15,22 @@
   outline: 2px solid #005058;
   outline-offset: 2px;
 }
+
+/* Page transition fade-in */
+body > div > main,
+body > div > div,
+body > div > section,
+[data-page-transition] {
+  animation: pageFadeIn 0.35s ease-out both;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

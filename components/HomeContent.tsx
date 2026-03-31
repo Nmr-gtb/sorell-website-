@@ -701,7 +701,7 @@ export default function HomeContent() {
                   <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginBottom: 16 }}>
                     {plan.desc}
                   </div>
-                  <ul style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                  <ul style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 20 }}>
                     {plan.features.map((f) => (
                       <li
                         key={f}
@@ -720,6 +720,24 @@ export default function HomeContent() {
                       </li>
                     ))}
                   </ul>
+                  <Link
+                    href="/tarifs"
+                    style={{
+                      display: "block",
+                      textAlign: "center",
+                      padding: "10px 16px",
+                      borderRadius: 8,
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      background: plan.popular ? "var(--accent)" : "transparent",
+                      color: plan.popular ? "white" : "var(--accent)",
+                      border: plan.popular ? "none" : "1px solid var(--accent)",
+                      textDecoration: "none",
+                      transition: "opacity 0.15s",
+                    }}
+                  >
+                    {t("home.pricing_link").replace(" →", "")}
+                  </Link>
                 </div>
               </AnimateOnScroll>
             ))}

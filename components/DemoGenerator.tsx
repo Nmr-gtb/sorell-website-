@@ -10,6 +10,7 @@ type AIArticle = {
   summary: string;
   source: string;
   featured?: boolean;
+  image_url?: string | null;
 };
 
 const SECTORS = [
@@ -248,6 +249,7 @@ function DemoNewsletterResult({
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
             <span style={{ fontWeight: 700, fontSize: "0.9375rem", letterSpacing: "-0.02em", color: "var(--text)" }}>
               Sorel<span style={{ color: "var(--accent)" }}>l</span>
             </span>
@@ -268,7 +270,9 @@ function DemoNewsletterResult({
               position: "absolute",
               inset: 0,
               background: colors.hero,
-              backgroundImage: diagonalPattern,
+              backgroundImage: featured?.image_url ? `url(${featured.image_url})` : diagonalPattern,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
           />
           <div
@@ -346,7 +350,9 @@ function DemoNewsletterResult({
                   style={{
                     height: 90,
                     background: bg,
-                    backgroundImage: diagonalPattern,
+                    backgroundImage: article.image_url ? `url(${article.image_url})` : diagonalPattern,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
                   }}
                 />
                 <div style={{ padding: "12px 14px" }}>
@@ -404,7 +410,9 @@ function DemoNewsletterResult({
                   borderRadius: 6,
                   flexShrink: 0,
                   background: colors.highlight,
-                  backgroundImage: diagonalPattern,
+                  backgroundImage: highlight.image_url ? `url(${highlight.image_url})` : diagonalPattern,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
                 }}
               />
               <div style={{ flex: 1 }}>
@@ -495,10 +503,13 @@ function DemoNewsletterResult({
             textAlign: "center" as const,
           }}
         >
-          <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
-            Généré automatiquement par Sorel<span style={{ color: "var(--accent)" }}>l</span>
-            {" · "}Propulsé par IA
-          </span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <img src="/icone.png" alt="S." style={{ width: 18, height: 18 }} />
+            <span style={{ fontSize: "0.6875rem", color: "var(--text-muted)" }}>
+              Généré automatiquement par Sorel<span style={{ color: "var(--accent)" }}>l</span>
+              {" · "}Propulsé par IA
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -506,7 +517,7 @@ function DemoNewsletterResult({
 }
 
 export default function DemoGenerator() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [sector, setSector] = useState("tech");
   const [articles, setArticles] = useState<AIArticle[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -529,7 +540,7 @@ export default function DemoGenerator() {
     }, 1200);
 
     try {
-      const res = await fetch(`/api/demo?sector=${sector}`);
+      const res = await fetch(`/api/demo?sector=${sector}&lang=${lang}`);
       const data = await res.json();
       clearInterval(interval);
       setGenerationTime(Math.round((Date.now() - start) / 1000));
