@@ -460,219 +460,227 @@ export default function GeneratePage() {
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{sendError}</p>
           )}
 
-          {/* Email preview container */}
-          <div style={{ background: bgColor, border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+          {/* Email preview container — V4 matching email-template.ts */}
+          <div style={{ background: bgColor, border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", maxWidth: 620, margin: "0 auto" }}>
 
             {/* Header */}
-            <div style={{ padding: "24px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              {customLogo ? (
-                <img src={customLogo} alt="Logo" style={{ maxHeight: 36, maxWidth: 180 }} />
-              ) : (
-                <span style={{ fontSize: 20, fontWeight: 700, color: textColor, letterSpacing: "-0.02em" }}>
-                  Sorel<span style={{ color: brandColor }}>l</span>
+            <div style={{ padding: "20px 32px", borderBottom: "1px solid #E8E0D8" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                {customLogo ? (
+                  <img src={customLogo} alt="Logo" style={{ maxHeight: 32, maxWidth: 160 }} />
+                ) : (
+                  <img src="/icone.png" alt="S." style={{ width: 32, height: 32 }} />
+                )}
+                <span style={{ fontSize: 12, color: "#7A7267", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                  {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                 </span>
-              )}
-              <span style={{ fontSize: 12, color: "#9CA3AF" }}>
-                {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-              </span>
-            </div>
-
-            {/* Article phare avec bandeau décoratif */}
-            <div style={{ padding: "0 32px 24px" }}>
-              <div style={{ border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden" }}>
-                <div style={{ background: "#1F2937", height: 120 }}></div>
-                <div style={{ padding: "20px 24px", background: bgColor }}>
-                  <span style={{
-                    display: "inline-block",
-                    padding: "4px 12px",
-                    borderRadius: 4,
-                    background: brandColor,
-                    color: "white",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}>
-                    {t("generate.featured_article")}
-                  </span>
-                  <h2 style={{ fontSize: 18, fontWeight: 700, color: textColor, margin: "12px 0 8px", lineHeight: 1.35, letterSpacing: "-0.01em" }}>
-                    {featuredArticle.title}
-                  </h2>
-                  {featuredArticle.hook && (
-                    <p style={{ fontSize: 14, color: bodyTextColor, margin: "0 0 10px", fontStyle: "italic", lineHeight: 1.5 }}>
-                      {featuredArticle.hook}
-                    </p>
-                  )}
-                  <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 12px" }}>
-                    {featuredArticle.content || featuredArticle.summary}
-                  </p>
-                  <a href={featuredArticle.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
-                    {featuredArticle.source} →
-                  </a>
-                </div>
               </div>
             </div>
 
+            {/* Hero */}
+            <div style={{ background: brandColor, display: "flex" }}>
+              <div style={{ padding: "36px 32px 32px", flex: "0 0 65%" }}>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 16px", fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
+                  {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} · {subject}
+                </p>
+                <h1 style={{ fontSize: 26, fontWeight: 700, color: "#FFFFFF", margin: 0, lineHeight: 1.3, fontFamily: "Georgia, 'Times New Roman', serif", letterSpacing: "-0.01em" }}>
+                  Ce qui change dans votre secteur cette semaine
+                </h1>
+              </div>
+              <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
+                <div style={{ height: 140, width: "100%", background: "rgba(255,255,255,0.08)", borderRadius: "8px 0 0 0" }}></div>
+              </div>
+            </div>
+
+            {/* Article phare */}
+            <div style={{ padding: "28px 32px 24px" }}>
+              <div style={{ marginBottom: 14, display: "flex", gap: 8, alignItems: "center" }}>
+                <span style={{
+                  display: "inline-block",
+                  padding: "4px 12px",
+                  borderRadius: 4,
+                  background: brandColor,
+                  color: "white",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  fontFamily: "'Segoe UI', Roboto, Arial, sans-serif",
+                }}>
+                  A la une
+                </span>
+                {featuredArticle.tag && (
+                  <span style={{
+                    display: "inline-block",
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    background: "#F5F0EB",
+                    color: "#7A7267",
+                    fontSize: 10,
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                    fontFamily: "'Segoe UI', Roboto, Arial, sans-serif",
+                  }}>
+                    {featuredArticle.tag}
+                  </span>
+                )}
+              </div>
+              <h2 style={{ fontSize: 22, fontWeight: 700, color: textColor, margin: "0 0 10px", lineHeight: 1.35, fontFamily: "Georgia, 'Times New Roman', serif", letterSpacing: "-0.01em" }}>
+                {featuredArticle.title}
+              </h2>
+              {featuredArticle.hook && (
+                <p style={{ fontSize: 14, color: "#7A7267", margin: "0 0 14px", fontStyle: "italic", lineHeight: 1.55, fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                  {featuredArticle.hook}
+                </p>
+              )}
+              <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.7, margin: "0 0 18px", fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
+                {featuredArticle.content || featuredArticle.summary}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <a href={featuredArticle.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "inline-block", padding: "10px 22px", background: brandColor, color: "white", fontSize: 13, fontWeight: 600, textDecoration: "none", borderRadius: 6, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                  Lire l&apos;article →
+                </a>
+                <span style={{ fontSize: 12, color: "#7A7267", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                  via {featuredArticle.source}
+                </span>
+              </div>
+            </div>
+            <div style={{ padding: "0 32px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+
             {/* Intro personnalisée */}
-            <div style={{ padding: "0 32px 20px" }}>
+            <div style={{ padding: "20px 32px" }}>
               <p style={{ fontSize: 14, color: textColor, lineHeight: 1.6, margin: 0 }}>
                 <span style={{ fontWeight: 600 }}>{t("generate.greeting")}</span>
-                <span style={{ color: "#6B7280" }}> {t("generate.intro_text").replace("{count}", String(otherArticles.length + 1))}</span>
+                <span style={{ color: "#7A7267" }}> {t("generate.intro_text").replace("{count}", String(otherArticles.length + 1))}</span>
               </p>
             </div>
 
             {/* Editorial */}
             {editorial && (
-              <div style={{ padding: "0 32px 24px" }}>
-                <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "16px 20px", background: "#F8FAFC" }}>
-                  <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>
-                    {t("generate.editorial")}
-                  </p>
-                  <p style={{ fontSize: 14, color: bodyTextColor, lineHeight: 1.65, margin: 0, fontStyle: "italic" }}>
-                    {editorial}
-                  </p>
+              <>
+                <div style={{ padding: "0 32px 24px" }}>
+                  <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "18px 22px", background: "#F5F0EB", borderRadius: "0 8px 8px 0" }}>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 12px", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                      Le point de vue
+                    </p>
+                    <p style={{ fontSize: 15, color: bodyTextColor, lineHeight: 1.7, margin: 0, fontStyle: "italic", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                      {editorial}
+                    </p>
+                  </div>
                 </div>
-              </div>
+                <div style={{ padding: "0 32px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+              </>
             )}
 
             {/* Chiffres clés */}
             {keyFigures.length > 0 && (
-              <div style={{ padding: "0 32px 24px" }}>
-                <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 12px" }}>
-                  {t("generate.key_figures")}
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(keyFigures.length, 3)}, 1fr)`, gap: 8 }}>
-                  {keyFigures.map((fig, i) => (
-                    <div key={i} style={{ background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 8, padding: 16, textAlign: "center" }}>
-                      <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px", letterSpacing: "-0.02em" }}>{fig.value}</p>
-                      <p style={{ fontSize: 12, color: "#111827", fontWeight: 500, margin: "0 0 2px" }}>{fig.label}</p>
-                      <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{fig.context}</p>
-                    </div>
-                  ))}
+              <>
+                <div style={{ padding: "24px 32px" }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 16px", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                    Chiffres cl&eacute;s
+                  </p>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    {keyFigures.map((fig, i) => (
+                      <div key={i} style={{ flex: 1, background: "#F5F0EB", border: "1px solid #E8E0D8", borderRadius: 8, padding: 16, textAlign: "center" }}>
+                        <p style={{ fontSize: 26, fontWeight: 700, color: brandColor, margin: "0 0 6px", fontFamily: "Georgia, 'Times New Roman', serif" }}>{fig.value}</p>
+                        <p style={{ fontSize: 12, color: textColor, fontWeight: 600, margin: "0 0 3px", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>{fig.label}</p>
+                        <p style={{ fontSize: 11, color: "#7A7267", margin: 0, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>{fig.context}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+                <div style={{ padding: "0 32px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+              </>
             )}
 
             {/* Articles secondaires */}
-            <div style={{ padding: "0 32px 16px" }}>
-              <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 16px" }}>
-                {t("generate.weekly_news")}
-              </p>
+            {otherArticles.length > 0 && (
+              <div style={{ padding: "24px 32px 8px" }}>
+                <p style={{ fontSize: 11, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 18px", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                  A lire aussi
+                </p>
 
-              {/* 2 premiers articles en grille */}
-              {otherArticles.length >= 2 && (
-                <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-                  {otherArticles.slice(0, 2).map((article, i) => (
-                    <div key={i} style={{ flex: 1, border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden" }}>
-                      <div style={{ background: "#374151", height: 80 }}></div>
-                      <div style={{ padding: 14, background: bgColor }}>
+                {otherArticles.map((article, i) => (
+                  <div key={i} style={{ border: "1px solid #E8E0D8", borderRadius: 10, overflow: "hidden", marginBottom: 18 }}>
+                    <div style={{ padding: 22, background: bgColor }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                         <span style={{
                           display: "inline-block",
-                          padding: "3px 8px",
+                          padding: "3px 10px",
                           borderRadius: 4,
-                          background: "#F3F4F6",
-                          color: "#374151",
+                          background: "#F5F0EB",
+                          color: "#7A7267",
                           fontSize: 9,
                           fontWeight: 700,
                           textTransform: "uppercase",
                           letterSpacing: "0.05em",
+                          fontFamily: "'Segoe UI', Roboto, Arial, sans-serif",
                         }}>
                           {article.tag}
                         </span>
-                        <h3 style={{ fontSize: 14, fontWeight: 600, color: textColor, margin: "8px 0", lineHeight: 1.35 }}>
-                          {article.title}
-                        </h3>
-                        <p style={{ fontSize: 12, color: bodyTextColor, lineHeight: 1.5, margin: "0 0 8px" }}>
-                          {(article.content || article.summary || "").length > 120
-                            ? (article.content || article.summary || "").substring(0, 120) + "..."
-                            : (article.content || article.summary || "")}
-                        </p>
-                        <a href={article.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
-                          style={{ fontSize: 11, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
-                          {article.source} →
-                        </a>
+                        <span style={{ fontSize: 11, color: "#7A7267", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                          {article.source}
+                        </span>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Articles restants */}
-              {otherArticles.slice(2).map((article, i) => (
-                <div key={i} style={{ border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden", marginBottom: 16 }}>
-                  <div style={{ background: "#374151", height: 60 }}></div>
-                  <div style={{ padding: "16px 20px", background: bgColor }}>
-                    <span style={{
-                      display: "inline-block",
-                      padding: "3px 8px",
-                      borderRadius: 4,
-                      background: "#F3F4F6",
-                      color: "#374151",
-                      fontSize: 9,
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}>
-                      {article.tag}
-                    </span>
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: textColor, margin: "8px 0", lineHeight: 1.35 }}>
-                      {article.title}
-                    </h3>
-                    {article.hook && (
-                      <p style={{ fontSize: 13, color: bodyTextColor, margin: "0 0 8px", fontStyle: "italic" }}>
-                        {article.hook}
+                      <h3 style={{ fontSize: 17, fontWeight: 600, color: textColor, margin: "0 0 8px", lineHeight: 1.35, fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                        {article.title}
+                      </h3>
+                      {article.hook && (
+                        <p style={{ fontSize: 13, color: "#7A7267", margin: "0 0 8px", fontStyle: "italic", lineHeight: 1.5, fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                          {article.hook}
+                        </p>
+                      )}
+                      <p style={{ fontSize: 13, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 14px", fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
+                        {(article.content || article.summary || "").length > 180
+                          ? (article.content || article.summary || "").substring(0, 180).replace(/\s+\S*$/, "") + "..."
+                          : (article.content || article.summary || "")}
                       </p>
-                    )}
-                    <p style={{ fontSize: 13, color: bodyTextColor, lineHeight: 1.6, margin: "0 0 10px" }}>
-                      {article.content || article.summary}
-                    </p>
-                    <a href={article.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 500 }}>
-                      {article.source} →
-                    </a>
+                      <a href={article.url || "https://sorell.fr"} target="_blank" rel="noopener noreferrer"
+                        style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontWeight: 600, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                        Lire la suite →
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
-            {/* Statistiques */}
-            <div style={{ padding: "8px 32px 24px" }}>
-              <div style={{ display: "flex", gap: 8 }}>
-                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>147</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.sources_analyzed")}</p>
+            {/* CTA */}
+            <div style={{ padding: "8px 32px 28px" }}>
+              <div style={{ borderRadius: 10, overflow: "hidden", background: brandColor, display: "flex" }}>
+                <div style={{ padding: "28px 28px 28px 32px", flex: "0 0 65%" }}>
+                  <p style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: "0 0 6px", fontFamily: "Georgia, 'Times New Roman', serif", lineHeight: 1.4 }}>
+                    {plan === "free" ? "Partagez cette veille avec votre équipe" : "Cette newsletter vous a été utile ?"}
+                  </p>
+                  <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "0 0 18px", lineHeight: 1.5, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                    {plan === "free" ? "Passez au plan Pro pour envoyer cette veille à vos collaborateurs." : "Transférez-la à un collègue qui devrait la lire."}
+                  </p>
+                  <a href={plan === "free" ? "https://sorell.fr/tarifs" : "#"}
+                    style={{ display: "inline-block", padding: "11px 26px", background: "white", color: brandColor, fontSize: 13, fontWeight: 600, textDecoration: "none", borderRadius: 8, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                    {plan === "free" ? "Voir les plans →" : "Transférer →"}
+                  </a>
                 </div>
-                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>{otherArticles.length + 1}</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.articles_selected")}</p>
-                </div>
-                <div style={{ flex: 1, textAlign: "center", padding: 12, border: "1px solid #E5E7EB", borderRadius: 8 }}>
-                  <p style={{ fontSize: 20, fontWeight: 700, color: brandColor, margin: "0 0 4px" }}>3min</p>
-                  <p style={{ fontSize: 11, color: "#9CA3AF", margin: 0 }}>{t("generate.read_time")}</p>
+                <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
+                  <div style={{ height: 120, width: "100%", background: "rgba(255,255,255,0.06)", borderRadius: "8px 0 0 0" }}></div>
                 </div>
               </div>
             </div>
 
-            {/* CTA */}
-            <div style={{ padding: "0 32px 24px", textAlign: "center" }}>
-              <p style={{ fontSize: 14, color: "#6B7280", margin: "0 0 12px" }}>{t("generate.cta_useful")}</p>
-              <a href="https://sorell.fr/tarifs"
-                style={{ display: "inline-block", padding: "10px 24px", background: brandColor, color: "white", fontSize: 13, fontWeight: 600, textDecoration: "none", borderRadius: 6 }}>
-                {t("generate.cta_share")}
-              </a>
-            </div>
-
             {/* Footer */}
-            <div style={{ padding: "20px 32px", borderTop: "1px solid #E5E7EB", background: "#F9FAFB", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              {customLogo ? (
-                <img src={customLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 140 }} />
-              ) : (
-                <span style={{ fontSize: 14, fontWeight: 700, color: textColor, letterSpacing: "-0.01em" }}>
-                  Sorel<span style={{ color: brandColor }}>l</span>
-                </span>
-              )}
-              <span style={{ fontSize: 12, color: brandColor }}>sorell.fr</span>
+            <div style={{ padding: "22px 32px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                {customLogo ? (
+                  <img src={customLogo} alt="Logo" style={{ maxHeight: 24, maxWidth: 120 }} />
+                ) : (
+                  <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                )}
+                <a href="https://sorell.fr" style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>sorell.fr</a>
+              </div>
+              <p style={{ fontSize: 11, color: "#7A7267", margin: 0, lineHeight: 1.5, fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
+                Généré par Sorell · Votre veille sectorielle par IA
+              </p>
             </div>
 
           </div>
