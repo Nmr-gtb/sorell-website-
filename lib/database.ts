@@ -32,26 +32,26 @@ export async function getNewsletterConfig(userId: string) {
   return { data, error };
 }
 
-export async function upsertNewsletterConfig(userId: string, config: {
-  topics?: { id: string; label: string; enabled: boolean }[];
-  sources?: string[];
-  frequency?: string;
-  custom_brief?: string;
-  send_day?: string;
-  send_hour?: number;
-}) {
+export async function upsertNewsletterConfig(userId: string, config: Record<string, unknown>) {
+  const upsertData: Record<string, unknown> = {
+    user_id: userId,
+    updated_at: new Date().toISOString(),
+  };
+  if (config.topics !== undefined) upsertData.topics = config.topics;
+  if (config.sources !== undefined) upsertData.sources = config.sources;
+  if (config.frequency !== undefined) upsertData.frequency = config.frequency;
+  if (config.custom_brief !== undefined) upsertData.custom_brief = config.custom_brief;
+  if (config.send_day !== undefined) upsertData.send_day = config.send_day;
+  if (config.send_hour !== undefined) upsertData.send_hour = config.send_hour;
+  if (config.brand_color !== undefined) upsertData.brand_color = config.brand_color;
+  if (config.text_color !== undefined) upsertData.text_color = config.text_color;
+  if (config.bg_color !== undefined) upsertData.bg_color = config.bg_color;
+  if (config.body_text_color !== undefined) upsertData.body_text_color = config.body_text_color;
+  if (config.custom_logo_url !== undefined) upsertData.custom_logo_url = config.custom_logo_url;
+
   const { data, error } = await supabase
     .from("newsletter_config")
-    .upsert({
-      user_id: userId,
-      topics: config.topics ?? [],
-      sources: config.sources ?? [],
-      frequency: config.frequency ?? "weekly",
-      custom_brief: config.custom_brief ?? "",
-      send_day: config.send_day ?? "monday",
-      send_hour: config.send_hour ?? 9,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" })
+    .upsert(upsertData, { onConflict: "user_id" })
     .select()
     .single();
   return { data, error };

@@ -12,50 +12,33 @@ import {
 } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
 import { getPlanLimits } from "@/lib/plans";
-import CrownBadge from "@/components/CrownBadge";
 import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
 
 const ALL_SOURCES = [
-  "Les Echos",
-  "Le Monde",
-  "Le Figaro",
-  "BFM Business",
-  "La Tribune",
-  "Challenges",
-  "Financial Times",
-  "Bloomberg",
-  "Reuters",
-  "The Economist",
-  "Harvard Business Review",
-  "TechCrunch",
-  "The Verge",
-  "Wired",
-  "MIT Technology Review",
-  "L'Usine Digitale",
-  "Maddyness",
-  "FrenchWeb",
-  "Capital",
-  "Investir",
-  "McKinsey Insights",
-  "Gartner",
-  "Forrester",
-  "The Lancet",
-  "Nature",
-  "INSERM",
-  "Medscape",
-  "L'Usine Nouvelle",
-  "LSA Commerce",
-  "Stratégies",
-  "CB News",
-  "Mind Media",
+  "Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune",
+  "Challenges", "Financial Times", "Bloomberg", "Reuters", "The Economist",
+  "Harvard Business Review", "TechCrunch", "The Verge", "Wired",
+  "MIT Technology Review", "L'Usine Digitale", "Maddyness", "FrenchWeb",
+  "Capital", "Investir", "McKinsey Insights", "Gartner", "Forrester",
+  "The Lancet", "Nature", "INSERM", "Medscape", "L'Usine Nouvelle",
+  "LSA Commerce", "Stratégies", "CB News", "Mind Media",
 ];
 
+const PRESET_COLORS = [
+  { label: "Teal Sorell", value: "#005058" },
+  { label: "Bleu foncé", value: "#1E40AF" },
+  { label: "Vert", value: "#059669" },
+  { label: "Violet", value: "#7C3AED" },
+  { label: "Rouge", value: "#DC2626" },
+  { label: "Orange", value: "#EA580C" },
+  { label: "Rose", value: "#DB2777" },
+  { label: "Noir", value: "#111827" },
+];
 
 const defaultTopics = DEFAULT_TOPICS;
-
 const defaultSources = ["Les Echos", "TechCrunch", "McKinsey Insights"];
 
 type Recipient = {
@@ -64,39 +47,6 @@ type Recipient = {
   email: string;
   role: string;
 };
-
-function Toggle({ enabled, onChange }: { enabled: boolean; onChange: () => void }) {
-  return (
-    <button
-      onClick={onChange}
-      style={{
-        width: 40,
-        height: 22,
-        borderRadius: 11,
-        background: enabled ? "var(--accent)" : "var(--border)",
-        border: "none",
-        cursor: "pointer",
-        position: "relative",
-        transition: "background 0.2s ease",
-        flexShrink: 0,
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          top: 3,
-          left: enabled ? 21 : 3,
-          width: 16,
-          height: 16,
-          borderRadius: "50%",
-          background: "white",
-          transition: "left 0.2s ease",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-        }}
-      />
-    </button>
-  );
-}
 
 function IconX() {
   return (
@@ -107,41 +57,175 @@ function IconX() {
   );
 }
 
+/* ─── Tab icon components ─── */
+function IconFileText() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+    </svg>
+  );
+}
+
+function IconGlobe() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
+function IconSend() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13" />
+      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+    </svg>
+  );
+}
+
+function IconPalette() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="13.5" cy="6.5" r="2.5" />
+      <circle cx="17.5" cy="10.5" r="2.5" />
+      <circle cx="8.5" cy="7.5" r="2.5" />
+      <circle cx="6.5" cy="12" r="2.5" />
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+    </svg>
+  );
+}
+
+function IconUsers() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function IconClock() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function IconSave() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
+    </svg>
+  );
+}
+
+function IconPlus() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function IconUpload() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function IconEye() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function CrownIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" strokeWidth="1.5">
+      <path d="M2 20h20L19 9l-5 4-2-6-2 6-5-4z" />
+    </svg>
+  );
+}
+
+type TabId = "contenu" | "sources" | "envoi" | "apparence";
+
 export default function ConfigPage() {
   const { user } = useAuth();
   const { t } = useLanguage();
-
-  const [topics, setTopics] = useState(defaultTopics);
-  const [sources, setSources] = useState(defaultSources);
-  const [newSource, setNewSource] = useState("");
-  const [frequency, setFrequency] = useState("weekly");
-  const [sendDay, setSendDay] = useState("monday");
-  const [sendHour, setSendHour] = useState(9);
-  const [customBrief, setCustomBrief] = useState("");
-  const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [realPlan, setRealPlan] = useState<string>("free");
   const { getEffectivePlan } = useDevMode();
 
-  const [sendDay2, setSendDay2] = useState("thursday");
-  const [instantSending, setInstantSending] = useState(false);
-  const [instantSent, setInstantSent] = useState(false);
-  const [instantError, setInstantError] = useState("");
+  const [activeTab, setActiveTab] = useState<TabId>("contenu");
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [saveError, setSaveError] = useState("");
-
-const [showAddTopic, setShowAddTopic] = useState(false);
-  const [showSourcePicker, setShowSourcePicker] = useState(false);
+  // Content state
+  const [topics, setTopics] = useState(defaultTopics);
+  const [customBrief, setCustomBrief] = useState("");
   const [newTopicLabel, setNewTopicLabel] = useState("");
+  const [showAddTopic, setShowAddTopic] = useState(false);
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  // Sources state
+  const [sources, setSources] = useState(defaultSources);
+  const [newSource, setNewSource] = useState("");
+
+  // Scheduling state
+  const [frequency, setFrequency] = useState("weekly");
+  const [sendDay, setSendDay] = useState("monday");
+  const [sendDay2, setSendDay2] = useState("thursday");
+  const [sendHour, setSendHour] = useState(9);
+
+  // Recipients state
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newRole, setNewRole] = useState("");
   const [addingRecipient, setAddingRecipient] = useState(false);
   const [recipientLimitMsg, setRecipientLimitMsg] = useState("");
+
+  // Customization state
+  const [brandColor, setBrandColor] = useState("#005058");
+  const [textColor, setTextColor] = useState("#111827");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [bodyTextColor, setBodyTextColor] = useState("#4B5563");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Global state
+  const [realPlan, setRealPlan] = useState<string>("free");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [instantSending, setInstantSending] = useState(false);
+  const [instantSent, setInstantSent] = useState(false);
+  const [instantError, setInstantError] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -160,15 +244,9 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
       if (configResult.data) {
         const cfg = configResult.data;
-        if (cfg.topics && cfg.topics.length > 0) {
-          setTopics(cfg.topics);
-        }
-        if (cfg.sources && cfg.sources.length > 0) {
-          setSources(cfg.sources);
-        }
-        if (cfg.frequency) {
-          setFrequency(cfg.frequency);
-        }
+        if (cfg.topics && cfg.topics.length > 0) setTopics(cfg.topics);
+        if (cfg.sources && cfg.sources.length > 0) setSources(cfg.sources);
+        if (cfg.frequency) setFrequency(cfg.frequency);
         if (cfg.send_day) {
           if (cfg.frequency === "biweekly" && cfg.send_day.includes(",")) {
             const parts = cfg.send_day.split(",");
@@ -178,35 +256,25 @@ const [showAddTopic, setShowAddTopic] = useState(false);
             setSendDay(cfg.send_day);
           }
         }
-        if (cfg.send_hour !== undefined && cfg.send_hour !== null) {
-          setSendHour(cfg.send_hour);
-        }
-        if (cfg.custom_brief) {
-          setCustomBrief(cfg.custom_brief);
-        }
+        if (cfg.send_hour !== undefined && cfg.send_hour !== null) setSendHour(cfg.send_hour);
+        if (cfg.custom_brief) setCustomBrief(cfg.custom_brief);
+        if (cfg.brand_color) setBrandColor(cfg.brand_color);
+        if (cfg.custom_logo_url) setLogoUrl(cfg.custom_logo_url);
+        if (cfg.text_color) setTextColor(cfg.text_color);
+        if (cfg.bg_color) setBgColor(cfg.bg_color);
+        if (cfg.body_text_color) setBodyTextColor(cfg.body_text_color);
       }
 
       let loadedRecipients = recipientsResult.data ?? [];
-
       if (loadedRecipients.length === 0 && user?.email) {
         await supabase.from("recipients").upsert(
-          {
-            user_id: user.id,
-            email: user.email,
-            name: user.user_metadata?.full_name || "",
-            role: "",
-          },
+          { user_id: user.id, email: user.email, name: user.user_metadata?.full_name || "", role: "" },
           { onConflict: "user_id,email" }
         );
-        const { data: refreshed } = await supabase
-          .from("recipients")
-          .select("*")
-          .eq("user_id", user.id);
+        const { data: refreshed } = await supabase.from("recipients").select("*").eq("user_id", user.id);
         loadedRecipients = refreshed ?? [];
       }
-
       setRecipients(loadedRecipients);
-
       setLoading(false);
     }
 
@@ -215,24 +283,23 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
   const plan = getEffectivePlan(realPlan);
   const limits = getPlanLimits(plan);
+  const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
+  const canUseLogo = plan === "business" || plan === "enterprise";
 
+  /* ─── Topic handlers ─── */
   const toggleTopic = (id: string) => {
-    setTopics((prev) => prev.map((t) => (t.id === id ? { ...t, enabled: !t.enabled } : t)));
+    setTopics((prev) => prev.map((tp) => (tp.id === id ? { ...tp, enabled: !tp.enabled } : tp)));
   };
-
   const addCustomTopic = () => {
     const trimmed = newTopicLabel.trim();
     if (!trimmed) return;
-    const id = `custom-${Date.now()}`;
-    setTopics((prev) => [...prev, { id, label: trimmed, enabled: true }]);
+    setTopics((prev) => [...prev, { id: `custom-${Date.now()}`, label: trimmed, enabled: true }]);
     setNewTopicLabel("");
     setShowAddTopic(false);
   };
+  const removeTopic = (id: string) => setTopics((prev) => prev.filter((tp) => tp.id !== id));
 
-  const removeTopic = (id: string) => {
-    setTopics((prev) => prev.filter((t) => t.id !== id));
-  };
-
+  /* ─── Source handlers ─── */
   const addSource = () => {
     const trimmed = newSource.trim();
     if (trimmed && !sources.includes(trimmed)) {
@@ -240,15 +307,38 @@ const [showAddTopic, setShowAddTopic] = useState(false);
       setNewSource("");
     }
   };
-
   const removeSource = (s: string) => setSources((prev) => prev.filter((x) => x !== s));
 
-  const addCuratedSource = (s: string) => {
-    if (!sources.includes(s)) {
-      setSources((prev) => [...prev, s]);
+  /* ─── Logo handlers ─── */
+  const handleLogoDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === "image/png" || file.type === "image/svg+xml" || file.type === "image/jpeg")) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
     }
   };
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === "image/png" || file.type === "image/svg+xml" || file.type === "image/jpeg")) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+  const uploadLogo = async () => {
+    if (!logoFile || !user) return null;
+    setUploading(true);
+    const fileExt = logoFile.name.split(".").pop();
+    const filePath = `${user.id}/logo.${fileExt}`;
+    await supabase.storage.from("logos").remove([`${user.id}/logo.png`, `${user.id}/logo.svg`, `${user.id}/logo.jpg`, `${user.id}/logo.jpeg`]);
+    const { error } = await supabase.storage.from("logos").upload(filePath, logoFile, { upsert: true });
+    setUploading(false);
+    if (error) return null;
+    const { data: urlData } = supabase.storage.from("logos").getPublicUrl(filePath);
+    return urlData.publicUrl;
+  };
 
+  /* ─── Save handler ─── */
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
@@ -256,7 +346,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
 
     let savedFrequency = frequency;
     let savedSendDay = sendDay;
-    let savedSendHour = sendHour;
+    const savedSendHour = sendHour;
 
     if (plan === "free") {
       savedFrequency = "bimonthly";
@@ -267,11 +357,37 @@ const [showAddTopic, setShowAddTopic] = useState(false);
       savedSendDay = `${sendDay},${sendDay2}`;
     }
 
-    const { error } = await upsertNewsletterConfig(user.id, {
-      topics, sources, frequency: savedFrequency, custom_brief: customBrief,
-      send_day: savedSendDay, send_hour: savedSendHour,
-    });
+    // Upload logo if needed
+    let finalLogoUrl = logoUrl;
+    if (logoFile && canUseLogo) {
+      const uploadedUrl = await uploadLogo();
+      if (uploadedUrl) {
+        finalLogoUrl = uploadedUrl;
+        setLogoUrl(uploadedUrl);
+        setLogoFile(null);
+      }
+    }
+
+    const updateData: Record<string, unknown> = {
+      topics,
+      sources,
+      frequency: savedFrequency,
+      custom_brief: customBrief,
+      send_day: savedSendDay,
+      send_hour: savedSendHour,
+    };
+
+    if (isPro) {
+      updateData.brand_color = brandColor;
+      updateData.text_color = textColor;
+      updateData.bg_color = bgColor;
+      updateData.body_text_color = bodyTextColor;
+      updateData.custom_logo_url = finalLogoUrl || null;
+    }
+
+    const { error } = await upsertNewsletterConfig(user.id, updateData);
     setSaving(false);
+
     if (error) {
       setSaveError(t("config.save_error"));
     } else {
@@ -288,7 +404,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
         setInstantSending(true);
         setInstantError("");
         try {
-          const enabledTopics = topics.filter((t) => t.enabled);
+          const enabledTopics = topics.filter((tp) => tp.enabled);
           const genRes = await authFetch("/api/generate", {
             method: "POST",
             body: JSON.stringify({ userId: user.id, topics: enabledTopics, sources, customBrief }),
@@ -305,7 +421,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               setInstantSent(true);
             }
           }
-        } catch (e) {
+        } catch {
           // silently ignore
         }
         setInstantSending(false);
@@ -313,9 +429,9 @@ const [showAddTopic, setShowAddTopic] = useState(false);
     }
   };
 
+  /* ─── Recipient handlers ─── */
   const handleAddRecipient = async () => {
     if (!user || !newName.trim() || !newEmail.trim()) return;
-
     const maxR = limits.maxRecipients;
     if (maxR !== -1 && recipients.length >= maxR) {
       setRecipientLimitMsg(
@@ -327,7 +443,6 @@ const [showAddTopic, setShowAddTopic] = useState(false);
       );
       return;
     }
-
     setAddingRecipient(true);
     const { data, error } = await addRecipient(user.id, {
       name: newName.trim(),
@@ -340,7 +455,6 @@ const [showAddTopic, setShowAddTopic] = useState(false);
       setNewName("");
       setNewEmail("");
       setNewRole("");
-      setShowAddForm(false);
       setRecipientLimitMsg("");
     }
   };
@@ -358,37 +472,81 @@ const [showAddTopic, setShowAddTopic] = useState(false);
     ? `${recipients.length} ${t("config.recipient_count")}`
     : `${recipients.length} / ${maxR} ${t("config.recipient_count")}`;
 
+  /* ─── Tab config ─── */
+  const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
+    { id: "contenu", label: t("config.tab_contenu"), icon: <IconFileText /> },
+    { id: "sources", label: t("config.tab_sources"), icon: <IconGlobe /> },
+    { id: "envoi", label: t("config.tab_envoi"), icon: <IconSend /> },
+    { id: "apparence", label: t("config.tab_apparence"), icon: <IconPalette /> },
+  ];
+
+  /* ─── Schedule confirmation text ─── */
+  const getScheduleConfirmation = () => {
+    const dayKey = `config.${sendDay}` as const;
+    const dayKey2 = `config.${sendDay2}` as const;
+    const dayLabel = t(dayKey) || sendDay;
+    const dayLabel2 = t(dayKey2) || sendDay2;
+    const timeStr = `${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}`;
+    if (plan === "free") return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
+    if (plan === "pro") return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", `${sendHour}h00`);
+    if (frequency === "daily") return t("config.confirm_daily").replace("{hour}", timeStr);
+    if (frequency === "biweekly") return t("config.confirm_biweekly").replace("{day1}", dayLabel).replace("{day2}", dayLabel2).replace("{hour}", timeStr);
+    return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", timeStr);
+  };
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return parts[0]?.[0]?.toUpperCase() || "?";
+  };
+
+  const avatarColors = ["#005058", "#0D9488", "#7C3AED", "#DC2626", "#EA580C", "#059669", "#1E40AF", "#DB2777"];
+
   return (
-    <div style={{ padding: 32, maxWidth: 700 }}>
+    <div style={{ padding: "32px 40px", maxWidth: 900 }}>
       {/* Page header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1
-          style={{
-            fontSize: 24,
-            fontWeight: 600,
-            color: "var(--text)",
-            letterSpacing: "-0.02em",
-            marginBottom: 6,
-          }}
-        >
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
           {t("config.title")}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          {t("config.subtitle")}
+          {t("config.subtitle_tabs")}
         </p>
       </div>
 
+      {/* Tab bar */}
       <div style={{
-        padding: "12px 16px",
-        background: "rgba(0,80,88,0.04)",
-        border: "1px solid rgba(0,80,88,0.1)",
-        borderRadius: 8,
-        marginBottom: 20,
-        fontSize: 13,
-        color: "var(--text-secondary)",
-        lineHeight: 1.5,
+        display: "flex",
+        borderBottom: "1px solid var(--border)",
+        marginBottom: 28,
+        gap: 0,
       }}>
-        {t("config.info_banner")}
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "12px 20px",
+                background: "transparent",
+                border: "none",
+                borderBottom: isActive ? "2px solid var(--accent)" : "2px solid transparent",
+                cursor: "pointer",
+                fontSize: 14,
+                fontWeight: isActive ? 500 : 400,
+                color: isActive ? "var(--accent)" : "var(--text-muted)",
+                transition: "color 0.15s ease, border-color 0.15s ease",
+              }}
+            >
+              <span style={{ display: "flex", opacity: isActive ? 1 : 0.6 }}>{tab.icon}</span>
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
@@ -397,45 +555,511 @@ const [showAddTopic, setShowAddTopic] = useState(false);
         </div>
       ) : (
         <>
-          {/* Topics card */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 16,
-              }}
-            >
-              {t("config.topics")}
-            </h2>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {topics.map((topic, i) => (
-                <div key={topic.id}>
-                  {i > 0 && <div style={{ height: 1, background: "var(--border)" }} />}
-                  <div
+          {/* ═══════ TAB: CONTENU ═══════ */}
+          {activeTab === "contenu" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Brief section */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                    {t("config.custom_brief")}
+                  </h2>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                    {customBrief.length} / 1000
+                  </span>
+                </div>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  {t("config.custom_brief_desc")}
+                </p>
+                <textarea
+                  className="input-field"
+                  value={customBrief}
+                  onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
+                  placeholder={t("config.custom_brief_placeholder")}
+                  style={{ width: "100%", minHeight: 140, resize: "vertical", boxSizing: "border-box" }}
+                />
+              </div>
+
+              {/* Topics section */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: "0 0 6px" }}>
+                  {t("config.topics")}
+                </h2>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  {t("config.topics_desc")}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                  {topics.map((topic) => (
+                    <button
+                      key={topic.id}
+                      onClick={() => toggleTopic(topic.id)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "6px 14px",
+                        borderRadius: 99,
+                        border: topic.enabled ? "1.5px solid var(--accent)" : "1px solid var(--border)",
+                        background: topic.enabled ? "rgba(0,80,88,0.06)" : "var(--surface)",
+                        color: topic.enabled ? "var(--accent)" : "var(--text-secondary)",
+                        fontSize: 13,
+                        fontWeight: topic.enabled ? 500 : 400,
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      {topic.enabled && <IconCheck />}
+                      {topic.label}
+                      {topic.id.startsWith("custom-") && (
+                        <span
+                          onClick={(e) => { e.stopPropagation(); removeTopic(topic.id); }}
+                          style={{ display: "flex", marginLeft: 2, opacity: 0.5 }}
+                        >
+                          <IconX />
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                {showAddTopic ? (
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <input
+                      className="input-field"
+                      value={newTopicLabel}
+                      onChange={(e) => setNewTopicLabel(e.target.value)}
+                      placeholder={t("config.topic_placeholder")}
+                      onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
+                      autoFocus
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      onClick={addCustomTopic}
+                      disabled={!newTopicLabel.trim()}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "none",
+                        background: "var(--accent)",
+                        color: "white",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        cursor: newTopicLabel.trim() ? "pointer" : "not-allowed",
+                        opacity: newTopicLabel.trim() ? 1 : 0.5,
+                      }}
+                    >
+                      <IconPlus />
+                      {t("common.add")}
+                    </button>
+                    <button
+                      onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
+                      style={{
+                        padding: "8px 14px",
+                        borderRadius: 8,
+                        border: "1px solid var(--border)",
+                        background: "transparent",
+                        color: "var(--text-secondary)",
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {t("common.cancel")}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowAddTopic(true)}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "12px 0",
+                      gap: 6,
+                      padding: "8px 16px",
+                      borderRadius: 8,
+                      border: "1px dashed var(--border)",
+                      background: "transparent",
+                      color: "var(--text-muted)",
+                      fontSize: 13,
+                      cursor: "pointer",
                     }}
                   >
-                    <span style={{ fontSize: 14, color: "var(--text)" }}>{topic.label}</span>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      {topic.id.startsWith("custom-") && (
+                    <IconPlus />
+                    {t("config.add_topic")}
+                  </button>
+                )}
+              </div>
+
+              {/* Save button */}
+              {renderSaveButton()}
+            </div>
+          )}
+
+          {/* ═══════ TAB: SOURCES ═══════ */}
+          {activeTab === "sources" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Verified sources grid */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: "0 0 6px" }}>
+                  {t("config.verified_sources")}
+                </h2>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  {t("config.verified_sources_desc")}
+                </p>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                  gap: 8,
+                }}>
+                  {ALL_SOURCES.map((source) => {
+                    const isSelected = sources.includes(source);
+                    return (
+                      <button
+                        key={source}
+                        onClick={() => {
+                          if (isSelected) setSources(sources.filter((s) => s !== source));
+                          else setSources([...sources, source]);
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "10px 14px",
+                          borderRadius: 8,
+                          border: isSelected ? "1.5px solid var(--accent)" : "1px solid var(--border)",
+                          background: isSelected ? "rgba(0,80,88,0.04)" : "var(--surface)",
+                          cursor: "pointer",
+                          fontSize: 13,
+                          color: isSelected ? "var(--accent)" : "var(--text)",
+                          fontWeight: isSelected ? 500 : 400,
+                          textAlign: "left",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <span>{source}</span>
+                        {isSelected && (
+                          <span style={{ color: "var(--accent)", display: "flex" }}>
+                            <IconCheck />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Custom source */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: "0 0 6px" }}>
+                  {t("config.custom_source")}
+                </h2>
+                <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 12 }}>
+                  <input
+                    className="input-field"
+                    value={newSource}
+                    onChange={(e) => setNewSource(e.target.value)}
+                    placeholder={t("config.add_source_placeholder")}
+                    onKeyDown={(e) => e.key === "Enter" && addSource()}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    onClick={addSource}
+                    disabled={!newSource.trim()}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "8px 16px",
+                      borderRadius: 8,
+                      border: "none",
+                      background: "var(--accent)",
+                      color: "white",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: newSource.trim() ? "pointer" : "not-allowed",
+                      opacity: newSource.trim() ? 1 : 0.5,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <IconPlus />
+                    {t("common.add")}
+                  </button>
+                </div>
+                {/* Show custom sources (not in ALL_SOURCES) */}
+                {sources.filter((s) => !ALL_SOURCES.includes(s)).length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+                    {sources.filter((s) => !ALL_SOURCES.includes(s)).map((s) => (
+                      <div
+                        key={s}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "6px 12px",
+                          borderRadius: 8,
+                          background: "var(--surface-alt)",
+                          border: "1px solid var(--border)",
+                          fontSize: 13,
+                          color: "var(--text)",
+                        }}
+                      >
+                        {s}
                         <button
-                          onClick={() => removeTopic(topic.id)}
+                          onClick={() => removeSource(s)}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "var(--text-muted)",
+                            display: "flex",
+                            padding: 0,
+                          }}
+                        >
+                          <IconX />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {renderSaveButton()}
+            </div>
+          )}
+
+          {/* ═══════ TAB: ENVOI ═══════ */}
+          {activeTab === "envoi" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Schedule section */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "flex", color: "var(--accent)" }}><IconClock /></span>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                    {t("config.scheduling")}
+                  </h2>
+                </div>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20 }}>
+                  {t("config.scheduling_desc")}
+                </p>
+
+                {plan === "free" ? (
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 200px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.frequency")}</label>
+                      <div style={{
+                        padding: "10px 14px",
+                        borderRadius: 8,
+                        border: "1px solid var(--border)",
+                        background: "var(--surface-alt)",
+                        fontSize: 14,
+                        color: "var(--text-muted)",
+                      }}>
+                        {t("config.free_schedule_desc")}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 150px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
+                      <select
+                        className="select-field"
+                        value={sendHour}
+                        onChange={(e) => setSendHour(Number(e.target.value))}
+                        style={{ height: 42 }}
+                      >
+                        <option value={8}>{t("config.morning")}</option>
+                        <option value={12}>{t("config.noon")}</option>
+                        <option value={18}>{t("config.evening")}</option>
+                      </select>
+                    </div>
+                  </div>
+                ) : plan === "pro" ? (
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 200px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.day")}</label>
+                      <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)} style={{ height: 42 }}>
+                        <option value="monday">{t("config.monday")}</option>
+                        <option value="tuesday">{t("config.tuesday")}</option>
+                        <option value="wednesday">{t("config.wednesday")}</option>
+                        <option value="thursday">{t("config.thursday")}</option>
+                        <option value="friday">{t("config.friday")}</option>
+                        <option value="saturday">{t("config.saturday")}</option>
+                        <option value="sunday">{t("config.sunday")}</option>
+                      </select>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 150px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
+                      <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))} style={{ height: 42 }}>
+                        {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
+                          <option key={h} value={h}>{h}h00</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 160px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.frequency")}</label>
+                      <select
+                        className="select-field"
+                        value={frequency}
+                        onChange={(e) => {
+                          setFrequency(e.target.value);
+                          if (e.target.value === "weekly" || e.target.value === "biweekly") setSendDay("monday");
+                        }}
+                        style={{ height: 42 }}
+                      >
+                        <option value="weekly">{t("config.freq_weekly")}</option>
+                        <option value="biweekly">{t("config.freq_biweekly")}</option>
+                        <option value="daily">{t("config.freq_daily")}</option>
+                      </select>
+                    </div>
+                    {(frequency === "weekly" || frequency === "biweekly") && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                          {frequency === "biweekly" ? t("config.first_day") : t("config.day")}
+                        </label>
+                        <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)} style={{ height: 42 }}>
+                          <option value="monday">{t("config.monday")}</option>
+                          <option value="tuesday">{t("config.tuesday")}</option>
+                          <option value="wednesday">{t("config.wednesday")}</option>
+                          <option value="thursday">{t("config.thursday")}</option>
+                          <option value="friday">{t("config.friday")}</option>
+                        </select>
+                      </div>
+                    )}
+                    {frequency === "biweekly" && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.second_day")}</label>
+                        <select className="select-field" value={sendDay2} onChange={(e) => setSendDay2(e.target.value)} style={{ height: 42 }}>
+                          <option value="monday">{t("config.monday")}</option>
+                          <option value="tuesday">{t("config.tuesday")}</option>
+                          <option value="wednesday">{t("config.wednesday")}</option>
+                          <option value="thursday">{t("config.thursday")}</option>
+                          <option value="friday">{t("config.friday")}</option>
+                        </select>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
+                      <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))} style={{ height: 42 }}>
+                        {Array.from({ length: 29 }, (_, i) => 6 + i * 0.5).map((h) => (
+                          <option key={h} value={h}>{Math.floor(h)}h{h % 1 === 0.5 ? "30" : "00"}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* Confirmation banner */}
+                <div style={{
+                  marginTop: 16,
+                  padding: "12px 16px",
+                  background: "rgba(16,185,129,0.06)",
+                  border: "1px solid rgba(16,185,129,0.15)",
+                  borderRadius: 8,
+                  fontSize: 13,
+                  color: "#059669",
+                  lineHeight: 1.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}>
+                  <span style={{ display: "flex", flexShrink: 0 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                  </span>
+                  {getScheduleConfirmation()}
+                </div>
+              </div>
+
+              {/* Recipients section */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ display: "flex", color: "var(--accent)" }}><IconUsers /></span>
+                    <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                      {t("config.recipients")}
+                    </h2>
+                  </div>
+                  <span style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "var(--accent)",
+                    background: "rgba(0,80,88,0.08)",
+                    padding: "4px 10px",
+                    borderRadius: 99,
+                  }}>
+                    {recipientsLabel}
+                  </span>
+                </div>
+
+                {/* Recipient list */}
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {recipients.map((r, i) => (
+                    <div key={r.id}>
+                      {i > 0 && <div style={{ height: 1, background: "var(--border)" }} />}
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "12px 0",
+                        gap: 12,
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "50%",
+                            background: avatarColors[i % avatarColors.length],
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                          }}>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
+                              {getInitials(r.name || r.email)}
+                            </span>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>{r.name}</div>
+                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                              {r.email}{r.role ? ` · ${r.role}` : ""}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteRecipient(r.id)}
                           style={{
                             background: "transparent",
                             border: "none",
@@ -452,603 +1076,355 @@ const [showAddTopic, setShowAddTopic] = useState(false);
                         >
                           <IconX />
                         </button>
-                      )}
-                      <Toggle enabled={topic.enabled} onChange={() => toggleTopic(topic.id)} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{ marginTop: 12 }}>
-              {showAddTopic ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
-                  <input
-                    className="input-field"
-                    value={newTopicLabel}
-                    onChange={(e) => setNewTopicLabel(e.target.value)}
-                    placeholder={t("config.topic_placeholder")}
-                    onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
-                    autoFocus
-                    style={{ width: "100%", boxSizing: "border-box" }}
-                  />
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button
-                      className="btn-primary"
-                      onClick={addCustomTopic}
-                      disabled={!newTopicLabel.trim()}
-                      style={{ fontSize: 13, padding: "6px 14px" }}
-                    >
-                      {t("common.add")}
-                    </button>
-                    <button
-                      className="btn-ghost"
-                      onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
-                      style={{ fontSize: 13, padding: "6px 14px" }}
-                    >
-                      {t("common.cancel")}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  className="btn-ghost"
-                  onClick={() => setShowAddTopic(true)}
-                  style={{ fontSize: 13, padding: "6px 14px" }}
-                >
-                  {t("config.add_topic")}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Custom brief card */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 6,
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              {t("config.custom_brief")}
-            </h2>
-            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-              {t("config.custom_brief_desc")}
-            </p>
-
-            <textarea
-              className="input-field"
-              value={customBrief}
-              onChange={(e) => setCustomBrief(e.target.value.slice(0, 1000))}
-              placeholder={t("config.custom_brief_placeholder")}
-              style={{ width: "100%", minHeight: 160, resize: "vertical", boxSizing: "border-box" }}
-            />
-            <div style={{
-              marginTop: 12,
-              padding: "12px 16px",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-              fontSize: 12,
-              color: "var(--text-muted)",
-              lineHeight: 1.6,
-            }}>
-              <span style={{ fontWeight: 600, color: "var(--text-secondary)", fontSize: 12 }}>{t("config.tip_title")}</span>
-              <div style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: "4px 16px" }}>
-                <span>{t("config.tip_competitors")}</span>
-                <span>{t("config.tip_clients")}</span>
-                <span>{t("config.tip_regulations")}</span>
-                <span>{t("config.tip_innovations")}</span>
-              </div>
-            </div>
-            <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
-              {customBrief.length} / 1000
-            </div>
-          </div>
-
-          {/* Sources card */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 16,
-              }}
-            >
-              {t("config.sources")}
-            </h2>
-
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-              <input
-                className="input-field"
-                value={newSource}
-                onChange={(e) => setNewSource(e.target.value)}
-                placeholder={t("config.add_source_placeholder")}
-                onKeyDown={(e) => e.key === "Enter" && addSource()}
-                style={{ flex: 1 }}
-              />
-              <button
-                className="btn-ghost"
-                onClick={addSource}
-                style={{ fontSize: 14, padding: "7px 16px", flexShrink: 0 }}
-              >
-                {t("common.add")}
-              </button>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {sources.map((s) => (
-                <div
-                  key={s}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "8px 12px",
-                    background: "var(--surface-alt)",
-                    borderRadius: 8,
-                    border: "1px solid var(--border)",
-                  }}
-                >
-                  <span style={{ fontSize: 14, color: "var(--text)" }}>{s}</span>
-                  <button
-                    onClick={() => removeSource(s)}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--text-muted)",
-                      display: "flex",
-                      alignItems: "center",
-                      padding: 4,
-                      borderRadius: 4,
-                      transition: "color 0.1s ease",
-                    }}
-                    onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--error)")}
-                    onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)")}
-                  >
-                    <IconX />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Curated sources library */}
-            <div style={{ marginTop: 20 }}>
-              <button
-                onClick={() => setShowSourcePicker(!showSourcePicker)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "10px 14px",
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: showSourcePicker ? "8px 8px 0 0" : 8,
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: "var(--text)",
-                }}
-              >
-                <span>{t("config.select_verified_sources")}</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {sources.length > 0 && (
-                    <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600 }}>
-                      {sources.length} {t("config.source_count")}
-                    </span>
-                  )}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                    style={{ color: "var(--text-muted)", transform: showSourcePicker ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </span>
-              </button>
-              {showSourcePicker && (
-                <div style={{
-                  border: "1px solid var(--border)",
-                  borderTop: "none",
-                  borderRadius: "0 0 8px 8px",
-                  maxHeight: 280,
-                  overflowY: "auto",
-                  background: "var(--surface)",
-                }}>
-                  {ALL_SOURCES.map((source, index) => {
-                    const isSelected = sources.includes(source);
-                    return (
-                      <button
-                        key={source}
-                        onClick={() => {
-                          if (isSelected) {
-                            setSources(sources.filter(s => s !== source));
-                          } else {
-                            setSources([...sources, source]);
-                          }
-                        }}
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px 14px",
-                          background: isSelected ? "rgba(0,80,88,0.04)" : "transparent",
-                          border: "none",
-                          borderBottom: index < ALL_SOURCES.length - 1 ? "1px solid var(--border)" : "none",
-                          cursor: "pointer",
-                          fontSize: 13,
-                          color: isSelected ? "var(--accent)" : "var(--text)",
-                          fontWeight: isSelected ? 500 : 400,
-                          textAlign: "left",
-                        }}
-                      >
-                        <span>{source}</span>
-                        {isSelected && (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 12l5 5L20 7" />
-                          </svg>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Scheduling card */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 16,
-              }}
-            >
-              {t("config.scheduling")}
-            </h2>
-
-            {plan === "free" ? (
-              <>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  {t("config.free_schedule_desc")}
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 200 }}>
-                  <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.send_slot")}</label>
-                  <select
-                    className="select-field"
-                    value={sendHour}
-                    onChange={(e) => setSendHour(Number(e.target.value))}
-                  >
-                    <option value={8}>{t("config.morning")}</option>
-                    <option value={12}>{t("config.noon")}</option>
-                    <option value={18}>{t("config.evening")}</option>
-                  </select>
-                </div>
-              </>
-            ) : plan === "pro" ? (
-              <>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  {t("config.pro_schedule_desc")}
-                </p>
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.day")}</label>
-                    <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
-                      <option value="monday">{t("config.monday")}</option>
-                      <option value="tuesday">{t("config.tuesday")}</option>
-                      <option value="wednesday">{t("config.wednesday")}</option>
-                      <option value="thursday">{t("config.thursday")}</option>
-                      <option value="friday">{t("config.friday")}</option>
-                      <option value="saturday">{t("config.saturday")}</option>
-                      <option value="sunday">{t("config.sunday")}</option>
-                    </select>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
-                    <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))}>
-                      {Array.from({ length: 15 }, (_, i) => i + 6).map((h) => (
-                        <option key={h} value={h}>{h}h00</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                  {t("config.advanced_scheduling")}
-                </p>
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 160px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.frequency")}</label>
-                    <select
-                      className="select-field"
-                      value={frequency}
-                      onChange={(e) => {
-                        setFrequency(e.target.value);
-                        if (e.target.value === "weekly" || e.target.value === "biweekly") setSendDay("monday");
-                      }}
-                    >
-                      <option value="weekly">{t("config.freq_weekly")}</option>
-                      <option value="biweekly">{t("config.freq_biweekly")}</option>
-                      <option value="daily">{t("config.freq_daily")}</option>
-                    </select>
-                  </div>
-                  {(frequency === "weekly" || frequency === "biweekly") && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
-                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>
-                        {frequency === "biweekly" ? t("config.first_day") : t("config.day")}
-                      </label>
-                      <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)}>
-                        <option value="monday">{t("config.monday")}</option>
-                        <option value="tuesday">{t("config.tuesday")}</option>
-                        <option value="wednesday">{t("config.wednesday")}</option>
-                        <option value="thursday">{t("config.thursday")}</option>
-                        <option value="friday">{t("config.friday")}</option>
-                      </select>
-                    </div>
-                  )}
-                  {frequency === "biweekly" && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 120px" }}>
-                      <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.second_day")}</label>
-                      <select className="select-field" value={sendDay2} onChange={(e) => setSendDay2(e.target.value)}>
-                        <option value="monday">{t("config.monday")}</option>
-                        <option value="tuesday">{t("config.tuesday")}</option>
-                        <option value="wednesday">{t("config.wednesday")}</option>
-                        <option value="thursday">{t("config.thursday")}</option>
-                        <option value="friday">{t("config.friday")}</option>
-                      </select>
-                    </div>
-                  )}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 100px" }}>
-                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
-                    <select
-                      className="select-field"
-                      value={sendHour}
-                      onChange={(e) => setSendHour(Number(e.target.value))}
-                    >
-                      {Array.from({ length: 29 }, (_, i) => 6 + i * 0.5).map((h) => (
-                        <option key={h} value={h}>
-                          {Math.floor(h)}h{h % 1 === 0.5 ? "30" : "00"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div style={{
-              marginTop: 12,
-              padding: "10px 14px",
-              background: "rgba(16,185,129,0.06)",
-              border: "1px solid rgba(16,185,129,0.15)",
-              borderRadius: 8,
-              fontSize: 13,
-              color: "#059669",
-              lineHeight: 1.5,
-            }}>
-              {(() => {
-                const dayKey = `config.${sendDay}` as const;
-                const dayKey2 = `config.${sendDay2}` as const;
-                const dayLabel = t(dayKey) || sendDay;
-                const dayLabel2 = t(dayKey2) || sendDay2;
-                const timeStr = `${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}`;
-                if (plan === "free") {
-                  return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
-                } else if (plan === "pro") {
-                  return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", `${sendHour}h00`);
-                } else if (frequency === "daily") {
-                  return t("config.confirm_daily").replace("{hour}", timeStr);
-                } else if (frequency === "biweekly") {
-                  return t("config.confirm_biweekly").replace("{day1}", dayLabel).replace("{day2}", dayLabel2).replace("{hour}", timeStr);
-                } else {
-                  return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", timeStr);
-                }
-              })()}
-            </div>
-          </div>
-
-          {/* Recipients card */}
-          <div
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-              <h2
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "var(--text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  margin: 0,
-                }}
-              >
-                {t("config.recipients")}
-              </h2>
-              <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{recipientsLabel}</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {recipients.map((r, i) => (
-                <div key={r.id}>
-                  {i > 0 && <div style={{ height: 1, background: "var(--border)" }} />}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "10px 0",
-                      gap: 12,
-                    }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginBottom: 2 }}>
-                        {r.name}
-                      </div>
-                      <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                        {r.email}{r.role ? ` · ${r.role}` : ""}
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDeleteRecipient(r.id)}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--text-muted)",
-                        display: "flex",
-                        alignItems: "center",
-                        padding: 4,
-                        borderRadius: 4,
-                        transition: "color 0.1s ease",
-                      }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--error)")}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)")}
-                    >
-                      <IconX />
-                    </button>
+                  ))}
+                </div>
+
+                {recipientLimitMsg && (
+                  <div style={{ marginTop: 8, fontSize: 13, color: "var(--text-muted)" }}>{recipientLimitMsg}</div>
+                )}
+
+                {/* Add recipient form - always visible */}
+                <div style={{ display: "flex", gap: 10, alignItems: "end", marginTop: 16 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 140px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.recipient_name")}</label>
+                    <input
+                      className="input-field"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder={t("config.recipient_name_placeholder")}
+                      style={{ height: 40 }}
+                    />
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {recipientLimitMsg && (
-              <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>{recipientLimitMsg}</p>
-                <CrownBadge tooltip={t("config.upgrade_recipients_tooltip")} />
-              </div>
-            )}
-
-            {showAddForm ? (
-              <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <input
-                    className="input-field"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder={t("config.recipient_name")}
-                    style={{ flex: "1 1 140px" }}
-                  />
-                  <input
-                    className="input-field"
-                    type="email"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder={t("config.recipient_email")}
-                    style={{ flex: "2 1 200px" }}
-                  />
-                  <input
-                    className="input-field"
-                    value={newRole}
-                    onChange={(e) => setNewRole(e.target.value)}
-                    placeholder={t("config.recipient_role")}
-                    style={{ flex: "1 1 160px" }}
-                  />
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "2 1 200px" }}>
+                    <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.recipient_email")}</label>
+                    <input
+                      className="input-field"
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      placeholder="email@exemple.com"
+                      onKeyDown={(e) => e.key === "Enter" && handleAddRecipient()}
+                      style={{ height: 40 }}
+                    />
+                  </div>
                   <button
-                    className="btn-primary"
                     onClick={handleAddRecipient}
                     disabled={addingRecipient || !newName.trim() || !newEmail.trim()}
-                    style={{ fontSize: 13, padding: "6px 14px" }}
-                  >
-                    {addingRecipient ? t("config.adding") : t("common.add")}
-                  </button>
-                  <button
-                    className="btn-ghost"
-                    onClick={() => {
-                      setShowAddForm(false);
-                      setNewName("");
-                      setNewEmail("");
-                      setNewRole("");
-                      setRecipientLimitMsg("");
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      height: 40,
+                      padding: "0 16px",
+                      borderRadius: 8,
+                      border: "none",
+                      background: "var(--accent)",
+                      color: "white",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      cursor: !newName.trim() || !newEmail.trim() ? "not-allowed" : "pointer",
+                      opacity: !newName.trim() || !newEmail.trim() ? 0.5 : 1,
+                      flexShrink: 0,
                     }}
-                    style={{ fontSize: 13, padding: "6px 14px" }}
                   >
-                    {t("common.cancel")}
+                    <IconPlus />
+                    {addingRecipient ? t("config.adding") : t("common.add")}
                   </button>
                 </div>
               </div>
-            ) : (
-              <div style={{ marginTop: 12 }}>
-                <button
-                  className="btn-ghost"
-                  onClick={() => {
-                    const maxR = limits.maxRecipients;
-                    if (maxR !== -1 && recipients.length >= maxR) {
-                      setRecipientLimitMsg(
-                        plan === "free"
-                          ? t("config.recipient_limit_free").replace("{max}", String(maxR))
-                          : t("config.recipient_limit_upgrade").replace("{max}", String(maxR))
-                      );
-                    } else {
-                      setShowAddForm(true);
-                      setRecipientLimitMsg("");
-                    }
-                  }}
-                  style={{ fontSize: 13, padding: "6px 14px" }}
-                >
-                  {t("config.add_recipient")}
-                </button>
-              </div>
-            )}
-          </div>
 
-          {/* Save button */}
-          {saveError && (
-            <p style={{ fontSize: 13, color: "var(--error)", marginBottom: 12 }}>{saveError}</p>
+              {renderSaveButton()}
+            </div>
           )}
-          <button
-            className="btn-primary"
-            onClick={handleSave}
-            disabled={saving}
-            style={{ width: "100%", fontSize: 15 }}
-          >
-            {saving ? t("common.saving") : t("common.save")}
-          </button>
+
+          {/* ═══════ TAB: APPARENCE ═══════ */}
+          {activeTab === "apparence" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {!isPro ? (
+                /* Locked state for free users */
+                <div style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 12,
+                  padding: "48px 24px",
+                  textAlign: "center",
+                }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>🎨</div>
+                  <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+                    {t("custom.pro_required")}
+                  </h2>
+                  <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 20, lineHeight: 1.6, maxWidth: 400, margin: "0 auto 20px" }}>
+                    {t("custom.pro_desc")}
+                  </p>
+                  <a href="/tarifs" style={{
+                    display: "inline-block",
+                    padding: "10px 24px",
+                    background: "var(--accent)",
+                    color: "white",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    textDecoration: "none",
+                  }}>
+                    {t("custom.see_plans")}
+                  </a>
+                </div>
+              ) : (
+                <>
+                  {/* Colors section */}
+                  <div style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                    padding: 24,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                      <span style={{ display: "flex", color: "var(--accent)" }}><IconPalette /></span>
+                      <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                        {t("config.tab_colors")}
+                      </h2>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                      {/* Primary color */}
+                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.primary_color")}</label>
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                          padding: "0 12px",
+                          height: 42,
+                          borderRadius: 8,
+                          border: "1px solid var(--border)",
+                          background: "var(--surface)",
+                        }}>
+                          <input
+                            type="color"
+                            value={brandColor}
+                            onChange={(e) => setBrandColor(e.target.value)}
+                            style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }}
+                          />
+                          <input
+                            type="text"
+                            value={brandColor}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBrandColor(val);
+                            }}
+                            style={{
+                              flex: 1,
+                              border: "none",
+                              background: "transparent",
+                              fontSize: 14,
+                              color: "var(--text)",
+                              fontFamily: "monospace",
+                              outline: "none",
+                            }}
+                          />
+                        </div>
+                        {/* Preset swatches */}
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                          {PRESET_COLORS.map((c) => (
+                            <button
+                              key={c.value}
+                              onClick={() => setBrandColor(c.value)}
+                              title={c.label}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: "50%",
+                                background: c.value,
+                                border: "none",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                boxShadow: brandColor === c.value ? `0 0 0 2px white, 0 0 0 3px ${c.value}` : "0 1px 2px rgba(0,0,0,0.15)",
+                                padding: 0,
+                              }}
+                            >
+                              {brandColor === c.value && (
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Accent color (text color) */}
+                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.title_color")}</label>
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                          padding: "0 12px",
+                          height: 42,
+                          borderRadius: 8,
+                          border: "1px solid var(--border)",
+                          background: "var(--surface)",
+                        }}>
+                          <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }} />
+                          <input type="text" value={textColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setTextColor(val); }}
+                            style={{ flex: 1, border: "none", background: "transparent", fontSize: 14, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                        </div>
+                      </div>
+
+                      {/* Background color */}
+                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.bg_color")}</label>
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                          padding: "0 12px",
+                          height: 42,
+                          borderRadius: 8,
+                          border: "1px solid var(--border)",
+                          background: "var(--surface)",
+                        }}>
+                          <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }} />
+                          <input type="text" value={bgColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBgColor(val); }}
+                            style={{ flex: 1, border: "none", background: "transparent", fontSize: 14, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Logo section */}
+                  <div style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                    padding: 24,
+                    position: "relative",
+                    opacity: canUseLogo ? 1 : 0.6,
+                    pointerEvents: canUseLogo ? "auto" : "none",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ display: "flex", color: "var(--accent)" }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </span>
+                        <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                          {t("custom.logo_title")}
+                        </h2>
+                      </div>
+                      {!canUseLogo && (
+                        <span style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                          background: "#FEF3C7",
+                          padding: "4px 10px",
+                          borderRadius: 99,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: "#D97706",
+                        }}>
+                          <CrownIcon />
+                          Business
+                        </span>
+                      )}
+                    </div>
+
+                    <div
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={handleLogoDrop}
+                      onClick={() => document.getElementById("logo-input")?.click()}
+                      style={{
+                        border: "2px dashed var(--border)",
+                        borderRadius: 10,
+                        padding: "32px 20px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        background: "var(--surface-alt)",
+                        transition: "border-color 0.2s",
+                      }}
+                    >
+                      {logoPreview || logoUrl ? (
+                        <div>
+                          <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }} />
+                          <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>{t("custom.logo_replace")}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <span style={{ display: "flex", justifyContent: "center", color: "var(--text-muted)", marginBottom: 8 }}><IconUpload /></span>
+                          <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>{t("custom.logo_drop")}</p>
+                          <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>PNG, JPG ou SVG - Max 2 Mo</p>
+                        </div>
+                      )}
+                      <input id="logo-input" type="file" accept="image/png,image/svg+xml,image/jpeg" style={{ display: "none" }} onChange={handleLogoSelect} />
+                    </div>
+
+                    {(logoUrl || logoPreview) && (
+                      <button
+                        onClick={() => { setLogoUrl(""); setLogoPreview(null); setLogoFile(null); }}
+                        style={{ marginTop: 8, fontSize: 13, color: "#EF4444", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      >
+                        {t("custom.logo_delete")}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Preview section */}
+                  <div style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                    padding: 24,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                      <span style={{ display: "flex", color: "var(--accent)" }}><IconEye /></span>
+                      <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                        {t("custom.preview")}
+                      </h2>
+                    </div>
+
+                    <div style={{
+                      borderRadius: 10,
+                      overflow: "hidden",
+                      background: brandColor,
+                      padding: 24,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 12,
+                    }}>
+                      <div style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 8,
+                        background: "rgba(255,255,255,0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>
+                        <img src="/icone.png" alt="S." width={32} height={32} style={{ borderRadius: 4 }} />
+                      </div>
+                      <span style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", textAlign: "center" }}>
+                        {t("config.preview_newsletter_title")}
+                      </span>
+                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+                        {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {renderSaveButton()}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Global feedback messages */}
           {saved && (
             <div style={{
               marginTop: 16,
@@ -1062,9 +1438,7 @@ const [showAddTopic, setShowAddTopic] = useState(false);
               textAlign: "center",
             }}>
               <p style={{ fontWeight: 600, margin: "0 0 4px" }}>{t("config.saved_title")}</p>
-              <p style={{ margin: 0, fontSize: 13 }}>
-                {t("config.saved_desc")}
-              </p>
+              <p style={{ margin: 0, fontSize: 13 }}>{t("config.saved_desc")}</p>
             </div>
           )}
           {instantSending && (
@@ -1084,6 +1458,48 @@ const [showAddTopic, setShowAddTopic] = useState(false);
           )}
         </>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .config-page-wrap {
+            padding: 20px 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
+
+  function renderSaveButton() {
+    return (
+      <>
+        {saveError && (
+          <p style={{ fontSize: 13, color: "var(--error)", margin: 0 }}>{saveError}</p>
+        )}
+        <button
+          onClick={handleSave}
+          disabled={saving || uploading}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            width: "100%",
+            height: 44,
+            borderRadius: 10,
+            border: "none",
+            background: "var(--accent)",
+            color: "white",
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: saving || uploading ? "not-allowed" : "pointer",
+            opacity: saving || uploading ? 0.7 : 1,
+            transition: "opacity 0.15s ease",
+          }}
+        >
+          <IconSave />
+          {uploading ? t("custom.uploading") : saving ? t("common.saving") : t("config.save_tab_" + activeTab)}
+        </button>
+      </>
+    );
+  }
 }
