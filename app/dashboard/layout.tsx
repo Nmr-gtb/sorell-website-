@@ -55,10 +55,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <DashboardSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main style={{ flex: 1, background: "var(--bg)", overflow: "auto", minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
-        {children}
-      </main>
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", height: "100vh" }}>
+        <DashboardHeader onMenuClick={() => setSidebarOpen((v) => !v)} menuOpen={sidebarOpen} />
+        <main style={{ flex: 1, background: "var(--bg)", overflowY: "auto", minWidth: 0 }}>
+          {children}
+        </main>
+      </div>
 
       <DevModeToggle />
     </div>

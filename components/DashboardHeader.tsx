@@ -6,16 +6,7 @@ import { usePathname } from "next/navigation";
 
 interface Props {
   onMenuClick: () => void;
-}
-
-function IconMenu() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  );
+  menuOpen?: boolean;
 }
 
 const navLinks = [
@@ -25,7 +16,7 @@ const navLinks = [
   { label: "Dashboard", href: "/dashboard" },
 ];
 
-export default function DashboardHeader({ onMenuClick }: Props) {
+export default function DashboardHeader({ onMenuClick, menuOpen }: Props) {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -35,6 +26,7 @@ export default function DashboardHeader({ onMenuClick }: Props) {
 
   return (
     <header
+      className="dashboard-header"
       style={{
         borderBottom: "1px solid var(--border)",
         background: "var(--surface)",
@@ -45,8 +37,11 @@ export default function DashboardHeader({ onMenuClick }: Props) {
         justifyContent: "space-between",
         position: "sticky",
         top: 0,
-        zIndex: 10,
+        zIndex: 20,
         flexShrink: 0,
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        backgroundColor: "rgba(var(--surface-rgb, 255,255,255), 0.85)",
       }}
     >
       {/* Logo */}
@@ -93,10 +88,11 @@ export default function DashboardHeader({ onMenuClick }: Props) {
         })}
       </nav>
 
-      {/* Hamburger - mobile only */}
+      {/* Animated hamburger - mobile only */}
       <button
         className="dashboard-header-hamburger"
         onClick={onMenuClick}
+        aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
         style={{
           background: "transparent",
           border: "none",
@@ -105,10 +101,63 @@ export default function DashboardHeader({ onMenuClick }: Props) {
           display: "none",
           alignItems: "center",
           justifyContent: "center",
-          padding: 4,
+          padding: 6,
+          width: 36,
+          height: 36,
+          borderRadius: 8,
+          position: "relative",
+          transition: "background 0.2s ease",
         }}
       >
-        <IconMenu />
+        <div
+          style={{
+            width: 18,
+            height: 14,
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Top line */}
+          <span
+            style={{
+              display: "block",
+              width: 18,
+              height: 2,
+              borderRadius: 1,
+              background: "currentColor",
+              transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
+              transformOrigin: "center",
+              transform: menuOpen ? "translateY(6px) rotate(45deg)" : "none",
+            }}
+          />
+          {/* Middle line */}
+          <span
+            style={{
+              display: "block",
+              width: menuOpen ? 0 : 18,
+              height: 2,
+              borderRadius: 1,
+              background: "currentColor",
+              transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
+              opacity: menuOpen ? 0 : 1,
+            }}
+          />
+          {/* Bottom line */}
+          <span
+            style={{
+              display: "block",
+              width: 18,
+              height: 2,
+              borderRadius: 1,
+              background: "currentColor",
+              transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
+              transformOrigin: "center",
+              transform: menuOpen ? "translateY(-6px) rotate(-45deg)" : "none",
+            }}
+          />
+        </div>
       </button>
 
       <style>{`

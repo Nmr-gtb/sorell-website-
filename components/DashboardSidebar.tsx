@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
@@ -97,7 +97,14 @@ function IconLogout() {
   );
 }
 
-// navItems is built inside the component to use t()
+function IconClose() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -126,6 +133,9 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const [realPlan, setRealPlan] = useState<string>("free");
   const { getEffectivePlan } = useDevMode();
   const plan = getEffectivePlan(realPlan);
+  const [animating, setAnimating] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const navItems = [
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
@@ -141,6 +151,28 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
       if (data?.plan) setRealPlan(data.plan);
     });
   }, [user]);
+
+  // Handle open/close animations
+  useEffect(() => {
+    if (mobileOpen) {
+      setVisible(true);
+      // Force reflow then animate in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnimating(true);
+        });
+      });
+    } else {
+      setAnimating(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setVisible(false);
+      }, 300);
+    }
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [mobileOpen]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -167,8 +199,8 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
         flexShrink: 0,
       }}
     >
-      {/* Logo */}
-      <div style={{ padding: "4px 16px 16px" }}>
+      {/* Logo + close button on mobile */}
+      <div style={{ padding: "4px 16px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
           <img
             src="/icone.png"
@@ -178,6 +210,35 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
             style={{ borderRadius: 6 }}
           />
         </Link>
+        {/* Close button - visible only in mobile overlay */}
+        <button
+          className="sidebar-close-btn"
+          onClick={onClose}
+          aria-label="Fermer le menu"
+          style={{
+            display: "none",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            border: "none",
+            background: "transparent",
+            color: "var(--text-muted)",
+            cursor: "pointer",
+            transition: "background 0.15s ease, color 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = "var(--surface-hover)";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--text)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
+          }}
+        >
+          <IconClose />
+        </button>
       </div>
 
       {/* Separator */}
@@ -383,27 +444,42 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
       {/* Desktop */}
       <div className="dashboard-sidebar-desktop">{sidebarContent}</div>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
+      {/* Mobile overlay with animation */}
+      {visible && (
         <div
           style={{
             position: "fixed",
             inset: 0,
             zIndex: 50,
             display: "flex",
+            pointerEvents: animating ? "auto" : "none",
           }}
         >
-          {/* Backdrop */}
+          {/* Backdrop with blur */}
           <div
             onClick={onClose}
             style={{
               position: "absolute",
               inset: 0,
-              background: "rgba(0,0,0,0.4)",
+              background: "rgba(0,0,0,0.5)",
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+              opacity: animating ? 1 : 0,
+              transition: "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           />
-          {/* Sidebar */}
-          <div style={{ position: "relative", zIndex: 1 }}>{sidebarContent}</div>
+          {/* Sidebar with slide-in */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              transform: animating ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              boxShadow: animating ? "4px 0 24px rgba(0,0,0,0.15)" : "none",
+            }}
+          >
+            {sidebarContent}
+          </div>
         </div>
       )}
 
@@ -411,9 +487,15 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
         .dashboard-sidebar-desktop {
           display: flex;
         }
+        .dashboard-sidebar-desktop .sidebar-close-btn {
+          display: none !important;
+        }
         @media (max-width: 768px) {
           .dashboard-sidebar-desktop {
             display: none;
+          }
+          .sidebar-close-btn {
+            display: flex !important;
           }
         }
       `}</style>
