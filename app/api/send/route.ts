@@ -129,8 +129,7 @@ export async function POST(request: Request) {
       .eq("id", newsletterId);
 
     return NextResponse.json({ success: true, results });
-  } catch (err: unknown) {
-    console.error("[send] Runtime error:", err instanceof Error ? err.message : String(err));
+  } catch {
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

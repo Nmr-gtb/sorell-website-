@@ -662,6 +662,9 @@ const en: Record<string, string> = {
 
   // TrialBanner
   "trial.text": "Try Pro free for 15 days - No commitment",
+  "trial.daysLeft": "You have {days} days left in your trial",
+  "trial.lastDay": "Last day of trial",
+  "trial.expired": "Your trial has ended",
   "trial.cta": "See plans \u2192",
 
   // DashboardSidebar

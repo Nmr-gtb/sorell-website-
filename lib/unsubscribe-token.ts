@@ -1,6 +1,10 @@
 import { createHmac } from "crypto";
 
-const SECRET = process.env.CRON_SECRET || "fallback-secret";
+const SECRET = process.env.UNSUBSCRIBE_SECRET || process.env.CRON_SECRET || "";
+
+if (!SECRET) {
+  throw new Error("UNSUBSCRIBE_SECRET ou CRON_SECRET doit etre defini dans les variables d'environnement");
+}
 
 /**
  * Génère un token HMAC pour sécuriser les liens de désabonnement.

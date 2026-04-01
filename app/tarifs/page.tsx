@@ -361,6 +361,7 @@ export default function PricingPage() {
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    aria-expanded={openFaq === i}
                     style={{
                       width: "100%",
                       display: "flex",
@@ -386,6 +387,7 @@ export default function PricingPage() {
                       {item.q}
                     </span>
                     <svg
+                      aria-hidden="true"
                       width="14"
                       height="14"
                       viewBox="0 0 16 16"

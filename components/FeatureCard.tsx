@@ -26,6 +26,7 @@ export default function FeatureCard({ icon, title, description }: FeatureCardPro
       }}
     >
       <div
+        aria-hidden="true"
         style={{
           color: "var(--text)",
           marginBottom: 16,

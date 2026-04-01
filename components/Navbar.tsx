@@ -58,7 +58,7 @@ function ThemeToggle() {
       }}
     >
       {isDark ? (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="5" />
           <line x1="12" y1="1" x2="12" y2="3" />
           <line x1="12" y1="21" x2="12" y2="23" />
@@ -70,7 +70,7 @@ function ThemeToggle() {
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
       ) : (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
       )}
@@ -137,20 +137,20 @@ export default function Navbar() {
           color: var(--text) !important;
         }
         .nav-cta-btn {
-          background: #111827 !important;
+          background: #005058 !important;
           color: #FFFFFF !important;
           border-radius: 20px !important;
         }
         .nav-cta-btn:hover {
-          background: #1F2937 !important;
+          background: #00404A !important;
           opacity: 1 !important;
         }
         [data-theme="dark"] .nav-cta-btn {
-          background: #E5E7EB !important;
-          color: #111827 !important;
+          background: #0D9488 !important;
+          color: #FFFFFF !important;
         }
         [data-theme="dark"] .nav-cta-btn:hover {
-          background: #D1D5DB !important;
+          background: #14B8A6 !important;
         }
       `}</style>
 
@@ -360,7 +360,7 @@ export default function Navbar() {
               flexShrink: 0,
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>

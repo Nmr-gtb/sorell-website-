@@ -8,6 +8,7 @@ export default function TrialBanner() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [plan, setPlan] = useState<string | null>(null);
+  const [trialEndsAt, setTrialEndsAt] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -17,8 +18,9 @@ export default function TrialBanner() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("plan").eq("id", user.id).single().then(({ data }) => {
+    supabase.from("profiles").select("plan, trial_ends_at").eq("id", user.id).single().then(({ data }) => {
       setPlan(data?.plan || "free");
+      setTrialEndsAt(data?.trial_ends_at || null);
     });
   }, [user]);
 
@@ -29,6 +31,19 @@ export default function TrialBanner() {
   const handleDismiss = () => {
     setDismissed(true);
     sessionStorage.setItem("trialBannerDismissed", "true");
+  };
+
+  const getTrialText = (): string => {
+    if (!trialEndsAt) return t("trial.text");
+
+    const now = new Date();
+    const endDate = new Date(trialEndsAt);
+    const diffMs = endDate.getTime() - now.getTime();
+    const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (daysLeft <= 0) return t("trial.expired");
+    if (daysLeft === 1) return t("trial.lastDay");
+    return t("trial.daysLeft").replace("{days}", String(daysLeft));
   };
 
   return (
@@ -44,7 +59,7 @@ export default function TrialBanner() {
         position: "relative",
       }}
     >
-      {t("trial.text")}
+      {getTrialText()}
       <a
         href="/tarifs"
         style={{

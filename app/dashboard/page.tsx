@@ -355,9 +355,8 @@ export default function DashboardPage() {
 
     // 4. Send welcome email
     try {
-      await fetch("/api/welcome", {
+      await authFetch("/api/welcome", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
       });
     } catch (e) {

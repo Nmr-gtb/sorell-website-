@@ -8,7 +8,7 @@ export default function LanguageToggle() {
   return (
     <button
       onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-      aria-label="Switch language"
+      aria-label={lang === "fr" ? "Switch to English" : "Passer en francais"}
       style={{
         display: "inline-flex",
         alignItems: "center",

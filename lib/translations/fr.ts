@@ -662,6 +662,9 @@ const fr: Record<string, string> = {
 
   // TrialBanner
   "trial.text": "Essayez Pro gratuitement pendant 15 jours - Sans engagement",
+  "trial.daysLeft": "Il vous reste {days} jours d'essai",
+  "trial.lastDay": "Dernier jour d'essai",
+  "trial.expired": "Votre essai est termin\u00e9",
   "trial.cta": "D\u00e9couvrir les offres \u2192",
 
   // DashboardSidebar

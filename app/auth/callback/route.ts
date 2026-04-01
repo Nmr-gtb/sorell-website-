@@ -29,7 +29,10 @@ export async function GET(request: NextRequest) {
         if (isNewUser) {
           await fetch(new URL("/api/welcome-email", request.url).toString(), {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.access_token}`,
+            },
             body: JSON.stringify({
               email: session.user.email,
               name: session.user.user_metadata?.full_name || "",

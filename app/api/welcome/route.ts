@@ -1,21 +1,38 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { emailRateLimit } from "@/lib/ratelimit";
+import { getAuthenticatedUser } from "@/lib/auth";
+import { escapeHtml, isValidEmail, truncateInput } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export async function POST(request: Request) {
   try {
-    const { email, name } = await request.json();
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
+
+    const raw = await request.json();
+    const email = truncateInput(String(raw.email || ""), 320);
+    const name = truncateInput(String(raw.name || ""), 200);
+
     if (!email) return NextResponse.json({ error: "Missing email" }, { status: 400 });
+
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
+    }
 
     const { success: rateLimitOk } = await emailRateLimit.limit(email);
     if (!rateLimitOk) {
       return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
     }
 
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
     const firstName = name?.split(" ")[0] || "";
-    const greeting = firstName ? `Bonjour ${firstName},` : "Bonjour,";
+    const safeFirstName = escapeHtml(firstName);
+    const greeting = safeFirstName ? `Bonjour ${safeFirstName},` : "Bonjour,";
 
     await resend.emails.send({
       from: "Sorell <noe@sorell.fr>",
@@ -90,8 +107,8 @@ export async function POST(request: Request) {
   <div style="max-width:480px;margin:40px auto;background:white;border-radius:10px;padding:28px;border:1px solid #E5E7EB;">
     <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 16px;">Nouvel inscrit sur Sorell</h2>
     <table style="width:100%;border-collapse:collapse;font-size:14px;color:#374151;">
-      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${name || "Non renseigne"}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${email}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${safeName || "Non renseigne"}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${safeEmail}</td></tr>
       <tr><td style="padding:8px 0;font-weight:600;">Date</td><td style="padding:8px 0;">${now}</td></tr>
     </table>
   </div>

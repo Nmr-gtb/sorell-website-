@@ -114,7 +114,7 @@ export default function ContactPage() {
               flexShrink: 0,
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="M2 7l10 7 10-7" />
             </svg>
@@ -189,10 +189,11 @@ export default function ContactPage() {
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {/* Nom */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+              <label htmlFor="contact-name" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
                 {t("login.name_label")}
               </label>
               <input
+                id="contact-name"
                 type="text"
                 className="input-field"
                 placeholder={t("contact.name")}
@@ -204,10 +205,11 @@ export default function ContactPage() {
 
             {/* Email */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+              <label htmlFor="contact-email" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
                 {t("login.email")}
               </label>
               <input
+                id="contact-email"
                 type="email"
                 className="input-field"
                 placeholder={t("contact.email")}
@@ -219,10 +221,11 @@ export default function ContactPage() {
 
             {/* Sujet */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+              <label htmlFor="contact-subject" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
                 {t("contact.subject")}
               </label>
               <select
+                id="contact-subject"
                 className="select-field"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
@@ -238,10 +241,11 @@ export default function ContactPage() {
 
             {/* Message */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+              <label htmlFor="contact-message" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
                 Message
               </label>
               <textarea
+                id="contact-message"
                 className="input-field"
                 placeholder={t("contact.message")}
                 value={message}

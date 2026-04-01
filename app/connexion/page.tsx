@@ -107,12 +107,7 @@ export default function LoginPage() {
       setError(error.message);
     } else {
       setSuccess(t("login.verify_email"));
-      // Envoyer l'email de bienvenue
-      fetch("/api/welcome-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name }),
-      }).catch(() => {}); // fire and forget, pas bloquant
+      // L'email de bienvenue sera envoye depuis /auth/callback apres verification
     }
     setLoading(false);
   };
@@ -263,8 +258,9 @@ export default function LoginPage() {
           {mode === "login" && (
             <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>{t("login.email_label")}</label>
+                <label htmlFor="login-email" style={labelStyle}>{t("login.email_label")}</label>
                 <input
+                  id="login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -276,7 +272,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
-                  <label style={{ ...labelStyle, marginBottom: 0 }}>{t("login.password_label")}</label>
+                  <label htmlFor="login-password" style={{ ...labelStyle, marginBottom: 0 }}>{t("login.password_label")}</label>
                   <button
                     type="button"
                     onClick={() => switchMode("reset")}
@@ -293,6 +289,7 @@ export default function LoginPage() {
                   </button>
                 </div>
                 <input
+                  id="login-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -319,8 +316,9 @@ export default function LoginPage() {
           {mode === "signup" && (
             <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>{t("login.name_label")}</label>
+                <label htmlFor="signup-name" style={labelStyle}>{t("login.name_label")}</label>
                 <input
+                  id="signup-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -331,8 +329,9 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label style={labelStyle}>{t("login.email_label")}</label>
+                <label htmlFor="signup-email" style={labelStyle}>{t("login.email_label")}</label>
                 <input
+                  id="signup-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -343,8 +342,9 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label style={labelStyle}>{t("login.password_label")}</label>
+                <label htmlFor="signup-password" style={labelStyle}>{t("login.password_label")}</label>
                 <input
+                  id="signup-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -372,8 +372,9 @@ export default function LoginPage() {
           {mode === "reset" && (
             <form onSubmit={handleReset} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={labelStyle}>{t("login.email_label")}</label>
+                <label htmlFor="reset-email" style={labelStyle}>{t("login.email_label")}</label>
                 <input
+                  id="reset-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

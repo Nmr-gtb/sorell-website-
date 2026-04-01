@@ -1,15 +1,28 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { emailRateLimit } from "@/lib/ratelimit";
+import { getAuthenticatedUser } from "@/lib/auth";
+import { escapeHtml, isValidEmail, truncateInput } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export async function POST(request: Request) {
   try {
-    const { email, name } = await request.json();
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
+
+    const raw = await request.json();
+    const email = truncateInput(String(raw.email || ""), 320);
+    const name = truncateInput(String(raw.name || ""), 200);
 
     if (!email) {
       return NextResponse.json({ error: "Email requis" }, { status: 400 });
+    }
+
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
     }
 
     const { success: rateLimitOk } = await emailRateLimit.limit(email);
@@ -17,7 +30,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
     }
 
-    const displayName = name || email.split("@")[0];
+    const displayName = escapeHtml(name || email.split("@")[0]);
 
     await resend.emails.send({
       from: "Sorell <newsletter@sorell.fr>",

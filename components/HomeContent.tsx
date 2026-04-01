@@ -775,7 +775,26 @@ export default function HomeContent() {
               {t("home.cta_subtitle")}
             </p>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <WaitlistForm buttonText={t("hero.cta_primary")} />
+              <Link
+                href="/connexion"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                  background: "#FFFFFF",
+                  color: "#005058",
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontWeight: 600,
+                  fontSize: "0.9375rem",
+                  textDecoration: "none",
+                  letterSpacing: "-0.01em",
+                  transition: "opacity 0.15s ease",
+                }}
+              >
+                {t("hero.cta_primary")}
+              </Link>
             </div>
           </div>
         </AnimateOnScroll>

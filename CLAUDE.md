@@ -77,6 +77,8 @@ STRIPE_WEBHOOK_SECRET
 CRON_SECRET
 UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN
+RESEND_WEBHOOK_SECRET
+UNSUBSCRIBE_SECRET
 ```
 
 ## Base de données (Supabase)
@@ -119,6 +121,7 @@ sorell-website/
 │   │   ├── checkout/route.ts         # Stripe checkout avec trial 15 jours
 │   │   ├── welcome/route.ts          # Email bienvenue + notification admin
 │   │   ├── webhooks/stripe/route.ts  # Webhook Stripe
+│   │   ├── webhooks/resend/route.ts  # Webhook Resend (bounces/complaints)
 │   │   ├── contact/route.ts          # Formulaire de contact
 │   │   ├── analytics/route.ts        # Analytics
 │   │   ├── delete-account/route.ts   # Suppression de compte
@@ -279,8 +282,6 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 
 ## Failles de sécurité connues (à corriger)
 
-- 🚨 next.config.ts : ignoreBuildErrors: true (erreurs TypeScript ignorées)
-
 ### Failles CORRIGÉES (31 mars 2026)
 
 - ✅ /api/delete-account : auth ajoutée (getAuthenticatedUser)
@@ -296,6 +297,21 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - ✅ Dashboard i18n (textes hardcodés FR → t() avec clés FR/EN)
 - ✅ Tests unitaires ajoutés (auth, checkout, contact, cron, stripe, delete-account)
 - ✅ SEO : JSON-LD FAQPage, sitemap dynamique, focus-visible, font preload
+- ✅ Erreur technique exposee dans /api/cron masquee (message generique)
+- ✅ Rate limiter fail-close dans /api/demo
+- ✅ Gestion invoice.payment_failed dans webhook Stripe
+- ✅ Webhook Resend pour bounces/complaints
+- ✅ getProfile() avec catch dans DashboardSidebar
+
+### Failles CORRIGÉES (1 avril 2026)
+
+- ✅ Webhook Resend : verification cryptographique HMAC-SHA256 de la signature svix (RESEND_WEBHOOK_SECRET)
+- ✅ XSS : escapeHtml() applique sur tous les champs utilisateur dans /api/contact, /api/welcome, /api/welcome-email
+- ✅ Validation email (isValidEmail) et limites de longueur (name: 200, email: 320, message: 5000) sur les routes contact/welcome
+- ✅ Headers de securite dans next.config.ts (X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy, Permissions-Policy, HSTS)
+- ✅ /api/welcome et /api/welcome-email proteges par getAuthenticatedUser() (401 si non authentifie)
+- ✅ Appelants mis a jour : dashboard utilise authFetch, auth/callback passe le Bearer token, connexion/page delegue au callback
+- ✅ unsubscribe-token.ts : secret HMAC separe (UNSUBSCRIBE_SECRET prioritaire sur CRON_SECRET), throw si vide au lieu de fallback silencieux
 
 ## Règles de travail avec Claude Code
 
@@ -350,3 +366,7 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - **Commande** : `npm test` ou `npx vitest run`
 - **Tests existants** : auth, checkout, contact, cron-auth, delete-account, stripe-config (28 tests au total)
 - **Mocking** : vi.mock() avec class syntax pour Resend/Anthropic/Stripe constructeurs
+
+## Notes d'optimisation
+
+- hero-visual.png fait ~1.5MB et devrait etre convertie en WebP pour ameliorer le LCP (Largest Contentful Paint)
