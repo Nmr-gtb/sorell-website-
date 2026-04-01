@@ -1022,15 +1022,51 @@ export default function DashboardPage() {
   const completedSteps = checklistSteps.filter((s) => s.done).length;
   const showChecklist = !loadingData && !loadingNewsletter && completedSteps < 3;
 
+  // Contextual greeting message
+  const getContextualMessage = (): string => {
+    if (!briefDone) return t("dashboard.ctx_complete_brief");
+    if (!recipientsDone) return t("dashboard.ctx_add_recipients");
+    if (!newsletterDone) return t("dashboard.ctx_generate_first");
+    if (nextNewsletter) {
+      const now = new Date();
+      const nextDate = new Date(nextNewsletter.date);
+      const diffMs = nextDate.getTime() - now.getTime();
+      const diffHours = diffMs / (1000 * 60 * 60);
+      if (diffHours > 0 && diffHours < 24) return t("dashboard.ctx_sending_soon");
+    }
+    if (lastOpenRate !== null && lastOpenRate >= 50) return t("dashboard.ctx_good_performance").replace("{rate}", String(lastOpenRate));
+    return t("dashboard.ctx_all_good");
+  };
+
+  const isFullySetUp = briefDone && recipientsDone && newsletterDone;
+
   return (
     <div style={{ padding: "32px 40px", maxWidth: 960 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
-          {t("dashboard.greeting")}, {firstName}
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", margin: 0 }}>
+            {t("dashboard.greeting")}, {firstName}
+          </h1>
+          {!loadingData && !loadingNewsletter && isFullySetUp && (
+            <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "4px 10px",
+              borderRadius: 9999,
+              background: "#ECFDF5",
+              fontSize: 12,
+              fontWeight: 500,
+              color: "#059669",
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#059669" }} />
+              {t("dashboard.status_active")}
+            </span>
+          )}
+        </div>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          {t("dashboard.summary")}
+          {loadingData || loadingNewsletter ? t("dashboard.summary") : getContextualMessage()}
         </p>
       </div>
 
@@ -1260,9 +1296,14 @@ export default function DashboardPage() {
                 </>
               )}
             </div>
-            <Link href="/dashboard/generate" style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>
-              {t("dashboard.view_detail")}
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <Link href="/dashboard/generate" style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>
+                {t("dashboard.view_detail")}
+              </Link>
+              <Link href="/dashboard/historique" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-muted)", textDecoration: "none" }}>
+                {t("dashboard.view_all_history")}
+              </Link>
+            </div>
           </>
         )}
       </div>
