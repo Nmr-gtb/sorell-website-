@@ -52,10 +52,7 @@ export async function GET(request: Request) {
       );
     }
   } catch {
-    return NextResponse.json(
-      { error: "Service temporairement indisponible. Réessayez dans quelques instants." },
-      { status: 503 }
-    );
+    // Rate limiter unavailable (e.g. Redis not configured) — allow demo to proceed
   }
 
   try {
