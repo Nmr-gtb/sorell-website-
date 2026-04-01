@@ -391,7 +391,7 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
       results.push({ userId: config.user_id, status: "sent", recipients: recipients.length });
     } catch (err) {
-      results.push({ userId: config.user_id, status: "error", error: String(err) });
+      results.push({ userId: config.user_id, status: "error", error: "Erreur lors du traitement" });
     }
   }
 

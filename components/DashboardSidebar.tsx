@@ -149,7 +149,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     if (!user) return;
     getProfile(user.id).then(({ data }) => {
       if (data?.plan) setRealPlan(data.plan);
-    });
+    }).catch(() => {});
   }, [user]);
 
   // Handle open/close animations

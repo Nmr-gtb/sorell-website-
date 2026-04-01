@@ -62,6 +62,24 @@ export async function POST(request: Request) {
     }
   }
 
+  if (event.type === "invoice.payment_failed") {
+    const invoice = event.data.object;
+    const customerId = invoice.customer as string;
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email")
+      .eq("stripe_customer_id", customerId)
+      .single();
+
+    if (profile) {
+      await supabaseAdmin
+        .from("profiles")
+        .update({ plan: "free", updated_at: new Date().toISOString() })
+        .eq("id", profile.id);
+    }
+  }
+
   if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object;
     const customerId = subscription.customer as string;
