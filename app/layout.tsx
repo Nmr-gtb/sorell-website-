@@ -82,6 +82,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WZMXL3FN');`,
           }}
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-2J5JGJRHJ6"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="ga4-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-2J5JGJRHJ6');`,
+          }}
+        />
         <link
           rel="preload"
           href="/fonts/quiglet.otf"
