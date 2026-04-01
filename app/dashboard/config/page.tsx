@@ -1143,7 +1143,7 @@ export default function ConfigPage() {
           {activeTab === "apparence" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {!isPro ? (
-                /* Read-only preview for free users */}
+                /* Read-only preview for free users */
                 <div style={{ position: "relative" }}>
                   <div style={{ filter: "blur(2px)", pointerEvents: "none", userSelect: "none", opacity: 0.85 }}>
                   {/* 2-column layout: controls left, preview right - READ ONLY */}
