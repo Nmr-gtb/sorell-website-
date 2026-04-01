@@ -125,7 +125,7 @@ export default function ProfilePage() {
   const planDescription = t(planDescriptionKeys[plan ?? "free"] ?? planDescriptionKeys.free);
 
   return (
-    <div style={{ padding: 32, maxWidth: 700 }}>
+    <div style={{ padding: 32, maxWidth: 700 }} className="profile-page-container">
       {/* Upgrade success banner */}
       {upgraded && (
         <div
@@ -337,12 +337,12 @@ export default function ProfilePage() {
               {t("profile.full_name")}
             </label>
             {editing ? (
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div className="profile-edit-name-row" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <input
                   className="input-field"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                   autoFocus
                 />
                 <button
@@ -461,6 +461,25 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .profile-page-container {
+            padding: 20px 16px !important;
+          }
+          .profile-edit-name-row {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .profile-edit-name-row input {
+            width: 100% !important;
+          }
+          .profile-edit-name-row button {
+            width: 100% !important;
+            justify-content: center !important;
+          }
+        }
+      `}</style>
 
       {/* Delete account modal */}
       {showDeleteModal && (

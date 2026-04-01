@@ -503,7 +503,7 @@ export default function ConfigPage() {
   const avatarColors = ["#005058", "#0D9488", "#7C3AED", "#DC2626", "#EA580C", "#059669", "#1E40AF", "#DB2777"];
 
   return (
-    <div style={{ padding: "32px 40px", maxWidth: 900 }}>
+    <div style={{ padding: "32px 40px", maxWidth: 900 }} className="config-page-container">
       {/* Page header */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
@@ -515,12 +515,15 @@ export default function ConfigPage() {
       </div>
 
       {/* Tab bar */}
-      <div style={{
-        display: "flex",
-        borderBottom: "1px solid var(--border)",
-        marginBottom: 28,
-        gap: 0,
-      }}>
+      <div
+        className="config-tab-bar"
+        style={{
+          display: "flex",
+          borderBottom: "1px solid var(--border)",
+          marginBottom: 28,
+          gap: 0,
+        }}
+      >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -1086,7 +1089,7 @@ export default function ConfigPage() {
                 )}
 
                 {/* Add recipient form - always visible */}
-                <div style={{ display: "flex", gap: 10, alignItems: "end", marginTop: 16 }}>
+                <div className="config-recipient-form" style={{ display: "flex", gap: 10, alignItems: "end", marginTop: 16, flexWrap: "wrap" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 140px" }}>
                     <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.recipient_name")}</label>
                     <input
@@ -1147,9 +1150,9 @@ export default function ConfigPage() {
                 <div style={{ position: "relative" }}>
                   <div style={{ filter: "blur(2px)", pointerEvents: "none", userSelect: "none", opacity: 0.85 }}>
                   {/* 2-column layout: controls left, preview right - READ ONLY */}
-                  <div style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
+                  <div className="config-apparence-layout" style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
                     {/* LEFT - Controls (disabled) */}
-                    <div style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
+                    <div className="config-apparence-controls" style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
                       {/* Colors section */}
                       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -1332,9 +1335,9 @@ export default function ConfigPage() {
               ) : (
                 <>
                   {/* 2-column layout: controls left, live preview right */}
-                  <div style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
+                  <div className="config-apparence-layout" style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
                     {/* LEFT — Controls */}
-                    <div style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
+                    <div className="config-apparence-controls" style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
                       {/* Colors section */}
                       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -1582,8 +1585,36 @@ export default function ConfigPage() {
 
       <style>{`
         @media (max-width: 768px) {
-          .config-page-wrap {
+          .config-page-container {
             padding: 20px 16px !important;
+          }
+          .config-tab-bar {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 0 !important;
+          }
+          .config-tab-bar::-webkit-scrollbar {
+            display: none;
+          }
+          .config-tab-bar button {
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+          }
+          .config-apparence-layout {
+            flex-direction: column !important;
+          }
+          .config-apparence-controls {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+          .config-recipient-form {
+            flex-direction: column !important;
+          }
+          .config-recipient-form > * {
+            flex: 1 1 auto !important;
           }
         }
       `}</style>

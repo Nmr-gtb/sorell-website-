@@ -115,7 +115,7 @@ export default function HistoriquePage() {
     }
 
     return (
-      <div style={{ padding: 32, maxWidth: 800 }}>
+      <div style={{ padding: 32, maxWidth: 800 }} className="historique-page-container">
         <button
           onClick={() => setSelectedNewsletter(null)}
           style={{
@@ -189,7 +189,7 @@ export default function HistoriquePage() {
 
             {/* Chiffres clés */}
             {parsedContent.keyFigures?.length > 0 && (
-              <div style={{ display: "flex", gap: 12 }}>
+              <div className="historique-keyfigures" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 {parsedContent.keyFigures.map((fig: any, i: number) => (
                   <div key={i} style={{
                     flex: 1,
@@ -216,7 +216,7 @@ export default function HistoriquePage() {
 
   // Vue liste
   return (
-    <div style={{ padding: 32, maxWidth: 800 }}>
+    <div style={{ padding: 32, maxWidth: 800 }} className="historique-page-container">
       <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{t("history.title")}</h1>
       <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24 }}>{t("history.subtitle")}</p>
 
@@ -283,6 +283,20 @@ export default function HistoriquePage() {
           ))}
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .historique-page-container {
+            padding: 20px 16px !important;
+          }
+          .historique-keyfigures {
+            flex-direction: column !important;
+          }
+          .historique-keyfigures > div {
+            flex: 1 1 auto !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -568,11 +568,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Plan cards */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 16,
-          }}>
+          <div
+            className="onboarding-plan-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: 16,
+            }}
+          >
             {plans.map((plan) => {
               const displayPrice =
                 billingPeriod === "annual" && plan.annualPrice !== null
@@ -720,10 +723,10 @@ export default function DashboardPage() {
           {/* Responsive styles */}
           <style>{`
             @media (max-width: 800px) {
-              .plan-grid { grid-template-columns: 1fr 1fr !important; }
+              .onboarding-plan-grid { grid-template-columns: 1fr 1fr !important; }
             }
             @media (max-width: 500px) {
-              .plan-grid { grid-template-columns: 1fr !important; }
+              .onboarding-plan-grid { grid-template-columns: 1fr !important; }
             }
           `}</style>
         </div>
@@ -1041,10 +1044,10 @@ export default function DashboardPage() {
   const isFullySetUp = briefDone && recipientsDone && newsletterDone;
 
   return (
-    <div style={{ padding: "32px 40px", maxWidth: 960 }}>
+    <div style={{ padding: "32px 40px", maxWidth: 960 }} className="dashboard-page-container">
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", margin: 0 }}>
             {t("dashboard.greeting")}, {firstName}
           </h1>
@@ -1419,6 +1422,9 @@ export default function DashboardPage() {
 
       <style>{`
         @media (max-width: 768px) {
+          .dashboard-page-container {
+            padding: 20px 16px !important;
+          }
           .dashboard-metrics-grid {
             grid-template-columns: 1fr !important;
           }

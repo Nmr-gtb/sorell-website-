@@ -229,9 +229,48 @@ export default function GeneratePage() {
     : `${generatedThisMonth} / ${previewLimit} ${t("generate.previews_count")}${previewLimit > 1 ? "s" : ""}`;
 
   return (
-    <div style={{ padding: "32px", maxWidth: 760 }}>
+    <div style={{ padding: "32px", maxWidth: 760 }} className="generate-page-container">
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+          .generate-page-container {
+            padding: 20px 16px !important;
+          }
+          .generate-actions-bar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .generate-actions-bar > div:first-child {
+            min-width: 0 !important;
+          }
+          .generate-actions-buttons {
+            align-items: stretch !important;
+            flex-direction: column !important;
+          }
+          .generate-actions-buttons > div {
+            flex-direction: column !important;
+          }
+          .generate-actions-buttons > div > button {
+            width: 100% !important;
+            justify-content: center !important;
+          }
+          .generate-email-hero {
+            flex-direction: column !important;
+          }
+          .generate-email-hero > div:first-child {
+            flex: 1 1 auto !important;
+            padding: 24px 20px 20px !important;
+          }
+          .generate-email-hero > div:last-child {
+            display: none !important;
+          }
+          .generate-email-header {
+            padding: 16px 20px !important;
+          }
+          .generate-email-content {
+            padding: 20px 16px !important;
+          }
+        }
       `}</style>
 
       {/* Header */}
@@ -389,6 +428,7 @@ export default function GeneratePage() {
         <>
           {/* Subject + actions */}
           <div
+            className="generate-actions-bar"
             style={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -423,8 +463,8 @@ export default function GeneratePage() {
                 }}
               />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flexShrink: 0 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div className="generate-actions-buttons" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, flexShrink: 0 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <button
                   className="btn-ghost"
                   onClick={handleGenerate}
@@ -464,7 +504,7 @@ export default function GeneratePage() {
           <div style={{ background: bgColor, border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", maxWidth: 620, margin: "0 auto" }}>
 
             {/* Header */}
-            <div style={{ padding: "20px 32px", borderBottom: "1px solid #E8E0D8" }}>
+            <div className="generate-email-header" style={{ padding: "20px 32px", borderBottom: "1px solid #E8E0D8" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 {customLogo ? (
                   <img src={customLogo} alt="Logo" style={{ maxHeight: 32, maxWidth: 160 }} />
@@ -478,7 +518,7 @@ export default function GeneratePage() {
             </div>
 
             {/* Hero */}
-            <div style={{ background: brandColor, display: "flex" }}>
+            <div className="generate-email-hero" style={{ background: brandColor, display: "flex" }}>
               <div style={{ padding: "36px 32px 32px", flex: "0 0 65%" }}>
                 <p style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 16px", fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }}>
                   {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} · {subject}
@@ -493,7 +533,7 @@ export default function GeneratePage() {
             </div>
 
             {/* Article phare */}
-            <div style={{ padding: "28px 32px 24px" }}>
+            <div className="generate-email-content" style={{ padding: "28px 32px 24px" }}>
               <div style={{ marginBottom: 14, display: "flex", gap: 8, alignItems: "center" }}>
                 <span style={{
                   display: "inline-block",

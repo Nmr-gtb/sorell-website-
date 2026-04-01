@@ -272,6 +272,11 @@ export default function AnalyticsPage() {
         </div>
 
         <style>{`
+          @media (max-width: 768px) {
+            .analytics-page-container {
+              padding: 20px 16px !important;
+            }
+          }
           @media (max-width: 700px) {
             .analytics-metrics-grid {
               grid-template-columns: repeat(2, 1fr) !important;
@@ -353,7 +358,7 @@ export default function AnalyticsPage() {
   const maxClicks = data.topArticles.length > 0 ? Math.max(...data.topArticles.map((a) => a.clicks), 1) : 1;
 
   return (
-    <div style={{ padding: 32, maxWidth: 900 }}>
+    <div style={{ padding: 32, maxWidth: 900 }} className="analytics-page-container">
       {/* Page header */}
       <div style={{ marginBottom: 32 }}>
         <h1
