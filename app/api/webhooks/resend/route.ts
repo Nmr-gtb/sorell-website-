@@ -84,23 +84,11 @@ export async function POST(request: Request) {
   if (type === "email.bounced" || type === "email.complained") {
     const bouncedEmail = data?.to?.[0];
     if (bouncedEmail) {
-      // Retirer l'email des destinataires de toutes les configs
-      const { data: configs } = await supabaseAdmin
-        .from("newsletter_config")
-        .select("user_id, recipients");
-
-      if (configs) {
-        for (const config of configs) {
-          const recipients = config.recipients as string[] | null;
-          if (recipients?.includes(bouncedEmail)) {
-            const updated = recipients.filter((r: string) => r !== bouncedEmail);
-            await supabaseAdmin
-              .from("newsletter_config")
-              .update({ recipients: updated })
-              .eq("user_id", config.user_id);
-          }
-        }
-      }
+      // Remove bounced email from recipients table
+      await supabaseAdmin
+        .from("recipients")
+        .delete()
+        .eq("email", bouncedEmail);
     }
   }
 

@@ -25,9 +25,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
     }
 
-    const { success: rateLimitOk } = await emailRateLimit.limit(email);
-    if (!rateLimitOk) {
-      return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+    try {
+      const { success: rateLimitOk } = await emailRateLimit.limit(email);
+      if (!rateLimitOk) {
+        return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+      }
+    } catch {
+      // Redis unavailable — allow welcome email to proceed
     }
 
     const displayName = escapeHtml(name || email.split("@")[0]);

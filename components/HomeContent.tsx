@@ -5,7 +5,6 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FeatureCard from "@/components/FeatureCard";
-import WaitlistForm from "@/components/WaitlistForm";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useLanguage } from "@/lib/LanguageContext";
 

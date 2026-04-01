@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const mockGetAuthenticatedUser = vi.fn();
+vi.mock("@/lib/auth", () => ({
+  getAuthenticatedUser: (...args: unknown[]) => mockGetAuthenticatedUser(...args),
+}));
+
 vi.mock("@/lib/stripe", () => ({
   stripe: {
     checkout: {
@@ -25,24 +30,26 @@ describe("POST /api/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCreate.mockResolvedValue({ url: "https://checkout.stripe.com/session-123" });
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
     process.env.NEXT_PUBLIC_SITE_URL = "https://sorell.fr";
+  });
+
+  it("returns 401 when user is not authenticated", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue(null);
+    const request = new Request("http://localhost/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: "price_pro_monthly" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(401);
   });
 
   it("returns 400 when priceId is missing", async () => {
     const request = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: "user-123" }),
-    });
-    const response = await POST(request);
-    expect(response.status).toBe(400);
-  });
-
-  it("returns 400 when userId is missing", async () => {
-    const request = new Request("http://localhost/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId: "price_pro_monthly" }),
+      body: JSON.stringify({}),
     });
     const response = await POST(request);
     expect(response.status).toBe(400);
@@ -52,7 +59,7 @@ describe("POST /api/checkout", () => {
     const request = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId: "price_fake_id", userId: "user-123" }),
+      body: JSON.stringify({ priceId: "price_fake_id" }),
     });
     const response = await POST(request);
     expect(response.status).toBe(400);
@@ -64,11 +71,7 @@ describe("POST /api/checkout", () => {
     const request = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        priceId: "price_pro_monthly",
-        userId: "user-123",
-        userEmail: "test@example.com",
-      }),
+      body: JSON.stringify({ priceId: "price_pro_monthly" }),
     });
     const response = await POST(request);
     expect(response.status).toBe(200);
@@ -80,11 +83,7 @@ describe("POST /api/checkout", () => {
     const request = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        priceId: "price_pro_monthly",
-        userId: "user-123",
-        userEmail: "test@example.com",
-      }),
+      body: JSON.stringify({ priceId: "price_pro_monthly" }),
     });
     await POST(request);
 
@@ -99,12 +98,7 @@ describe("POST /api/checkout", () => {
     const request = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        priceId: "price_business_monthly",
-        userId: "user-123",
-        userEmail: "test@example.com",
-        fromOnboarding: true,
-      }),
+      body: JSON.stringify({ priceId: "price_business_monthly", fromOnboarding: true }),
     });
     await POST(request);
 

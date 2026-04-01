@@ -16,15 +16,13 @@ vi.mock("crypto", () => ({
 }));
 
 // Mock Supabase admin
-const mockSelectResult = vi.fn();
-const mockUpdateEq = vi.fn().mockResolvedValue({ error: null });
-const mockUpdate = vi.fn().mockReturnValue({ eq: mockUpdateEq });
+const mockDeleteEq = vi.fn().mockResolvedValue({ error: null });
+const mockDelete = vi.fn().mockReturnValue({ eq: mockDeleteEq });
 
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
     from: () => ({
-      select: () => mockSelectResult(),
-      update: (...args: unknown[]) => mockUpdate(...args),
+      delete: () => ({ eq: mockDeleteEq }),
     }),
   },
 }));
@@ -83,14 +81,8 @@ describe("POST /api/webhooks/resend", () => {
     expect([400, 401]).toContain(response.status);
   });
 
-  it("removes bounced email from newsletter_config.recipients on email.bounced", async () => {
+  it("deletes bounced email from recipients table on email.bounced", async () => {
     mockHmacDigest.mockReturnValue("valid-sig");
-    mockSelectResult.mockResolvedValue({
-      data: [
-        { user_id: "user-1", recipients: ["good@test.com", "bounced@test.com"] },
-        { user_id: "user-2", recipients: ["other@test.com"] },
-      ],
-    });
 
     const body = JSON.stringify({
       type: "email.bounced",
@@ -112,18 +104,11 @@ describe("POST /api/webhooks/resend", () => {
     const data = await response.json();
     expect(data.received).toBe(true);
 
-    // Should update user-1's config (which contained the bounced email)
-    expect(mockUpdate).toHaveBeenCalledWith({ recipients: ["good@test.com"] });
-    expect(mockUpdateEq).toHaveBeenCalledWith("user_id", "user-1");
+    expect(mockDeleteEq).toHaveBeenCalledWith("email", "bounced@test.com");
   });
 
-  it("removes complained email from newsletter_config.recipients on email.complained", async () => {
+  it("deletes complained email from recipients table on email.complained", async () => {
     mockHmacDigest.mockReturnValue("valid-sig");
-    mockSelectResult.mockResolvedValue({
-      data: [
-        { user_id: "user-1", recipients: ["complained@test.com", "ok@test.com"] },
-      ],
-    });
 
     const body = JSON.stringify({
       type: "email.complained",
@@ -143,11 +128,12 @@ describe("POST /api/webhooks/resend", () => {
     const response = await POST(request);
     expect(response.status).toBe(200);
 
-    expect(mockUpdate).toHaveBeenCalledWith({ recipients: ["ok@test.com"] });
+    expect(mockDeleteEq).toHaveBeenCalledWith("email", "complained@test.com");
   });
 
   it("returns 200 without action for unhandled event types", async () => {
     mockHmacDigest.mockReturnValue("valid-sig");
+    mockDeleteEq.mockClear();
 
     const body = JSON.stringify({
       type: "email.delivered",
@@ -169,17 +155,13 @@ describe("POST /api/webhooks/resend", () => {
     const data = await response.json();
     expect(data.received).toBe(true);
 
-    // Should NOT call update since email.delivered is not handled
-    expect(mockUpdate).not.toHaveBeenCalled();
+    // Should NOT call delete since email.delivered is not handled
+    expect(mockDeleteEq).not.toHaveBeenCalled();
   });
 
-  it("does not error when bounced email is not in any config", async () => {
+  it("handles bounced email gracefully even if delete fails", async () => {
     mockHmacDigest.mockReturnValue("valid-sig");
-    mockSelectResult.mockResolvedValue({
-      data: [
-        { user_id: "user-1", recipients: ["other@test.com"] },
-      ],
-    });
+    mockDeleteEq.mockResolvedValue({ error: null });
 
     const body = JSON.stringify({
       type: "email.bounced",
@@ -201,7 +183,7 @@ describe("POST /api/webhooks/resend", () => {
     const data = await response.json();
     expect(data.received).toBe(true);
 
-    // Should NOT call update since the email is not in any config
-    expect(mockUpdate).not.toHaveBeenCalled();
+    // Delete was called (even if email doesn't exist, Supabase handles it gracefully)
+    expect(mockDeleteEq).toHaveBeenCalledWith("email", "unknown@test.com");
   });
 });

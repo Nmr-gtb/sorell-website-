@@ -40,6 +40,13 @@ vi.mock("@/lib/supabase-admin", () => ({
         return {
           select: () => ({
             eq: () => ({
+              eq: () => ({
+                single: () =>
+                  Promise.resolve({
+                    data: mockNewsletterData,
+                    error: mockNewsletterData ? null : { message: "not found" },
+                  }),
+              }),
               single: () =>
                 Promise.resolve({
                   data: mockNewsletterData,
@@ -80,7 +87,7 @@ vi.mock("@/lib/supabase-admin", () => ({
         };
       }
       return {
-        select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
+        select: () => ({ eq: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }), single: () => Promise.resolve({ data: null, error: null }) }) }),
       };
     },
   },

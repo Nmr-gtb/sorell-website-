@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { escapeHtml, isValidEmail, truncateInput } from "@/lib/utils";
+import { emailRateLimit } from "@/lib/ratelimit";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -19,6 +20,15 @@ export async function POST(request: Request) {
 
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
+    }
+
+    try {
+      const { success: rateLimitOk } = await emailRateLimit.limit(`contact:${email}`);
+      if (!rateLimitOk) {
+        return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+      }
+    } catch {
+      // Redis unavailable — allow contact form to proceed
     }
 
     const safeName = escapeHtml(name);

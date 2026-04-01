@@ -1,9 +1,11 @@
 import { createHmac } from "crypto";
 
-const SECRET = process.env.UNSUBSCRIBE_SECRET || process.env.CRON_SECRET || "";
-
-if (!SECRET) {
-  throw new Error("UNSUBSCRIBE_SECRET ou CRON_SECRET doit etre defini dans les variables d'environnement");
+function getSecret(): string {
+  const secret = process.env.UNSUBSCRIBE_SECRET || process.env.CRON_SECRET || "";
+  if (!secret) {
+    throw new Error("UNSUBSCRIBE_SECRET ou CRON_SECRET doit etre defini dans les variables d'environnement");
+  }
+  return secret;
 }
 
 /**
@@ -12,7 +14,7 @@ if (!SECRET) {
  * un attaquant de désabonner un email sans connaître le token.
  */
 export function generateUnsubscribeToken(email: string): string {
-  return createHmac("sha256", SECRET)
+  return createHmac("sha256", getSecret())
     .update(email.toLowerCase().trim())
     .digest("hex")
     .substring(0, 16); // 16 chars suffisent pour la sécurité
