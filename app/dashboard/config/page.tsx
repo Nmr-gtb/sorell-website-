@@ -1173,252 +1173,215 @@ export default function ConfigPage() {
                 </div>
               ) : (
                 <>
-                  {/* Colors section */}
-                  <div style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
-                    padding: 24,
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                      <span style={{ display: "flex", color: "var(--accent)" }}><IconPalette /></span>
-                      <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
-                        {t("config.tab_colors")}
-                      </h2>
-                    </div>
-
-                    <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                      {/* Primary color */}
-                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.primary_color")}</label>
-                        <div style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                          padding: "0 12px",
-                          height: 42,
-                          borderRadius: 8,
-                          border: "1px solid var(--border)",
-                          background: "var(--surface)",
-                        }}>
-                          <input
-                            type="color"
-                            value={brandColor}
-                            onChange={(e) => setBrandColor(e.target.value)}
-                            style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }}
-                          />
-                          <input
-                            type="text"
-                            value={brandColor}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBrandColor(val);
-                            }}
-                            style={{
-                              flex: 1,
-                              border: "none",
-                              background: "transparent",
-                              fontSize: 14,
-                              color: "var(--text)",
-                              fontFamily: "monospace",
-                              outline: "none",
-                            }}
-                          />
+                  {/* 2-column layout: controls left, live preview right */}
+                  <div style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
+                    {/* LEFT — Controls */}
+                    <div style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
+                      {/* Colors section */}
+                      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                          <span style={{ display: "flex", color: "var(--accent)" }}><IconPalette /></span>
+                          <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>{t("config.tab_colors")}</h2>
                         </div>
-                        {/* Preset swatches */}
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                          {PRESET_COLORS.map((c) => (
-                            <button
-                              key={c.value}
-                              onClick={() => setBrandColor(c.value)}
-                              title={c.label}
-                              style={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: "50%",
-                                background: c.value,
-                                border: "none",
-                                cursor: "pointer",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: brandColor === c.value ? `0 0 0 2px white, 0 0 0 3px ${c.value}` : "0 1px 2px rgba(0,0,0,0.15)",
-                                padding: 0,
-                              }}
-                            >
-                              {brandColor === c.value && (
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-                              )}
-                            </button>
-                          ))}
+                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                          {/* Primary color */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.primary_color")}</label>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 12px", height: 42, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                              <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }} />
+                              <input type="text" value={brandColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBrandColor(val); }}
+                                style={{ flex: 1, border: "none", background: "transparent", fontSize: 14, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                            </div>
+                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                              {PRESET_COLORS.map((c) => (
+                                <button key={c.value} onClick={() => setBrandColor(c.value)} title={c.label}
+                                  style={{ width: 24, height: 24, borderRadius: "50%", background: c.value, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: brandColor === c.value ? `0 0 0 2px white, 0 0 0 3px ${c.value}` : "0 1px 2px rgba(0,0,0,0.15)", padding: 0 }}>
+                                  {brandColor === c.value && (<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>)}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          {/* Secondary colors grid */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                              <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.title_color")}</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                                <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} style={{ width: 20, height: 20, border: "none", cursor: "pointer", borderRadius: 4, padding: 0 }} />
+                                <input type="text" value={textColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setTextColor(val); }}
+                                  style={{ flex: 1, border: "none", background: "transparent", fontSize: 12, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                              <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.bg_color")}</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                                <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ width: 20, height: 20, border: "none", cursor: "pointer", borderRadius: 4, padding: 0 }} />
+                                <input type="text" value={bgColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBgColor(val); }}
+                                  style={{ flex: 1, border: "none", background: "transparent", fontSize: 12, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                              </div>
+                            </div>
+                          </div>
+                          {/* Body text color */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.text_color")}</label>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                              <input type="color" value={bodyTextColor} onChange={(e) => setBodyTextColor(e.target.value)} style={{ width: 20, height: 20, border: "none", cursor: "pointer", borderRadius: 4, padding: 0 }} />
+                              <input type="text" value={bodyTextColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBodyTextColor(val); }}
+                                style={{ flex: 1, border: "none", background: "transparent", fontSize: 12, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Accent color (text color) */}
-                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.title_color")}</label>
-                        <div style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                          padding: "0 12px",
-                          height: 42,
-                          borderRadius: 8,
-                          border: "1px solid var(--border)",
-                          background: "var(--surface)",
-                        }}>
-                          <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }} />
-                          <input type="text" value={textColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setTextColor(val); }}
-                            style={{ flex: 1, border: "none", background: "transparent", fontSize: 14, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
+                      {/* Logo section */}
+                      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, position: "relative", opacity: canUseLogo ? 1 : 0.6, pointerEvents: canUseLogo ? "auto" : "none" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <span style={{ display: "flex", color: "var(--accent)" }}>
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+                            </span>
+                            <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>{t("custom.logo_title")}</h2>
+                          </div>
+                          {!canUseLogo && (
+                            <span style={{ display: "flex", alignItems: "center", gap: 4, background: "#FEF3C7", padding: "4px 10px", borderRadius: 99, fontSize: 11, fontWeight: 600, color: "#D97706" }}>
+                              <CrownIcon /> Business
+                            </span>
+                          )}
                         </div>
+                        <div onDragOver={(e) => e.preventDefault()} onDrop={handleLogoDrop} onClick={() => document.getElementById("logo-input")?.click()}
+                          style={{ border: "2px dashed var(--border)", borderRadius: 10, padding: "24px 20px", textAlign: "center", cursor: "pointer", background: "var(--surface-alt)", transition: "border-color 0.2s" }}>
+                          {logoPreview || logoUrl ? (
+                            <div>
+                              <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }} />
+                              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>{t("custom.logo_replace")}</p>
+                            </div>
+                          ) : (
+                            <div>
+                              <span style={{ display: "flex", justifyContent: "center", color: "var(--text-muted)", marginBottom: 8 }}><IconUpload /></span>
+                              <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>{t("custom.logo_drop")}</p>
+                              <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>PNG, JPG ou SVG - Max 2 Mo</p>
+                            </div>
+                          )}
+                          <input id="logo-input" type="file" accept="image/png,image/svg+xml,image/jpeg" style={{ display: "none" }} onChange={handleLogoSelect} />
+                        </div>
+                        {(logoUrl || logoPreview) && (
+                          <button onClick={() => { setLogoUrl(""); setLogoPreview(null); setLogoFile(null); }}
+                            style={{ marginTop: 8, fontSize: 13, color: "#EF4444", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                            {t("custom.logo_delete")}
+                          </button>
+                        )}
                       </div>
 
-                      {/* Background color */}
-                      <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: 8 }}>
-                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.bg_color")}</label>
-                        <div style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                          padding: "0 12px",
-                          height: 42,
-                          borderRadius: 8,
-                          border: "1px solid var(--border)",
-                          background: "var(--surface)",
-                        }}>
-                          <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ width: 24, height: 24, border: "none", cursor: "pointer", borderRadius: 6, padding: 0 }} />
-                          <input type="text" value={bgColor} onChange={(e) => { const val = e.target.value; if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) setBgColor(val); }}
-                            style={{ flex: 1, border: "none", background: "transparent", fontSize: 14, color: "var(--text)", fontFamily: "monospace", outline: "none" }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Logo section */}
-                  <div style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
-                    padding: 24,
-                    position: "relative",
-                    opacity: canUseLogo ? 1 : 0.6,
-                    pointerEvents: canUseLogo ? "auto" : "none",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ display: "flex", color: "var(--accent)" }}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                          </svg>
-                        </span>
-                        <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
-                          {t("custom.logo_title")}
-                        </h2>
-                      </div>
-                      {!canUseLogo && (
-                        <span style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 4,
-                          background: "#FEF3C7",
-                          padding: "4px 10px",
-                          borderRadius: 99,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          color: "#D97706",
-                        }}>
-                          <CrownIcon />
-                          Business
-                        </span>
-                      )}
+                      {renderSaveButton()}
                     </div>
 
-                    <div
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={handleLogoDrop}
-                      onClick={() => document.getElementById("logo-input")?.click()}
-                      style={{
-                        border: "2px dashed var(--border)",
-                        borderRadius: 10,
-                        padding: "32px 20px",
-                        textAlign: "center",
-                        cursor: "pointer",
-                        background: "var(--surface-alt)",
-                        transition: "border-color 0.2s",
-                      }}
-                    >
-                      {logoPreview || logoUrl ? (
-                        <div>
-                          <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }} />
-                          <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>{t("custom.logo_replace")}</p>
-                        </div>
-                      ) : (
-                        <div>
-                          <span style={{ display: "flex", justifyContent: "center", color: "var(--text-muted)", marginBottom: 8 }}><IconUpload /></span>
-                          <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>{t("custom.logo_drop")}</p>
-                          <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>PNG, JPG ou SVG - Max 2 Mo</p>
-                        </div>
-                      )}
-                      <input id="logo-input" type="file" accept="image/png,image/svg+xml,image/jpeg" style={{ display: "none" }} onChange={handleLogoSelect} />
-                    </div>
-
-                    {(logoUrl || logoPreview) && (
-                      <button
-                        onClick={() => { setLogoUrl(""); setLogoPreview(null); setLogoFile(null); }}
-                        style={{ marginTop: 8, fontSize: 13, color: "#EF4444", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                      >
-                        {t("custom.logo_delete")}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Preview section */}
-                  <div style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
-                    padding: 24,
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                      <span style={{ display: "flex", color: "var(--accent)" }}><IconEye /></span>
-                      <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                    {/* RIGHT — Live V4 email preview */}
+                    <div style={{ flex: 1, minWidth: 0, position: "sticky", top: 24 }}>
+                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)", margin: "0 0 12px" }}>
                         {t("custom.preview")}
-                      </h2>
-                    </div>
-
-                    <div style={{
-                      borderRadius: 10,
-                      overflow: "hidden",
-                      background: brandColor,
-                      padding: 24,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: 12,
-                    }}>
-                      <div style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 8,
-                        background: "rgba(255,255,255,0.2)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}>
-                        <img src="/icone.png" alt="S." width={32} height={32} style={{ borderRadius: 4 }} />
+                      </p>
+                      <div style={{ background: "#F5F0EB", borderRadius: 12, padding: 16, border: "1px solid var(--border)" }}>
+                        <div style={{ background: bgColor, borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
+                          {/* Header */}
+                          <div style={{ padding: "14px 20px", borderBottom: "1px solid #E8E0D8", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            {(canUseLogo && (logoPreview || logoUrl)) ? (
+                              <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 24, maxWidth: 120 }} />
+                            ) : (
+                              <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                            )}
+                            <span style={{ fontSize: 10, color: "#7A7267" }}>Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
+                          </div>
+                          {/* Hero */}
+                          <div style={{ background: brandColor, display: "flex" }}>
+                            <div style={{ padding: "24px 20px 20px", flex: "0 0 65%" }}>
+                              <p style={{ fontSize: 8, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 10px" }}>Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} · Sorell</p>
+                              <p style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", margin: 0, lineHeight: 1.3 }}>Sorell automatise votre veille sectorielle chaque semaine</p>
+                            </div>
+                            <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
+                              <div style={{ height: 80, width: "100%", background: "rgba(255,255,255,0.08)", borderRadius: "8px 0 0 0" }}></div>
+                            </div>
+                          </div>
+                          {/* Featured article */}
+                          <div style={{ padding: "16px 20px 14px" }}>
+                            <div style={{ marginBottom: 8, display: "flex", gap: 6 }}>
+                              <span style={{ padding: "2px 8px", borderRadius: 4, background: brandColor, color: "white", fontSize: 7, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>A la une</span>
+                              <span style={{ padding: "2px 6px", borderRadius: 4, background: "#F5F0EB", color: "#7A7267", fontSize: 7, fontWeight: 600, textTransform: "uppercase" }}>Veille IA</span>
+                            </div>
+                            <p style={{ fontSize: 14, fontWeight: 700, color: textColor, margin: "0 0 6px", lineHeight: 1.35 }}>Sorell automatise votre veille sectorielle chaque semaine</p>
+                            <p style={{ fontSize: 10, color: "#7A7267", margin: "0 0 8px", fontStyle: "italic", lineHeight: 1.5 }}>Plus besoin de faire votre veille. Sorell l&apos;a d&eacute;j&agrave; faite.</p>
+                            <p style={{ fontSize: 10, color: bodyTextColor, lineHeight: 1.6, margin: "0 0 12px" }}>Sorell analyse plus de 147 sources en temps r&eacute;el et g&eacute;n&egrave;re une newsletter personnalis&eacute;e pour votre secteur en 12 secondes.</p>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <span style={{ padding: "6px 14px", background: brandColor, color: "white", fontSize: 9, fontWeight: 600, borderRadius: 5 }}>D&eacute;couvrir Sorell →</span>
+                              <span style={{ fontSize: 9, color: "#7A7267" }}>sorell.fr</span>
+                            </div>
+                          </div>
+                          <div style={{ padding: "0 20px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+                          {/* Editorial */}
+                          <div style={{ padding: "14px 20px" }}>
+                            <div style={{ borderLeft: `3px solid ${brandColor}`, padding: "10px 14px", background: "#F5F0EB", borderRadius: "0 6px 6px 0" }}>
+                              <p style={{ fontSize: 8, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Le point de vue</p>
+                              <p style={{ fontSize: 10, color: bodyTextColor, lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>La veille sectorielle n&apos;est plus un luxe r&eacute;serv&eacute; aux grandes entreprises. Avec Sorell, chaque dirigeant de PME re&ccedil;oit une synth&egrave;se claire et actionnable.</p>
+                            </div>
+                          </div>
+                          <div style={{ padding: "0 20px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+                          {/* Key figures */}
+                          <div style={{ padding: "14px 20px" }}>
+                            <p style={{ fontSize: 8, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>Chiffres cl&eacute;s</p>
+                            <div style={{ display: "flex", gap: 6 }}>
+                              {[{ v: "147+", l: "Sources", c: "en temps r\u00e9el" }, { v: "12s", l: "G\u00e9n\u00e9ration", c: "par newsletter" }, { v: "30+", l: "Secteurs", c: "et sur-mesure" }].map((f, i) => (
+                                <div key={i} style={{ flex: 1, background: "#F5F0EB", border: "1px solid #E8E0D8", borderRadius: 6, padding: 8, textAlign: "center" }}>
+                                  <p style={{ fontSize: 14, fontWeight: 700, color: brandColor, margin: "0 0 2px" }}>{f.v}</p>
+                                  <p style={{ fontSize: 8, color: textColor, fontWeight: 600, margin: "0 0 1px" }}>{f.l}</p>
+                                  <p style={{ fontSize: 7, color: "#7A7267", margin: 0 }}>{f.c}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div style={{ padding: "0 20px" }}><div style={{ borderTop: "1px solid #E8E0D8" }}></div></div>
+                          {/* Secondary articles */}
+                          <div style={{ padding: "14px 20px 6px" }}>
+                            <p style={{ fontSize: 8, fontWeight: 600, color: brandColor, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px" }}>A lire aussi</p>
+                            {[{ tag: "Fonctionnalit\u00e9", src: "Sorell", title: "Personnalisez vos newsletters avec votre identit\u00e9 visuelle", desc: "Couleurs, logo, fr\u00e9quence d\u2019envoi : chaque newsletter Sorell est adapt\u00e9e \u00e0 votre marque." },
+                              { tag: "Produit", src: "Sorell", title: "Sources custom et analytics : gardez le contr\u00f4le", desc: "Ajoutez vos propres sources, suivez les taux d\u2019ouverture et de clic." }].map((a, i) => (
+                              <div key={i} style={{ border: "1px solid #E8E0D8", borderRadius: 6, padding: 12, marginBottom: 10, background: bgColor }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                  <span style={{ padding: "1px 6px", borderRadius: 3, background: "#F5F0EB", color: "#7A7267", fontSize: 7, fontWeight: 700, textTransform: "uppercase" }}>{a.tag}</span>
+                                  <span style={{ fontSize: 8, color: "#7A7267" }}>{a.src}</span>
+                                </div>
+                                <p style={{ fontSize: 11, fontWeight: 600, color: textColor, margin: "0 0 4px", lineHeight: 1.35 }}>{a.title}</p>
+                                <p style={{ fontSize: 9, color: bodyTextColor, lineHeight: 1.5, margin: "0 0 8px" }}>{a.desc}</p>
+                                <span style={{ fontSize: 8, color: brandColor, fontWeight: 600 }}>Lire la suite →</span>
+                              </div>
+                            ))}
+                          </div>
+                          {/* CTA */}
+                          <div style={{ padding: "2px 20px 16px" }}>
+                            <div style={{ borderRadius: 6, background: brandColor, display: "flex", overflow: "hidden" }}>
+                              <div style={{ padding: "16px 16px 16px 20px", flex: "0 0 65%" }}>
+                                <p style={{ fontSize: 11, fontWeight: 600, color: "#FFFFFF", margin: "0 0 4px", lineHeight: 1.4 }}>Essayez Sorell gratuitement</p>
+                                <p style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", margin: "0 0 10px", lineHeight: 1.4 }}>2 newsletters par mois, sans engagement.</p>
+                                <span style={{ display: "inline-block", padding: "6px 14px", background: "white", color: brandColor, fontSize: 9, fontWeight: 600, borderRadius: 5 }}>Commencer →</span>
+                              </div>
+                              <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
+                                <div style={{ height: 60, width: "100%", background: "rgba(255,255,255,0.06)", borderRadius: "6px 0 0 0" }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Footer */}
+                          <div style={{ padding: "12px 20px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                              {(canUseLogo && (logoPreview || logoUrl)) ? (
+                                <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 16, maxWidth: 80 }} />
+                              ) : (
+                                <img src="/icone.png" alt="S." style={{ width: 16, height: 16 }} />
+                              )}
+                              <span style={{ fontSize: 9, color: brandColor }}>sorell.fr</span>
+                            </div>
+                            <p style={{ fontSize: 8, color: "#7A7267", margin: 0 }}>G&eacute;n&eacute;r&eacute; par Sorell · Votre veille sectorielle par IA</p>
+                          </div>
+                        </div>
                       </div>
-                      <span style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", textAlign: "center" }}>
-                        {t("config.preview_newsletter_title")}
-                      </span>
-                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-                        {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                      </span>
                     </div>
                   </div>
-
-                  {renderSaveButton()}
                 </>
               )}
             </div>
