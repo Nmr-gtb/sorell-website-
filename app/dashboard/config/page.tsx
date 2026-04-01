@@ -1143,33 +1143,191 @@ export default function ConfigPage() {
           {activeTab === "apparence" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {!isPro ? (
-                /* Locked state for free users */
-                <div style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 12,
-                  padding: "48px 24px",
-                  textAlign: "center",
-                }}>
-                  <div style={{ fontSize: 32, marginBottom: 12 }}>🎨</div>
-                  <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
-                    {t("custom.pro_required")}
-                  </h2>
-                  <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 20, lineHeight: 1.6, maxWidth: 400, margin: "0 auto 20px" }}>
-                    {t("custom.pro_desc")}
-                  </p>
-                  <a href="/tarifs" style={{
-                    display: "inline-block",
-                    padding: "10px 24px",
-                    background: "var(--accent)",
-                    color: "white",
-                    borderRadius: 8,
-                    fontSize: 14,
-                    fontWeight: 600,
-                    textDecoration: "none",
+                /* Read-only preview for free users */}
+                <div style={{ position: "relative" }}>
+                  <div style={{ filter: "blur(2px)", pointerEvents: "none", userSelect: "none", opacity: 0.85 }}>
+                  {/* 2-column layout: controls left, preview right - READ ONLY */}
+                  <div style={{ display: "flex", gap: 28, alignItems: "flex-start" }}>
+                    {/* LEFT - Controls (disabled) */}
+                    <div style={{ flex: "0 0 380px", display: "flex", flexDirection: "column", gap: 24 }}>
+                      {/* Colors section */}
+                      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                          <span style={{ display: "flex", color: "var(--accent)" }}><IconPalette /></span>
+                          <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>{t("config.tab_colors")}</h2>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                          {/* Primary color */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.primary_color")}</label>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 12px", height: 42, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                              <div style={{ width: 24, height: 24, borderRadius: 6, background: "#005058" }} />
+                              <span style={{ flex: 1, fontSize: 14, color: "var(--text)", fontFamily: "monospace" }}>#005058</span>
+                            </div>
+                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                              {PRESET_COLORS.map((c) => (
+                                <div key={c.value} title={c.label}
+                                  style={{ width: 24, height: 24, borderRadius: "50%", background: c.value, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: c.value === "#005058" ? `0 0 0 2px white, 0 0 0 3px ${c.value}` : "0 1px 2px rgba(0,0,0,0.15)" }}>
+                                  {c.value === "#005058" && (<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>)}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {/* Secondary colors grid */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                              <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.title_color")}</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                                <div style={{ width: 20, height: 20, borderRadius: 4, background: "#111827" }} />
+                                <span style={{ flex: 1, fontSize: 12, color: "var(--text)", fontFamily: "monospace" }}>#111827</span>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                              <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.bg_color")}</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                                <div style={{ width: 20, height: 20, borderRadius: 4, background: "#FFFFFF", border: "1px solid #E5E7EB" }} />
+                                <span style={{ flex: 1, fontSize: 12, color: "var(--text)", fontFamily: "monospace" }}>#FFFFFF</span>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Body text color */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <label style={{ fontSize: 12, fontWeight: 500, color: "var(--text-secondary)" }}>{t("custom.text_color")}</label>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "0 10px", height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--surface)" }}>
+                              <div style={{ width: 20, height: 20, borderRadius: 4, background: "#4B5563" }} />
+                              <span style={{ flex: 1, fontSize: 12, color: "var(--text)", fontFamily: "monospace" }}>#4B5563</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Logo section */}
+                      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                          <span style={{ display: "flex", color: "var(--accent)" }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+                          </span>
+                          <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>{t("custom.logo_title")}</h2>
+                        </div>
+                        <div style={{ border: "2px dashed var(--border)", borderRadius: 10, padding: "24px 20px", textAlign: "center", background: "var(--surface-alt)" }}>
+                          <span style={{ display: "flex", justifyContent: "center", color: "var(--text-muted)", marginBottom: 8 }}><IconUpload /></span>
+                          <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0" }}>{t("custom.logo_drop")}</p>
+                          <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>PNG, JPG ou SVG - Max 2 Mo</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* RIGHT - V4 email preview */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)", margin: "0 0 12px" }}>
+                        {t("custom.preview")}
+                      </p>
+                      <div style={{ background: "#F5F0EB", borderRadius: 12, padding: 16, border: "1px solid var(--border)" }}>
+                        <div style={{ background: "#FFFFFF", borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
+                          {/* Header */}
+                          <div style={{ padding: "14px 20px", borderBottom: "1px solid #E8E0D8", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                            <span style={{ fontSize: 10, color: "#7A7267" }}>Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
+                          </div>
+                          {/* Hero */}
+                          <div style={{ background: "#005058", display: "flex" }}>
+                            <div style={{ padding: "24px 20px 20px", flex: "0 0 65%" }}>
+                              <p style={{ fontSize: 8, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 10px" }}>Sorell</p>
+                              <p style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", margin: 0, lineHeight: 1.3 }}>Sorell automatise votre veille sectorielle</p>
+                            </div>
+                            <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
+                              <div style={{ height: 80, width: "100%", background: "rgba(255,255,255,0.08)", borderRadius: "8px 0 0 0" }}></div>
+                            </div>
+                          </div>
+                          {/* Featured article */}
+                          <div style={{ padding: "16px 20px 14px" }}>
+                            <div style={{ marginBottom: 8 }}>
+                              <span style={{ padding: "2px 8px", borderRadius: 4, background: "#005058", color: "white", fontSize: 7, fontWeight: 700, textTransform: "uppercase" }}>A la une</span>
+                            </div>
+                            <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "0 0 6px", lineHeight: 1.35 }}>Sorell automatise votre veille sectorielle chaque semaine</p>
+                            <p style={{ fontSize: 10, color: "#4B5563", lineHeight: 1.6, margin: "0 0 12px" }}>Sorell analyse plus de 147 sources en temps reel et genere une newsletter personnalisee pour votre secteur.</p>
+                          </div>
+                          {/* Key figures */}
+                          <div style={{ padding: "14px 20px" }}>
+                            <div style={{ display: "flex", gap: 6 }}>
+                              {[{ v: "147+", l: "Sources" }, { v: "12s", l: "Generation" }, { v: "30+", l: "Secteurs" }].map((f, i) => (
+                                <div key={i} style={{ flex: 1, background: "#F5F0EB", border: "1px solid #E8E0D8", borderRadius: 6, padding: 8, textAlign: "center" }}>
+                                  <p style={{ fontSize: 14, fontWeight: 700, color: "#005058", margin: "0 0 2px" }}>{f.v}</p>
+                                  <p style={{ fontSize: 8, color: "#111827", fontWeight: 600, margin: 0 }}>{f.l}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {/* Footer */}
+                          <div style={{ padding: "12px 20px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>
+                            <p style={{ fontSize: 8, color: "#7A7267", margin: 0 }}>Genere par Sorell - Votre veille sectorielle par IA</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+
+                  {/* Upgrade overlay */}
+                  <div style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 10,
+                    background: "rgba(var(--surface-rgb, 255,255,255), 0.25)",
+                    borderRadius: 12,
                   }}>
-                    {t("custom.see_plans")}
-                  </a>
+                    <div style={{
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 16,
+                      padding: "36px 40px",
+                      textAlign: "center",
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                      maxWidth: 420,
+                    }}>
+                      <div style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 12,
+                        background: "linear-gradient(135deg, #FEF3C7, #FDE68A)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 16px",
+                      }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#D97706" stroke="#D97706" strokeWidth="1.5">
+                          <path d="M2 20h20L19 9l-5 4-2-6-2 6-5-4z" />
+                        </svg>
+                      </div>
+                      <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+                        {t("custom.pro_required")}
+                      </h2>
+                      <p style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
+                        {t("custom.pro_desc")}
+                      </p>
+                      <a
+                        href="/tarifs"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 8,
+                          background: "var(--accent)",
+                          color: "#fff",
+                          fontSize: 15,
+                          fontWeight: 600,
+                          padding: "12px 28px",
+                          borderRadius: 10,
+                          textDecoration: "none",
+                          transition: "opacity 0.15s ease",
+                        }}
+                      >
+                        {t("custom.see_plans")} →
+                      </a>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <>

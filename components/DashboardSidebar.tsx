@@ -131,7 +131,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
     { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false, alsoActive: ["/dashboard/customization"] },
     { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
-    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: plan === "free", alsoActive: ["/dashboard/historique"] },
+    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: false, alsoActive: ["/dashboard/historique"] },
     { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
   ];
 
