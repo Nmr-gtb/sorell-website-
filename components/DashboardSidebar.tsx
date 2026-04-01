@@ -129,11 +129,9 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
 
   const navItems = [
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
-    { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false },
+    { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false, alsoActive: ["/dashboard/customization"] },
     { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
-    { label: t("dash.history"), href: "/dashboard/historique", icon: <IconHistory />, crown: plan === "free" },
-    { label: t("dash.customization"), href: "/dashboard/customization", icon: <IconPalette />, crown: plan === "free" },
-    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: plan === "free" },
+    { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: plan === "free", alsoActive: ["/dashboard/historique"] },
     { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
   ];
 
@@ -149,9 +147,11 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     router.push("/");
   };
 
-  const isActive = (href: string) => {
+  const isActive = (href: string, alsoActive?: string[]) => {
     if (href === "/dashboard") return pathname === "/dashboard";
-    return pathname.startsWith(href);
+    if (pathname.startsWith(href)) return true;
+    if (alsoActive) return alsoActive.some((p) => pathname.startsWith(p));
+    return false;
   };
 
   const sidebarContent = (
@@ -170,17 +170,13 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
       {/* Logo */}
       <div style={{ padding: "4px 16px 16px" }}>
         <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-          <span
-            style={{
-              fontFamily: "'Quiglet', sans-serif",
-              fontSize: "1rem",
-              fontWeight: "normal",
-              color: "var(--text)",
-              lineHeight: 1,
-            }}
-          >
-            Sorell
-          </span>
+          <img
+            src="/icone.png"
+            alt="Sorell"
+            width={32}
+            height={32}
+            style={{ borderRadius: 6 }}
+          />
         </Link>
       </div>
 
@@ -201,26 +197,26 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
               padding: "8px 12px",
               borderRadius: 6,
               fontSize: 14,
-              fontWeight: isActive(item.href) ? 500 : 400,
-              color: isActive(item.href) ? "var(--accent)" : item.crown && !isActive(item.href) ? "var(--text-muted)" : "var(--text-secondary)",
-              background: isActive(item.href) ? "var(--accent-subtle)" : "transparent",
+              fontWeight: isActive(item.href, item.alsoActive) ? 500 : 400,
+              color: isActive(item.href, item.alsoActive) ? "var(--accent)" : item.crown && !isActive(item.href, item.alsoActive) ? "var(--text-muted)" : "var(--text-secondary)",
+              background: isActive(item.href, item.alsoActive) ? "var(--accent-subtle)" : "transparent",
               textDecoration: "none",
               transition: "background 0.1s ease, color 0.1s ease",
             }}
             onMouseEnter={(e) => {
-              if (!isActive(item.href)) {
+              if (!isActive(item.href, item.alsoActive)) {
                 (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface-hover)";
                 (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)";
               }
             }}
             onMouseLeave={(e) => {
-              if (!isActive(item.href)) {
+              if (!isActive(item.href, item.alsoActive)) {
                 (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
                 (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-secondary)";
               }
             }}
           >
-            <span style={{ opacity: isActive(item.href) ? 1 : 0.7, display: "flex" }}>{item.icon}</span>
+            <span style={{ opacity: isActive(item.href, item.alsoActive) ? 1 : 0.7, display: "flex" }}>{item.icon}</span>
             <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
               {item.label}
               {item.crown && <CrownIcon />}

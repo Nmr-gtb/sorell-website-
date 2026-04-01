@@ -380,33 +380,7 @@ export default function DashboardPage() {
 
   const lastArticleCount = lastNewsletter ? countArticles(lastNewsletter.content) : null;
 
-  const metrics = [
-    {
-      icon: <IconCalendar />,
-      value: loadingData ? "..." : (nextNewsletter?.date ?? "—"),
-      sublabel: loadingData ? "" : (nextNewsletter?.time ?? ""),
-      label: t("dashboard.metric_next_newsletter"),
-    },
-    {
-      icon: <IconUsers />,
-      value: loadingData ? "..." : String(recipientCount ?? 0),
-      sublabel: t("dashboard.metric_collaborators"),
-      label: t("dashboard.metric_recipients"),
-      link: "/dashboard/config",
-    },
-    {
-      icon: <IconEye />,
-      value: loadingNewsletter ? "..." : lastOpenRate !== null ? `${lastOpenRate}%` : "—",
-      sublabel: "",
-      label: t("dashboard.metric_open_rate"),
-    },
-    {
-      icon: <IconDocument />,
-      value: loadingNewsletter ? "..." : lastArticleCount !== null ? String(lastArticleCount) : "—",
-      sublabel: lastArticleCount !== null ? t("dashboard.metric_articles_sublabel") : "",
-      label: t("dashboard.metric_articles"),
-    },
-  ];
+  // metrics are now inline in the JSX (3 cards instead of 4)
 
   // Loading state while checking if new user
   if (isNewUser === null) {
@@ -1035,20 +1009,24 @@ export default function DashboardPage() {
     }
   }
 
-  // ── NORMAL DASHBOARD ─────────────────────────────────────────────
+  // ── NORMAL DASHBOARD (Redesign V2 - Musemind style) ──────────────
+
+  const briefDone = !!(config?.custom_brief && config.custom_brief.length >= 20);
+  const recipientsDone = (recipientCount ?? 0) > 0;
+  const newsletterDone = !!lastNewsletter;
+  const checklistSteps = [
+    { done: briefDone, label: t("dashboard.checklist_brief"), href: "/dashboard/config" },
+    { done: recipientsDone, label: t("dashboard.checklist_recipients"), href: "/dashboard/config" },
+    { done: newsletterDone, label: t("dashboard.checklist_generate"), href: "/dashboard/generate" },
+  ];
+  const completedSteps = checklistSteps.filter((s) => s.done).length;
+  const showChecklist = !loadingData && !loadingNewsletter && completedSteps < 3;
+
   return (
-    <div style={{ padding: "32px", maxWidth: 900 }}>
-      {/* Page header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1
-          style={{
-            fontSize: 24,
-            fontWeight: 600,
-            color: "var(--text)",
-            letterSpacing: "-0.02em",
-            marginBottom: 6,
-          }}
-        >
+    <div style={{ padding: "32px 40px", maxWidth: 960 }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
           {t("dashboard.greeting")}, {firstName}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
@@ -1056,287 +1034,278 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Guidance messages */}
-      {!loadingData && !loadingNewsletter && (
-        <>
-          {(!config?.custom_brief || config.custom_brief.length < 20) && (
+      {/* Checklist de progression */}
+      {showChecklist && (
+        <div style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          marginBottom: 24,
+          overflow: "hidden",
+        }}>
+          {/* Progress bar */}
+          <div style={{ height: 4, background: "var(--border)" }}>
             <div style={{
-              padding: "16px 20px",
-              background: "rgba(0,80,88,0.06)",
-              border: "1px solid rgba(0,80,88,0.15)",
-              borderRadius: 10,
-              marginBottom: 24,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  {t("dashboard.guide_brief_title")}
-                </p>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  {t("dashboard.guide_brief_desc")}
-                </p>
-              </div>
-              <a href="/dashboard/config" style={{
-                padding: "8px 16px",
-                background: "var(--accent)",
-                color: "white",
-                borderRadius: 6,
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                marginLeft: 16,
-              }}>
-                {t("dashboard.guide_complete_btn")}
-              </a>
-            </div>
-          )}
-          {config?.custom_brief && config.custom_brief.length >= 20 && recipientCount === 0 && (
-            <div style={{
-              padding: "16px 20px",
-              background: "rgba(245,158,11,0.06)",
-              border: "1px solid rgba(245,158,11,0.15)",
-              borderRadius: 10,
-              marginBottom: 24,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  {t("dashboard.guide_recipient_title")}
-                </p>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  {t("dashboard.guide_recipient_desc")}
-                </p>
-              </div>
-              <a href="/dashboard/config" style={{
-                padding: "8px 16px",
-                background: "#F59E0B",
-                color: "white",
-                borderRadius: 6,
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                marginLeft: 16,
-              }}>
-                {t("dashboard.guide_add_btn")}
-              </a>
-            </div>
-          )}
-          {config?.custom_brief && config.custom_brief.length >= 20 && (recipientCount ?? 0) > 0 && !lastNewsletter && (
-            <div style={{
-              padding: "16px 20px",
-              background: "rgba(16,185,129,0.06)",
-              border: "1px solid rgba(16,185,129,0.15)",
-              borderRadius: 10,
-              marginBottom: 24,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", margin: "0 0 4px" }}>
-                  {t("dashboard.guide_generate_title")}
-                </p>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>
-                  {t("dashboard.guide_generate_desc")}
-                </p>
-              </div>
-              <a href="/dashboard/generate" style={{
-                padding: "8px 16px",
-                background: "#10B981",
-                color: "white",
-                borderRadius: 6,
-                fontSize: 13,
-                fontWeight: 600,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                marginLeft: 16,
-              }}>
-                {t("dashboard.guide_generate_btn")}
-              </a>
-            </div>
-          )}
-        </>
+              height: 4,
+              width: `${(completedSteps / 3) * 100}%`,
+              background: "var(--accent)",
+              borderRadius: completedSteps < 3 ? "0" : undefined,
+              transition: "width 0.3s ease",
+            }} />
+          </div>
+          <div style={{ display: "flex", padding: "16px 20px", gap: 24, flexWrap: "wrap" }}>
+            {checklistSteps.map((step) => (
+              <Link
+                key={step.label}
+                href={step.href}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  textDecoration: "none",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: step.done ? "#059669" : "var(--text-muted)",
+                }}
+              >
+                {step.done ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="16 10 11 15 8 12" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                )}
+                {step.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
 
-      {/* Metric cards */}
+      {/* 3 Metric cards */}
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: 16,
-          marginBottom: 24,
-        }}
+        style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}
         className="dashboard-metrics-grid"
       >
-        {metrics.map((m) => {
-          const cardStyle = {
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: 20,
-            cursor: m.link ? "pointer" as const : undefined,
-          };
-          const cardContent = (
-            <>
-              <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
-                {m.icon}
-              </div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
-                <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-                  {m.value}
-                </span>
-                {m.sublabel && (
-                  <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{m.sublabel}</span>
-                )}
-              </div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{m.label}</div>
-              {m.link && (
-                <span style={{ fontSize: 11, color: "var(--accent)", marginTop: 4, display: "block" }}>{t("dashboard.manage")}</span>
-              )}
-            </>
-          );
-          return m.link ? (
-            <a key={m.label} href={m.link} style={{ textDecoration: "none", color: "inherit" }}>
-              <div style={cardStyle}>{cardContent}</div>
-            </a>
-          ) : (
-            <div key={m.label} style={cardStyle}>{cardContent}</div>
-          );
-        })}
-      </div>
-
-      {/* Last newsletter */}
-      <div
-        style={{
+        {/* Prochain envoi */}
+        <div style={{
           background: "var(--surface)",
           border: "1px solid var(--border)",
           borderRadius: 12,
           padding: 24,
-          marginBottom: 24,
-        }}
-      >
-        <h2
-          style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: "var(--text-muted)",
-            textTransform: "uppercase",
-            letterSpacing: "0.06em",
-            marginBottom: 16,
-          }}
-        >
+        }}>
+          <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
+            <IconCalendar />
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+              {loadingData ? "..." : (nextNewsletter?.date ?? "—")}
+            </span>
+            {!loadingData && nextNewsletter?.time && (
+              <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{nextNewsletter.time}</span>
+            )}
+          </div>
+          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_next_newsletter")}</div>
+        </div>
+
+        {/* Destinataires */}
+        <Link href="/dashboard/config" style={{ textDecoration: "none", color: "inherit" }}>
+          <div style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 24,
+            cursor: "pointer",
+            height: "100%",
+          }}>
+            <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
+              <IconUsers />
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+              <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+                {loadingData ? "..." : String(recipientCount ?? 0)}
+              </span>
+              <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.metric_collaborators")}</span>
+            </div>
+            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_recipients")}</div>
+            <span style={{ fontSize: 12, color: "var(--accent)", marginTop: 4, display: "block" }}>{t("dashboard.manage")}</span>
+          </div>
+        </Link>
+
+        {/* Taux d'ouverture */}
+        <div style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 12,
+          padding: 24,
+        }}>
+          <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
+            <IconEye />
+          </div>
+          <span style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", letterSpacing: "-0.02em", display: "block", marginBottom: 4 }}>
+            {loadingNewsletter ? "..." : lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
+          </span>
+          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_open_rate")}</div>
+        </div>
+      </div>
+
+      {/* Derniere newsletter */}
+      <div style={{
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: 12,
+        padding: 24,
+        marginBottom: 24,
+      }}>
+        <h2 style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: "var(--text-muted)",
+          letterSpacing: "0.08em",
+          marginBottom: 16,
+        }}>
           {t("dashboard.last_newsletter")}
         </h2>
         {loadingNewsletter ? (
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
         ) : lastNewsletter === null ? (
-          <div style={{ textAlign: "center", padding: "16px 0" }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="M2 7l10 7 10-7" />
+              </svg>
+            </div>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
               {t("dashboard.no_newsletter")}
             </p>
-            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20 }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
               {t("dashboard.no_newsletter_desc")}
             </p>
-            <Link href="/dashboard/generate" className="btn-primary" style={{ padding: "10px 20px", fontSize: 14 }}>
+            <Link
+              href="/dashboard/generate"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 20px",
+                background: "var(--accent)",
+                color: "white",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
               {t("dashboard.generate_first")}
             </Link>
           </div>
         ) : (
           <>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-                  {lastNewsletter.status === "sent" ? t("dashboard.sent_date") : t("dashboard.generated_date")}
-                </span>
-                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {lastNewsletter.sent_at
-                    ? formatDate(lastNewsletter.sent_at, lang)
-                    : lastNewsletter.generated_at
-                    ? formatDate(lastNewsletter.generated_at, lang)
-                    : "—"}
-                </span>
-              </div>
-              <div style={{ height: 1, background: "var(--border)" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.subject")}</span>
-                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500, textAlign: "right", maxWidth: "60%" }}>
-                  {lastNewsletter.subject || "—"}
-                </span>
-              </div>
-              <div style={{ height: 1, background: "var(--border)" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.status")}</span>
-                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {lastNewsletter.status === "sent" ? t("history.sent") : t("history.draft")}
-                </span>
-              </div>
-              <div style={{ height: 1, background: "var(--border)" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.open_rate")}</span>
-                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
-                </span>
-              </div>
-              <div style={{ height: 1, background: "var(--border)" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.click_count")}</span>
-                <span style={{ fontSize: 14, color: "var(--text)", fontWeight: 500 }}>
-                  {lastNewsletter.click_count ?? "—"}
-                </span>
-              </div>
+            <p style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 6, lineHeight: 1.4 }}>
+              {lastNewsletter.subject || "—"}
+            </p>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12 }}>
+              {lastNewsletter.sent_at
+                ? `${t("dashboard.sent_date")} ${formatDate(lastNewsletter.sent_at, lang)}`
+                : lastNewsletter.generated_at
+                ? `${t("dashboard.generated_date")} ${formatDate(lastNewsletter.generated_at, lang)}`
+                : ""}
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+              <span style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "4px 10px",
+                borderRadius: 9999,
+                background: lastNewsletter.status === "sent" ? "#ECFDF5" : "#FEF3C7",
+                fontSize: 12,
+                fontWeight: 500,
+                color: lastNewsletter.status === "sent" ? "#059669" : "#D97706",
+              }}>
+                <span style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: lastNewsletter.status === "sent" ? "#059669" : "#D97706",
+                }} />
+                {lastNewsletter.status === "sent" ? t("dashboard.nl_sent") : t("dashboard.nl_draft")}
+              </span>
+              {lastOpenRate !== null && (
+                <>
+                  <span style={{ fontSize: 13, color: "var(--text-muted)" }}>·</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                    {lastOpenRate}% {t("dashboard.nl_opened")}
+                  </span>
+                </>
+              )}
+              {lastNewsletter.click_count > 0 && (
+                <>
+                  <span style={{ fontSize: 13, color: "var(--text-muted)" }}>·</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                    {lastNewsletter.click_count} {t("dashboard.nl_clicks")}
+                  </span>
+                </>
+              )}
+              {lastArticleCount !== null && (
+                <>
+                  <span style={{ fontSize: 13, color: "var(--text-muted)" }}>·</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                    {lastArticleCount} {t("dashboard.nl_articles")}
+                  </span>
+                </>
+              )}
             </div>
-            <Link href="/dashboard/generate" className="btn-ghost" style={{ fontSize: 13, padding: "6px 14px" }}>
-              {t("dashboard.generate_new")}
+            <Link href="/dashboard/generate" style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>
+              {t("dashboard.view_detail")}
             </Link>
           </>
         )}
       </div>
 
-      {/* Quick actions */}
-      <h2
+      {/* CTA principal */}
+      <Link
+        href="/dashboard/generate"
         style={{
-          fontSize: 13,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+          width: "100%",
+          padding: "16px 24px",
+          background: "var(--accent)",
+          color: "white",
+          borderRadius: 12,
+          fontSize: 15,
           fontWeight: 600,
-          color: "var(--text-muted)",
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-          marginBottom: 12,
+          textDecoration: "none",
+          marginBottom: 24,
+          transition: "opacity 0.15s ease",
         }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "0.88"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "1"; }}
       >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+        </svg>
+        {t("dashboard.action_generate")}
+      </Link>
+
+      {/* Actions rapides */}
+      <h2 style={{
+        fontSize: 11,
+        fontWeight: 600,
+        color: "var(--text-muted)",
+        letterSpacing: "0.08em",
+        marginBottom: 12,
+      }}>
         {t("dashboard.quick_actions")}
       </h2>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="dashboard-actions-grid">
-        <Link
-          href="/dashboard/generate"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: "var(--accent)",
-            border: "1px solid var(--accent)",
-            borderRadius: 12,
-            padding: "16px 20px",
-            textDecoration: "none",
-            gridColumn: "1 / -1",
-            transition: "opacity 0.15s ease",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.opacity = "0.88";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.opacity = "1";
-          }}
-        >
-          <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
-            {t("dashboard.action_generate")}
-          </span>
-        </Link>
         <Link
           href="/dashboard/config"
           style={{
@@ -1345,7 +1314,7 @@ export default function DashboardPage() {
             justifyContent: "space-between",
             background: "var(--surface)",
             border: "1px solid var(--border)",
-            borderRadius: 12,
+            borderRadius: 10,
             padding: "16px 20px",
             textDecoration: "none",
             transition: "border-color 0.15s ease, background 0.15s ease",
@@ -1359,10 +1328,15 @@ export default function DashboardPage() {
             (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface)";
           }}
         >
-          <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
-            {t("dashboard.action_configure")}
-          </span>
-          <span style={{ color: "var(--text-muted)" }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginBottom: 2 }}>
+              {t("dashboard.action_configure")}
+            </div>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+              {t("dashboard.action_config_desc")}
+            </div>
+          </div>
+          <span style={{ color: "var(--text-muted)", flexShrink: 0, marginLeft: 12 }}>
             <IconArrow />
           </span>
         </Link>
@@ -1374,7 +1348,7 @@ export default function DashboardPage() {
             justifyContent: "space-between",
             background: "var(--surface)",
             border: "1px solid var(--border)",
-            borderRadius: 12,
+            borderRadius: 10,
             padding: "16px 20px",
             textDecoration: "none",
             transition: "border-color 0.15s ease, background 0.15s ease",
@@ -1388,17 +1362,22 @@ export default function DashboardPage() {
             (e.currentTarget as HTMLAnchorElement).style.background = "var(--surface)";
           }}
         >
-          <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>
-            {t("dashboard.action_analytics")}
-          </span>
-          <span style={{ color: "var(--text-muted)" }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginBottom: 2 }}>
+              {t("dashboard.action_analytics")}
+            </div>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+              {t("dashboard.action_analytics_desc")}
+            </div>
+          </div>
+          <span style={{ color: "var(--text-muted)", flexShrink: 0, marginLeft: 12 }}>
             <IconArrow />
           </span>
         </Link>
       </div>
 
       <style>{`
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .dashboard-metrics-grid {
             grid-template-columns: 1fr !important;
           }
