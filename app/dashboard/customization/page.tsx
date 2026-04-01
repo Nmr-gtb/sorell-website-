@@ -500,10 +500,10 @@ export default function CustomizationPage() {
               <div style={{ background: brandColor, display: "flex" }}>
                 <div style={{ padding: "28px 24px 24px", flex: "0 0 65%" }}>
                   <p style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 12px", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>
-                    Semaine du {previewDate} · Veille sectorielle
+                    Semaine du {previewDate} · Sorell
                   </p>
                   <h1 style={{ fontSize: 20, fontWeight: 700, color: "#FFFFFF", margin: 0, lineHeight: 1.3, fontFamily: "Georgia, 'Times New Roman', serif", letterSpacing: "-0.01em" }}>
-                    Ce qui change dans votre secteur cette semaine
+                    Sorell automatise votre veille sectorielle chaque semaine
                   </h1>
                 </div>
                 <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
@@ -518,23 +518,23 @@ export default function CustomizationPage() {
                     A la une
                   </span>
                   <span style={{ display: "inline-block", padding: "3px 8px", borderRadius: 4, background: warmBg, color: secondaryText, fontSize: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                    March&eacute;
+                    Veille IA
                   </span>
                 </div>
                 <h2 style={{ fontSize: 17, fontWeight: 700, color: textColor, margin: "0 0 8px", lineHeight: 1.35, fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                  Les tendances qui redessinent votre secteur en 2026
+                  Sorell automatise votre veille sectorielle chaque semaine
                 </h2>
                 <p style={{ fontSize: 12, color: secondaryText, margin: "0 0 10px", fontStyle: "italic", lineHeight: 1.5, fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                  Une analyse des forces qui transforment le paysage concurrentiel cette ann&eacute;e.
+                  Plus besoin de faire votre veille. Sorell l&apos;a d&eacute;j&agrave; faite.
                 </p>
                 <p style={{ fontSize: 12, color: bodyTextColor, lineHeight: 1.65, margin: "0 0 14px" }}>
-                  Le march&eacute; conna&icirc;t une acc&eacute;l&eacute;ration sans pr&eacute;c&eacute;dent dans l&apos;adoption des technologies d&apos;intelligence artificielle. Les entreprises qui int&egrave;grent ces outils voient leur productivit&eacute; augmenter de 30% en moyenne.
+                  Sorell analyse plus de 147 sources en temps r&eacute;el et g&eacute;n&egrave;re une newsletter personnalis&eacute;e pour votre secteur en 12 secondes. Vos &eacute;quipes re&ccedil;oivent l&apos;essentiel, sans effort.
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <span style={{ display: "inline-block", padding: "8px 18px", background: brandColor, color: "white", fontSize: 11, fontWeight: 600, borderRadius: 6 }}>
-                    Lire l&apos;article →
+                    D&eacute;couvrir Sorell →
                   </span>
-                  <span style={{ fontSize: 10, color: secondaryText }}>via Les Echos</span>
+                  <span style={{ fontSize: 10, color: secondaryText }}>sorell.fr</span>
                 </div>
               </div>
               <div style={{ padding: "0 24px" }}><div style={{ borderTop: `1px solid ${warmBorder}` }}></div></div>
@@ -546,7 +546,7 @@ export default function CustomizationPage() {
                     Le point de vue
                   </p>
                   <p style={{ fontSize: 12, color: bodyTextColor, lineHeight: 1.65, margin: 0, fontStyle: "italic", fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                    L&apos;intelligence artificielle n&apos;est plus un avantage comp&eacute;titif, c&apos;est un pr&eacute;requis. Les entreprises qui tardent &agrave; l&apos;int&eacute;grer risquent de perdre en pertinence face &agrave; des concurrents plus agiles.
+                    La veille sectorielle n&apos;est plus un luxe r&eacute;serv&eacute; aux grandes entreprises. Avec Sorell, chaque dirigeant de PME re&ccedil;oit une synth&egrave;se claire et actionnable, directement dans sa bo&icirc;te mail.
                   </p>
                 </div>
               </div>
@@ -559,9 +559,9 @@ export default function CustomizationPage() {
                 </p>
                 <div style={{ display: "flex", gap: 8 }}>
                   {[
-                    { value: "+30%", label: "Productivit\u00e9 IA", context: "gain moyen observ\u00e9" },
-                    { value: "2,4M", label: "Emplois cr\u00e9\u00e9s", context: "en Europe d'ici 2028" },
-                    { value: "67%", label: "PME concern\u00e9es", context: "pr\u00e9voient d'investir" },
+                    { value: "147+", label: "Sources analys\u00e9es", context: "en temps r\u00e9el" },
+                    { value: "12s", label: "G\u00e9n\u00e9ration", context: "par newsletter" },
+                    { value: "30+", label: "Secteurs couverts", context: "et sur-mesure" },
                   ].map((fig, i) => (
                     <div key={i} style={{ flex: 1, background: warmBg, border: `1px solid ${warmBorder}`, borderRadius: 8, padding: 12, textAlign: "center" }}>
                       <p style={{ fontSize: 18, fontWeight: 700, color: brandColor, margin: "0 0 4px", fontFamily: "Georgia, 'Times New Roman', serif" }}>{fig.value}</p>
@@ -579,8 +579,8 @@ export default function CustomizationPage() {
                   A lire aussi
                 </p>
                 {[
-                  { tag: "Innovation", source: "Le Monde", title: "Comment l'IA g\u00e9n\u00e9rative transforme le service client", desc: "Les chatbots nouvelle g\u00e9n\u00e9ration r\u00e9duisent les temps de r\u00e9ponse de 80% tout en am\u00e9liorant la satisfaction." },
-                  { tag: "R\u00e9glementation", source: "Reuters", title: "Nouvelles normes europ\u00e9ennes : ce qui change pour votre entreprise", desc: "L'entr\u00e9e en vigueur de l'AI Act impose de nouvelles obligations de transparence aux entreprises." },
+                  { tag: "Fonctionnalit\u00e9", source: "Sorell", title: "Personnalisez vos newsletters avec votre identit\u00e9 visuelle", desc: "Couleurs, logo, fr\u00e9quence d'envoi : chaque newsletter Sorell est adapt\u00e9e \u00e0 votre marque." },
+                  { tag: "Produit", source: "Sorell", title: "Sources custom et analytics : gardez le contr\u00f4le sur votre veille", desc: "Ajoutez vos propres sources, suivez les taux d'ouverture et de clic." },
                 ].map((a, i) => (
                   <div key={i} style={{ border: `1px solid ${warmBorder}`, borderRadius: 8, overflow: "hidden", marginBottom: 12 }}>
                     <div style={{ padding: 16, background: bgColor }}>
@@ -605,13 +605,13 @@ export default function CustomizationPage() {
                 <div style={{ borderRadius: 8, overflow: "hidden", background: brandColor, display: "flex" }}>
                   <div style={{ padding: "20px 20px 20px 24px", flex: "0 0 65%" }}>
                     <p style={{ fontSize: 13, fontWeight: 600, color: "#FFFFFF", margin: "0 0 4px", fontFamily: "Georgia, 'Times New Roman', serif", lineHeight: 1.4 }}>
-                      Partagez cette veille avec votre &eacute;quipe
+                      Essayez Sorell gratuitement
                     </p>
                     <p style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", margin: "0 0 14px", lineHeight: 1.5 }}>
-                      Envoyez cette newsletter &agrave; vos collaborateurs.
+                      2 newsletters par mois, sans engagement.
                     </p>
                     <span style={{ display: "inline-block", padding: "8px 18px", background: "white", color: brandColor, fontSize: 11, fontWeight: 600, borderRadius: 6 }}>
-                      Voir les plans →
+                      Commencer →
                     </span>
                   </div>
                   <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
