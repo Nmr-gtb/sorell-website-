@@ -180,42 +180,38 @@ function DemoNewsletterResult({
         )}
       </div>
 
-      {/* Email metadata bar */}
-      <div
-        style={{
-          background: "var(--surface-alt)",
-          borderBottom: "1px solid var(--border)",
-          padding: "12px 20px",
-          borderRadius: "12px 12px 0 0",
-          border: "1px solid var(--border)",
-          borderBottomColor: "transparent",
-        }}
-      >
-        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
-          <span style={{ color: "var(--text-muted)" }}>De : </span>
-          <span style={{ fontWeight: 500, color: "var(--text)" }}>Sorell</span>
-          <span style={{ color: "var(--text-muted)" }}> &lt;newsletter@sorell.fr&gt;</span>
-        </div>
-        <div style={{ fontSize: "0.75rem" }}>
-          <span style={{ color: "var(--text-muted)" }}>Objet : </span>
-          <span style={{ fontWeight: 600, color: "var(--text)" }}>
-            Votre briefing {SECTOR_LABELS[sector]} - {now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-          </span>
-        </div>
-      </div>
-
       {/* Newsletter V4 card */}
       <div
         style={{
           background: p.cardBg,
           border: `1px solid ${p.warmBorder}`,
-          borderRadius: "0 0 12px 12px",
+          borderRadius: 12,
           overflow: "hidden",
           fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           fontSize: "14px",
           color: p.bodyTextColor,
         }}
       >
+        {/* Email metadata bar */}
+        <div
+          style={{
+            background: "var(--surface-alt)",
+            borderBottom: `1px solid ${p.warmBorder}`,
+            padding: "12px 20px",
+          }}
+        >
+          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
+            <span style={{ color: "var(--text-muted)" }}>De : </span>
+            <span style={{ fontWeight: 500, color: "var(--text)" }}>Sorell</span>
+            <span style={{ color: "var(--text-muted)" }}> &lt;newsletter@sorell.fr&gt;</span>
+          </div>
+          <div style={{ fontSize: "0.75rem" }}>
+            <span style={{ color: "var(--text-muted)" }}>Objet : </span>
+            <span style={{ fontWeight: 600, color: "var(--text)" }}>
+              Votre briefing {SECTOR_LABELS[sector]} - {now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+            </span>
+          </div>
+        </div>
         {/* Header — logo + date */}
         <div style={{ padding: "20px 32px", borderBottom: `1px solid ${p.warmBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
