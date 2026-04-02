@@ -186,6 +186,7 @@ function DemoNewsletterResult({
           background: p.cardBg,
           border: `1px solid ${p.warmBorder}`,
           borderRadius: 12,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)",
           fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           fontSize: "14px",
           color: p.bodyTextColor,
