@@ -124,9 +124,11 @@ export default function Navbar() {
         }
         .nav-desktop { display: none !important; }
         .nav-mobile-controls { display: flex !important; }
+        .nav-mobile-drawer, .nav-mobile-overlay { display: block; }
         @media (min-width: 900px) {
           .nav-desktop { display: flex !important; }
           .nav-mobile-controls { display: none !important; }
+          .nav-mobile-drawer, .nav-mobile-overlay { display: none !important; }
         }
         .mobile-nav-link:hover {
           background: var(--surface-hover) !important;
@@ -302,6 +304,7 @@ export default function Navbar() {
 
       {/* Overlay */}
       <div
+        className="nav-mobile-overlay"
         onClick={close}
         style={{
           position: "fixed",
@@ -317,6 +320,7 @@ export default function Navbar() {
 
       {/* Slide drawer */}
       <div
+        className="nav-mobile-drawer"
         style={{
           position: "fixed",
           top: 0,
