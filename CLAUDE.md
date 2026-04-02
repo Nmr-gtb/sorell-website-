@@ -32,7 +32,7 @@
 
 ## Projet local
 
-- **Chemin** : ~/Desktop/SORELL/sorell-website
+- **Chemin** : ~/Desktop/CLAUDE-WORKSPACE/Projets/SORELL/sorell-website
 
 ## Direction artistique
 

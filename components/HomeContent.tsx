@@ -110,10 +110,10 @@ export default function HomeContent() {
   ];
 
   const metrics = [
-    { value: t("home.stat1_value"), label: t("home.stat1_label") },
-    { value: t("home.stat2_value"), label: t("home.stat2_label") },
-    { value: t("home.stat3_value"), label: t("home.stat3_label") },
-    { value: t("home.stat4_value"), label: t("home.stat4_label") },
+    { value: t("home.stat1_value"), label: t("home.stat1_label"), detail: t("home.stat1_detail") },
+    { value: t("home.stat2_value"), label: t("home.stat2_label"), detail: t("home.stat2_detail") },
+    { value: t("home.stat3_value"), label: t("home.stat3_label"), detail: t("home.stat3_detail") },
+    { value: t("home.stat4_value"), label: t("home.stat4_label"), detail: t("home.stat4_detail") },
   ];
 
   return (
@@ -598,18 +598,81 @@ export default function HomeContent() {
               <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5 }}>
                 {metric.label}
               </div>
+              {metric.detail && (
+                <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5, marginTop: 4, fontStyle: "italic" }}>
+                  {metric.detail}
+                </div>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── SOCIAL PROOF ──────────────────────────────────────── */}
-      <section className="section-social" style={{ background: "var(--bg)", padding: "100px 1.5rem" }}>
-        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
-            {t("social.proof")}
-          </p>
+      {/* ─── SORELL EN ACTION ─────────────────────────────────── */}
+      <section className="section-social" style={{ background: "var(--bg)", padding: "80px 1.5rem" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <AnimateOnScroll>
+            <h2
+              style={{
+                fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                fontWeight: 700,
+                letterSpacing: "-0.03em",
+                color: "var(--text)",
+                marginBottom: 48,
+              }}
+            >
+              {t("social.title")}
+            </h2>
+          </AnimateOnScroll>
+
+          <div className="social-counters" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 64, marginBottom: 40, flexWrap: "wrap" }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "clamp(2.5rem, 4vw, 3rem)", fontWeight: 700, color: "#005058", letterSpacing: "-0.03em", lineHeight: 1, fontFamily: "var(--font-inter, 'Inter', sans-serif)" }}>147+</div>
+              <div style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 4 }}>{t("social.counter_sources")}</div>
+            </div>
+            <div style={{ width: 1, height: 48, background: "var(--border)" }} className="social-divider" />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "clamp(2.5rem, 4vw, 3rem)", fontWeight: 700, color: "#005058", letterSpacing: "-0.03em", lineHeight: 1, fontFamily: "var(--font-inter, 'Inter', sans-serif)" }}>30+</div>
+              <div style={{ fontSize: 14, color: "var(--text-secondary)", marginTop: 4 }}>{t("social.counter_sectors")}</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("social.sources_label")}</span>
+            {["Les Echos", "Bloomberg", "Reuters", "TechCrunch"].map((source) => (
+              <span
+                key={source}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: 8,
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "var(--text)",
+                }}
+              >
+                {source}
+              </span>
+            ))}
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#005058" }}>{t("social.sources_more")}</span>
+          </div>
         </div>
+
+        <style>{`
+          @media (max-width: 640px) {
+            .social-divider {
+              display: none;
+            }
+            .social-counters {
+              gap: 32px !important;
+            }
+          }
+        `}</style>
       </section>
 
       {/* ─── PRICING TEASER ───────────────────────────────────── */}
