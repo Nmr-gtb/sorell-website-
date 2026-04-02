@@ -11,7 +11,9 @@ type EmailType =
   | "trial_j1"
   | "trial_j0"
   | "limit_reached"
-  | "generation_failed";
+  | "generation_failed"
+  | "feedback_j14"
+  | "upsell_j28";
 
 interface Profile {
   id: string;
@@ -88,27 +90,50 @@ async function sendAdminAlert(subject: string, html: string): Promise<void> {
   }
 }
 
-// ─── Email wrapper HTML ─────────────────────────────────────────
-function emailWrapper(content: string): string {
+// ─── Email wrapper HTML (DA Newsletter Sorell V4) ──────────────
+function emailWrapper(content: string, preheader?: string): string {
+  const warmBorder = "#E8E0D8";
+  const warmBg = "#F5F0EB";
+  const secondaryText = "#7A7267";
+
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#F3F4F6;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+</head>
+<body style="margin:0;padding:0;background:${warmBg};font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;">
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}${"&nbsp;&zwnj;".repeat(20)}</div>` : ""}
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
-    <div style="padding:28px 32px;border-bottom:2px solid #005058;">
-      <span style="font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Sorel<span style="color:#005058;">l</span></span>
-    </div>
-    ${content}
-    <div style="padding:24px 32px;border-top:2px solid #E5E7EB;background:#F9FAFB;">
+    <div style="padding:20px 32px;border-bottom:1px solid ${warmBorder};">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span style="font-size:14px;font-weight:700;color:#111827;letter-spacing:-0.01em;">Sorel<span style="color:#005058;">l</span></span></td>
-          <td align="right"><a href="https://sorell.fr" style="font-size:12px;color:#005058;text-decoration:none;">sorell.fr</a></td>
+          <td style="width:36px;">
+            <img src="https://www.sorell.fr/icone.png" alt="S." style="width:32px;height:32px;" />
+          </td>
+          <td align="right">
+            <a href="https://sorell.fr" style="font-size:12px;color:#005058;text-decoration:none;">sorell.fr</a>
+          </td>
         </tr>
       </table>
-      <p style="font-size:11px;color:#9CA3AF;margin:12px 0 0;line-height:1.5;">
+    </div>
+    ${content}
+    <div style="padding:22px 32px;border-top:1px solid ${warmBorder};background:${warmBg};">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width:32px;">
+            <img src="https://www.sorell.fr/icone.png" alt="S." style="width:24px;height:24px;" />
+          </td>
+          <td align="right">
+            <a href="https://sorell.fr" style="font-size:12px;color:#005058;text-decoration:none;">sorell.fr</a>
+          </td>
+        </tr>
+      </table>
+      <p style="font-size:11px;color:${secondaryText};margin:14px 0 0;line-height:1.5;">
         Vous recevez cet email car vous avez un compte sur Sorell.<br/>
-        <a href="mailto:noe@sorell.fr" style="color:#9CA3AF;">Besoin d'aide ? Contactez-nous</a>
+        <a href="mailto:noe@sorell.fr" style="color:${secondaryText};">Besoin d'aide ? Repondez a cet email</a>
       </p>
     </div>
   </div>
@@ -122,30 +147,48 @@ function templateOnboardingJ1(name: string): { subject: string; html: string } {
   return {
     subject: `${name}, votre newsletter IA vous attend`,
     html: emailWrapper(`
-    <div style="padding:40px 32px 24px;">
-      <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 12px;">Vous y êtes presque, ${name} !</h1>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        Vous avez créé votre compte Sorell hier, mais votre première newsletter n'a pas encore été configurée.
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre compte Sorell</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre veille sectorielle vous attend, ${name}</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
+        Votre compte a ete cree hier, mais votre premiere newsletter n'est pas encore configuree.
       </p>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        En <strong>5 minutes</strong>, vous pouvez recevoir automatiquement une veille sectorielle personnalisée, générée par IA à partir de vraies actualités du web.
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        En <strong>5 minutes</strong>, Sorell peut vous envoyer automatiquement une veille sectorielle personnalisee, generee par IA a partir de vraies actualites du web.
       </p>
     </div>
-    <div style="padding:0 32px 20px;">
-      <div style="background:#F0FDFA;border-radius:8px;padding:20px;border:1px solid #CCFBF1;">
-        <p style="font-size:14px;color:#115E59;line-height:1.6;margin:0;">
-          <strong>3 étapes rapides :</strong><br/>
-          1. Décrivez votre activité (votre brief)<br/>
-          2. Choisissez vos thématiques<br/>
-          3. Cliquez sur "Générer"
-        </p>
+    <div style="padding:0 32px 24px;">
+      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
+        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">3 etapes rapides</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding:0 0 10px;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">1</span><span style="font-size:14px;color:#111827;">Decrivez votre activite (votre brief)</span></td>
+          </tr>
+          <tr>
+            <td style="padding:0 0 10px;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">2</span><span style="font-size:14px;color:#111827;">Choisissez vos thematiques</span></td>
+          </tr>
+          <tr>
+            <td style="padding:0;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">3</span><span style="font-size:14px;color:#111827;">Cliquez sur "Generer"</span></td>
+          </tr>
+        </table>
       </div>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Configurer ma newsletter →
+      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
+        Configurer ma newsletter &rarr;
       </a>
-    </div>`),
+    </div>`, `${name}, configurez votre newsletter IA en 5 minutes`),
   };
 }
 
@@ -153,30 +196,44 @@ function templateTrialJ3(name: string, plan: string): { subject: string; html: s
   return {
     subject: `Votre essai ${plan} se termine dans 3 jours`,
     html: emailWrapper(`
-    <div style="padding:40px 32px 24px;">
-      <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 12px;">Plus que 3 jours d'essai, ${name}</h1>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        Votre essai gratuit du plan <strong>${plan}</strong> se termine dans 3 jours. Pour continuer à profiter de toutes les fonctionnalités, aucune action n'est requise - votre abonnement démarrera automatiquement.
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre essai ${plan}</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Plus que 3 jours d'essai, ${name}</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        Votre essai gratuit du plan <strong>${plan}</strong> se termine dans 3 jours. Pour continuer, aucune action requise - votre abonnement demarrera automatiquement.
       </p>
     </div>
-    <div style="padding:0 32px 20px;">
-      <div style="background:#FEF3C7;border-radius:8px;padding:20px;border:1px solid #FDE68A;">
-        <p style="font-size:14px;color:#92400E;line-height:1.6;margin:0;">
-          <strong>Ce que vous gardez avec ${plan} :</strong><br/>
-          ${plan === "Pro" ? "• 4 newsletters/mois • 5 destinataires • Analytics complets • Sources custom" : "• Newsletters illimitées • 25 destinataires • Analytics complets • Logo personnalisé"}
+    <div style="padding:0 32px 24px;">
+      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
+        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">Ce que vous gardez avec ${plan}</p>
+        <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
+          ${plan === "Pro" ? "&#8226; 4 newsletters/mois &#8226; 5 destinataires &#8226; Analytics complets &#8226; Sources custom" : "&#8226; Newsletters illimitees &#8226; 25 destinataires &#8226; Analytics complets &#8226; Logo personnalise"}
         </p>
       </div>
     </div>
-    <div style="padding:0 32px 20px;">
-      <p style="font-size:14px;color:#6B7280;line-height:1.6;margin:0;">
-        Si vous ne souhaitez pas continuer, vous pouvez annuler depuis votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a> avant la fin de l'essai. Vous passerez alors au plan Free.
-      </p>
+    <div style="padding:0 32px 8px;">
+      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
+        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+          Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
+        </p>
+      </div>
     </div>
-    <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Accéder à mon dashboard →
+    <div style="padding:16px 32px 32px;text-align:center;">
+      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
+        Mon dashboard &rarr;
       </a>
-    </div>`),
+    </div>`, `Plus que 3 jours d'essai ${plan}`),
   };
 }
 
@@ -184,71 +241,253 @@ function templateTrialJ1(name: string, plan: string): { subject: string; html: s
   return {
     subject: `Dernier jour d'essai ${plan} demain`,
     html: emailWrapper(`
-    <div style="padding:40px 32px 24px;">
-      <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 12px;">Dernier jour d'essai demain, ${name}</h1>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre essai ${plan}</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Dernier jour d'essai demain, ${name}</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
         Votre essai du plan <strong>${plan}</strong> se termine demain. Votre abonnement commencera automatiquement - aucune interruption de service.
       </p>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
-      </p>
     </div>
-    <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Gérer mon abonnement →
+    <div style="padding:0 32px 8px;">
+      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
+        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+          Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
+        </p>
+      </div>
+    </div>
+    <div style="padding:16px 32px 32px;text-align:center;">
+      <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
+        Gerer mon abonnement &rarr;
       </a>
-    </div>`),
+    </div>`, `Dernier jour d'essai ${plan} - ${name}`),
   };
 }
 
 function templateTrialJ0(name: string, plan: string): { subject: string; html: string } {
   return {
-    subject: `Votre essai ${plan} est terminé`,
+    subject: `Votre essai ${plan} est termine`,
     html: emailWrapper(`
-    <div style="padding:40px 32px 24px;">
-      <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 12px;">Votre essai est terminé, ${name}</h1>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        Votre période d'essai du plan <strong>${plan}</strong> vient de se terminer. Si votre moyen de paiement est valide, votre abonnement est désormais actif. Bienvenue parmi nos utilisateurs ${plan} !
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Bienvenue ${plan}</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre abonnement ${plan} est actif, ${name}</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        Votre periode d'essai est terminee et votre abonnement <strong>${plan}</strong> est desormais actif. Profitez de toutes les fonctionnalites de votre plan.
       </p>
     </div>
-    <div style="padding:0 32px 20px;">
-      <div style="background:#F0FDFA;border-radius:8px;padding:20px;border:1px solid #CCFBF1;">
-        <p style="font-size:14px;color:#115E59;line-height:1.6;margin:0;">
-          <strong>Astuce :</strong> Profitez de toutes les fonctionnalités de votre plan ${plan}. Configurez vos sources, ajoutez des destinataires, et explorez vos analytics.
+    <div style="padding:0 32px 24px;">
+      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
+        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">A explorer</p>
+        <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
+          Configurez vos sources, ajoutez des destinataires et explorez vos analytics depuis votre dashboard.
         </p>
       </div>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Mon dashboard →
+      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
+        Mon dashboard &rarr;
       </a>
-    </div>`),
+    </div>`, `Votre abonnement ${plan} est actif`),
   };
 }
 
 function templateLimitReached(name: string, plan: string, limit: number): { subject: string; html: string } {
+  const nextPlan = plan === "Free" ? "Pro" : "Business";
+  const nextPrice = plan === "Free" ? "19" : "49";
+  const nextBenefits = plan === "Free"
+    ? "4 newsletters/mois, 5 destinataires, analytics, sources custom"
+    : "Newsletters illimitees, 25 destinataires, logo personnalise";
+
   return {
-    subject: `Limite de newsletters atteinte - Passez au niveau supérieur`,
+    subject: `Limite atteinte - Passez au plan ${nextPlan}`,
     html: emailWrapper(`
-    <div style="padding:40px 32px 24px;">
-      <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 12px;">Vous avez atteint votre limite, ${name}</h1>
-      <p style="font-size:15px;color:#4B5563;line-height:1.65;margin:0 0 24px;">
-        Vous avez utilisé vos <strong>${limit} newsletters</strong> du mois sur le plan <strong>${plan}</strong>. Votre prochaine newsletter sera disponible le mois prochain.
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Plan ${plan}</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Limite de newsletters atteinte</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        ${name}, vous avez utilise vos <strong>${limit} newsletters</strong> du mois sur le plan <strong>${plan}</strong>. Votre prochaine newsletter sera disponible le mois prochain.
       </p>
     </div>
-    <div style="padding:0 32px 20px;">
-      <div style="background:#F0FDFA;border-radius:8px;padding:20px;border:1px solid #CCFBF1;">
-        <p style="font-size:14px;color:#115E59;line-height:1.6;margin:0;">
-          <strong>Besoin de plus ?</strong> Passez au plan supérieur pour envoyer plus de newsletters chaque mois.<br/><br/>
-          ${plan === "Free" ? "• <strong>Pro</strong> (19€/mois) : 4 newsletters/mois, 5 destinataires, analytics" : "• <strong>Business</strong> (49€/mois) : newsletters illimitées, 25 destinataires, logo custom"}
-        </p>
+    <div style="padding:0 32px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;">
+        <tr>
+          <td style="background:#005058;padding:0;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding:28px 28px 28px 32px;vertical-align:middle;width:65%;">
+                  <p style="font-size:16px;font-weight:600;color:#FFFFFF;margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;line-height:1.4;">
+                    Passez au plan ${nextPlan} - ${nextPrice}&euro;/mois
+                  </p>
+                  <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 18px;line-height:1.5;">
+                    ${nextBenefits}
+                  </p>
+                  <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:11px 26px;background:white;color:#005058;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;">
+                    Voir les plans &rarr;
+                  </a>
+                </td>
+                <td style="width:35%;vertical-align:bottom;padding:0;">
+                  <div style="height:120px;background:rgba(255,255,255,0.06);border-radius:8px 0 0 0;"></div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>`, `Vous avez utilise vos ${limit} newsletters du mois`),
+  };
+}
+
+function templateFeedbackJ14(name: string): { subject: string; html: string } {
+  return {
+    subject: `${name}, votre avis compte`,
+    html: emailWrapper(`
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">2 semaines avec Sorell</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre avis nous interesse, ${name}</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
+        Vous utilisez Sorell depuis 2 semaines. Avant de continuer, une question simple : <strong>est-ce que ca vous est utile ?</strong>
+      </p>
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        Pas de formulaire. <strong>Repondez directement a cet email</strong>, meme en une phrase.
+      </p>
+    </div>
+    <div style="padding:0 32px 24px;">
+      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
+        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">Ce qui nous interesse</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding:0 0 10px;">
+              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; Les sujets couverts sont-ils pertinents pour votre activite ?</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 0 10px;">
+              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; La frequence vous convient-elle ?</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0;">
+              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; Qu'est-ce qu'on pourrait ameliorer ?</span>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Voir les plans →
-      </a>
-    </div>`),
+    <div style="padding:0 32px 28px;">
+      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
+        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+          Chaque retour aide a rendre Sorell meilleur. On lit et on repond a chaque message.
+        </p>
+      </div>
+    </div>`, `${name}, ca fait 2 semaines - votre avis compte`),
+  };
+}
+
+function templateUpsellJ28(name: string, currentPlan: string): { subject: string; html: string } {
+  const isPro = currentPlan === "pro";
+  const nextPlan = isPro ? "Business" : "Pro";
+  const nextPrice = isPro ? "49" : "19";
+  const nextBenefits = isPro
+    ? "Newsletters illimitees, 25 destinataires, logo personnalise"
+    : "4 newsletters/mois, 5 destinataires, sources custom, analytics, historique";
+
+  return {
+    subject: `${name}, et si votre veille allait plus loin ?`,
+    html: emailWrapper(`
+    <div style="background:#005058;padding:0;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
+            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">1 mois avec Sorell</p>
+            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Et si votre veille allait plus loin ?</h1>
+          </td>
+          <td style="width:35%;vertical-align:bottom;padding:0;">
+            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:32px 32px 24px;">
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        ${name}, ca fait 4 semaines que Sorell fait votre veille sectorielle. Si vous souhaitez aller plus loin, le plan <strong>${nextPlan}</strong> debloque de nouvelles possibilites.
+      </p>
+    </div>
+    <div style="padding:0 32px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;">
+        <tr>
+          <td style="background:#005058;padding:0;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding:28px 28px 28px 32px;vertical-align:middle;width:65%;">
+                  <p style="font-size:16px;font-weight:600;color:#FFFFFF;margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;line-height:1.4;">
+                    Plan ${nextPlan} - ${nextPrice}&euro;/mois
+                  </p>
+                  <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 18px;line-height:1.5;">
+                    ${nextBenefits}
+                  </p>
+                  <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:11px 26px;background:white;color:#005058;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;">
+                    Voir les plans &rarr;
+                  </a>
+                </td>
+                <td style="width:35%;vertical-align:bottom;padding:0;">
+                  <div style="height:120px;background:rgba(255,255,255,0.06);border-radius:8px 0 0 0;"></div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="padding:0 32px 28px;">
+      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
+        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+          Pas de pression - votre plan actuel reste actif. Une question ? Repondez a cet email.
+        </p>
+      </div>
+    </div>`, `${name}, decouvrez le plan ${nextPlan}`),
   };
 }
 
@@ -265,6 +504,8 @@ export async function GET(request: Request) {
     trial_j1: 0,
     trial_j0: 0,
     limit_reached: 0,
+    feedback_j14: 0,
+    upsell_j28: 0,
     errors: 0,
   };
 
@@ -391,7 +632,48 @@ export async function GET(request: Request) {
       }
     }
 
-    // ─── 4. Vérifier les échecs de génération récents ────────────
+    // ─── 4. Feedback J+14 ─────────────────────────────────────────
+    // Utilisateurs inscrits il y a 14 jours (fenetre 14j-14j1h)
+    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const fourteenDaysAgoPlus1h = new Date(fourteenDaysAgo.getTime() - 60 * 60 * 1000);
+
+    const { data: feedbackUsers } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, full_name, plan, created_at")
+      .gte("created_at", fourteenDaysAgoPlus1h.toISOString())
+      .lte("created_at", fourteenDaysAgo.toISOString());
+
+    if (feedbackUsers && feedbackUsers.length > 0) {
+      for (const user of feedbackUsers) {
+        const name = user.full_name || user.email.split("@")[0];
+        const { subject, html } = templateFeedbackJ14(name);
+        const sent = await sendLifecycleEmail(user.id, "feedback_j14", user.email, subject, html);
+        if (sent) results.feedback_j14++;
+      }
+    }
+
+    // ─── 5. Upsell J+28 ────────────────────────────────────────────
+    // Utilisateurs Free ou Pro inscrits il y a 28 jours (fenetre 28j-28j1h)
+    const twentyEightDaysAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
+    const twentyEightDaysAgoPlus1h = new Date(twentyEightDaysAgo.getTime() - 60 * 60 * 1000);
+
+    const { data: upsellUsers } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, full_name, plan, created_at")
+      .gte("created_at", twentyEightDaysAgoPlus1h.toISOString())
+      .lte("created_at", twentyEightDaysAgo.toISOString())
+      .in("plan", ["free", "pro"]);
+
+    if (upsellUsers && upsellUsers.length > 0) {
+      for (const user of upsellUsers) {
+        const name = user.full_name || user.email.split("@")[0];
+        const { subject, html } = templateUpsellJ28(name, user.plan);
+        const sent = await sendLifecycleEmail(user.id, "upsell_j28", user.email, subject, html);
+        if (sent) results.upsell_j28++;
+      }
+    }
+
+    // ─── 6. Vérifier les échecs de génération récents ────────────
     // Checker si des newsletters ont échoué dans la dernière heure
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
     const { data: recentNewsletters } = await supabaseAdmin
