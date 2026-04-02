@@ -186,7 +186,6 @@ function DemoNewsletterResult({
           background: p.cardBg,
           border: `1px solid ${p.warmBorder}`,
           borderRadius: 12,
-          overflow: "hidden",
           fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
           fontSize: "14px",
           color: p.bodyTextColor,
@@ -198,6 +197,7 @@ function DemoNewsletterResult({
             background: "var(--surface-alt)",
             borderBottom: `1px solid ${p.warmBorder}`,
             padding: "12px 20px",
+            borderRadius: "12px 12px 0 0",
           }}
         >
           <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
@@ -457,7 +457,7 @@ function DemoNewsletterResult({
         </div>
 
         {/* Footer crème */}
-        <div style={{ padding: "22px 32px", borderTop: `1px solid ${p.warmBorder}`, background: p.warmBg }}>
+        <div style={{ padding: "22px 32px", borderTop: `1px solid ${p.warmBorder}`, background: p.warmBg, borderRadius: "0 0 12px 12px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
             <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
             <span style={{ fontSize: "12px", color: p.brandColor, fontWeight: 500 }}>sorell.fr</span>
