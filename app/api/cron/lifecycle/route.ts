@@ -147,46 +147,28 @@ function templateOnboardingJ1(name: string): { subject: string; html: string } {
   return {
     subject: `${name}, votre newsletter IA vous attend`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre compte Sorell</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre veille sectorielle vous attend, ${name}</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">Votre veille sectorielle vous attend</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Votre compte a ete cree hier, mais votre premiere newsletter n'est pas encore configuree.
+        Bonjour ${name}, votre compte a ete cree hier, mais votre premiere newsletter n'est pas encore configuree.
       </p>
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        En <strong>5 minutes</strong>, Sorell peut vous envoyer automatiquement une veille sectorielle personnalisee, generee par IA a partir de vraies actualites du web.
+        En 5 minutes, Sorell peut vous envoyer automatiquement une veille sectorielle personnalisee, generee par IA a partir de vraies actualites du web.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
-        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">3 etapes rapides</p>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td style="padding:0 0 10px;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">1</span><span style="font-size:14px;color:#111827;">Decrivez votre activite (votre brief)</span></td>
-          </tr>
-          <tr>
-            <td style="padding:0 0 10px;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">2</span><span style="font-size:14px;color:#111827;">Choisissez vos thematiques</span></td>
-          </tr>
-          <tr>
-            <td style="padding:0;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#005058;color:#FFFFFF;font-size:11px;font-weight:700;text-align:center;line-height:20px;margin-right:10px;">3</span><span style="font-size:14px;color:#111827;">Cliquez sur "Generer"</span></td>
-          </tr>
-        </table>
-      </div>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">3 etapes rapides</p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Decrivez votre activite (votre brief)</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Choisissez vos thematiques</span></td></tr>
+        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Cliquez sur "Generer"</span></td></tr>
+      </table>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Configurer ma newsletter &rarr;
+      <a href="https://sorell.fr/dashboard/config" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Configurer ma newsletter
       </a>
     </div>`, `${name}, configurez votre newsletter IA en 5 minutes`),
   };
@@ -196,42 +178,28 @@ function templateTrialJ3(name: string, plan: string): { subject: string; html: s
   return {
     subject: `Votre essai ${plan} se termine dans 3 jours`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre essai ${plan}</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Plus que 3 jours d'essai, ${name}</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">Plus que 3 jours d'essai</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Votre essai gratuit du plan <strong>${plan}</strong> se termine dans 3 jours. Pour continuer, aucune action requise - votre abonnement demarrera automatiquement.
+        Bonjour ${name}, votre essai gratuit du plan ${plan} se termine dans 3 jours. Pour continuer, aucune action requise - votre abonnement demarrera automatiquement.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
-        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">Ce que vous gardez avec ${plan}</p>
-        <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
-          ${plan === "Pro" ? "&#8226; 4 newsletters/mois &#8226; 5 destinataires &#8226; Analytics complets &#8226; Sources custom" : "&#8226; Newsletters illimitees &#8226; 25 destinataires &#8226; Analytics complets &#8226; Logo personnalise"}
-        </p>
-      </div>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Ce que vous gardez avec ${plan}</p>
+      <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
+        ${plan === "Pro" ? "&middot;&nbsp;&nbsp;4 newsletters/mois&nbsp;&nbsp;&middot;&nbsp;&nbsp;5 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Sources custom" : "&middot;&nbsp;&nbsp;Newsletters illimitees&nbsp;&nbsp;&middot;&nbsp;&nbsp;25 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Logo personnalise"}
+      </p>
     </div>
     <div style="padding:0 32px 8px;">
-      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
-        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
-          Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
-        </p>
-      </div>
+      <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+        Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
+      </p>
     </div>
     <div style="padding:16px 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Mon dashboard &rarr;
+      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Mon dashboard
       </a>
     </div>`, `Plus que 3 jours d'essai ${plan}`),
   };
@@ -241,34 +209,20 @@ function templateTrialJ1(name: string, plan: string): { subject: string; html: s
   return {
     subject: `Dernier jour d'essai ${plan} demain`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Votre essai ${plan}</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Dernier jour d'essai demain, ${name}</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">Dernier jour d'essai demain</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Votre essai du plan <strong>${plan}</strong> se termine demain. Votre abonnement commencera automatiquement - aucune interruption de service.
+        Bonjour ${name}, votre essai du plan ${plan} se termine demain. Votre abonnement commencera automatiquement, aucune interruption de service.
+      </p>
+      <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+        Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
       </p>
     </div>
-    <div style="padding:0 32px 8px;">
-      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
-        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
-          Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
-        </p>
-      </div>
-    </div>
-    <div style="padding:16px 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Gerer mon abonnement &rarr;
+    <div style="padding:0 32px 32px;text-align:center;">
+      <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Gerer mon abonnement
       </a>
     </div>`, `Dernier jour d'essai ${plan} - ${name}`),
   };
@@ -276,37 +230,19 @@ function templateTrialJ1(name: string, plan: string): { subject: string; html: s
 
 function templateTrialJ0(name: string, plan: string): { subject: string; html: string } {
   return {
-    subject: `Votre essai ${plan} est termine`,
+    subject: `Votre abonnement ${plan} est actif`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Bienvenue ${plan}</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre abonnement ${plan} est actif, ${name}</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div style="padding:32px 32px 24px;">
-      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Votre periode d'essai est terminee et votre abonnement <strong>${plan}</strong> est desormais actif. Profitez de toutes les fonctionnalites de votre plan.
-      </p>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">Votre abonnement ${plan} est actif</h1>
     </div>
     <div style="padding:0 32px 24px;">
-      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
-        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">A explorer</p>
-        <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
-          Configurez vos sources, ajoutez des destinataires et explorez vos analytics depuis votre dashboard.
-        </p>
-      </div>
+      <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
+        Bonjour ${name}, votre periode d'essai est terminee et votre abonnement ${plan} est desormais actif. Configurez vos sources, ajoutez des destinataires et explorez vos analytics depuis votre dashboard.
+      </p>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
-      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
-        Mon dashboard &rarr;
+      <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Mon dashboard
       </a>
     </div>`, `Votre abonnement ${plan} est actif`),
   };
@@ -322,49 +258,24 @@ function templateLimitReached(name: string, plan: string, limit: number): { subj
   return {
     subject: `Limite atteinte - Passez au plan ${nextPlan}`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">Plan ${plan}</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Limite de newsletters atteinte</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">Limite de newsletters atteinte</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        ${name}, vous avez utilise vos <strong>${limit} newsletters</strong> du mois sur le plan <strong>${plan}</strong>. Votre prochaine newsletter sera disponible le mois prochain.
+        ${name}, vous avez utilise vos ${limit} newsletters du mois sur le plan ${plan}. Votre prochaine newsletter sera disponible le mois prochain.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;">
-        <tr>
-          <td style="background:#005058;padding:0;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td style="padding:28px 28px 28px 32px;vertical-align:middle;width:65%;">
-                  <p style="font-size:16px;font-weight:600;color:#FFFFFF;margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;line-height:1.4;">
-                    Passez au plan ${nextPlan} - ${nextPrice}&euro;/mois
-                  </p>
-                  <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 18px;line-height:1.5;">
-                    ${nextBenefits}
-                  </p>
-                  <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:11px 26px;background:white;color:#005058;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;">
-                    Voir les plans &rarr;
-                  </a>
-                </td>
-                <td style="width:35%;vertical-align:bottom;padding:0;">
-                  <div style="height:120px;background:rgba(255,255,255,0.06);border-radius:8px 0 0 0;"></div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Besoin de plus ?</p>
+      <p style="font-size:14px;color:#111827;line-height:1.7;margin:0 0 20px;">
+        Le plan ${nextPlan} a ${nextPrice}&euro;/mois inclut : ${nextBenefits}.
+      </p>
+    </div>
+    <div style="padding:0 32px 32px;text-align:center;">
+      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Voir les plans
+      </a>
     </div>`, `Vous avez utilise vos ${limit} newsletters du mois`),
   };
 }
@@ -373,55 +284,29 @@ function templateFeedbackJ14(name: string): { subject: string; html: string } {
   return {
     subject: `${name}, votre avis compte`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">2 semaines avec Sorell</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Votre avis nous interesse, ${name}</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">2 semaines de veille automatique</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Vous utilisez Sorell depuis 2 semaines. Avant de continuer, une question simple : <strong>est-ce que ca vous est utile ?</strong>
+        Bonjour ${name}, vous utilisez Sorell depuis 2 semaines. Avant de continuer, une question simple : est-ce que ca vous est utile ?
       </p>
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Pas de formulaire. <strong>Repondez directement a cet email</strong>, meme en une phrase.
+        Pas de formulaire. Repondez directement a cet email, meme en une phrase.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <div style="border:1px solid #E8E0D8;border-radius:10px;padding:24px;">
-        <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;font-weight:600;">Ce qui nous interesse</p>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td style="padding:0 0 10px;">
-              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; Les sujets couverts sont-ils pertinents pour votre activite ?</span>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 0 10px;">
-              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; La frequence vous convient-elle ?</span>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0;">
-              <span style="font-size:14px;color:#111827;line-height:1.6;">&#8226; Qu'est-ce qu'on pourrait ameliorer ?</span>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Ce qui nous interesse</p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Les sujets couverts sont-ils pertinents pour votre activite ?</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;La frequence vous convient-elle ?</span></td></tr>
+        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Qu'est-ce qu'on pourrait ameliorer ?</span></td></tr>
+      </table>
     </div>
     <div style="padding:0 32px 28px;">
-      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
-        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
-          Chaque retour aide a rendre Sorell meilleur. On lit et on repond a chaque message.
-        </p>
-      </div>
+      <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
+        Chaque retour aide a rendre Sorell meilleur. On lit et on repond a chaque message.
+      </p>
     </div>`, `${name}, ca fait 2 semaines - votre avis compte`),
   };
 }
@@ -437,56 +322,27 @@ function templateUpsellJ28(name: string, currentPlan: string): { subject: string
   return {
     subject: `${name}, et si votre veille allait plus loin ?`,
     html: emailWrapper(`
-    <div style="background:#005058;padding:0;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td style="padding:36px 32px 32px;vertical-align:middle;width:65%;">
-            <p style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin:0 0 16px;">1 mois avec Sorell</p>
-            <h1 style="font-size:26px;font-weight:700;color:#FFFFFF;margin:0;line-height:1.3;font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.01em;">Et si votre veille allait plus loin ?</h1>
-          </td>
-          <td style="width:35%;vertical-align:bottom;padding:0;">
-            <div style="height:140px;background:rgba(255,255,255,0.08);border-radius:8px 0 0 0;"></div>
-          </td>
-        </tr>
-      </table>
+    <div style="padding:36px 32px 0;">
+      <h1 style="font-size:22px;font-weight:600;color:#111827;margin:0 0 24px;">1 mois avec Sorell</h1>
     </div>
-    <div style="padding:32px 32px 24px;">
+    <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        ${name}, ca fait 4 semaines que Sorell fait votre veille sectorielle. Si vous souhaitez aller plus loin, le plan <strong>${nextPlan}</strong> debloque de nouvelles possibilites.
+        ${name}, ca fait 4 semaines que Sorell fait votre veille sectorielle. Si vous souhaitez aller plus loin, le plan ${nextPlan} debloque de nouvelles possibilites.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:10px;overflow:hidden;">
-        <tr>
-          <td style="background:#005058;padding:0;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td style="padding:28px 28px 28px 32px;vertical-align:middle;width:65%;">
-                  <p style="font-size:16px;font-weight:600;color:#FFFFFF;margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;line-height:1.4;">
-                    Plan ${nextPlan} - ${nextPrice}&euro;/mois
-                  </p>
-                  <p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 18px;line-height:1.5;">
-                    ${nextBenefits}
-                  </p>
-                  <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:11px 26px;background:white;color:#005058;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;">
-                    Voir les plans &rarr;
-                  </a>
-                </td>
-                <td style="width:35%;vertical-align:bottom;padding:0;">
-                  <div style="height:120px;background:rgba(255,255,255,0.06);border-radius:8px 0 0 0;"></div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Plan ${nextPlan} - ${nextPrice}&euro;/mois</p>
+      <p style="font-size:14px;color:#111827;line-height:1.7;margin:0 0 20px;">
+        ${nextBenefits}
+      </p>
     </div>
-    <div style="padding:0 32px 28px;">
-      <div style="border-left:3px solid #E8E0D8;padding-left:20px;">
-        <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
-          Pas de pression - votre plan actuel reste actif. Une question ? Repondez a cet email.
-        </p>
-      </div>
+    <div style="padding:0 32px 12px;text-align:center;">
+      <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
+        Voir les plans
+      </a>
+    </div>
+    <div style="padding:4px 32px 28px;text-align:center;">
+      <p style="font-size:13px;color:#7A7267;margin:0;">Pas de pression, votre plan actuel reste actif.</p>
     </div>`, `${name}, decouvrez le plan ${nextPlan}`),
   };
 }
