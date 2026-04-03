@@ -25,17 +25,23 @@ const WELCOME_EN: Record<ChatMode, string> = {
     "Hi! I'm Soly, and I'll help you write the perfect brief for your newsletter. A great brief means perfectly tailored content.\n\nWhat industry are you in?",
 };
 
-export default function ChatWidget({
-  initialMode = "general",
-  onBriefReady,
-}: {
-  initialMode?: ChatMode;
-  onBriefReady?: (brief: string) => void;
-}) {
+// Global event to open Soly in brief mode from anywhere
+// Usage: window.dispatchEvent(new CustomEvent("soly:open-brief"))
+// The ChatWidget listens for this and switches to brief mode
+
+// Global callback for brief injection
+let _onBriefReadyCallback: ((brief: string) => void) | null = null;
+
+export function openSolyBrief(onBriefReady: (brief: string) => void) {
+  _onBriefReadyCallback = onBriefReady;
+  window.dispatchEvent(new CustomEvent("soly:open-brief"));
+}
+
+export default function ChatWidget() {
   const { lang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
-  const [mode, setMode] = useState<ChatMode>(initialMode);
+  const [mode, setMode] = useState<ChatMode>("general");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,9 +56,19 @@ export default function ChatWidget({
     setBriefExtracted(null);
   }, [lang]);
 
-  // Auto-open on first visit (general mode only, not brief)
+  // Listen for soly:open-brief event
   useEffect(() => {
-    if (initialMode === "brief") return;
+    const handleOpenBrief = () => {
+      setMode("brief");
+      setIsOpen(true);
+      initMessages("brief");
+    };
+    window.addEventListener("soly:open-brief", handleOpenBrief);
+    return () => window.removeEventListener("soly:open-brief", handleOpenBrief);
+  }, [initMessages]);
+
+  // Auto-open on first visit (general mode only)
+  useEffect(() => {
     const alreadyShown = localStorage.getItem("soly_shown");
     if (!alreadyShown && !hasAutoOpened) {
       const timer = setTimeout(() => {
@@ -63,7 +79,7 @@ export default function ChatWidget({
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [hasAutoOpened, initialMode, initMessages]);
+  }, [hasAutoOpened, initMessages]);
 
   // When opened manually and no messages yet
   useEffect(() => {
@@ -84,17 +100,20 @@ export default function ChatWidget({
     }
   }, [isOpen]);
 
-  // Update mode from parent
-  useEffect(() => {
-    if (initialMode !== mode) {
-      setMode(initialMode);
-      initMessages(initialMode);
-    }
-  }, [initialMode, mode, initMessages]);
-
   const handleOpen = () => {
     setIsOpen(true);
     if (messages.length === 0) initMessages(mode);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // If closing brief mode, go back to general for next open
+    if (mode === "brief") {
+      setMode("general");
+      setMessages([]);
+      setBriefExtracted(null);
+      _onBriefReadyCallback = null;
+    }
   };
 
   const extractBrief = (text: string): string | null => {
@@ -172,9 +191,10 @@ export default function ChatWidget({
   };
 
   const handleUseBrief = () => {
-    if (briefExtracted && onBriefReady) {
-      onBriefReady(briefExtracted);
+    if (briefExtracted && _onBriefReadyCallback) {
+      _onBriefReadyCallback(briefExtracted);
       setBriefExtracted(null);
+      _onBriefReadyCallback = null;
       setMessages((prev) => [
         ...prev,
         {
@@ -286,7 +306,7 @@ export default function ChatWidget({
           </div>
         </div>
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={handleClose}
           aria-label="Fermer le chat"
           style={{
             background: "none",
@@ -372,7 +392,7 @@ export default function ChatWidget({
         )}
 
         {/* Brief CTA */}
-        {briefExtracted && onBriefReady && (
+        {briefExtracted && _onBriefReadyCallback && (
           <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}>
             <button
               onClick={handleUseBrief}

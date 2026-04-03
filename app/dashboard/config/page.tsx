@@ -16,7 +16,7 @@ import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
-import ChatWidget from "@/components/ChatWidget";
+import { openSolyBrief } from "@/components/ChatWidget";
 
 const ALL_SOURCES = [
   "Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune",
@@ -227,7 +227,6 @@ export default function ConfigPage() {
   const [instantSending, setInstantSending] = useState(false);
   const [instantSent, setInstantSent] = useState(false);
   const [instantError, setInstantError] = useState("");
-  const [showBriefChat, setShowBriefChat] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -589,7 +588,7 @@ export default function ConfigPage() {
                   style={{ width: "100%", minHeight: 140, resize: "vertical", boxSizing: "border-box" }}
                 />
                 <button
-                  onClick={() => setShowBriefChat(true)}
+                  onClick={() => openSolyBrief((brief) => setCustomBrief(brief))}
                   style={{
                     marginTop: 12,
                     padding: "9px 16px",
@@ -611,27 +610,6 @@ export default function ConfigPage() {
                   </svg>
                   {t("config.brief_ai_help") !== "config.brief_ai_help" ? t("config.brief_ai_help") : "Soly m'aide a rediger mon brief"}
                 </button>
-                {showBriefChat && (
-                  <>
-                    {/* Overlay to close */}
-                    <div
-                      onClick={() => setShowBriefChat(false)}
-                      style={{
-                        position: "fixed",
-                        inset: 0,
-                        background: "rgba(0,0,0,0.3)",
-                        zIndex: 9998,
-                      }}
-                    />
-                    <ChatWidget
-                      initialMode="brief"
-                      onBriefReady={(brief) => {
-                        setCustomBrief(brief);
-                        setShowBriefChat(false);
-                      }}
-                    />
-                  </>
-                )}
               </div>
 
               {/* Topics section */}
