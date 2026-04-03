@@ -14,7 +14,8 @@ async function rewardReferrer(referrerId: string) {
     if (referrerProfile?.stripe_subscription_id) {
       const sub = await stripe.subscriptions.retrieve(referrerProfile.stripe_subscription_id);
       if (sub.status === "active" || sub.status === "trialing") {
-        const currentEnd = sub.trial_end || sub.current_period_end;
+        // current_period_end est sur les items dans Stripe API v2026
+        const currentEnd = sub.trial_end || sub.items.data[0]?.current_period_end || Math.floor(Date.now() / 1000);
         const newEnd = currentEnd + (15 * 24 * 60 * 60); // +15 jours en secondes
         await stripe.subscriptions.update(referrerProfile.stripe_subscription_id, {
           trial_end: newEnd,
