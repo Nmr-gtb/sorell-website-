@@ -31,7 +31,7 @@ export default function CGVPage() {
           Conditions Générales de Vente
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 31 mars 2026
+          Dernière mise à jour : 3 avril 2026
         </p>
 
         <Section title="1. Objet">
@@ -130,7 +130,32 @@ export default function CGVPage() {
           </p>
         </Section>
 
-        <Section title="11. Droit applicable et litiges">
+        <Section title="11. Propriété intellectuelle du contenu généré">
+          <p>
+            Les newsletters générées par Sorell sont créées par intelligence artificielle à partir
+            de sources publiques. L'utilisateur est libre d'utiliser, partager et diffuser le contenu
+            de ses newsletters dans le cadre de son activité professionnelle.
+          </p>
+          <p style={{ marginTop: "1rem" }}>
+            Sorell ne revendique aucun droit de propriété intellectuelle sur le contenu généré pour
+            l'utilisateur. L'utilisateur reste toutefois responsable de l'usage qu'il fait de ce contenu.
+          </p>
+        </Section>
+
+        <Section title="12. Médiation">
+          <p>
+            Conformément aux articles L611-1 et suivants du Code de la consommation, en cas de litige
+            non résolu, l'utilisateur peut recourir gratuitement à un médiateur de la consommation.
+          </p>
+          <p style={{ marginTop: "1rem" }}>
+            Plateforme de règlement en ligne des litiges de la Commission européenne :{" "}
+            <a href="https://ec.europa.eu/consumers/odr" style={{ color: "var(--accent)" }}>
+              https://ec.europa.eu/consumers/odr
+            </a>
+          </p>
+        </Section>
+
+        <Section title="13. Droit applicable et litiges">
           <p>
             Les présentes CGV sont régies par le droit français. En cas de litige, les parties
             s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut, les

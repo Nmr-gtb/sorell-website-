@@ -31,7 +31,7 @@ export default function LegalPage() {
           Mentions légales
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 31 mars 2026
+          Dernière mise à jour : 3 avril 2026
         </p>
 
         <Section title="1. Éditeur du site">
@@ -39,9 +39,12 @@ export default function LegalPage() {
             Le site sorell.fr est édité par Noé Mur, entrepreneur individuel.
           </p>
           <ul>
+            <li>Directeur de la publication : Noé Mur</li>
             <li>SIRET : 993 646 116 00018</li>
+            <li>SIREN : 993 646 116</li>
             <li>Activité : Conseil en relations publiques et communication (code APE : 7021Z)</li>
             <li>Adresse : 315, Chemin des Ventarelles, 13090 Aix-en-Provence</li>
+            <li>Téléphone : 07 67 90 56 15</li>
             <li>Email : <a href="mailto:noe@sorell.fr" style={{ color: "var(--accent)" }}>noe@sorell.fr</a></li>
             <li>Site : <a href="https://sorell.fr" style={{ color: "var(--accent)" }}>https://sorell.fr</a></li>
           </ul>

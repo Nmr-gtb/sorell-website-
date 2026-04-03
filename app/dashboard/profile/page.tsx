@@ -47,6 +47,9 @@ export default function ProfilePage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
+  // Export data
+  const [exporting, setExporting] = useState(false);
+
   const upgraded = searchParams.get("upgraded") === "true";
 
   useEffect(() => {
@@ -85,6 +88,28 @@ export default function ProfilePage() {
       setTimeout(() => setSaveSuccess(false), 3000);
     }
     setSaving(false);
+  };
+
+  const handleExportData = async () => {
+    if (!user) return;
+    setExporting(true);
+    try {
+      const res = await authFetch("/api/export-data");
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `sorell-export-${new Date().toISOString().split("T")[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch {
+      // Silently fail
+    }
+    setExporting(false);
   };
 
   const handleDeleteAccount = async () => {
@@ -458,6 +483,23 @@ export default function ProfilePage() {
             }}
           >
             {t("profile.delete_account")}
+          </button>
+          <button
+            onClick={handleExportData}
+            disabled={exporting}
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--accent)",
+              fontSize: 13,
+              cursor: exporting ? "not-allowed" : "pointer",
+              opacity: exporting ? 0.5 : 0.7,
+              textAlign: "left",
+              padding: 0,
+              marginTop: 4,
+            }}
+          >
+            {exporting ? "Export en cours..." : "Exporter mes données (RGPD)"}
           </button>
         </div>
       </div>

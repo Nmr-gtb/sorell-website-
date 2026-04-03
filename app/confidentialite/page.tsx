@@ -31,7 +31,7 @@ export default function PrivacyPage() {
           Politique de confidentialité
         </h1>
         <p style={{ fontSize: "14px", color: "var(--text-muted)", marginBottom: "3rem" }}>
-          Dernière mise à jour : 31 mars 2026
+          Dernière mise à jour : 3 avril 2026
         </p>
 
         <Section title="1. Responsable du traitement">
@@ -39,8 +39,12 @@ export default function PrivacyPage() {
             Le responsable du traitement des données personnelles est Noé Mur, entrepreneur individuel.
           </p>
           <ul style={{ marginTop: "0.5rem" }}>
+            <li>Adresse : 315, Chemin des Ventarelles, 13090 Aix-en-Provence</li>
             <li>Email : <a href="mailto:noe@sorell.fr" style={{ color: "var(--accent)" }}>noe@sorell.fr</a></li>
           </ul>
+          <p style={{ marginTop: "0.5rem" }}>
+            Pour toute demande relative à vos données personnelles, contactez-nous à noe@sorell.fr.
+          </p>
         </Section>
 
         <Section title="2. Données collectées">
@@ -120,8 +124,13 @@ export default function PrivacyPage() {
 
         <Section title="8. Cookies">
           <p>
-            Sorell utilise des cookies strictement nécessaires au fonctionnement du service
-            (authentification, session). Aucun cookie publicitaire ou de tracking tiers n'est utilisé.
+            Sorell utilise uniquement des cookies strictement nécessaires au fonctionnement du service
+            (authentification, maintien de session). Ces cookies sont indispensables pour permettre
+            la connexion et la navigation sur l'espace client.
+          </p>
+          <p style={{ marginTop: "0.5rem" }}>
+            Aucun cookie publicitaire, de tracking tiers ou d'analyse d'audience n'est déposé.
+            Sorell n'utilise pas Google Analytics ni aucun autre outil de mesure d'audience tiers.
           </p>
         </Section>
 
