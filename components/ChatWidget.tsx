@@ -10,30 +10,27 @@ type Message = {
 
 type ChatMode = "general" | "brief";
 
-// Soly welcome messages
 const WELCOME_FR: Record<ChatMode, string> = {
   general:
-    "Salut ! Moi c'est Soly, l'assistant Sorell. Tu as une question sur nos offres, le fonctionnement, ou tu veux juste en savoir plus ?",
+    "Salut ! Moi c'est Soly. Une question sur Sorell ?",
   brief:
-    "Salut ! Je suis Soly, et je vais t'aider a ecrire le brief parfait pour ta newsletter. Un bon brief, c'est la cle pour recevoir exactement les infos dont tu as besoin.\n\nDans quel secteur tu travailles ?",
+    "Salut ! Je vais t'aider a ecrire un bon brief pour ta newsletter.\n\nDans quel secteur tu travailles ?",
 };
 
 const WELCOME_EN: Record<ChatMode, string> = {
   general:
-    "Hi! I'm Soly, the Sorell assistant. Got a question about our plans, how it works, or just want to learn more?",
+    "Hi! I'm Soly. Got a question about Sorell?",
   brief:
-    "Hi! I'm Soly, and I'll help you write the perfect brief for your newsletter. A great brief means perfectly tailored content.\n\nWhat industry are you in?",
+    "Hi! I'll help you write a great brief for your newsletter.\n\nWhat industry are you in?",
 };
 
-// Global event to open Soly in brief mode from anywhere
-// Usage: window.dispatchEvent(new CustomEvent("soly:open-brief"))
-// The ChatWidget listens for this and switches to brief mode
-
-// Global callback for brief injection
+// Global ref to force open in brief mode from anywhere
+let _pendingBriefOpen = false;
 let _onBriefReadyCallback: ((brief: string) => void) | null = null;
 
 export function openSolyBrief(onBriefReady: (brief: string) => void) {
   _onBriefReadyCallback = onBriefReady;
+  _pendingBriefOpen = true;
   window.dispatchEvent(new CustomEvent("soly:open-brief"));
 }
 
@@ -48,45 +45,51 @@ export default function ChatWidget() {
   const [briefExtracted, setBriefExtracted] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const modeRef = useRef<ChatMode>("general");
 
-  // Initialize welcome message
-  const initMessages = useCallback((m: ChatMode) => {
-    const welcome = lang === "en" ? WELCOME_EN[m] : WELCOME_FR[m];
-    setMessages([{ role: "assistant", content: welcome }]);
-    setBriefExtracted(null);
+  const getWelcome = useCallback((m: ChatMode) => {
+    return lang === "en" ? WELCOME_EN[m] : WELCOME_FR[m];
   }, [lang]);
 
   // Listen for soly:open-brief event
   useEffect(() => {
     const handleOpenBrief = () => {
+      modeRef.current = "brief";
       setMode("brief");
       setIsOpen(true);
-      initMessages("brief");
+      setBriefExtracted(null);
+      setMessages([{ role: "assistant", content: getWelcome("brief") }]);
     };
     window.addEventListener("soly:open-brief", handleOpenBrief);
     return () => window.removeEventListener("soly:open-brief", handleOpenBrief);
-  }, [initMessages]);
+  }, [getWelcome]);
+
+  // Fallback: check pending brief on each render
+  useEffect(() => {
+    if (_pendingBriefOpen && mode !== "brief") {
+      _pendingBriefOpen = false;
+      modeRef.current = "brief";
+      setMode("brief");
+      setIsOpen(true);
+      setBriefExtracted(null);
+      setMessages([{ role: "assistant", content: getWelcome("brief") }]);
+    }
+  });
 
   // Auto-open on first visit (general mode only)
   useEffect(() => {
     const alreadyShown = localStorage.getItem("soly_shown");
     if (!alreadyShown && !hasAutoOpened) {
       const timer = setTimeout(() => {
+        if (modeRef.current === "brief") return; // Don't override brief mode
         setIsOpen(true);
         setHasAutoOpened(true);
         localStorage.setItem("soly_shown", "1");
-        initMessages("general");
+        setMessages([{ role: "assistant", content: getWelcome("general") }]);
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [hasAutoOpened, initMessages]);
-
-  // When opened manually and no messages yet
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      initMessages(mode);
-    }
-  }, [isOpen, messages.length, mode, initMessages]);
+  }, [hasAutoOpened, getWelcome]);
 
   // Auto-scroll
   useEffect(() => {
@@ -102,17 +105,20 @@ export default function ChatWidget() {
 
   const handleOpen = () => {
     setIsOpen(true);
-    if (messages.length === 0) initMessages(mode);
+    if (messages.length === 0) {
+      setMessages([{ role: "assistant", content: getWelcome(mode) }]);
+    }
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    // If closing brief mode, go back to general for next open
     if (mode === "brief") {
+      modeRef.current = "general";
       setMode("general");
       setMessages([]);
       setBriefExtracted(null);
       _onBriefReadyCallback = null;
+      _pendingBriefOpen = false;
     }
   };
 
@@ -125,6 +131,7 @@ export default function ChatWidget() {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
+    const currentMode = modeRef.current;
     const newMessages: Message[] = [...messages, { role: "user", content: trimmed }];
     setMessages(newMessages);
     setInput("");
@@ -133,7 +140,6 @@ export default function ChatWidget() {
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
 
-      // Try to get auth token if available
       try {
         const { supabase } = await import("@/lib/supabase");
         const { data } = await supabase.auth.getSession();
@@ -141,7 +147,7 @@ export default function ChatWidget() {
           headers["Authorization"] = `Bearer ${data.session.access_token}`;
         }
       } catch {
-        // Not authenticated — fine for general mode
+        // Not authenticated
       }
 
       const res = await fetch("/api/chat", {
@@ -149,13 +155,13 @@ export default function ChatWidget() {
         headers,
         body: JSON.stringify({
           messages: newMessages,
-          mode,
+          mode: currentMode,
         }),
       });
 
       if (!res.ok) {
         const errData = await res.json().catch(() => null);
-        const errMsg = errData?.error || (lang === "en" ? "An error occurred. Please try again." : "Une erreur est survenue. Reessaie.");
+        const errMsg = errData?.error || (lang === "en" ? "An error occurred." : "Une erreur est survenue.");
         setMessages([...newMessages, { role: "assistant", content: errMsg }]);
         setLoading(false);
         return;
@@ -164,13 +170,11 @@ export default function ChatWidget() {
       const data = await res.json();
       const assistantMsg = data.message || "";
 
-      // Check for brief extraction
       const brief = extractBrief(assistantMsg);
       if (brief) {
         setBriefExtracted(brief);
       }
 
-      // Clean the markers from displayed message
       const cleanedMsg = assistantMsg
         .replace(/---BRIEF_READY---\n?/, "")
         .replace(/\n?---END_BRIEF---/, "")
@@ -182,7 +186,7 @@ export default function ChatWidget() {
         ...newMessages,
         {
           role: "assistant",
-          content: lang === "en" ? "Connection error. Please try again." : "Erreur de connexion. Reessaie.",
+          content: lang === "en" ? "Connection error." : "Erreur de connexion.",
         },
       ]);
     } finally {
@@ -200,14 +204,14 @@ export default function ChatWidget() {
         {
           role: "assistant",
           content: lang === "en"
-            ? "Done! The brief has been added to your configuration. You can edit it anytime."
-            : "C'est fait ! Le brief a ete ajoute a ta configuration. Tu peux le modifier a tout moment.",
+            ? "Done! Brief added to your config."
+            : "C'est fait ! Brief ajoute a ta config.",
         },
       ]);
     }
   };
 
-  // Bubble only (closed state)
+  // Bubble (closed)
   if (!isOpen) {
     return (
       <button
@@ -246,7 +250,7 @@ export default function ChatWidget() {
     );
   }
 
-  // Open chat window
+  // Open chat
   return (
     <div
       style={{
@@ -289,7 +293,6 @@ export default function ChatWidget() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 16,
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -371,7 +374,6 @@ export default function ChatWidget() {
           </div>
         ))}
 
-        {/* Typing indicator */}
         {loading && (
           <div style={{ display: "flex", justifyContent: "flex-start" }}>
             <div
@@ -391,7 +393,6 @@ export default function ChatWidget() {
           </div>
         )}
 
-        {/* Brief CTA */}
         {briefExtracted && _onBriefReadyCallback && (
           <div style={{ display: "flex", justifyContent: "center", padding: "4px 0" }}>
             <button
@@ -408,10 +409,7 @@ export default function ChatWidget() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                transition: "opacity 0.15s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
@@ -458,7 +456,6 @@ export default function ChatWidget() {
             color: "var(--text, #1a1a1a)",
             fontSize: 13,
             outline: "none",
-            transition: "border-color 0.15s",
           }}
           onFocus={(e) => (e.currentTarget.style.borderColor = "var(--accent, #005058)")}
           onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border, #e5e5e5)")}
@@ -479,7 +476,6 @@ export default function ChatWidget() {
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            transition: "background 0.15s",
           }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -489,7 +485,6 @@ export default function ChatWidget() {
         </button>
       </div>
 
-      {/* Typing animation CSS */}
       <style>{`
         @keyframes solyBounce {
           0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
