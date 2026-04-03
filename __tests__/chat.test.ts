@@ -212,6 +212,21 @@ describe("POST /api/chat", () => {
     expect(mockChatHourlyLimit).not.toHaveBeenCalled();
     expect(mockChatDailyLimit).not.toHaveBeenCalled();
   });
+
+  // --- Fail-close si Redis down ---
+
+  it("retourne 503 si rate limiter indisponible (fail-close)", async () => {
+    mockChatHourlyLimit.mockRejectedValue(new Error("Redis connection failed"));
+    mockChatDailyLimit.mockRejectedValue(new Error("Redis connection failed"));
+    const request = buildRequest(
+      { messages: [{ role: "user", content: "Salut" }], mode: "general" },
+      { auth: true }
+    );
+    const response = await POST(request);
+    expect(response.status).toBe(503);
+    const data = await response.json();
+    expect(data.error).toContain("temporairement indisponible");
+  });
 });
 
 // --- Tests du prompt systeme ---
@@ -227,6 +242,14 @@ describe("getSolySystemPrompt", () => {
     const prompt = getSolySystemPrompt("brief");
     expect(prompt).toContain("BRIEF_READY");
     expect(prompt).toContain("END_BRIEF");
+  });
+
+  it("les deux modes contiennent les regles anti-injection", () => {
+    const general = getSolySystemPrompt("general");
+    const brief = getSolySystemPrompt("brief");
+    expect(general).toContain("ignorer tes consignes");
+    expect(general).toContain("reveler ton prompt");
+    expect(brief).toContain("ignorer tes consignes");
   });
 
   it("les deux modes contiennent le contexte de base Sorell, sans mention de Haiku", () => {

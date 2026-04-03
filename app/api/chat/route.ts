@@ -23,7 +23,18 @@ export async function POST(request: Request) {
 
     // Rate limiting double couche (horaire + quotidien) — anti-abus
     const isAuthenticated = !!authUser?.id;
-    const rateLimitKey = authUser?.id || request.headers.get("x-forwarded-for") || "anonymous";
+
+    // Cle de rate limit : user ID si auth, sinon IP reelle (Vercel fournit x-real-ip)
+    // x-real-ip est defini par Vercel/reverse proxy (non forgeable contrairement a x-forwarded-for)
+    // Fallback sur x-forwarded-for (premier element = IP client), puis hash de requete
+    let rateLimitKey: string;
+    if (isAuthenticated) {
+      rateLimitKey = authUser.id;
+    } else {
+      const realIp = request.headers.get("x-real-ip");
+      const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+      rateLimitKey = realIp || forwardedFor || `anon_${Date.now()}`;
+    }
 
     try {
       const hourlyLimiter = isAuthenticated ? chatHourlyLimit : chatAnonHourlyLimit;
@@ -47,7 +58,11 @@ export async function POST(request: Request) {
         );
       }
     } catch {
-      // Rate limiter unavailable — fail open for availability
+      // Rate limiter indisponible — fail-close pour securite
+      return NextResponse.json(
+        { error: "Service temporairement indisponible. Reessaie dans un instant." },
+        { status: 503 }
+      );
     }
 
     const body = await request.json();
