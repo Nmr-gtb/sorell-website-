@@ -50,6 +50,8 @@ export async function POST(request: Request) {
     await supabase.from("lifecycle_emails").delete().eq("user_id", userId);
     await supabase.from("referrals").delete().eq("referrer_id", userId);
     await supabase.from("referrals").delete().eq("referee_id", userId);
+    // Nettoyer referred_by des filleuls qui pointent vers ce parrain (évite les FK orphelines)
+    await supabase.from("profiles").update({ referred_by: null }).eq("referred_by", userId);
     await supabase.from("profiles").delete().eq("id", userId);
 
     // Supprimer l'utilisateur de Supabase Auth

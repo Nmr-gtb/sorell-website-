@@ -50,14 +50,23 @@ export async function POST(request: Request) {
     if (referral && new Date(referral.expires_at) > new Date()) {
       const discountAmount = REFERRAL_PRICES[priceId];
       if (discountAmount) {
-        // Créer un coupon Stripe one-time pour ce filleul
-        const coupon = await stripe.coupons.create({
-          amount_off: discountAmount,
-          currency: "eur",
-          duration: "once",
-          name: "Parrainage Sorell -20%",
-        });
-        couponId = coupon.id;
+        // Coupon idempotent : un seul coupon par referral (évite les orphelins si checkout appelé plusieurs fois)
+        const couponKey = `sorell_ref_${referral.id}`;
+        try {
+          // Réutiliser le coupon existant s'il a déjà été créé
+          const existing = await stripe.coupons.retrieve(couponKey);
+          couponId = existing.id;
+        } catch {
+          // Le coupon n'existe pas encore, on le crée avec un ID déterministe
+          const coupon = await stripe.coupons.create({
+            id: couponKey,
+            amount_off: discountAmount,
+            currency: "eur",
+            duration: "once",
+            name: "Parrainage Sorell -20%",
+          });
+          couponId = coupon.id;
+        }
       }
     }
 
