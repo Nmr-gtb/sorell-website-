@@ -695,6 +695,8 @@ const en: Record<string, string> = {
   "referral.upgrade_desc": "Upgrade to Pro or Business to refer your colleagues and earn free days.",
   "referral.upgrade_cta": "See plans",
   "contact.calendly_label": "Schedule a 30 min call",
+  // Chat / Soly
+  "config.brief_ai_help": "Let Soly help me write my brief",
 };
 
 export default en;

@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import ChatWidget from "@/components/ChatWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -188,6 +189,7 @@ export default function RootLayout({
               <div data-page-content="">
                 {children}
               </div>
+              <ChatWidget />
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
