@@ -2,6 +2,8 @@ import { stripe, PRICE_TO_PLAN } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Resend } from "resend";
+import { render } from "@react-email/components";
+import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -146,57 +148,13 @@ export async function POST(request: Request) {
       // Envoyer un email de notification de paiement échoué
       try {
         const firstName = profile.full_name?.split(" ")[0] || "";
-        const greeting = firstName ? `Bonjour ${firstName},` : "Bonjour,";
+        const html = await render(PaymentFailedEmail({ firstName }));
 
         await resend.emails.send({
           from: "Sorell <noe@sorell.fr>",
           to: profile.email,
           subject: "Problème de paiement \u2014 Action requise",
-          html: `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="UTF-8" /></head>
-<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:Inter,Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 0;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;">
-          <!-- Header -->
-          <tr>
-            <td style="background-color:#005058;padding:32px 40px;text-align:center;">
-              <span style="font-size:28px;font-weight:700;color:#ffffff;letter-spacing:1px;">Sorell</span>
-            </td>
-          </tr>
-          <!-- Body -->
-          <tr>
-            <td style="padding:40px;">
-              <p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#1a1a1a;">${greeting}</p>
-              <p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#1a1a1a;">Nous n'avons pas pu traiter votre dernier paiement pour votre abonnement Sorell.</p>
-              <p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#1a1a1a;">Votre compte a été temporairement basculé vers le plan <strong>Gratuit</strong>. Vos configurations sont conservées, mais certaines fonctionnalités ne sont plus accessibles.</p>
-              <p style="margin:0 0 30px;font-size:16px;line-height:1.6;color:#1a1a1a;">Pour retrouver votre abonnement, il vous suffit de mettre à jour votre moyen de paiement :</p>
-              <!-- CTA Button -->
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center">
-                    <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;background-color:#005058;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:6px;">Mettre à jour mon paiement</a>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin:30px 0 0;font-size:14px;line-height:1.6;color:#6b7280;">Si vous pensez qu'il s'agit d'une erreur ou si vous avez besoin d'aide, répondez simplement à cet email. Nous sommes là pour vous aider.</p>
-            </td>
-          </tr>
-          <!-- Footer -->
-          <tr>
-            <td style="background-color:#f9fafb;padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;">
-              <p style="margin:0;font-size:13px;color:#9ca3af;">Sorell - Votre veille sectorielle automatisée</p>
-              <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">Cet email a été envoyé automatiquement suite à un problème de paiement.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`,
+          html,
         });
       } catch {
         // Ne pas faire échouer le webhook si l'envoi d'email échoue

@@ -182,7 +182,7 @@ export async function GET(request: Request) {
       const dateStr = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
       for (const recipient of recipients) {
-        const emailHtml = buildNewsletterHtml({
+        const emailHtml = await buildNewsletterHtml({
           newsletterId: newsletter.id,
           recipientEmail: recipient.email,
           subject,

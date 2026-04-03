@@ -99,7 +99,7 @@ vi.mock("resend", () => ({
 
 // Mock email template
 vi.mock("@/lib/email-template", () => ({
-  buildNewsletterHtml: () => "<html>Newsletter</html>",
+  buildNewsletterHtml: async () => "<html>Newsletter</html>",
 }));
 
 import { GET } from "@/app/api/cron/route";

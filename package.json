@@ -12,12 +12,14 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.79.0",
+    "@react-email/components": "^1.0.11",
     "@supabase/supabase-js": "^2.99.2",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-email": "^5.2.10",
     "resend": "^6.9.4",
     "stripe": "^20.4.1"
   },

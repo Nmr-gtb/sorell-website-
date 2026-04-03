@@ -58,7 +58,7 @@ describe("POST /api/welcome", () => {
     const response = await POST(request);
     expect(response.status).toBe(401);
     const data = await response.json();
-    expect(data.error).toContain("Non autorise");
+    expect(data.error).toContain("Non autoris");
   });
 
   it("retourne 400 si email manquant", async () => {

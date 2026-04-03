@@ -93,7 +93,7 @@ export async function POST(request: Request) {
 
     const results = [];
     for (const recipient of recipients) {
-      const emailHtml = buildNewsletterHtml({
+      const emailHtml = await buildNewsletterHtml({
         newsletterId: newsletter.id,
         recipientEmail: recipient.email,
         subject: newsletter.subject,

@@ -25,7 +25,7 @@ vi.mock("resend", () => {
 
 // Mock email template
 vi.mock("@/lib/email-template", () => ({
-  buildNewsletterHtml: () => "<html>newsletter</html>",
+  buildNewsletterHtml: async () => "<html>newsletter</html>",
 }));
 
 // Supabase mock state
