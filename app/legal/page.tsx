@@ -80,8 +80,9 @@ export default function LegalPage() {
             informations.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Les newsletters générées par Sorell utilisent l'intelligence artificielle et peuvent contenir
-            des approximations. Le contenu généré ne constitue pas un conseil professionnel.
+            Les newsletters et l&apos;assistant conversationnel Soly utilisent l&apos;intelligence artificielle
+            (Claude, Anthropic). Le contenu généré peut contenir des approximations. L&apos;utilisateur reste
+            responsable de la vérification des informations.
           </p>
         </Section>
 

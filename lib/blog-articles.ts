@@ -10,6 +10,76 @@ export interface BlogArticle {
 
 export const BLOG_ARTICLES: BlogArticle[] = [
   {
+    slug: "soly-assistant-ia-newsletter",
+    title: "Soly, ton assistant IA pour creer la newsletter parfaite",
+    description: "Decouvrez Soly, l'assistant integre a Sorell qui vous aide a configurer votre newsletter en 2 minutes. Plus besoin de chercher quoi ecrire dans votre brief.",
+    date: "2026-04-03",
+    readTime: "4 min",
+    tags: ["Produit", "IA", "Newsletter"],
+    content: `
+      <p>Tu viens de creer ton compte Sorell. Tu arrives sur le dashboard, et la, on te demande de decrire ton activite pour personnaliser ta newsletter. Le champ est vide. Tu fixes l'ecran. Tu tapes "je suis dans la tech" et tu valides.</p>
+
+      <p>Resultat : ta newsletter parle de tout et de rien. Un article sur les semi-conducteurs, un autre sur le cloud gaming, un troisieme sur la cybersecurite bancaire. Rien a voir avec ton quotidien.</p>
+
+      <p>C'est exactement pour ca qu'on a cree <strong>Soly</strong>.</p>
+
+      <h2>Le vrai probleme : on ne sait pas quoi ecrire</h2>
+      <p>La qualite de ta newsletter Sorell depend directement de ton brief. Plus il est precis, plus le contenu sera pertinent. Mais la plupart des utilisateurs ne savent pas par ou commencer. Pas parce qu'ils ne connaissent pas leur metier - parce que formuler un brief clair, c'est un exercice a part entiere.</p>
+
+      <p>On a vu des briefs comme "je fais du conseil", "PME industrielle" ou "startup B2B". C'est trop vague. L'IA ne peut pas deviner ce qui t'interesse vraiment avec si peu d'informations.</p>
+
+      <h2>Soly : ton assistant qui pose les bonnes questions</h2>
+      <p>Soly est un assistant integre directement dans Sorell. Au lieu de te laisser seul face a un champ vide, il te pose 5 questions simples :</p>
+
+      <p><strong>1. Quel est ton secteur d'activite ?</strong><br/>Par exemple : "conseil en strategie pour l'industrie pharmaceutique" ou "e-commerce de cosmetiques bio".</p>
+
+      <p><strong>2. Qui va lire ta newsletter ?</strong><br/>Toi seul ? Ton equipe marketing ? Tes associes ? Soly adapte le niveau de detail en fonction du public.</p>
+
+      <p><strong>3. Quels sujets t'interessent ?</strong><br/>Les levees de fonds dans ton secteur ? Les nouvelles reglementations ? Les strategies de tes concurrents ? Soly te guide pour identifier ce qui compte vraiment.</p>
+
+      <p><strong>4. Quel ton tu preferes ?</strong><br/>Direct et factuel ? Analytique avec des chiffres ? Accessible et vulgarise ? Ta newsletter doit te ressembler.</p>
+
+      <p><strong>5. Des sujets a exclure ?</strong><br/>Si tu ne veux pas entendre parler de crypto ou de metaverse, dis-le. Soly s'en souvient.</p>
+
+      <h2>En 2 minutes, ton brief est pret</h2>
+      <p>Apres ces 5 questions, Soly genere un brief optimise automatiquement. Pas un brief generique - un brief qui reflete exactement ton activite, tes centres d'interet et tes attentes.</p>
+
+      <p><strong>Exemple concret :</strong> un dirigeant de cabinet de conseil en sante a repondu en 2 minutes. Son brief genere par Soly mentionnait les dispositifs medicaux connectes, les reglementations MDR europeennes, les levees de fonds health-tech et la transformation digitale hospitaliere. Sa premiere newsletter etait pile dans le sujet.</p>
+
+      <p>Compare ca avec un brief tape a la main : "je suis dans le conseil sante". La difference de qualite dans la newsletter est enorme.</p>
+
+      <h2>Comment utiliser Soly</h2>
+      <p>Tu as deux facons d'acceder a Soly :</p>
+
+      <p><strong>Sur le site sorell.fr :</strong> tu vois une bulle en bas a droite de l'ecran. Clique dessus, Soly est la. Disponible 24h/24, 7j/7. Tu peux lui poser des questions sur Sorell ou lui demander de t'aider avec ton brief.</p>
+
+      <p><strong>Dans ton dashboard :</strong> quand tu configures ta newsletter, tu verras un bouton "Soly m'aide" juste a cote du champ de brief. Clique dessus, reponds aux 5 questions, et le brief genere est injecte directement dans ta configuration. Un seul clic pour valider.</p>
+
+      <p>Pas besoin de copier-coller. Pas besoin de reformuler. Soly fait le travail, tu valides, c'est tout.</p>
+
+      <h2>Le resultat : une newsletter qui te correspond vraiment</h2>
+      <p>Avec un brief precis, ta newsletter Sorell change completement :</p>
+
+      <p>- Les articles selectionnes sont directement lies a ton activite<br/>
+      - Les sources correspondent a ton secteur (presse specialisee, rapports, medias de reference)<br/>
+      - Le ton et le niveau de detail matchent tes attentes<br/>
+      - Les sujets qui ne t'interessent pas sont filtres</p>
+
+      <p>Fini le contenu generique. Chaque newsletter devient un vrai outil de veille, pas juste un email de plus dans ta boite.</p>
+
+      <h2>Essaie par toi-meme</h2>
+      <p>Cree ton compte gratuit sur <a href="https://sorell.fr">sorell.fr</a>, et laisse Soly t'aider a configurer ta premiere newsletter. En 2 minutes de conversation, tu auras un brief optimise et ta premiere newsletter sera generee dans la foulee.</p>
+
+      <p><strong><a href="https://sorell.fr">Essaie Sorell gratuitement</a></strong> - Soly t'attend pour t'aider a demarrer.</p>
+
+      <h2>Articles lies</h2>
+      <ul>
+        <li><a href="/blog/automatiser-veille-sectorielle-5-minutes">Automatiser sa veille sectorielle en 5 minutes</a></li>
+        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+      </ul>
+    `
+  },
+  {
     slug: "meilleurs-outils-newsletter-ia-2026",
     title: "Les 10 meilleurs outils de newsletter IA pour entreprises en 2026",
     description: "Comparatif complet des outils de newsletter automatique par IA. Découvrez quelle solution choisir pour automatiser votre veille sectorielle en 2026.",
@@ -157,7 +227,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <ul>
         <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle : la comparaison</a></li>
         <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
-        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+        <li><a href="/blog/soly-assistant-ia-newsletter">Soly, ton assistant IA pour créer la newsletter parfaite</a></li>
       </ul>
     `
   },
@@ -266,7 +336,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <ul>
         <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
         <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle : la comparaison</a></li>
-        <li><a href="/blog/sorell-vs-chatgpt-veille-sectorielle">Sorell vs ChatGPT pour la veille sectorielle</a></li>
+        <li><a href="/blog/soly-assistant-ia-newsletter">Soly, ton assistant IA pour créer la newsletter parfaite</a></li>
       </ul>
     `
   },

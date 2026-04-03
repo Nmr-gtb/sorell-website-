@@ -572,6 +572,10 @@ const fr: Record<string, string> = {
   "home.step2_desc": "Sorell cherche les actualités importantes dans les médias et rédige votre résumé.",
   "home.step3_title": "Vous recevez par email",
   "home.step3_desc": "Chaque semaine, un email propre et clair arrive dans votre boîte. Vous n'avez rien à faire.",
+  "home.soly_title": "Pas inspire ? Soly t'aide.",
+  "home.soly_subtitle": "Notre assistant IA te guide pas a pas. Il te pose les bonnes questions et redige ton brief a ta place. En 2 minutes, ta newsletter est parfaitement configuree.",
+  "home.soly_bubble": "Dans quel secteur tu travailles ?",
+  "home.soly_label": "Soly, assistant IA",
   "home.pricing_title": "Tarifs simples, sans engagement",
   "home.pricing_link": "Voir tous les détails →",
   "home.cta_title": "Prêt à recevoir les infos qui comptent, chaque semaine ?",
@@ -633,6 +637,8 @@ const fr: Record<string, string> = {
   "faq.a11": "Oui, à tout moment. Vous pouvez changer vos thématiques, vos sources, votre brief et votre fréquence d'envoi quand vous le souhaitez. Les modifications sont prises en compte dès la prochaine newsletter. Aucun engagement, aucune limite de modifications.",
   "faq.q12": "Comment fonctionne l'essai gratuit ?",
   "faq.a12": "Vous avez 15 jours pour tester toutes les fonctionnalités du plan choisi. Votre carte bancaire est demandée mais vous n'êtes pas débité pendant la période d'essai. Vous pouvez annuler à tout moment avant la fin des 15 jours sans aucun frais.",
+  "faq.q13": "Est-ce que Sorell aide a configurer sa newsletter ?",
+  "faq.a13": "Oui, Soly, notre assistant IA integre, vous guide pour rediger le brief parfait. Il est disponible gratuitement pour tous les utilisateurs.",
 
   // Dashboard - Profile
   "profile.title": "Mon profil",

@@ -37,6 +37,7 @@ export default function PricingPage() {
     { q: t("faq.q10"), a: t("faq.a10") },
     { q: t("faq.q11"), a: t("faq.a11") },
     { q: t("faq.q12"), a: t("faq.a12") },
+    { q: t("faq.q13"), a: t("faq.a13") },
   ];
 
   const [period, setPeriod] = useState<"monthly" | "annual">("monthly");
@@ -145,7 +146,8 @@ export default function PricingPage() {
               { "@type": "Question", "name": "Mes données sont-elles sécurisées ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Hébergement sur serveurs européens, chiffrement AES-256, conforme RGPD. Nous ne revendons jamais vos données. Les paiements sont sécurisés par Stripe." } },
               { "@type": "Question", "name": "L'IA peut-elle se tromper ?", "acceptedAnswer": { "@type": "Answer", "text": "Comme tout outil, l'IA peut parfois manquer de précision. C'est pourquoi chaque article contient un lien vers la source originale - vous pouvez toujours vérifier. Le contenu ne constitue pas un conseil professionnel." } },
               { "@type": "Question", "name": "Puis-je modifier ma newsletter après l'avoir configurée ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, à tout moment. Vous pouvez changer vos thématiques, vos sources, votre brief et votre fréquence d'envoi quand vous le souhaitez. Les modifications sont prises en compte dès la prochaine newsletter. Aucun engagement, aucune limite de modifications." } },
-              { "@type": "Question", "name": "Comment fonctionne l'essai gratuit ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous avez 15 jours pour tester toutes les fonctionnalités du plan choisi. Votre carte bancaire est demandée mais vous n'êtes pas débité pendant la période d'essai. Vous pouvez annuler à tout moment avant la fin des 15 jours sans aucun frais." } }
+              { "@type": "Question", "name": "Comment fonctionne l'essai gratuit ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous avez 15 jours pour tester toutes les fonctionnalités du plan choisi. Votre carte bancaire est demandée mais vous n'êtes pas débité pendant la période d'essai. Vous pouvez annuler à tout moment avant la fin des 15 jours sans aucun frais." } },
+              { "@type": "Question", "name": "Est-ce que Sorell aide à configurer sa newsletter ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, Soly, notre assistant IA intégré, vous guide pour rédiger le brief parfait. Il est disponible gratuitement pour tous les utilisateurs." } }
             ]
           })
         }}

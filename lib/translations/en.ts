@@ -572,6 +572,10 @@ const en: Record<string, string> = {
   "home.step2_desc": "Sorell searches for important news in the media and writes your summary.",
   "home.step3_title": "You receive it by email",
   "home.step3_desc": "Every week, a clean and clear email lands in your inbox. You don't have to do anything.",
+  "home.soly_title": "Not sure what to write? Soly helps.",
+  "home.soly_subtitle": "Our AI assistant guides you step by step. It asks the right questions and writes your brief for you. In 2 minutes, your newsletter is perfectly configured.",
+  "home.soly_bubble": "What industry do you work in?",
+  "home.soly_label": "Soly, AI assistant",
   "home.pricing_title": "Simple pricing, no commitment",
   "home.pricing_link": "See all details →",
   "home.cta_title": "Ready to get the news that matters, every week?",
@@ -633,6 +637,8 @@ const en: Record<string, string> = {
   "faq.a11": "Yes, anytime. You can change your topics, sources, brief and send frequency whenever you want. Changes take effect from the next newsletter. No commitment, no limit on modifications.",
   "faq.q12": "How does the free trial work?",
   "faq.a12": "You get 15 days to test all features of your chosen plan. Your credit card is required but you won't be charged during the trial period. You can cancel anytime before the end of the 15 days at no cost.",
+  "faq.q13": "Does Sorell help configure the newsletter?",
+  "faq.a13": "Yes, Soly, our built-in AI assistant, guides you to write the perfect brief. It is available for free to all users.",
 
   // Dashboard - Profile
   "profile.title": "My profile",

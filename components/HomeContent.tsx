@@ -534,6 +534,160 @@ export default function HomeContent() {
         </div>
       </section>
 
+      {/* ─── SOLY ASSISTANT IA ──────────────────────────────── */}
+      <section className="section-soly" style={{ background: "var(--bg)", padding: "120px 1.5rem" }}>
+        <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          <AnimateOnScroll>
+            <div style={{ textAlign: "center", marginBottom: 48 }}>
+              <h2
+                style={{
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
+                  color: "var(--text)",
+                  marginBottom: 16,
+                }}
+              >
+                {t("home.soly_title")}
+              </h2>
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "var(--text-secondary)",
+                  maxWidth: 520,
+                  margin: "0 auto",
+                  lineHeight: 1.7,
+                }}
+              >
+                {t("home.soly_subtitle")}
+              </p>
+            </div>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll delay={120}>
+            <div
+              className="soly-chat-visual"
+              style={{
+                maxWidth: 380,
+                margin: "0 auto",
+              }}
+            >
+              {/* Soly label */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 12,
+                }}
+              >
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: "#005058",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
+                  </svg>
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: "var(--text-secondary)",
+                    fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  }}
+                >
+                  {t("home.soly_label")}
+                </span>
+              </div>
+
+              {/* Chat bubble */}
+              <div
+                style={{
+                  background: "#005058",
+                  borderRadius: "16px 16px 16px 4px",
+                  padding: "16px 20px",
+                  maxWidth: 300,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "0.9375rem",
+                    color: "#FFFFFF",
+                    lineHeight: 1.5,
+                    fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                    fontWeight: 400,
+                    margin: 0,
+                  }}
+                >
+                  {t("home.soly_bubble")}
+                </p>
+              </div>
+
+              {/* Typing indicator dots */}
+              <div
+                className="soly-typing"
+                style={{
+                  display: "flex",
+                  gap: 4,
+                  marginTop: 12,
+                  marginLeft: 16,
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "var(--text-muted)",
+                    opacity: 0.4,
+                    display: "block",
+                  }}
+                />
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "var(--text-muted)",
+                    opacity: 0.25,
+                    display: "block",
+                  }}
+                />
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "var(--text-muted)",
+                    opacity: 0.15,
+                    display: "block",
+                  }}
+                />
+              </div>
+            </div>
+          </AnimateOnScroll>
+        </div>
+
+        <style>{`
+          @media (max-width: 767px) {
+            .section-soly {
+              padding-top: 64px !important;
+              padding-bottom: 64px !important;
+            }
+          }
+        `}</style>
+      </section>
+
       {/* ─── METRIQUES DE CONFIANCE ───────────────────────────── */}
       <section className="section-metrics" style={{ background: "var(--bg)", padding: "96px 1.5rem" }}>
         <style>{`

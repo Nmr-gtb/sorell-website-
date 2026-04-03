@@ -94,6 +94,14 @@ export default function PrivacyPage() {
             Des garanties appropriées (clauses contractuelles types) encadrent les transferts de données
             hors UE.
           </p>
+          <p style={{ marginTop: "1rem" }}>
+            <strong>Assistant Soly</strong> : Sorell intègre un assistant conversationnel (&laquo;&nbsp;Soly&nbsp;&raquo;)
+            alimenté par l&apos;intelligence artificielle (Anthropic, États-Unis). Les messages que vous envoyez
+            à Soly sont transmis à Anthropic pour générer une réponse. Les conversations ne sont pas
+            enregistrées sur nos serveurs — elles restent dans votre navigateur et sont supprimées à la
+            fermeture de la fenêtre. Aucune donnée personnelle n&apos;est collectée via cet assistant.
+            Anthropic peut traiter les données conformément à ses propres conditions d&apos;utilisation.
+          </p>
         </Section>
 
         <Section title="6. Durée de conservation">

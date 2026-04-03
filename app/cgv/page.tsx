@@ -111,6 +111,12 @@ export default function CGVPage() {
             L'utilisateur est seul responsable de l'utilisation qu'il fait du contenu.
           </p>
           <p style={{ marginTop: "1rem" }}>
+            L&apos;assistant Soly, intégré au site, utilise l&apos;intelligence artificielle (Claude, Anthropic)
+            pour aider les utilisateurs à configurer leur service. Les réponses de Soly sont fournies à
+            titre indicatif et ne constituent pas des conseils professionnels. Sorell ne garantit pas
+            l&apos;exactitude des réponses fournies par l&apos;assistant.
+          </p>
+          <p style={{ marginTop: "1rem" }}>
             Sorell s'engage à mettre en œuvre les moyens nécessaires pour assurer la disponibilité du
             service, sans obligation de résultat.
           </p>
