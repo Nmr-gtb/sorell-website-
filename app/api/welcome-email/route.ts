@@ -49,7 +49,7 @@ export async function POST(request: Request) {
   <meta name="color-scheme" content="light">
 </head>
 <body style="margin:0;padding:0;background:#F5F0EB;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Votre veille sectorielle IA est prete${"&nbsp;&zwnj;".repeat(20)}</div>
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">Votre veille sectorielle IA est prête${"&nbsp;&zwnj;".repeat(20)}</div>
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;">
 
     <!-- Header -->
@@ -70,10 +70,10 @@ export async function POST(request: Request) {
     <!-- Contenu -->
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Bonjour ${displayName}, merci de nous avoir rejoints. Vous avez desormais acces a une veille sectorielle automatique, generee par IA a partir de vraies actualites du web, et livree dans votre boite mail chaque semaine.
+        Bonjour ${displayName}, merci de nous avoir rejoints. Vous avez désormais accès à une veille sectorielle automatique, générée par IA à partir de vraies actualités du web, et livrée dans votre boîte mail chaque semaine.
       </p>
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Il ne reste que 5 minutes de configuration pour que Sorell comprenne votre metier et commence a travailler pour vous.
+        Il ne reste que 5 minutes de configuration pour que Sorell comprenne votre métier et commence à travailler pour vous.
       </p>
     </div>
 
@@ -81,9 +81,9 @@ export async function POST(request: Request) {
     <div style="padding:0 32px 24px;">
       <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Ce qu'on configure ensemble</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Votre brief : decrivez votre activite en quelques lignes</span></td></tr>
-        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Vos thematiques et sources preferees</span></td></tr>
-        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Votre creneau d'envoi et vos destinataires</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Votre brief : décrivez votre activité en quelques lignes</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Vos thématiques et sources préférées</span></td></tr>
+        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Votre créneau d'envoi et vos destinataires</span></td></tr>
       </table>
     </div>
 
@@ -103,8 +103,8 @@ export async function POST(request: Request) {
         </tr>
       </table>
       <p style="font-size:11px;color:#7A7267;margin:14px 0 0;line-height:1.5;">
-        Vous recevez cet email car vous avez cree un compte sur Sorell.<br/>
-        <a href="mailto:noe@sorell.fr" style="color:#7A7267;">Besoin d'aide ? Repondez a cet email</a>
+        Vous recevez cet email car vous avez créé un compte sur Sorell.<br/>
+        <a href="mailto:noe@sorell.fr" style="color:#7A7267;">Besoin d'aide ? Répondez à cet email</a>
       </p>
     </div>
 

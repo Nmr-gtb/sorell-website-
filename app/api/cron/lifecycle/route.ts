@@ -133,7 +133,7 @@ function emailWrapper(content: string, preheader?: string): string {
       </table>
       <p style="font-size:11px;color:${secondaryText};margin:14px 0 0;line-height:1.5;">
         Vous recevez cet email car vous avez un compte sur Sorell.<br/>
-        <a href="mailto:noe@sorell.fr" style="color:${secondaryText};">Besoin d'aide ? Repondez a cet email</a>
+        <a href="mailto:noe@sorell.fr" style="color:${secondaryText};">Besoin d'aide ? Répondez à cet email</a>
       </p>
     </div>
   </div>
@@ -152,18 +152,18 @@ function templateOnboardingJ1(name: string): { subject: string; html: string } {
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Bonjour ${name}, votre compte a ete cree hier, mais votre premiere newsletter n'est pas encore configuree.
+        Bonjour ${name}, votre compte a été créé hier, mais votre première newsletter n'est pas encore configurée.
       </p>
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        En 5 minutes, Sorell peut vous envoyer automatiquement une veille sectorielle personnalisee, generee par IA a partir de vraies actualites du web.
+        En 5 minutes, Sorell peut vous envoyer automatiquement une veille sectorielle personnalisée, générée par IA à partir de vraies actualités du web.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
-      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">3 etapes rapides</p>
+      <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">3 étapes rapides</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Decrivez votre activite (votre brief)</span></td></tr>
-        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Choisissez vos thematiques</span></td></tr>
-        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Cliquez sur "Generer"</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Décrivez votre activité (votre brief)</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Choisissez vos thématiques</span></td></tr>
+        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Cliquez sur "Générer"</span></td></tr>
       </table>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
@@ -183,13 +183,13 @@ function templateTrialJ3(name: string, plan: string): { subject: string; html: s
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Bonjour ${name}, votre essai gratuit du plan ${plan} se termine dans 3 jours. Pour continuer, aucune action requise - votre abonnement demarrera automatiquement.
+        Bonjour ${name}, votre essai gratuit du plan ${plan} se termine dans 3 jours. Pour continuer, aucune action requise — votre abonnement démarrera automatiquement.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Ce que vous gardez avec ${plan}</p>
       <p style="font-size:14px;color:#111827;line-height:1.7;margin:0;">
-        ${plan === "Pro" ? "&middot;&nbsp;&nbsp;4 newsletters/mois&nbsp;&nbsp;&middot;&nbsp;&nbsp;5 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Sources custom" : "&middot;&nbsp;&nbsp;Newsletters illimitees&nbsp;&nbsp;&middot;&nbsp;&nbsp;25 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Logo personnalise"}
+        ${plan === "Pro" ? "&middot;&nbsp;&nbsp;4 newsletters/mois&nbsp;&nbsp;&middot;&nbsp;&nbsp;5 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Sources custom" : "&middot;&nbsp;&nbsp;Newsletters illimitées&nbsp;&nbsp;&middot;&nbsp;&nbsp;25 destinataires&nbsp;&nbsp;&middot;&nbsp;&nbsp;Analytics&nbsp;&nbsp;&middot;&nbsp;&nbsp;Logo personnalisé"}
       </p>
     </div>
     <div style="padding:0 32px 8px;">
@@ -201,7 +201,7 @@ function templateTrialJ3(name: string, plan: string): { subject: string; html: s
       <a href="https://sorell.fr/dashboard" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
         Mon dashboard
       </a>
-    </div>`, `Plus que 3 jours d'essai ${plan}`),
+    </div>`, `Plus que 3 jours d&#39;essai ${plan}`),
   };
 }
 
@@ -214,7 +214,7 @@ function templateTrialJ1(name: string, plan: string): { subject: string; html: s
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Bonjour ${name}, votre essai du plan ${plan} se termine demain. Votre abonnement commencera automatiquement, aucune interruption de service.
+        Bonjour ${name}, votre essai du plan ${plan} se termine demain. Votre abonnement commencera automatiquement — aucune interruption de service.
       </p>
       <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
         Pour annuler avant le premier paiement, rendez-vous sur votre <a href="https://sorell.fr/dashboard/profile" style="color:#005058;text-decoration:underline;">profil</a>.
@@ -222,7 +222,7 @@ function templateTrialJ1(name: string, plan: string): { subject: string; html: s
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
       <a href="https://sorell.fr/dashboard/profile" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
-        Gerer mon abonnement
+        Gérer mon abonnement
       </a>
     </div>`, `Dernier jour d'essai ${plan} - ${name}`),
   };
@@ -237,7 +237,7 @@ function templateTrialJ0(name: string, plan: string): { subject: string; html: s
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Bonjour ${name}, votre periode d'essai est terminee et votre abonnement ${plan} est desormais actif. Configurez vos sources, ajoutez des destinataires et explorez vos analytics depuis votre dashboard.
+        Bonjour ${name}, votre période d'essai est terminée et votre abonnement ${plan} est désormais actif. Configurez vos sources, ajoutez des destinataires et explorez vos analytics depuis votre dashboard.
       </p>
     </div>
     <div style="padding:0 32px 32px;text-align:center;">
@@ -253,7 +253,7 @@ function templateLimitReached(name: string, plan: string, limit: number): { subj
   const nextPrice = plan === "Free" ? "19" : "49";
   const nextBenefits = plan === "Free"
     ? "4 newsletters/mois, 5 destinataires, analytics, sources custom"
-    : "Newsletters illimitees, 25 destinataires, logo personnalise";
+    : "Newsletters illimitées, 25 destinataires, logo personnalise";
 
   return {
     subject: `Limite atteinte - Passez au plan ${nextPlan}`,
@@ -263,7 +263,7 @@ function templateLimitReached(name: string, plan: string, limit: number): { subj
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        ${name}, vous avez utilise vos ${limit} newsletters du mois sur le plan ${plan}. Votre prochaine newsletter sera disponible le mois prochain.
+        ${name}, vous avez utilisé vos ${limit} newsletters du mois sur le plan ${plan}. Votre prochaine newsletter sera disponible le mois prochain.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
@@ -276,7 +276,7 @@ function templateLimitReached(name: string, plan: string, limit: number): { subj
       <a href="https://sorell.fr/tarifs" style="display:inline-block;padding:14px 32px;background:#005058;color:white;font-size:14px;font-weight:500;text-decoration:none;border-radius:8px;">
         Voir les plans
       </a>
-    </div>`, `Vous avez utilise vos ${limit} newsletters du mois`),
+    </div>`, `Vous avez utilisé vos ${limit} newsletters du mois`),
   };
 }
 
@@ -289,25 +289,25 @@ function templateFeedbackJ14(name: string): { subject: string; html: string } {
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 16px;">
-        Bonjour ${name}, vous utilisez Sorell depuis 2 semaines. Avant de continuer, une question simple : est-ce que ca vous est utile ?
+        Bonjour ${name}, vous utilisez Sorell depuis 2 semaines. Avant de continuer, une question simple : est-ce que ça vous est utile ?
       </p>
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        Pas de formulaire. Repondez directement a cet email, meme en une phrase.
+        Pas de formulaire. Répondez directement à cet email, même en une phrase.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:11px;color:#7A7267;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 14px;">Ce qui nous interesse</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Les sujets couverts sont-ils pertinents pour votre activite ?</span></td></tr>
+        <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Les sujets couverts sont-ils pertinents pour votre activité ?</span></td></tr>
         <tr><td style="padding:0 0 10px;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;La frequence vous convient-elle ?</span></td></tr>
-        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Qu'est-ce qu'on pourrait ameliorer ?</span></td></tr>
+        <tr><td style="padding:0;"><span style="font-size:14px;color:#111827;line-height:1.6;">&middot;&nbsp;&nbsp;Qu'est-ce qu'on pourrait améliorer ?</span></td></tr>
       </table>
     </div>
     <div style="padding:0 32px 28px;">
       <p style="font-size:13px;color:#7A7267;line-height:1.6;margin:0;font-style:italic;">
-        Chaque retour aide a rendre Sorell meilleur. On lit et on repond a chaque message.
+        Chaque retour aide à rendre Sorell meilleur. On lit et on répond à chaque message.
       </p>
-    </div>`, `${name}, ca fait 2 semaines - votre avis compte`),
+    </div>`, `${name}, ça fait 2 semaines — votre avis compte`),
   };
 }
 
@@ -316,7 +316,7 @@ function templateUpsellJ28(name: string, currentPlan: string): { subject: string
   const nextPlan = isPro ? "Business" : "Pro";
   const nextPrice = isPro ? "49" : "19";
   const nextBenefits = isPro
-    ? "Newsletters illimitees, 25 destinataires, logo personnalise"
+    ? "Newsletters illimitées, 25 destinataires, logo personnalise"
     : "4 newsletters/mois, 5 destinataires, sources custom, analytics, historique";
 
   return {
@@ -327,7 +327,7 @@ function templateUpsellJ28(name: string, currentPlan: string): { subject: string
     </div>
     <div style="padding:0 32px 24px;">
       <p style="font-size:15px;color:#4B5563;line-height:1.7;margin:0 0 24px;">
-        ${name}, ca fait 4 semaines que Sorell fait votre veille sectorielle. Si vous souhaitez aller plus loin, le plan ${nextPlan} debloque de nouvelles possibilites.
+        ${name}, ça fait 4 semaines que Sorell fait votre veille sectorielle. Si vous souhaitez aller plus loin, le plan ${nextPlan} débloque de nouvelles possibilités.
       </p>
     </div>
     <div style="padding:0 32px 24px;">
@@ -342,8 +342,8 @@ function templateUpsellJ28(name: string, currentPlan: string): { subject: string
       </a>
     </div>
     <div style="padding:4px 32px 28px;text-align:center;">
-      <p style="font-size:13px;color:#7A7267;margin:0;">Pas de pression, votre plan actuel reste actif.</p>
-    </div>`, `${name}, decouvrez le plan ${nextPlan}`),
+      <p style="font-size:13px;color:#7A7267;margin:0;">Pas de pression — votre plan actuel reste actif.</p>
+    </div>`, `${name}, découvrez le plan ${nextPlan}`),
   };
 }
 
