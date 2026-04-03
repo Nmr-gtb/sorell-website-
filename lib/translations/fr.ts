@@ -691,6 +691,9 @@ const fr: Record<string, string> = {
   "referral.stat_converted": "Convertis",
   "referral.stat_pending": "En attente",
   "referral.stat_remaining": "Restants ce mois",
+  "referral.upgrade_title": "Débloquez le parrainage",
+  "referral.upgrade_desc": "Passez à Pro ou Business pour parrainer vos collègues et gagner des jours gratuits.",
+  "referral.upgrade_cta": "Voir les offres",
   "contact.calendly_label": "Planifier un appel de 30 min",
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { authFetch } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -22,18 +23,24 @@ export default function ReferralBlock() {
   const [data, setData] = useState<ReferralStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [eligible, setEligible] = useState<boolean | null>(null);
 
   useEffect(() => {
     authFetch("/api/referral")
-      .then((res) => {
-        if (res.ok) return res.json();
-        return null;
-      })
+      .then((res) => res.json())
       .then((d) => {
-        if (d?.eligible) setData(d);
+        if (d?.eligible) {
+          setData(d);
+          setEligible(true);
+        } else {
+          setEligible(false);
+        }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setEligible(false);
+        setLoading(false);
+      });
   }, []);
 
   const handleCopy = async () => {
@@ -43,7 +50,6 @@ export default function ReferralBlock() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback
       const input = document.createElement("input");
       input.value = data.referralLink;
       document.body.appendChild(input);
@@ -55,10 +61,13 @@ export default function ReferralBlock() {
     }
   };
 
-  // Ne rien afficher si pas eligible ou en chargement
-  if (loading || !data) return null;
+  if (loading) return null;
 
-  const { stats } = data;
+  const isLocked = !eligible;
+
+  // Placeholder values for locked state
+  const displayLink = isLocked ? "https://sorell.fr/?ref=XXXXXXXX" : (data?.referralLink ?? "");
+  const stats = data?.stats ?? { converted: 0, pending: 0, remainingThisMonth: 3 };
 
   return (
     <div
@@ -68,6 +77,8 @@ export default function ReferralBlock() {
         borderRadius: 12,
         padding: 24,
         marginBottom: 24,
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -119,12 +130,13 @@ export default function ReferralBlock() {
           : "Partagez votre lien. Si votre filleul s'abonne à un plan payant, vous gagnez 15 jours gratuits et il bénéficie de -20% sur son premier mois."}
       </div>
 
-      {/* Copy link */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      {/* Copy link - blurred for Free users */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, position: "relative" }}>
         <input
           readOnly
           aria-label="Lien de parrainage"
-          value={data.referralLink}
+          value={displayLink}
+          tabIndex={isLocked ? -1 : 0}
           style={{
             flex: 1,
             padding: "9px 12px",
@@ -135,24 +147,29 @@ export default function ReferralBlock() {
             fontSize: 13,
             fontFamily: "monospace",
             minWidth: 0,
+            filter: isLocked ? "blur(5px)" : "none",
+            userSelect: isLocked ? "none" : "auto",
+            pointerEvents: isLocked ? "none" : "auto",
           }}
         />
         <button
-          onClick={handleCopy}
+          onClick={isLocked ? undefined : handleCopy}
+          disabled={isLocked}
           style={{
             padding: "9px 16px",
             borderRadius: 8,
             border: "none",
-            background: copied ? "#059669" : "var(--accent)",
+            background: isLocked ? "var(--text-muted)" : copied ? "#059669" : "var(--accent)",
             color: "white",
             fontSize: 13,
             fontWeight: 600,
-            cursor: "pointer",
+            cursor: isLocked ? "not-allowed" : "pointer",
             whiteSpace: "nowrap",
             transition: "background 0.2s ease",
             display: "flex",
             alignItems: "center",
             gap: 6,
+            opacity: isLocked ? 0.5 : 1,
           }}
         >
           {copied ? (
@@ -174,12 +191,78 @@ export default function ReferralBlock() {
         </button>
       </div>
 
+      {/* Upgrade CTA for Free users */}
+      {isLocked && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, var(--accent-subtle), transparent)",
+            border: "1px solid var(--accent-border)",
+            borderRadius: 8,
+            padding: "14px 16px",
+            marginBottom: 16,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "var(--accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "var(--text)" }}>
+              {t("referral.upgrade_title") !== "referral.upgrade_title"
+                ? t("referral.upgrade_title")
+                : "Débloquez le parrainage"}
+            </p>
+            <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--text-secondary)" }}>
+              {t("referral.upgrade_desc") !== "referral.upgrade_desc"
+                ? t("referral.upgrade_desc")
+                : "Passez à Pro ou Business pour parrainer vos collègues et gagner des jours gratuits."}
+            </p>
+          </div>
+          <Link
+            href="/tarifs"
+            style={{
+              padding: "8px 16px",
+              borderRadius: 8,
+              background: "var(--accent)",
+              color: "white",
+              fontSize: 13,
+              fontWeight: 600,
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              transition: "opacity 0.2s",
+            }}
+          >
+            {t("referral.upgrade_cta") !== "referral.upgrade_cta"
+              ? t("referral.upgrade_cta")
+              : "Voir les offres"}
+          </Link>
+        </div>
+      )}
+
       {/* Stats */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
           gap: 12,
+          filter: isLocked ? "blur(3px)" : "none",
+          pointerEvents: isLocked ? "none" : "auto",
         }}
       >
         <div
@@ -220,7 +303,7 @@ export default function ReferralBlock() {
             background: "var(--bg)",
           }}
         >
-          <div style={{ fontSize: 20, fontWeight: 700, color: stats.remainingThisMonth > 0 ? "var(--accent)" : "var(--text-muted)", letterSpacing: "-0.02em" }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: isLocked ? "var(--text-muted)" : stats.remainingThisMonth > 0 ? "var(--accent)" : "var(--text-muted)", letterSpacing: "-0.02em" }}>
             {stats.remainingThisMonth}
           </div>
           <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>

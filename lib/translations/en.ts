@@ -691,6 +691,9 @@ const en: Record<string, string> = {
   "referral.stat_converted": "Converted",
   "referral.stat_pending": "Pending",
   "referral.stat_remaining": "Left this month",
+  "referral.upgrade_title": "Unlock referrals",
+  "referral.upgrade_desc": "Upgrade to Pro or Business to refer your colleagues and earn free days.",
+  "referral.upgrade_cta": "See plans",
   "contact.calendly_label": "Schedule a 30 min call",
 };
 
