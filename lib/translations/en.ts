@@ -655,6 +655,8 @@ const en: Record<string, string> = {
   "profile.delete_permanently": "Delete permanently",
   "profile.deleting": "Deleting...",
   "profile.delete_error": "Error during deletion. Contact support.",
+  "profile.exporting": "Exporting...",
+  "profile.export_data": "Export my data (GDPR)",
   "profile.upgrade_success": "Your subscription has been activated. Welcome to the {plan} plan!",
   "profile.name_updated": "Name updated successfully.",
   "profile.plan_desc_free": "2 newsletters per month, 1 recipient, custom brief.",
@@ -679,6 +681,17 @@ const en: Record<string, string> = {
   // DashboardSidebar
   "sidebar.back_to_site": "Back to site",
   "sidebar.sign_out": "Sign out",
+
+  // Referral
+  "referral.title": "Invite a colleague",
+  "referral.subtitle": "Earn 15 free days per referral",
+  "referral.explanation": "Share your link. If your referral subscribes to a paid plan, you earn 15 free days and they get -20% on their first month.",
+  "referral.copy": "Copy",
+  "referral.copied": "Copied!",
+  "referral.stat_converted": "Converted",
+  "referral.stat_pending": "Pending",
+  "referral.stat_remaining": "Left this month",
+  "contact.calendly_label": "Schedule a 30 min call",
 };
 
 export default en;

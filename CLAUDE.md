@@ -84,10 +84,11 @@ UNSUBSCRIBE_SECRET
 ## Base de données (Supabase)
 
 ### Tables principales
-- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, stripe_subscription_id, trial_ends_at, created_at
+- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code (VARCHAR UNIQUE), referred_by (UUID FK profiles), created_at
 - **lifecycle_emails** : id, user_id, email_type, sent_at (tracking des emails lifecycle envoyés, UNIQUE user_id+email_type)
 - **newsletter_config** : user_id, topics (array), custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics (array)
 - **newsletters** (historique) : id, user_id, content, subject, created_at, sent_at
+- **referrals** : id (UUID), referrer_id (UUID FK profiles), referee_id (UUID FK profiles), code (VARCHAR UNIQUE), status ("pending"/"converted"), created_at, converted_at, expires_at (default NOW + 30 jours). RLS activée.
 
 ### Storage
 - Bucket "logos" (public) pour les logos custom des utilisateurs Business+
@@ -127,6 +128,8 @@ sorell-website/
 │   │   ├── delete-account/route.ts   # Suppression de compte
 │   │   ├── portal/route.ts           # Portail Stripe
 │   │   ├── unsubscribe/route.ts      # Désabonnement
+│   │   ├── referral/route.ts         # Parrainage (GET code+stats, POST enregistrer filleul)
+│   │   ├── export-data/route.ts      # Export données RGPD
 │   │   ├── cron/lifecycle/route.ts    # CRON lifecycle emails (onboarding, trial, limites)
 │   │   └── track/                    # Tracking opens et clicks
 │   ├── auth/                         # Pages d'authentification
@@ -162,6 +165,7 @@ sorell-website/
 │   ├── TrialBanner.tsx               # Bannière trial noire
 │   ├── WaitlistForm.tsx              # Formulaire liste d'attente
 │   ├── AnimateOnScroll.tsx           # Animations au scroll
+│   ├── ReferralBlock.tsx             # Bloc parrainage dashboard (code, stats, copie lien)
 │   ├── CrownBadge.tsx                # Badge premium
 │   ├── ThemeProvider.tsx             # Provider de thème
 │   ├── LanguageToggle.tsx            # Switcher FR/EN
@@ -367,6 +371,34 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - **Tests existants** : auth, checkout, contact, cron-auth, delete-account, stripe-config (28 tests au total)
 - **Mocking** : vi.mock() avec class syntax pour Resend/Anthropic/Stripe constructeurs
 
+## Systeme de parrainage
+
+### Regles
+- Seuls les abonnes Pro et Business peuvent parrainer
+- Parrain : +15 jours gratuits (extension du billing cycle Stripe via trial_end)
+- Filleul : -20% sur le premier mois (coupon Stripe one-time, amount_off)
+  - Pro : 19€ -> 15€ (1500 centimes)
+  - Business : 49€ -> 39€ (3900 centimes)
+- Max 3 parrainages convertis par mois par parrain
+- Le lien de parrainage expire apres 30 jours
+- Si coupon applique, pas de trial 15 jours (le -20% s'applique au 1er mois)
+
+### Flow technique
+1. Le parrain copie son lien `sorell.fr/?ref=CODE` depuis le dashboard (ReferralBlock)
+2. Le filleul arrive sur la homepage, le code est stocke en localStorage (`sorell_ref`)
+3. A l'inscription (email ou Google OAuth), le code est envoye a `POST /api/referral` pour creer un referral en status "pending"
+4. Quand le filleul s'abonne (checkout Stripe), le checkout detecte le referral pending et cree un coupon Stripe -20%
+5. Le webhook `checkout.session.completed` detecte le referralId dans les metadata, marque le referral comme "converted", et ajoute +15 jours au parrain via Stripe API
+
+### Fichiers concernes
+- `app/api/referral/route.ts` : GET (code+stats), POST (enregistrer filleul)
+- `app/api/checkout/route.ts` : detection referral + coupon Stripe
+- `app/api/webhooks/stripe/route.ts` : conversion referral + recompense parrain
+- `app/auth/callback/route.ts` : capture ref code (Google OAuth)
+- `app/connexion/page.tsx` : capture ref code (email signup)
+- `components/HomeContent.tsx` : capture ref code depuis URL -> localStorage
+- `components/ReferralBlock.tsx` : UI dashboard (lien, stats)
+
 ## Notes d'optimisation
 
-- hero-visual.png fait ~1.5MB et devrait etre convertie en WebP pour ameliorer le LCP (Largest Contentful Paint)
+- hero-visual.webp : hero convertie en WebP qualite 95, 240KB (-84% vs PNG 1.5MB)

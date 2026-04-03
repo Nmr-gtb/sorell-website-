@@ -655,6 +655,8 @@ const fr: Record<string, string> = {
   "profile.delete_permanently": "Supprimer d\u00e9finitivement",
   "profile.deleting": "Suppression...",
   "profile.delete_error": "Erreur lors de la suppression. Contactez le support.",
+  "profile.exporting": "Export en cours...",
+  "profile.export_data": "Exporter mes données (RGPD)",
   "profile.upgrade_success": "Votre abonnement a bien \u00e9t\u00e9 activ\u00e9. Bienvenue sur le plan {plan} !",
   "profile.name_updated": "Nom mis \u00e0 jour avec succ\u00e8s.",
   "profile.plan_desc_free": "2 newsletters par mois, 1 destinataire, brief personnalis\u00e9.",
@@ -679,6 +681,17 @@ const fr: Record<string, string> = {
   // DashboardSidebar
   "sidebar.back_to_site": "Retour au site",
   "sidebar.sign_out": "Se d\u00e9connecter",
+
+  // Referral / Parrainage
+  "referral.title": "Inviter un collègue",
+  "referral.subtitle": "Gagnez 15 jours gratuits par filleul",
+  "referral.explanation": "Partagez votre lien. Si votre filleul s'abonne à un plan payant, vous gagnez 15 jours gratuits et il bénéficie de -20% sur son premier mois.",
+  "referral.copy": "Copier",
+  "referral.copied": "Copié !",
+  "referral.stat_converted": "Convertis",
+  "referral.stat_pending": "En attente",
+  "referral.stat_remaining": "Restants ce mois",
+  "contact.calendly_label": "Planifier un appel de 30 min",
 };
 
 export default fr;

@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const refCode = requestUrl.searchParams.get('ref')
 
   if (code) {
     const supabase = createClient(
@@ -38,10 +39,24 @@ export async function GET(request: NextRequest) {
               name: session.user.user_metadata?.full_name || "",
             }),
           }).catch(() => {});
+
+          // Enregistrer le parrainage si un code ref est présent
+          if (refCode) {
+            await fetch(new URL("/api/referral", request.url).toString(), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                code: refCode,
+                refereeId: session.user.id,
+              }),
+            }).catch(() => {});
+          }
         }
       }
     }
   }
 
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  // Rediriger vers le dashboard avec le ref code pour que le client-side puisse aussi le traiter
+  const redirectUrl = new URL('/dashboard', request.url);
+  return NextResponse.redirect(redirectUrl)
 }

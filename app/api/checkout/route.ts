@@ -1,8 +1,15 @@
 import { stripe, PRICE_IDS } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const VALID_PRICE_IDS = new Set(Object.values(PRICE_IDS));
+
+// Prix filleul avec -20% (arrondis au chiffre en dessous)
+const REFERRAL_PRICES: Record<string, number> = {
+  [PRICE_IDS.pro_monthly]: 1500,       // 19€ → 15€ (en centimes)
+  [PRICE_IDS.business_monthly]: 3900,   // 49€ → 39€ (en centimes)
+};
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +38,30 @@ export async function POST(request: Request) {
       ? `${base}/dashboard`
       : `${base}/tarifs`;
 
-    const session = await stripe.checkout.sessions.create({
+    // Vérifier si le user a été parrainé (referral pending)
+    let couponId: string | undefined;
+    const { data: referral } = await supabaseAdmin
+      .from("referrals")
+      .select("id, referrer_id, expires_at")
+      .eq("referee_id", userId)
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (referral && new Date(referral.expires_at) > new Date()) {
+      const discountAmount = REFERRAL_PRICES[priceId];
+      if (discountAmount) {
+        // Créer un coupon Stripe one-time pour ce filleul
+        const coupon = await stripe.coupons.create({
+          amount_off: discountAmount,
+          currency: "eur",
+          duration: "once",
+          name: "Parrainage Sorell -20%",
+        });
+        couponId = coupon.id;
+      }
+    }
+
+    const sessionParams: Record<string, unknown> = {
       mode: "subscription",
       payment_method_types: ["card"],
       customer_email: userEmail,
@@ -41,8 +71,18 @@ export async function POST(request: Request) {
       },
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: { userId },
-    });
+      metadata: { userId, referralId: referral?.id || "" },
+    };
+
+    if (couponId) {
+      sessionParams.discounts = [{ coupon: couponId }];
+      // Pas de trial si coupon appliqué (le -20% s'applique au premier mois)
+      (sessionParams.subscription_data as Record<string, unknown>).trial_period_days = undefined;
+    }
+
+    const session = await stripe.checkout.sessions.create(
+      sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0]
+    );
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {

@@ -2,14 +2,50 @@ import { stripe, PRICE_TO_PLAN } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
+// Ajouter 15 jours de gratuit au parrain en décalant la date de facturation Stripe
+async function rewardReferrer(referrerId: string) {
+  try {
+    const { data: referrerProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("stripe_subscription_id")
+      .eq("id", referrerId)
+      .maybeSingle();
+
+    if (referrerProfile?.stripe_subscription_id) {
+      const sub = await stripe.subscriptions.retrieve(referrerProfile.stripe_subscription_id);
+      if (sub.status === "active" || sub.status === "trialing") {
+        const currentEnd = sub.trial_end || sub.current_period_end;
+        const newEnd = currentEnd + (15 * 24 * 60 * 60); // +15 jours en secondes
+        await stripe.subscriptions.update(referrerProfile.stripe_subscription_id, {
+          trial_end: newEnd,
+          proration_behavior: "none",
+        });
+      }
+    }
+  } catch {
+    // Ne pas faire échouer le webhook si la récompense échoue
+  }
+}
+
 export async function POST(request: Request) {
-  const body = await request.text();
-  const sig = request.headers.get("stripe-signature")!;
+  let body: string;
+  let sig: string | null;
+
+  try {
+    body = await request.text();
+    sig = request.headers.get("stripe-signature");
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+  }
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch (err) {
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -39,6 +75,31 @@ export async function POST(request: Request) {
         .from("profiles")
         .update(updateData)
         .eq("id", userId);
+
+      // Traiter le parrainage si présent
+      const referralId = session.metadata?.referralId;
+      if (referralId) {
+        // Marquer le referral comme converti
+        const { data: referral } = await supabaseAdmin
+          .from("referrals")
+          .select("referrer_id")
+          .eq("id", referralId)
+          .eq("status", "pending")
+          .maybeSingle();
+
+        if (referral) {
+          await supabaseAdmin
+            .from("referrals")
+            .update({
+              status: "converted",
+              converted_at: new Date().toISOString(),
+            })
+            .eq("id", referralId);
+
+          // Récompenser le parrain (+15 jours gratuits)
+          await rewardReferrer(referral.referrer_id);
+        }
+      }
     }
   }
 
@@ -52,7 +113,7 @@ export async function POST(request: Request) {
       .from("profiles")
       .select("id")
       .eq("stripe_customer_id", customerId)
-      .single();
+      .maybeSingle();
 
     if (profile) {
       await supabaseAdmin
@@ -68,9 +129,9 @@ export async function POST(request: Request) {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("id, email")
+      .select("id")
       .eq("stripe_customer_id", customerId)
-      .single();
+      .maybeSingle();
 
     if (profile) {
       await supabaseAdmin
@@ -88,7 +149,7 @@ export async function POST(request: Request) {
       .from("profiles")
       .select("id")
       .eq("stripe_customer_id", customerId)
-      .single();
+      .maybeSingle();
 
     if (profile) {
       await supabaseAdmin

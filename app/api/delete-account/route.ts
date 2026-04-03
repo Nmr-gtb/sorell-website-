@@ -1,11 +1,7 @@
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
-});
+import { stripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   try {
@@ -52,6 +48,8 @@ export async function POST(request: Request) {
     await supabase.from("recipients").delete().eq("user_id", userId);
     await supabase.from("newsletter_config").delete().eq("user_id", userId);
     await supabase.from("lifecycle_emails").delete().eq("user_id", userId);
+    await supabase.from("referrals").delete().eq("referrer_id", userId);
+    await supabase.from("referrals").delete().eq("referee_id", userId);
     await supabase.from("profiles").delete().eq("id", userId);
 
     // Supprimer l'utilisateur de Supabase Auth
@@ -62,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: unknown) {
+  } catch {
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

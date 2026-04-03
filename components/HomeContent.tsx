@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -54,6 +55,15 @@ const IconEdit = () => (
 
 export default function HomeContent() {
   const { t } = useLanguage();
+
+  // Capturer le code de parrainage depuis l'URL (?ref=CODE) et le stocker
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get("ref");
+    if (refCode && /^[A-Z0-9]{8}$/i.test(refCode)) {
+      localStorage.setItem("sorell_ref", refCode);
+    }
+  }, []);
 
   const features = [
     { icon: <IconBolt />, title: t("home.feat1_title"), description: t("home.feat1_desc") },

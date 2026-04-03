@@ -71,9 +71,14 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     clearMessages();
     setLoading(true);
+    // Inclure le code de parrainage dans le redirect si présent
+    const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
+    const redirectUrl = refCode
+      ? `${window.location.origin}/auth/callback?ref=${encodeURIComponent(refCode)}`
+      : `${window.location.origin}/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: redirectUrl },
     });
     if (error) {
       setError(error.message);
@@ -98,7 +103,7 @@ export default function LoginPage() {
     e.preventDefault();
     clearMessages();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } },
@@ -107,7 +112,17 @@ export default function LoginPage() {
       setError(error.message);
     } else {
       setSuccess(t("login.verify_email"));
-      // L'email de bienvenue sera envoye depuis /auth/callback apres verification
+      // Enregistrer le parrainage si un code ref est stocké en localStorage
+      const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
+      if (refCode && data.user) {
+        fetch("/api/referral", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: refCode, refereeId: data.user.id }),
+        }).then(() => {
+          localStorage.removeItem("sorell_ref");
+        }).catch(() => {});
+      }
     }
     setLoading(false);
   };

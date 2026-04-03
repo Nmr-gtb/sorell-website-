@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/LanguageContext";
+import ReferralBlock from "@/components/ReferralBlock";
 
 function getInitials(user: { user_metadata?: { full_name?: string }; email?: string }) {
   const name = user.user_metadata?.full_name;
@@ -63,14 +64,18 @@ export default function ProfilePage() {
   const handlePortal = async () => {
     if (!user) return;
     setPortalLoading(true);
-    const res = await authFetch("/api/portal", {
-      method: "POST",
-      body: JSON.stringify({ userId: user.id }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
+    try {
+      const res = await authFetch("/api/portal", {
+        method: "POST",
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setPortalLoading(false);
+      }
+    } catch {
       setPortalLoading(false);
     }
   };
@@ -78,14 +83,17 @@ export default function ProfilePage() {
   const handleSaveName = async () => {
     if (!user || !editName.trim()) return;
     setSaving(true);
+    try {
+      const { error } = await updateProfile(user.id, { full_name: editName.trim() });
+      await supabase.auth.updateUser({ data: { full_name: editName.trim() } });
 
-    const { error } = await updateProfile(user.id, { full_name: editName.trim() });
-    await supabase.auth.updateUser({ data: { full_name: editName.trim() } });
-
-    if (!error) {
-      setSaveSuccess(true);
-      setEditing(false);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      if (!error) {
+        setSaveSuccess(true);
+        setEditing(false);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
+    } catch {
+      // Erreur silencieuse
     }
     setSaving(false);
   };
@@ -115,16 +123,20 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     if (confirmText !== "SUPPRIMER" || !user) return;
     setDeleting(true);
+    try {
+      const res = await authFetch("/api/delete-account", {
+        method: "POST",
+        body: JSON.stringify({ userId: user.id }),
+      });
 
-    const res = await authFetch("/api/delete-account", {
-      method: "POST",
-      body: JSON.stringify({ userId: user.id }),
-    });
-
-    if (res.ok) {
-      await signOut();
-      router.push("/");
-    } else {
+      if (res.ok) {
+        await signOut();
+        router.push("/");
+      } else {
+        setDeleteError(t("profile.delete_error"));
+        setDeleting(false);
+      }
+    } catch {
       setDeleteError(t("profile.delete_error"));
       setDeleting(false);
     }
@@ -325,6 +337,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Bloc parrainage (Pro/Business uniquement) */}
+      <ReferralBlock />
+
       {/* Account settings card */}
       <div
         style={{
@@ -499,7 +514,7 @@ export default function ProfilePage() {
               marginTop: 4,
             }}
           >
-            {exporting ? "Export en cours..." : "Exporter mes données (RGPD)"}
+            {exporting ? t("profile.exporting") : t("profile.export_data")}
           </button>
         </div>
       </div>
