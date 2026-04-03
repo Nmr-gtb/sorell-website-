@@ -6,27 +6,38 @@ vi.mock("@/lib/auth", () => ({
   getAuthenticatedUser: (...args: unknown[]) => mockGetAuthenticatedUser(...args),
 }));
 
-// Mock Supabase
-const mockSelect = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ data: [] }) });
-const mockDeleteFrom = vi.fn().mockReturnValue({
-  delete: vi.fn().mockReturnValue({
-    eq: vi.fn().mockResolvedValue({ error: null }),
-    in: vi.fn().mockResolvedValue({ error: null }),
-  }),
-});
+// Mock Stripe
+vi.mock("@/lib/stripe", () => ({
+  stripe: {
+    subscriptions: {
+      cancel: vi.fn().mockResolvedValue({}),
+    },
+  },
+}));
 
-vi.mock("@supabase/supabase-js", () => ({
-  createClient: () => ({
-    from: (table: string) => ({
+// Mock Supabase admin
+vi.mock("@/lib/supabase-admin", () => ({
+  supabaseAdmin: {
+    from: () => ({
       select: () => ({
-        eq: vi.fn().mockResolvedValue({ data: [] }),
+        eq: () => ({
+          maybeSingle: () => Promise.resolve({ data: null, error: null }),
+        }),
       }),
       delete: () => ({
         eq: vi.fn().mockResolvedValue({ error: null }),
         in: vi.fn().mockResolvedValue({ error: null }),
       }),
+      update: () => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
     }),
-  }),
+    auth: {
+      admin: {
+        deleteUser: vi.fn().mockResolvedValue({}),
+      },
+    },
+  },
 }));
 
 import { POST } from "@/app/api/delete-account/route";

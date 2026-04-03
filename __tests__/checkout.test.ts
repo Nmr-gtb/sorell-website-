@@ -12,12 +12,31 @@ vi.mock("@/lib/stripe", () => ({
         create: vi.fn().mockResolvedValue({ url: "https://checkout.stripe.com/mock" }),
       },
     },
+    coupons: {
+      retrieve: vi.fn().mockRejectedValue(new Error("not found")),
+      create: vi.fn().mockResolvedValue({ id: "coupon_test" }),
+    },
   },
   PRICE_IDS: {
     pro_monthly: "price_pro_monthly",
     pro_annual: "price_pro_annual",
     business_monthly: "price_business_monthly",
     business_annual: "price_business_annual",
+  },
+}));
+
+// Mock supabaseAdmin for referral lookup in checkout
+vi.mock("@/lib/supabase-admin", () => ({
+  supabaseAdmin: {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          eq: () => ({
+            maybeSingle: () => Promise.resolve({ data: null, error: null }),
+          }),
+        }),
+      }),
+    }),
   },
 }));
 
