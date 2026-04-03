@@ -57,6 +57,11 @@ export const metadata: Metadata = {
   icons: { icon: "/icone.png" },
   alternates: {
     canonical: "https://sorell.fr",
+    languages: {
+      "fr": "https://sorell.fr",
+      "en": "https://sorell.fr",
+      "x-default": "https://sorell.fr",
+    },
   },
 };
 

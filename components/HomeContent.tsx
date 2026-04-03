@@ -297,7 +297,7 @@ export default function HomeContent() {
             className="hero-image-col"
           >
             <Image
-              src="/hero-visual.png"
+              src="/hero-visual.webp"
               alt="Sorell newsletter preview"
               width={620}
               height={520}

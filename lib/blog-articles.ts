@@ -68,6 +68,13 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>Si vous cherchez un outil pour <strong>recevoir automatiquement</strong> une veille sectorielle sans effort, Sorell est la solution la plus adaptée en 2026. C'est le seul outil qui combine génération automatique par IA, envoi programmé, multi-destinataires et personnalisation - le tout sans compétence technique requise.</p>
       <p>Pour les créateurs de contenu qui veulent écrire et monétiser leur newsletter, Substack ou Beehiiv sont plus appropriés. Pour l'email marketing classique, Mailchimp reste une valeur sûre.</p>
       <p><a href="https://sorell.fr">Essayez Sorell gratuitement</a> - configuration en 5 minutes, 15 jours d'essai Pro offerts.</p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle : pourquoi automatiser sa veille</a></li>
+        <li><a href="/blog/sorell-vs-chatgpt-veille-sectorielle">Sorell vs ChatGPT pour la veille sectorielle</a></li>
+        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+      </ul>
     `
   },
   {
@@ -101,6 +108,13 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <h2>Conclusion</h2>
       <p>En 2026, automatiser sa veille n'est plus un luxe - c'est une nécessité économique. Un outil comme Sorell coûte 30 fois moins cher qu'une veille manuelle, avec une couverture de sources 15 fois supérieure et une régularité parfaite.</p>
       <p><a href="https://sorell.fr">Essayez Sorell gratuitement</a> et recevez votre première newsletter en 5 minutes.</p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
+        <li><a href="/blog/automatiser-veille-sectorielle-5-minutes">Automatiser sa veille sectorielle en 5 minutes</a></li>
+        <li><a href="/blog/sorell-vs-chatgpt-veille-sectorielle">Sorell vs ChatGPT pour la veille sectorielle</a></li>
+      </ul>
     `
   },
   {
@@ -138,6 +152,13 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p><strong>Avec le plan Business (49€/mois) :</strong> Newsletters illimitées, 25 destinataires, logo personnalisé.</p>
 
       <p><a href="https://sorell.fr">Commencez maintenant</a> - 15 jours d'essai Pro gratuit.</p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle : la comparaison</a></li>
+        <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
+        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+      </ul>
     `
   },
   {
@@ -183,6 +204,13 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>ChatGPT et Sorell ne sont pas des concurrents directs - ils répondent à des besoins différents. ChatGPT est un outil généraliste puissant. Sorell est un outil spécialisé qui automatise un processus précis : la veille sectorielle par newsletter.</p>
       <p>Pour les professionnels qui veulent recevoir automatiquement les informations de leur secteur chaque semaine, Sorell est la solution la plus efficace et la plus économique en 2026.</p>
       <p><a href="https://sorell.fr">Essayez Sorell gratuitement pendant 15 jours</a></p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
+        <li><a href="/blog/automatiser-veille-sectorielle-5-minutes">Automatiser sa veille sectorielle en 5 minutes</a></li>
+        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+      </ul>
     `
   },
   {
@@ -233,6 +261,13 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <h2>Conclusion</h2>
       <p>En 2026, les PME qui n'automatisent pas leur veille perdent du temps et de l'argent. Les outils de newsletter IA comme Sorell rendent cette automatisation accessible à toutes les entreprises, quel que soit leur budget ou leur niveau technique.</p>
       <p><a href="https://sorell.fr">Essayez Sorell gratuitement</a> - votre première newsletter en 5 minutes, 15 jours d'essai Pro offerts.</p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA en 2026</a></li>
+        <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle : la comparaison</a></li>
+        <li><a href="/blog/sorell-vs-chatgpt-veille-sectorielle">Sorell vs ChatGPT pour la veille sectorielle</a></li>
+      </ul>
     `
   },
 ];

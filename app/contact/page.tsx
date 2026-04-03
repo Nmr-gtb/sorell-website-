@@ -143,6 +143,65 @@ export default function ContactPage() {
           </div>
         </div>
 
+        {/* Calendly card */}
+        <div
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: 20,
+            marginBottom: 32,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: "var(--surface-alt)",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </div>
+          <div>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 2 }}>
+              {t("contact.calendly_label") !== "contact.calendly_label" ? t("contact.calendly_label") : "Planifier un appel de 30 min"}
+            </p>
+            <a
+              href="https://calendly.com/mur-noe-celony/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: "var(--accent)",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.textDecoration = "underline";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.textDecoration = "none";
+              }}
+            >
+              Réserver un créneau
+            </a>
+          </div>
+        </div>
+
         {/* Form card */}
         <div
           className="contact-form-card"
