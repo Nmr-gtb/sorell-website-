@@ -130,6 +130,7 @@ sorell-website/
 │   │   ├── unsubscribe/route.ts      # Désabonnement
 │   │   ├── referral/route.ts         # Parrainage (GET code+stats, POST enregistrer filleul)
 │   │   ├── export-data/route.ts      # Export données RGPD
+│   │   ├── chat/route.ts             # Chatbot Soly (Claude Haiku 4.5, rate limiting double)
 │   │   ├── cron/lifecycle/route.ts    # CRON lifecycle emails (onboarding, trial, limites)
 │   │   └── track/                    # Tracking opens et clicks
 │   ├── auth/                         # Pages d'authentification
@@ -166,6 +167,7 @@ sorell-website/
 │   ├── WaitlistForm.tsx              # Formulaire liste d'attente
 │   ├── AnimateOnScroll.tsx           # Animations au scroll
 │   ├── ReferralBlock.tsx             # Bloc parrainage dashboard (code, stats, copie lien)
+│   ├── ChatWidget.tsx                # Chatbot Soly (bulle flottante, 2 modes: general + brief)
 │   ├── CrownBadge.tsx                # Badge premium
 │   ├── ThemeProvider.tsx             # Provider de thème
 │   ├── LanguageToggle.tsx            # Switcher FR/EN
@@ -176,6 +178,7 @@ sorell-website/
 │   ├── blog-articles.ts              # 5 articles du blog
 │   ├── topics.ts                     # Thématiques par défaut
 │   ├── plans.ts                      # Configuration des plans et limites
+│   ├── chat-system-prompt.ts          # Prompt systeme Soly (general + brief)
 │   ├── stripe.ts                     # Configuration Stripe
 │   ├── supabase.ts                   # Client Supabase (anon, côté client)
 │   ├── supabase-admin.ts             # Client Supabase (service_role, côté serveur)
@@ -214,6 +217,7 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - /api/generate : 30 requêtes/heure par utilisateur (Upstash Redis, sliding window)
 - /api/send : 30 requêtes/heure (Upstash Redis)
 - /api/welcome, /api/welcome-email : 5 emails/heure par adresse (Upstash Redis)
+- /api/chat : 30 msg/h + 100 msg/jour (authentifie) / 15 msg/h + 40 msg/jour (anonyme)
 - Le CRON n'est pas affecté (route séparée)
 - Config centralisée dans lib/ratelimit.ts
 
@@ -240,6 +244,49 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - **Bienvenue** : envoyé à la fin de l'onboarding (3 étapes : enrichir brief, ajouter collaborateurs, laisser faire)
 - **Notification admin** : email à noe@sorell.fr à chaque nouvel inscrit
 - **Newsletters** : envoyées via Resend depuis noe@sorell.fr avec tracking opens/clicks
+
+## Chatbot Soly
+
+### Presentation
+Soly est l'assistant IA integre a sorell.fr. Bulle flottante en bas a droite. Deux modes :
+- **General** : FAQ sur Sorell (tarifs, fonctionnement, inscription) — accessible a tous les visiteurs
+- **Brief** : guide l'utilisateur pour rediger un bon brief newsletter — accessible depuis Dashboard > Config
+
+### Architecture
+- **Widget unique** dans `app/layout.tsx` (global, jamais duplique)
+- **Event system** : `soly:open-brief` pour ouvrir en mode brief depuis n'importe quel composant
+- **`openSolyBrief(callback)`** : fonction exportee par ChatWidget, utilisee par la page config
+- Le brief genere est injecte directement dans le champ `customBrief` de la config
+
+### Fichiers
+- `components/ChatWidget.tsx` : widget complet (bulle, fenetre chat, 2 modes)
+- `lib/chat-system-prompt.ts` : prompt systeme Soly (contexte Sorell, regles par mode)
+- `app/api/chat/route.ts` : API endpoint (Haiku 4.5, rate limiting, auth optionnelle)
+- `app/dashboard/config/page.tsx` : bouton "Soly m'aide" qui appelle `openSolyBrief()`
+
+### Modele IA
+- Claude Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- max_tokens: 500
+- Cout estime : ~0.001$/message
+- Prompt concis : 1-2 phrases par reponse, zero enthousiasme, tutoiement pro
+
+### Rate limiting (anti-abus)
+Double couche Upstash Redis :
+- **Utilisateurs authentifies** : 30 msg/heure + 100 msg/jour
+- **Visiteurs anonymes** : 15 msg/heure + 40 msg/jour
+- Budget max par user : ~1$/jour (impossible de depasser avec les limites)
+
+### Brief mode — flow
+1. User clique "Soly m'aide" dans config
+2. `openSolyBrief(callback)` dispatch event `soly:open-brief`
+3. ChatWidget s'ouvre en mode brief, pose 5 questions (secteur, cible, sujets, ton, exclusions)
+4. Apres les 5 reponses, Soly genere le brief avec marqueurs `---BRIEF_READY---` / `---END_BRIEF---`
+5. Bouton "Utiliser ce brief" apparait → injecte le brief dans la config via le callback
+
+### Comportement
+- Auto-ouverture 5s apres la 1ere visite (localStorage `soly_shown`)
+- Fermer en mode brief → reset vers general
+- `modeRef` (useRef) garantit le bon mode meme avec le state batching React
 
 ## Homepage — Structure
 

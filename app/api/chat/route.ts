@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSolySystemPrompt } from "@/lib/chat-system-prompt";
-import { apiRateLimit } from "@/lib/ratelimit";
+import {
+  chatHourlyLimit,
+  chatDailyLimit,
+  chatAnonHourlyLimit,
+  chatAnonDailyLimit,
+} from "@/lib/ratelimit";
 import { getAuthenticatedUser } from "@/lib/auth";
 import Anthropic from "@anthropic-ai/sdk";
 
@@ -16,18 +21,33 @@ export async function POST(request: Request) {
     // Auth optionnelle : les visiteurs non connectes peuvent aussi utiliser Soly
     const authUser = await getAuthenticatedUser(request).catch(() => null);
 
-    // Rate limiting par user ID ou par IP
+    // Rate limiting double couche (horaire + quotidien) — anti-abus
+    const isAuthenticated = !!authUser?.id;
     const rateLimitKey = authUser?.id || request.headers.get("x-forwarded-for") || "anonymous";
+
     try {
-      const { success } = await apiRateLimit.limit(`chat_${rateLimitKey}`);
-      if (!success) {
+      const hourlyLimiter = isAuthenticated ? chatHourlyLimit : chatAnonHourlyLimit;
+      const dailyLimiter = isAuthenticated ? chatDailyLimit : chatAnonDailyLimit;
+
+      const [hourly, daily] = await Promise.all([
+        hourlyLimiter.limit(rateLimitKey),
+        dailyLimiter.limit(rateLimitKey),
+      ]);
+
+      if (!hourly.success) {
         return NextResponse.json(
           { error: "Trop de messages. Reessaie dans quelques minutes." },
           { status: 429 }
         );
       }
+      if (!daily.success) {
+        return NextResponse.json(
+          { error: "Tu as atteint la limite quotidienne. Reviens demain !" },
+          { status: 429 }
+        );
+      }
     } catch {
-      // Rate limiter unavailable — fail open
+      // Rate limiter unavailable — fail open for availability
     }
 
     const body = await request.json();
