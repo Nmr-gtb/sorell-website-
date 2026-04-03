@@ -33,6 +33,14 @@ vi.mock("stripe", () => ({
   },
 }));
 
+// Mock Resend
+const mockSendEmail = vi.fn().mockResolvedValue({ id: "email-123" });
+vi.mock("resend", () => ({
+  Resend: class {
+    emails = { send: (...args: unknown[]) => mockSendEmail(...args) };
+  },
+}));
+
 vi.mock("@/lib/stripe", () => ({
   stripe: {
     webhooks: { constructEvent: (...args: unknown[]) => mockConstructEvent(...args) },

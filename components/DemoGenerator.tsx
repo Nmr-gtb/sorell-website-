@@ -13,77 +13,55 @@ type AIArticle = {
   image_url?: string | null;
 };
 
-const SECTORS = [
-  {
-    key: "tech",
-    label: "Tech & IA",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="7" y="7" width="10" height="10" rx="1" />
-        <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
-      </svg>
-    ),
-  },
-  {
-    key: "finance",
-    label: "Finance & Marchés",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-        <polyline points="16 7 22 7 22 13" />
-      </svg>
-    ),
-  },
-  {
-    key: "sante",
-    label: "Santé & Biotech",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    ),
-  },
-  {
-    key: "rh",
-    label: "RH & Management",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    key: "immobilier",
-    label: "Immobilier",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="1" />
-        <path d="M3 9h18" />
-        <path d="M9 21V9" />
-      </svg>
-    ),
-  },
-  {
-    key: "energie",
-    label: "Énergie & Climat",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-      </svg>
-    ),
-  },
-];
+const SECTOR_KEYS = ["tech", "finance", "sante", "rh", "immobilier", "energie"] as const;
 
-const SECTOR_LABELS: Record<string, string> = {
-  tech: "Tech & IA",
-  finance: "Finance & Marchés",
-  sante: "Santé & Biotech",
-  rh: "RH & Management",
-  immobilier: "Immobilier",
-  energie: "Énergie & Climat",
+const SECTOR_TRANSLATION_KEYS: Record<string, string> = {
+  tech: "demo.sector_tech",
+  finance: "demo.sector_finance",
+  sante: "demo.sector_sante",
+  rh: "demo.sector_rh",
+  immobilier: "demo.sector_immobilier",
+  energie: "demo.sector_energie",
+};
+
+const SECTOR_ICONS: Record<string, React.ReactNode> = {
+  tech: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="7" y="7" width="10" height="10" rx="1" />
+      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
+    </svg>
+  ),
+  finance: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+      <polyline points="16 7 22 7 22 13" />
+    </svg>
+  ),
+  sante: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+  rh: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  immobilier: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="1" />
+      <path d="M3 9h18" />
+      <path d="M9 21V9" />
+    </svg>
+  ),
+  energie: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
 };
 
 // V4 palette — premium crème/teal (matches email-template.ts)
@@ -97,12 +75,12 @@ const V4_PALETTE = {
   cardBg: "#FFFFFF",
 };
 
-const LOADING_MESSAGES = [
-  "Analyse des sources sectorielles...",
-  "Sélection des contenus pertinents...",
-  "Personnalisation par secteur...",
-  "Génération du briefing IA...",
-  "Mise en forme finale...",
+const LOADING_MESSAGE_KEYS = [
+  "demo.loading_1",
+  "demo.loading_2",
+  "demo.loading_3",
+  "demo.loading_4",
+  "demo.loading_5",
 ];
 
 function truncate(text: string, maxLen: number): string {
@@ -117,12 +95,16 @@ function DemoNewsletterResult({
   generationTime,
   fromCache,
   generatedAt,
+  t,
+  lang,
 }: {
   articles: AIArticle[];
   sector: string;
   generationTime: number;
   fromCache: boolean;
   generatedAt: string | null;
+  t: (key: string) => string;
+  lang: string;
 }) {
   const p = V4_PALETTE;
   const featured = articles.find((a) => a.featured) || articles[0];
@@ -134,8 +116,10 @@ function DemoNewsletterResult({
       : null;
 
   const now = new Date();
-  const dateLabel = `Semaine du ${now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}`;
-  const subject = `${SECTOR_LABELS[sector]} - ${featured?.title || "Votre briefing"}`;
+  const locale = lang === "en" ? "en-US" : "fr-FR";
+  const dateLabel = `${t("demo.week_of")} ${now.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}`;
+  const sectorLabel = t(SECTOR_TRANSLATION_KEYS[sector] || "demo.sector_tech");
+  const subject = `${sectorLabel} - ${featured?.title || t("demo.your_briefing")}`;
 
   return (
     <div>
@@ -157,7 +141,7 @@ function DemoNewsletterResult({
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59E0B", flexShrink: 0 }} />
-            Résultat en cache - généré il y a {minsAgo < 1 ? "moins d'1 min" : `${minsAgo} min`}
+            {t("demo.cache_result")} {minsAgo < 1 ? t("demo.cache_less_1min") : `${minsAgo} min`}
           </span>
         ) : (
           <span
@@ -175,7 +159,7 @@ function DemoNewsletterResult({
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", flexShrink: 0 }} />
-            Généré par IA en {generationTime} seconde{generationTime > 1 ? "s" : ""}
+            {t("demo.generated_by_ai")} {generationTime} {generationTime > 1 ? t("demo.seconds") : t("demo.second")}
           </span>
         )}
       </div>
@@ -202,14 +186,14 @@ function DemoNewsletterResult({
           }}
         >
           <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: 4 }}>
-            <span style={{ color: "var(--text-muted)" }}>De : </span>
+            <span style={{ color: "var(--text-muted)" }}>{t("demo.from")} </span>
             <span style={{ fontWeight: 500, color: "var(--text)" }}>Sorell</span>
             <span style={{ color: "var(--text-muted)" }}> &lt;newsletter@sorell.fr&gt;</span>
           </div>
           <div style={{ fontSize: "0.75rem" }}>
-            <span style={{ color: "var(--text-muted)" }}>Objet : </span>
+            <span style={{ color: "var(--text-muted)" }}>{t("demo.subject_label")} </span>
             <span style={{ fontWeight: 600, color: "var(--text)" }}>
-              Votre briefing {SECTOR_LABELS[sector]} - {now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+              {t("demo.your_briefing")} {sectorLabel} - {now.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
             </span>
           </div>
         </div>
@@ -235,7 +219,7 @@ function DemoNewsletterResult({
                 margin: "0 0 16px",
                 lineHeight: 1.4,
               }}>
-                {dateLabel.toUpperCase()} · {featured?.tag?.toUpperCase() || SECTOR_LABELS[sector].toUpperCase()} - {truncate(featured?.title || "", 50).toUpperCase()}
+                {dateLabel.toUpperCase()} · {featured?.tag?.toUpperCase() || sectorLabel.toUpperCase()} - {truncate(featured?.title || "", 50).toUpperCase()}
               </p>
               <h2 style={{
                 fontSize: "22px",
@@ -246,7 +230,7 @@ function DemoNewsletterResult({
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 letterSpacing: "-0.01em",
               }}>
-                Ce qui change dans votre secteur cette semaine
+                {t("demo.sector_changes")}
               </h2>
             </div>
             <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
@@ -270,7 +254,7 @@ function DemoNewsletterResult({
                 textTransform: "uppercase" as const,
                 letterSpacing: "0.06em",
               }}>
-                A la une
+                {t("demo.featured_article")}
               </span>
               {featured.tag && (
                 <span style={{
@@ -318,7 +302,7 @@ function DemoNewsletterResult({
                 borderRadius: 6,
                 cursor: "default",
               }}>
-                Lire l&apos;article &rarr;
+                {t("demo.read_article")} &rarr;
               </span>
               <span style={{ fontSize: "12px", color: p.secondaryText }}>
                 via {featured.source}
@@ -332,8 +316,8 @@ function DemoNewsletterResult({
         {/* Intro text */}
         <div style={{ padding: "24px 32px" }}>
           <p style={{ fontSize: "14px", color: p.bodyTextColor, lineHeight: 1.6, margin: 0 }}>
-            <span style={{ fontWeight: 600, color: p.brandColor }}>Bonjour,</span>{" "}
-            voici les {articles.length} actualités clés de votre secteur cette semaine, sélectionnées et résumées par Sorell.
+            <span style={{ fontWeight: 600, color: p.brandColor }}>{t("demo.greeting")}</span>{" "}
+            {t("demo.greeting_text_prefix")} {articles.length} {t("demo.greeting_text_suffix")}
           </p>
         </div>
 
@@ -350,7 +334,7 @@ function DemoNewsletterResult({
               letterSpacing: "0.08em",
               margin: "0 0 18px",
             }}>
-              A lire aussi
+              {t("demo.read_also")}
             </p>
             {otherArticles.map((article, idx) => (
               <div
@@ -406,7 +390,7 @@ function DemoNewsletterResult({
                     fontWeight: 600,
                     cursor: "default",
                   }}>
-                    Lire la suite &rarr;
+                    {t("demo.read_more")} &rarr;
                   </span>
                 </div>
               </div>
@@ -427,7 +411,7 @@ function DemoNewsletterResult({
                   fontFamily: "Georgia, 'Times New Roman', serif",
                   lineHeight: 1.4,
                 }}>
-                  Cette newsletter vous a été utile ?
+                  {t("demo.cta_useful")}
                 </p>
                 <p style={{
                   fontSize: "13px",
@@ -435,7 +419,7 @@ function DemoNewsletterResult({
                   margin: "0 0 18px",
                   lineHeight: 1.5,
                 }}>
-                  Transférez-la à un collègue qui devrait la lire.
+                  {t("demo.cta_forward_text")}
                 </p>
                 <span style={{
                   display: "inline-block",
@@ -447,7 +431,7 @@ function DemoNewsletterResult({
                   borderRadius: 8,
                   cursor: "default",
                 }}>
-                  Transférer &rarr;
+                  {t("demo.cta_forward")} &rarr;
                 </span>
               </div>
               <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>
@@ -464,7 +448,7 @@ function DemoNewsletterResult({
             <span style={{ fontSize: "12px", color: p.brandColor, fontWeight: 500 }}>sorell.fr</span>
           </div>
           <p style={{ fontSize: "11px", color: p.secondaryText, margin: 0, lineHeight: 1.5 }}>
-            Généré par Sorell · Votre veille sectorielle par IA
+            {t("demo.footer_generated")}
           </p>
         </div>
       </div>
@@ -491,7 +475,7 @@ export default function DemoGenerator() {
     let idx = 0;
     setMsgIdx(0);
     const interval = setInterval(() => {
-      idx = (idx + 1) % LOADING_MESSAGES.length;
+      idx = (idx + 1) % LOADING_MESSAGE_KEYS.length;
       setMsgIdx(idx);
     }, 1200);
 
@@ -506,11 +490,11 @@ export default function DemoGenerator() {
         setFromCache(data.fromCache || false);
         setGeneratedAt(data.generatedAt || null);
       } else {
-        setError(data.error || "Erreur lors de la génération. Veuillez réessayer.");
+        setError(data.error || t("demo.error_generation"));
       }
     } catch {
       clearInterval(interval);
-      setError("Erreur de connexion. Veuillez réessayer.");
+      setError(t("demo.error_connection"));
     }
     setLoading(false);
   };
@@ -565,12 +549,12 @@ export default function DemoGenerator() {
             marginBottom: 24,
           }}
         >
-          {SECTORS.map((s) => {
-            const isActive = sector === s.key;
+          {SECTOR_KEYS.map((key) => {
+            const isActive = sector === key;
             return (
               <button
-                key={s.key}
-                onClick={() => setSector(s.key)}
+                key={key}
+                onClick={() => setSector(key)}
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -587,7 +571,7 @@ export default function DemoGenerator() {
                 }}
               >
                 <span style={{ color: isActive ? "var(--accent)" : "var(--text-muted)" }}>
-                  {s.icon}
+                  {SECTOR_ICONS[key]}
                 </span>
                 <span
                   style={{
@@ -597,7 +581,7 @@ export default function DemoGenerator() {
                     lineHeight: 1.3,
                   }}
                 >
-                  {s.label}
+                  {t(SECTOR_TRANSLATION_KEYS[key])}
                 </span>
               </button>
             );
@@ -667,13 +651,13 @@ export default function DemoGenerator() {
             />
           </div>
           <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.9375rem", marginBottom: 6, letterSpacing: "-0.01em" }}>
-            {LOADING_MESSAGES[msgIdx]}
+            {t(LOADING_MESSAGE_KEYS[msgIdx])}
           </p>
           <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-            Claude analyse les sources et génère vos articles en temps réel
+            {t("demo.loading_subtitle")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
-            {LOADING_MESSAGES.map((_, i) => (
+            {LOADING_MESSAGE_KEYS.map((_, i) => (
               <div
                 key={i}
                 style={{
@@ -715,6 +699,8 @@ export default function DemoGenerator() {
             generationTime={generationTime}
             fromCache={fromCache}
             generatedAt={generatedAt}
+            t={t}
+            lang={lang}
           />
 
           {/* CTA */}

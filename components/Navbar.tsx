@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import TrialBanner from "./TrialBanner";
 
 function ThemeToggle() {
+  const { t } = useLanguage();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      aria-label="Basculer le thème"
+      aria-label={t("aria.toggle_theme")}
       style={{
         width: 32,
         height: 32,
@@ -252,7 +253,7 @@ export default function Navbar() {
             <ThemeToggle />
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-label={mobileOpen ? t("aria.close_menu") : t("aria.open_menu")}
               aria-expanded={mobileOpen}
               style={{
                 width: 32,
@@ -349,7 +350,7 @@ export default function Navbar() {
           <SorellLogo size="sm" />
           <button
             onClick={close}
-            aria-label="Fermer le menu"
+            aria-label={t("aria.close_menu")}
             style={{
               width: 32,
               height: 32,

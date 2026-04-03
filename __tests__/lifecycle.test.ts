@@ -16,15 +16,29 @@ vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
     from: (table: string) => {
       if (table === "profiles") {
+        const emptyData = { data: [] };
+        const chainable: Record<string, unknown> = {};
+        // Make it thenable so it works as both a promise and a chainable
+        chainable.then = (resolve: (v: unknown) => unknown) => Promise.resolve(emptyData).then(resolve);
+        chainable.catch = (reject: (v: unknown) => unknown) => Promise.resolve(emptyData).catch(reject);
+        chainable.in = () => Promise.resolve(emptyData);
+        chainable.lte = () => {
+          const sub: Record<string, unknown> = {};
+          sub.then = (resolve: (v: unknown) => unknown) => Promise.resolve(emptyData).then(resolve);
+          sub.catch = (reject: (v: unknown) => unknown) => Promise.resolve(emptyData).catch(reject);
+          sub.in = () => Promise.resolve(emptyData);
+          return sub;
+        };
         return {
           select: () => ({
-            gte: () => ({
-              lte: () => Promise.resolve({ data: [] }),
-            }),
+            gte: () => chainable,
             not: () => ({
-              in: () => Promise.resolve({ data: [] }),
+              in: () => Promise.resolve(emptyData),
             }),
-            in: () => Promise.resolve({ data: [] }),
+            in: () => Promise.resolve(emptyData),
+          }),
+          update: () => ({
+            eq: () => Promise.resolve({ error: null }),
           }),
         };
       }
@@ -49,18 +63,31 @@ vi.mock("@/lib/supabase-admin", () => ({
       }
       if (table === "newsletters") {
         return {
-          select: () => ({
-            eq: () => ({
+          select: (...args: unknown[]) => {
+            // count query: .select("id", { count: "exact", head: true })
+            if (args.length > 1) {
+              return {
+                eq: () => ({
+                  gte: () => ({
+                    not: () => Promise.resolve({ count: 0 }),
+                  }),
+                }),
+              };
+            }
+            // regular select for section 6: .select().gte().is()
+            return {
               eq: () => ({
-                gte: () => ({
-                  not: () => Promise.resolve({ count: 0 }),
+                eq: () => ({
+                  gte: () => ({
+                    not: () => Promise.resolve({ count: 0 }),
+                  }),
                 }),
               }),
-            }),
-            gte: () => ({
-              is: () => Promise.resolve({ data: [] }),
-            }),
-          }),
+              gte: () => ({
+                is: () => Promise.resolve({ data: [] }),
+              }),
+            };
+          },
         };
       }
       return {

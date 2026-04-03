@@ -35,7 +35,7 @@ export function openSolyBrief(onBriefReady: (brief: string) => void) {
 }
 
 export default function ChatWidget() {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [hasAutoOpened, setHasAutoOpened] = useState(false);
   const [mode, setMode] = useState<ChatMode>("general");
@@ -216,7 +216,7 @@ export default function ChatWidget() {
     return (
       <button
         onClick={handleOpen}
-        aria-label="Ouvrir l'assistant Soly"
+        aria-label={t("aria.open_soly")}
         style={{
           position: "fixed",
           bottom: 24,
@@ -310,7 +310,7 @@ export default function ChatWidget() {
         </div>
         <button
           onClick={handleClose}
-          aria-label="Fermer le chat"
+          aria-label={t("aria.close_chat")}
           style={{
             background: "none",
             border: "none",
@@ -446,7 +446,7 @@ export default function ChatWidget() {
           }}
           placeholder={lang === "en" ? "Type your message..." : "Ecris ton message..."}
           disabled={loading}
-          aria-label="Message pour Soly"
+          aria-label={t("aria.message_soly")}
           style={{
             flex: 1,
             padding: "10px 14px",
@@ -455,15 +455,12 @@ export default function ChatWidget() {
             background: "var(--bg, #f9f9f9)",
             color: "var(--text, #1a1a1a)",
             fontSize: 13,
-            outline: "none",
           }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "var(--accent, #005058)")}
-          onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border, #e5e5e5)")}
         />
         <button
           onClick={handleSend}
           disabled={loading || !input.trim()}
-          aria-label="Envoyer"
+          aria-label={t("aria.send")}
           style={{
             width: 40,
             height: 40,
