@@ -37,7 +37,7 @@ export async function generateMetadata({
       tags: article.tags,
       images: [
         {
-          url: "/og-image.svg",
+          url: "/og-image.png",
           width: 1200,
           height: 630,
           alt: article.title,
@@ -48,7 +48,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: article.title,
       description: article.description,
-      images: ["/og-image.svg"],
+      images: ["/og-image.png"],
     },
     alternates: {
       canonical: `https://sorell.fr/blog/${article.slug}`,

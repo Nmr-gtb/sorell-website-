@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Sorell - Newsletter IA pour les professionnels",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sorell - Un email par semaine. Tout ce qu'il faut savoir sur votre secteur.",
     description: "Sorell vous envoie automatiquement un résumé des actualités de votre secteur. Gratuit, sans carte bancaire, prêt en 5 minutes.",
-    images: ["/og-image.svg"],
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
