@@ -23,7 +23,8 @@ export async function GET(request: Request) {
       .eq("id", user.id)
       .maybeSingle();
 
-    if (!profile || (profile.plan !== "pro" && profile.plan !== "business")) {
+    const eligiblePlans = ["pro", "business", "enterprise"];
+    if (!profile || !eligiblePlans.includes(profile.plan)) {
       return NextResponse.json({
         error: "Le parrainage est réservé aux abonnés Pro et Business",
         eligible: false,
@@ -124,8 +125,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Auto-parrainage interdit" }, { status: 403 });
     }
 
-    // Vérifier que le parrain est toujours Pro ou Business
-    if (referrer.plan !== "pro" && referrer.plan !== "business") {
+    // Vérifier que le parrain est toujours Pro, Business ou Enterprise
+    const eligiblePlans = ["pro", "business", "enterprise"];
+    if (!eligiblePlans.includes(referrer.plan)) {
       return NextResponse.json({ error: "Parrain non éligible" }, { status: 403 });
     }
 
