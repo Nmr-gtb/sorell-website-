@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Désabonnement - Sorell",
+  title: "Désabonnement",
   robots: { index: false },
 };
 

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Tarifs",
-  description: "Decouvrez les tarifs Sorell : plan gratuit, Pro a 19 euros/mois et Business a 49 euros/mois. Essai gratuit 15 jours, sans carte bancaire.",
+  description: "Découvrez les tarifs Sorell : plan gratuit, Pro à 19 euros/mois et Business à 49 euros/mois. Essai gratuit 15 jours, sans carte bancaire.",
   openGraph: {
-    title: "Tarifs - Sorell",
-    description: "Plan gratuit, Pro a 19 euros/mois, Business a 49 euros/mois. Essai gratuit 15 jours.",
+    title: "Tarifs | Sorell",
+    description: "Plan gratuit, Pro à 19 euros/mois, Business à 49 euros/mois. Essai gratuit 15 jours.",
     url: "https://sorell.fr/tarifs",
   },
   alternates: { canonical: "https://sorell.fr/tarifs" },

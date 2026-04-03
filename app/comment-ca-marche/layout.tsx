@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Comment ca marche",
-  description: "Decouvrez comment Sorell genere automatiquement votre newsletter sectorielle par IA. Configuration en 5 minutes, envoi automatique chaque semaine.",
+  title: "Comment ça marche",
+  description: "Découvrez comment Sorell génère automatiquement votre newsletter sectorielle par IA. Configuration en 5 minutes, envoi automatique chaque semaine.",
   openGraph: {
-    title: "Comment ca marche - Sorell",
-    description: "Sorell genere vos newsletters sectorielles en 3 etapes. Configuration en 5 minutes.",
+    title: "Comment ça marche | Sorell",
+    description: "Sorell génère vos newsletters sectorielles en 3 étapes. Configuration en 5 minutes.",
     url: "https://sorell.fr/comment-ca-marche",
   },
   alternates: { canonical: "https://sorell.fr/comment-ca-marche" },

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Guides, comparatifs et conseils pour automatiser votre veille sectorielle avec l'IA. Decouvrez les meilleures pratiques pour les newsletters B2B.",
+  description: "Guides, comparatifs et conseils pour automatiser votre veille sectorielle avec l'IA. Découvrez les meilleures pratiques pour les newsletters B2B.",
   openGraph: {
-    title: "Blog - Sorell",
+    title: "Blog | Sorell",
     description: "Guides et conseils pour automatiser votre veille sectorielle avec l'IA.",
     url: "https://sorell.fr/blog",
   },

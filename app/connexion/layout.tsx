@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Connexion",
-  description: "Connectez-vous a votre espace Sorell pour gerer vos newsletters, configurer vos thematiques et suivre vos analytics.",
+  description: "Connectez-vous à votre espace Sorell pour gérer vos newsletters, configurer vos thématiques et suivre vos analytics.",
   openGraph: {
-    title: "Connexion - Sorell",
-    description: "Connectez-vous a votre espace Sorell.",
+    title: "Connexion | Sorell",
+    description: "Connectez-vous à votre espace Sorell.",
     url: "https://sorell.fr/connexion",
   },
   alternates: { canonical: "https://sorell.fr/connexion" },
