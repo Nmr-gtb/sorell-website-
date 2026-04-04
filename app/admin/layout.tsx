@@ -64,32 +64,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!verified) {
     return (
-      <div className="min-h-screen bg-[#0F1117] p-8">
+      <div className="min-h-screen bg-[#F9FAFB] p-8">
         <SkeletonDashboard />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1117] text-[#F3F4F6]">
+    <div className="min-h-screen bg-[#F9FAFB] text-[#111827]">
       {/* Mobile header */}
-      <div className="flex items-center justify-between border-b border-[#2A2D38] bg-[#1A1C25] px-4 py-3 lg:hidden">
+      <div className="flex items-center justify-between border-b border-[#E5E7EB] bg-white px-4 py-3 lg:hidden">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="rounded-lg p-1.5 text-[#9CA3AF] transition-colors hover:bg-[#2A2D38] hover:text-[#F3F4F6]"
+          className="rounded-lg p-1.5 text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
           aria-label="Ouvrir le menu"
         >
           <MenuIcon size={22} />
         </button>
         <span
-          className="text-lg font-bold text-[#F3F4F6]"
+          className="text-lg font-bold text-[#111827]"
           style={{ fontFamily: "'Quiglet', sans-serif" }}
         >
           Sorell
         </span>
         <button
           onClick={handleLogout}
-          className="rounded-lg p-1.5 text-[#6B7280] transition-colors hover:text-red-400"
+          className="rounded-lg p-1.5 text-[#6B7280] transition-colors hover:text-red-500"
           aria-label="Se déconnecter"
         >
           <LogoutIcon size={20} />
@@ -99,25 +99,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#2A2D38] bg-[#161820] transition-all duration-300 lg:static lg:z-auto ${
-            sidebarCollapsed ? "lg:w-[72px]" : "lg:w-64"
-          } ${sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:translate-x-0"}`}
+          className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#E5E7EB] bg-[#FAFBFC] transition-all duration-300 lg:static lg:z-auto ${
+            sidebarCollapsed ? "lg:w-[72px]" : "lg:w-60"
+          } ${sidebarOpen ? "w-60 translate-x-0" : "w-60 -translate-x-full lg:translate-x-0"}`}
         >
           {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-[#2A2D38] px-4 py-5">
+          <div className="flex items-center justify-between border-b border-[#E5E7EB] px-4 py-5">
             {!sidebarCollapsed && (
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-500/10">
-                  <span className="text-sm font-bold text-teal-400">N</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#005058]/8">
+                  <span className="text-sm font-bold text-[#005058]">S</span>
                 </div>
                 <div className="hidden lg:block">
                   <div
-                    className="text-base font-bold text-[#F3F4F6]"
+                    className="text-base font-bold text-[#111827]"
                     style={{ fontFamily: "'Quiglet', sans-serif" }}
                   >
                     Sorell
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-widest text-[#6B7280]">
+                  <div className="text-[10px] font-medium uppercase tracking-widest text-[#9CA3AF]">
                     Admin
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="hidden rounded-lg p-1 text-[#6B7280] transition-colors hover:bg-[#2A2D38] hover:text-[#9CA3AF] lg:block"
+              className="hidden rounded-lg p-1 text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#6B7280] lg:block"
               aria-label={sidebarCollapsed ? "Étendre le menu" : "Réduire le menu"}
             >
               {sidebarCollapsed ? <SidebarExpandIcon size={18} /> : <SidebarCollapseIcon size={18} />}
@@ -144,8 +144,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   onClick={() => setSidebarOpen(false)}
                   className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                     isActive
-                      ? "bg-teal-500/10 text-teal-400"
-                      : "text-[#9CA3AF] hover:bg-[#1E2030] hover:text-[#F3F4F6]"
+                      ? "bg-[#005058]/8 text-[#005058] border-l-[3px] border-[#005058]"
+                      : "text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#111827]"
                   } ${sidebarCollapsed ? "justify-center" : ""}`}
                   title={sidebarCollapsed ? item.label : undefined}
                   aria-label={item.label}
@@ -153,7 +153,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Icon
                     size={20}
                     className={`flex-shrink-0 transition-colors ${
-                      isActive ? "text-teal-400" : "text-[#6B7280] group-hover:text-[#9CA3AF]"
+                      isActive ? "text-[#005058]" : "text-[#9CA3AF] group-hover:text-[#6B7280]"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -163,10 +163,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           {/* Logout */}
-          <div className="border-t border-[#2A2D38] px-3 py-4">
+          <div className="border-t border-[#E5E7EB] px-3 py-4">
             <button
               onClick={handleLogout}
-              className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#6B7280] transition-all duration-150 hover:bg-red-500/10 hover:text-red-400 ${
+              className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#6B7280] transition-all duration-150 hover:bg-red-50 hover:text-red-500 ${
                 sidebarCollapsed ? "justify-center" : ""
               }`}
               aria-label="Se déconnecter"
@@ -180,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Backdrop mobile */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm transition-opacity lg:hidden"
+            className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm transition-opacity lg:hidden"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
@@ -189,10 +189,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main content */}
         <main className="flex-1 min-h-screen">
           {/* Breadcrumb header */}
-          <div className="hidden lg:flex items-center gap-2 border-b border-[#2A2D38] bg-[#161820]/50 px-8 py-3">
-            <span className="text-xs text-[#6B7280]">Admin</span>
-            <span className="text-xs text-[#3A3D4A]">/</span>
-            <span className="text-xs font-medium text-[#9CA3AF]">{getBreadcrumb()}</span>
+          <div className="hidden lg:flex items-center gap-2 border-b border-[#E5E7EB] bg-white px-8 py-3">
+            <span className="text-xs text-[#9CA3AF]">Admin</span>
+            <span className="text-xs text-[#D1D5DB]">/</span>
+            <span className="text-xs font-medium text-[#6B7280]">{getBreadcrumb()}</span>
           </div>
           <div className="p-6 lg:p-8">
             {children}

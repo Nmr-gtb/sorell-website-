@@ -38,10 +38,10 @@ interface Stats {
 }
 
 const PLAN_COLORS: Record<string, string> = {
-  free: "#6B7280",
+  free: "#9CA3AF",
   pro: "#0D9488",
-  business: "#8B5CF6",
-  enterprise: "#F59E0B",
+  business: "#7C3AED",
+  enterprise: "#D97706",
 };
 
 const PLAN_LABELS: Record<string, string> = {
@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
   if (error || !stats) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-xl border border-red-800/50 bg-red-950/20 px-6 py-4 text-sm text-red-400">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-600">
           {error || "Erreur inconnue."}
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[#F3F4F6]">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-[#111827]">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -129,35 +129,35 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Signups chart */}
         <AdminCard className="lg:col-span-2">
-          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">
+          <h2 className="mb-5 text-base font-semibold text-[#111827]">
             Inscriptions (30 derniers jours)
           </h2>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={stats.signupsChart}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2A2D38" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
               <XAxis
                 dataKey="date"
-                stroke="#6B7280"
-                tick={{ fontSize: 11, fill: "#6B7280" }}
+                stroke="#9CA3AF"
+                tick={{ fontSize: 11, fill: "#9CA3AF" }}
                 tickFormatter={(d: string) => d.slice(5)}
-                axisLine={{ stroke: "#2A2D38" }}
+                axisLine={{ stroke: "#E5E7EB" }}
                 tickLine={false}
               />
               <YAxis
-                stroke="#6B7280"
-                tick={{ fontSize: 11, fill: "#6B7280" }}
+                stroke="#9CA3AF"
+                tick={{ fontSize: 11, fill: "#9CA3AF" }}
                 allowDecimals={false}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1A1C25",
-                  border: "1px solid #2A2D38",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: "8px",
-                  boxShadow: "0 10px 15px -3px rgba(0,0,0,0.5)",
+                  boxShadow: "0 10px 15px -3px rgba(0,0,0,0.07)",
                 }}
-                labelStyle={{ color: "#9CA3AF", fontSize: 12 }}
+                labelStyle={{ color: "#6B7280", fontSize: 12 }}
                 itemStyle={{ color: "#0D9488", fontSize: 12 }}
               />
               <Line
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
                 stroke="#0D9488"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: "#0D9488", stroke: "#0F1117", strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: "#0D9488", stroke: "#FFFFFF", strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -174,8 +174,8 @@ export default function AdminDashboardPage() {
 
         {/* Plan distribution */}
         <AdminCard>
-          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">
-            Répartition des plans
+          <h2 className="mb-5 text-base font-semibold text-[#111827]">
+            Repartition des plans
           </h2>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
@@ -196,8 +196,8 @@ export default function AdminDashboardPage() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1A1C25",
-                  border: "1px solid #2A2D38",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: "8px",
                 }}
               />
@@ -205,7 +205,7 @@ export default function AdminDashboardPage() {
           </ResponsiveContainer>
           <div className="mt-4 flex flex-wrap gap-3">
             {pieData.map((p) => (
-              <div key={p.name} className="flex items-center gap-2 text-xs text-[#9CA3AF]">
+              <div key={p.name} className="flex items-center gap-2 text-xs text-[#6B7280]">
                 <span
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ backgroundColor: p.color }}
@@ -219,8 +219,8 @@ export default function AdminDashboardPage() {
 
       {/* Recent signups */}
       <div>
-        <h2 className="mb-4 text-base font-semibold text-[#F3F4F6]">
-          Dernières inscriptions
+        <h2 className="mb-4 text-base font-semibold text-[#111827]">
+          Dernieres inscriptions
         </h2>
         <AdminTable
           columns={[
@@ -229,11 +229,11 @@ export default function AdminDashboardPage() {
               header: "Utilisateur",
               render: (user) => (
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-xs font-bold text-teal-400">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#005058]/8 text-xs font-bold text-[#005058]">
                     {(user.full_name || user.email)[0].toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-[#F3F4F6]">{user.full_name || "\u2014"}</div>
+                    <div className="text-sm font-medium text-[#111827]">{user.full_name || "-"}</div>
                     <div className="text-xs text-[#6B7280]">{user.email}</div>
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export default function AdminDashboardPage() {
               key: "source",
               header: "Source",
               render: (user) => (
-                <span className="text-xs text-[#9CA3AF]">
+                <span className="text-sm text-[#6B7280]">
                   {user.referred_by ? "Referral" : "Direct"}
                 </span>
               ),
@@ -262,7 +262,7 @@ export default function AdminDashboardPage() {
               key: "date",
               header: "Date",
               render: (user) => (
-                <span className="text-xs text-[#9CA3AF]">
+                <span className="text-sm text-[#6B7280]">
                   {new Date(user.created_at).toLocaleDateString("fr-FR")}
                 </span>
               ),

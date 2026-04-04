@@ -9,9 +9,9 @@ interface AdminCardProps {
 }
 
 const variantStyles = {
-  default: "bg-[#1A1C25] border-[#2A2D38]",
-  accent: "bg-[#1A1C25] border-teal-800/40",
-  danger: "bg-red-950/20 border-red-900/40",
+  default: "bg-white border-[#E5E7EB]",
+  accent: "bg-white border-[#005058]/20",
+  danger: "bg-red-50 border-red-200",
 };
 
 const paddingStyles = {
@@ -29,8 +29,8 @@ export default function AdminCard({
 }: AdminCardProps) {
   return (
     <div
-      className={`rounded-xl border transition-all duration-200 ${variantStyles[variant]} ${paddingStyles[padding]} ${
-        hover ? "hover:border-[#3A3D4A] hover:bg-[#1E2030]" : ""
+      className={`rounded-xl border shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-200 ${variantStyles[variant]} ${paddingStyles[padding]} ${
+        hover ? "hover:border-[#D1D5DB] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07)]" : ""
       } ${className}`}
     >
       {children}

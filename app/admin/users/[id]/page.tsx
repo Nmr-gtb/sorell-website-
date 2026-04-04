@@ -125,7 +125,7 @@ export default function AdminUserDetailPage() {
   if (!data?.profile) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-xl border border-red-800/50 bg-red-950/20 px-6 py-4 text-sm text-red-400">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-600">
           Utilisateur non trouvé.
         </div>
       </div>
@@ -140,17 +140,17 @@ export default function AdminUserDetailPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/users"
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[#6B7280] transition-colors hover:bg-[#1E2030] hover:text-[#F3F4F6]"
+          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
         >
           <ArrowLeftIcon size={16} />
           Retour
         </Link>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500/10 text-sm font-bold text-teal-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#005058]/8 text-sm font-bold text-[#005058]">
             {(profile.full_name || profile.email)[0].toUpperCase()}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#F3F4F6]">{profile.full_name || profile.email}</h1>
+            <h1 className="text-xl font-bold text-[#111827]">{profile.full_name || profile.email}</h1>
             <span className="text-xs text-[#6B7280]">{profile.email}</span>
           </div>
         </div>
@@ -218,14 +218,14 @@ export default function AdminUserDetailPage() {
       </AdminCard>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-lg border border-[#2A2D38] bg-[#161820] p-1 w-fit">
+      <div className="flex gap-1 rounded-lg border border-[#E5E7EB] bg-white p-1 w-fit">
         {TAB_LIST.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition-all duration-150 ${
               tab === t.key
-                ? "bg-teal-500/10 text-teal-400 shadow-sm"
+                ? "bg-[#005058]/8 text-[#005058] shadow-sm"
                 : "text-[#6B7280] hover:text-[#9CA3AF]"
             }`}
           >
@@ -237,7 +237,7 @@ export default function AdminUserDetailPage() {
       {/* Tab content */}
       {tab === "overview" && config && (
         <AdminCard>
-          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">Configuration Newsletter</h2>
+          <h2 className="mb-5 text-base font-semibold text-[#111827]">Configuration Newsletter</h2>
           <div className="grid grid-cols-2 gap-5 text-sm">
             <InfoField
               label="Topics"
@@ -253,7 +253,7 @@ export default function AdminUserDetailPage() {
           {config.custom_brief && (
             <div className="mt-5">
               <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Brief custom</div>
-              <p className="rounded-lg border border-[#2A2D38] bg-[#161820] p-4 text-sm text-[#9CA3AF]">
+              <p className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-4 text-sm text-[#9CA3AF]">
                 {config.custom_brief}
               </p>
             </div>
@@ -264,7 +264,7 @@ export default function AdminUserDetailPage() {
               {recipients.map((r) => (
                 <span
                   key={r.id}
-                  className="rounded-md border border-[#2A2D38] bg-[#161820] px-2.5 py-1 text-xs text-[#9CA3AF]"
+                  className="rounded-md border border-[#E5E7EB] bg-[#F9FAFB] px-2.5 py-1 text-xs text-[#9CA3AF]"
                 >
                   {r.email}
                 </span>
@@ -273,7 +273,7 @@ export default function AdminUserDetailPage() {
           </div>
           <Link
             href={`/admin/prompts?userId=${id}`}
-            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-teal-400 transition-colors hover:text-teal-300"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[#005058] transition-colors hover:text-[#0D9488]"
           >
             <ExternalLinkIcon size={14} />
             Voir le prompt complet
@@ -294,7 +294,7 @@ export default function AdminUserDetailPage() {
               key: "subject",
               header: "Sujet",
               render: (nl) => (
-                <span className="text-sm font-medium text-[#F3F4F6]">
+                <span className="text-sm font-medium text-[#111827]">
                   {nl.subject || "Sans sujet"}
                 </span>
               ),
@@ -336,7 +336,7 @@ export default function AdminUserDetailPage() {
 
       {tab === "lifecycle" && (
         <AdminCard>
-          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">Timeline Lifecycle Emails</h2>
+          <h2 className="mb-5 text-base font-semibold text-[#111827]">Timeline Lifecycle Emails</h2>
           {lifecycleEmails.length === 0 ? (
             <p className="text-sm text-[#6B7280]">Aucun email lifecycle envoyé.</p>
           ) : (
@@ -345,15 +345,15 @@ export default function AdminUserDetailPage() {
                 <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
                   {/* Timeline line */}
                   {i < lifecycleEmails.length - 1 && (
-                    <div className="absolute left-[7px] top-4 h-full w-px bg-[#2A2D38]" />
+                    <div className="absolute left-[7px] top-4 h-full w-px bg-[#E5E7EB]" />
                   )}
                   {/* Dot */}
                   <div className="relative z-10 mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center">
-                    <div className="h-3 w-3 rounded-full bg-teal-400 ring-4 ring-[#1A1C25]" />
+                    <div className="h-3 w-3 rounded-full bg-[#0D9488] ring-4 ring-white" />
                   </div>
                   {/* Content */}
-                  <div className="flex flex-1 items-center justify-between rounded-lg border border-[#2A2D38] bg-[#161820] px-4 py-3">
-                    <span className="text-sm font-medium text-[#F3F4F6]">{le.email_type}</span>
+                  <div className="flex flex-1 items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3">
+                    <span className="text-sm font-medium text-[#111827]">{le.email_type}</span>
                     <span className="text-xs text-[#6B7280]">
                       {new Date(le.sent_at).toLocaleDateString("fr-FR")} à{" "}
                       {new Date(le.sent_at).toLocaleTimeString("fr-FR", {
@@ -408,11 +408,11 @@ export default function AdminUserDetailPage() {
       {/* Danger zone */}
       <AdminCard variant="danger">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-red-500/10">
-            <AlertTriangleIcon size={20} className="text-red-400" />
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-red-50">
+            <AlertTriangleIcon size={20} className="text-red-600" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-red-400">Zone dangereuse</h2>
+            <h2 className="text-base font-semibold text-red-600">Zone dangereuse</h2>
             <p className="mt-1 text-sm text-[#6B7280]">
               La suppression est irréversible. Toutes les données seront perdues.
             </p>
@@ -447,7 +447,7 @@ function InfoField({
         {label}
       </div>
       <div
-        className={`text-sm text-[#F3F4F6] ${mono ? "font-mono text-xs" : ""}`}
+        className={`text-sm text-[#111827] ${mono ? "font-mono text-xs" : ""}`}
       >
         {value}
       </div>

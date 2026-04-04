@@ -63,7 +63,7 @@ export default function AdminLifecyclePage() {
 
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[#F3F4F6]">Pipeline Lifecycle Emails</h1>
+      <h1 className="text-2xl font-bold text-[#111827]">Pipeline Lifecycle Emails</h1>
 
       {/* Visual pipeline stages */}
       <AdminCard padding="lg">
@@ -78,31 +78,31 @@ export default function AdminLifecyclePage() {
                   onClick={() => setStageFilter(isActive ? "all" : stage)}
                   className={`group relative flex flex-col items-center gap-2 rounded-xl px-4 py-3 transition-all duration-200 ${
                     isActive
-                      ? "bg-teal-500/10 ring-1 ring-teal-500/30"
+                      ? "bg-[#005058]/8 ring-1 ring-[#005058]/20"
                       : isAll && count > 0
-                        ? "hover:bg-[#1E2030]"
+                        ? "hover:bg-[#F3F4F6]"
                         : "opacity-40 hover:opacity-70"
                   }`}
                 >
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                       isActive
-                        ? "bg-teal-500 text-white"
+                        ? "bg-[#005058] text-white"
                         : count > 0
-                          ? "bg-[#2A2D38] text-[#F3F4F6]"
-                          : "bg-[#1E2030] text-[#6B7280]"
+                          ? "bg-[#E5E7EB] text-[#111827]"
+                          : "bg-[#F3F4F6] text-[#9CA3AF]"
                     }`}
                   >
                     {count}
                   </div>
                   <span className={`whitespace-nowrap text-[10px] font-medium ${
-                    isActive ? "text-teal-400" : "text-[#6B7280]"
+                    isActive ? "text-[#005058]" : "text-[#6B7280]"
                   }`}>
                     {cfg.label}
                   </span>
                 </button>
                 {idx < PIPELINE_STAGES.length - 1 && (
-                  <div className="mx-1 h-px w-6 bg-[#2A2D38] flex-shrink-0" />
+                  <div className="mx-1 h-px w-6 bg-[#E5E7EB] flex-shrink-0" />
                 )}
               </div>
             );
@@ -129,7 +129,7 @@ export default function AdminLifecyclePage() {
                 href={`/admin/users/${user.id}`}
                 className="group"
               >
-                <div className="text-sm font-medium text-teal-400 transition-colors group-hover:text-teal-300">
+                <div className="text-sm font-medium text-[#005058] transition-colors group-hover:text-[#0D9488]">
                   {user.full_name || "\u2014"}
                 </div>
                 <div className="text-xs text-[#6B7280]">{user.email}</div>
@@ -173,7 +173,7 @@ export default function AdminLifecyclePage() {
             render: (user: PipelineUser) => (
               <span className={`text-sm ${
                 user.trial_days_remaining !== null && user.trial_days_remaining <= 0
-                  ? "text-red-400"
+                  ? "text-red-500"
                   : "text-[#9CA3AF]"
               }`}>
                 {user.trial_days_remaining !== null
@@ -190,12 +190,12 @@ export default function AdminLifecyclePage() {
             render: (user: PipelineUser) => (
               <div className="flex flex-wrap gap-1">
                 {user.emails_received.length === 0 ? (
-                  <span className="text-xs text-[#3A3D4A]">Aucun</span>
+                  <span className="text-xs text-[#D1D5DB]">Aucun</span>
                 ) : (
                   user.emails_received.map((e, i) => (
                     <span
                       key={i}
-                      className="rounded border border-[#2A2D38] bg-[#161820] px-1.5 py-0.5 text-[10px] text-[#6B7280]"
+                      className="rounded border border-[#E5E7EB] bg-[#F9FAFB] px-1.5 py-0.5 text-[10px] text-[#6B7280]"
                     >
                       {e}
                     </span>
@@ -209,9 +209,9 @@ export default function AdminLifecyclePage() {
             header: "Config",
             render: (user: PipelineUser) => (
               user.has_config ? (
-                <CheckIcon size={16} className="text-emerald-400" />
+                <CheckIcon size={16} className="text-emerald-500" />
               ) : (
-                <span className="text-xs text-[#3A3D4A]">\u2014</span>
+                <span className="text-xs text-[#D1D5DB]">\u2014</span>
               )
             ),
           },
@@ -220,9 +220,9 @@ export default function AdminLifecyclePage() {
             header: "NL",
             render: (user: PipelineUser) => (
               user.has_sent_newsletter ? (
-                <CheckIcon size={16} className="text-emerald-400" />
+                <CheckIcon size={16} className="text-emerald-500" />
               ) : (
-                <span className="text-xs text-[#3A3D4A]">\u2014</span>
+                <span className="text-xs text-[#D1D5DB]">\u2014</span>
               )
             ),
           },

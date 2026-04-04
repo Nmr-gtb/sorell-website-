@@ -4,7 +4,7 @@ interface SkeletonProps {
 }
 
 function SkeletonBase({ className = "", style }: SkeletonProps) {
-  return <div className={`animate-pulse rounded bg-[#2A2D38] ${className}`} style={style} />;
+  return <div className={`animate-pulse rounded bg-[#E5E7EB] ${className}`} style={style} />;
 }
 
 export function SkeletonText({ className = "" }: SkeletonProps) {
@@ -13,7 +13,7 @@ export function SkeletonText({ className = "" }: SkeletonProps) {
 
 export function SkeletonCard({ className = "" }: SkeletonProps) {
   return (
-    <div className={`rounded-xl border border-[#2A2D38] bg-[#1A1C25] p-5 ${className}`}>
+    <div className={`rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}>
       <div className="flex items-start justify-between">
         <SkeletonBase className="h-10 w-10 rounded-lg" />
         <SkeletonBase className="h-5 w-12 rounded-full" />
@@ -28,8 +28,8 @@ export function SkeletonCard({ className = "" }: SkeletonProps) {
 
 export function SkeletonTable({ rows = 5, cols = 4, className = "" }: SkeletonProps & { rows?: number; cols?: number }) {
   return (
-    <div className={`overflow-hidden rounded-xl border border-[#2A2D38] bg-[#1A1C25] ${className}`}>
-      <div className="border-b border-[#2A2D38] px-4 py-3.5 flex gap-8">
+    <div className={`overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}>
+      <div className="border-b border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3.5 flex gap-8">
         {Array.from({ length: cols }).map((_, i) => (
           <SkeletonBase key={`header-${i}`} className="h-3 w-24" />
         ))}
@@ -37,7 +37,7 @@ export function SkeletonTable({ rows = 5, cols = 4, className = "" }: SkeletonPr
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div
           key={`row-${rowIdx}`}
-          className="flex gap-8 border-b border-[#2A2D38]/50 px-4 py-3.5 last:border-0"
+          className="flex gap-8 border-b border-[#F3F4F6] px-4 py-3.5 last:border-0"
         >
           {Array.from({ length: cols }).map((_, colIdx) => (
             <SkeletonBase
@@ -53,7 +53,7 @@ export function SkeletonTable({ rows = 5, cols = 4, className = "" }: SkeletonPr
 
 export function SkeletonChart({ className = "" }: SkeletonProps) {
   return (
-    <div className={`rounded-xl border border-[#2A2D38] bg-[#1A1C25] p-6 ${className}`}>
+    <div className={`rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}>
       <SkeletonBase className="mb-6 h-5 w-48" />
       <div className="flex items-end gap-1 h-[200px]">
         {Array.from({ length: 20 }).map((_, i) => (

@@ -41,15 +41,15 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0F1117] px-4">
-      <div className="w-full max-w-sm animate-[fadeInUp_0.4s_ease-out]">
+    <div className="flex min-h-screen items-center justify-center bg-[#F9FAFB] px-4">
+      <div className="w-full max-w-sm animate-[fadeInUp_0.4s_ease-out] rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-lg">
         {/* Logo */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/10">
-            <MailIcon className="text-teal-400" size={24} />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#005058]/8">
+            <MailIcon className="text-[#005058]" size={24} />
           </div>
           <h1
-            className="text-2xl font-bold text-[#F3F4F6]"
+            className="text-2xl font-bold text-[#111827]"
             style={{ fontFamily: "'Quiglet', sans-serif" }}
           >
             Sorell
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="animate-[fadeInUp_0.2s_ease-out] rounded-lg border border-red-800/50 bg-red-950/30 px-4 py-3 text-sm text-red-400">
+            <div className="animate-[fadeInUp_0.2s_ease-out] rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               {error}
             </div>
           )}

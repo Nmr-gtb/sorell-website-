@@ -27,7 +27,7 @@ interface Newsletter {
 function RateBar({ rate, color }: { rate: number; color: string }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[#2A2D38]">
+      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[#E5E7EB]">
         <div
           className={`h-full rounded-full transition-all duration-500 ${color}`}
           style={{ width: `${Math.min(rate, 100)}%` }}
@@ -71,7 +71,7 @@ export default function AdminNewslettersPage() {
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#F3F4F6]">Newsletters</h1>
+        <h1 className="text-2xl font-bold text-[#111827]">Newsletters</h1>
         <div className="flex items-center gap-3">
           <AdminSelect
             value={statusFilter}
@@ -83,7 +83,7 @@ export default function AdminNewslettersPage() {
             ]}
             className="w-44"
           />
-          <span className="rounded-full bg-[#2A2D38] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
+          <span className="rounded-full bg-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
             {total} au total
           </span>
         </div>
@@ -97,7 +97,7 @@ export default function AdminNewslettersPage() {
             render: (nl: Newsletter) => (
               <Link
                 href={`/admin/users/${nl.user_id}`}
-                className="text-xs font-medium text-teal-400 transition-colors hover:text-teal-300"
+                className="text-xs font-medium text-[#005058] transition-colors hover:text-[#0D9488]"
               >
                 {nl.user_name || nl.user_email}
               </Link>
@@ -107,7 +107,7 @@ export default function AdminNewslettersPage() {
             key: "subject",
             header: "Sujet",
             render: (nl: Newsletter) => (
-              <span className="block max-w-[300px] truncate text-sm font-medium text-[#F3F4F6]">
+              <span className="block max-w-[300px] truncate text-sm font-medium text-[#111827]">
                 {nl.subject || "Sans sujet"}
               </span>
             ),
@@ -134,7 +134,7 @@ export default function AdminNewslettersPage() {
             header: "Ouvertures",
             render: (nl: Newsletter) => (
               <div>
-                <span className="text-sm font-medium text-[#F3F4F6]">{nl.opens}</span>
+                <span className="text-sm font-medium text-[#111827]">{nl.opens}</span>
                 <RateBar rate={nl.open_rate} color="bg-teal-400" />
               </div>
             ),
@@ -144,7 +144,7 @@ export default function AdminNewslettersPage() {
             header: "Clics",
             render: (nl: Newsletter) => (
               <div>
-                <span className="text-sm font-medium text-[#F3F4F6]">{nl.clicks}</span>
+                <span className="text-sm font-medium text-[#111827]">{nl.clicks}</span>
                 <RateBar rate={nl.click_rate} color="bg-purple-400" />
               </div>
             ),

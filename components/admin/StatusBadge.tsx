@@ -7,18 +7,18 @@ interface StatusBadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-[#2A2D38] text-[#9CA3AF]",
-  teal: "bg-teal-500/10 text-teal-400",
-  blue: "bg-blue-500/10 text-blue-400",
-  purple: "bg-purple-500/10 text-purple-400",
-  amber: "bg-amber-500/10 text-amber-400",
-  green: "bg-emerald-500/10 text-emerald-400",
-  red: "bg-red-500/10 text-red-400",
-  yellow: "bg-yellow-500/10 text-yellow-400",
-  orange: "bg-orange-500/10 text-orange-400",
-  cyan: "bg-cyan-500/10 text-cyan-400",
-  emerald: "bg-emerald-500/10 text-emerald-400",
-  gray: "bg-[#2A2D38] text-[#6B7280]",
+  default: "bg-[#F3F4F6] text-[#6B7280]",
+  teal: "bg-[#005058]/10 text-[#0D9488]",
+  blue: "bg-blue-50 text-blue-600",
+  purple: "bg-purple-50 text-[#7C3AED]",
+  amber: "bg-amber-50 text-[#D97706]",
+  green: "bg-emerald-50 text-emerald-600",
+  red: "bg-red-50 text-red-600",
+  yellow: "bg-yellow-50 text-yellow-600",
+  orange: "bg-orange-50 text-orange-600",
+  cyan: "bg-cyan-50 text-cyan-600",
+  emerald: "bg-emerald-50 text-emerald-600",
+  gray: "bg-[#F3F4F6] text-[#6B7280]",
 };
 
 const sizeStyles = {

@@ -11,11 +11,11 @@ interface KpiCardProps {
 
 export default function KpiCard({ icon, label, value, trend, accent = false }: KpiCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-[#2A2D38] bg-[#1A1C25] p-5 transition-all duration-200 hover:border-[#3A3D4A] hover:bg-[#1E2030]">
+    <div className="group relative overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-[#D1D5DB] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07)]">
       <div className="flex items-start justify-between">
         <div
           className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-            accent ? "bg-teal-500/10 text-teal-400" : "bg-[#2A2D38] text-[#9CA3AF]"
+            accent ? "bg-[#005058]/8 text-[#005058]" : "bg-[#F3F4F6] text-[#6B7280]"
           }`}
         >
           {icon}
@@ -24,8 +24,8 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
           <div
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
               trend.positive
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-red-500/10 text-red-400"
+                ? "bg-emerald-50 text-emerald-600"
+                : "bg-red-50 text-red-600"
             }`}
           >
             {trend.positive ? <TrendUpIcon size={14} /> : <TrendDownIcon size={14} />}
@@ -34,10 +34,10 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
         )}
       </div>
       <div className="mt-4">
-        <div className="text-xs font-medium text-[#6B7280] uppercase tracking-wider">{label}</div>
+        <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.05em]">{label}</div>
         <div
           className={`mt-1 text-2xl font-bold tracking-tight ${
-            accent ? "text-teal-400" : "text-[#F3F4F6]"
+            accent ? "text-[#005058]" : "text-[#111827]"
           }`}
         >
           {value}

@@ -81,8 +81,8 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#F3F4F6]">Utilisateurs</h1>
-        <span className="rounded-full bg-[#2A2D38] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
+        <h1 className="text-2xl font-bold text-[#111827]">Utilisateurs</h1>
+        <span className="rounded-full bg-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
           {total} au total
         </span>
       </div>
@@ -118,11 +118,11 @@ export default function AdminUsersPage() {
             header: "Utilisateur",
             render: (user: User) => (
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-xs font-bold text-teal-400">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#005058]/8 text-xs font-bold text-[#005058]">
                   {(user.full_name || user.email)[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[#F3F4F6]">{user.full_name || "\u2014"}</div>
+                  <div className="text-sm font-medium text-[#111827]">{user.full_name || "\u2014"}</div>
                   <div className="text-xs text-[#6B7280]">{user.email}</div>
                 </div>
               </div>
@@ -157,14 +157,14 @@ export default function AdminUsersPage() {
             key: "newsletters",
             header: "Newsletters",
             render: (user: User) => (
-              <span className="text-sm font-medium text-[#F3F4F6]">{user.newsletters_sent}</span>
+              <span className="text-sm font-medium text-[#111827]">{user.newsletters_sent}</span>
             ),
           },
           {
             key: "recipients",
             header: "Destinataires",
             render: (user: User) => (
-              <span className="text-sm font-medium text-[#F3F4F6]">{user.recipient_count}</span>
+              <span className="text-sm font-medium text-[#111827]">{user.recipient_count}</span>
             ),
           },
           {
@@ -193,7 +193,7 @@ export default function AdminUsersPage() {
             render: (user: User) => (
               <Link
                 href={`/admin/users/${user.id}`}
-                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-teal-400 transition-colors hover:bg-teal-500/10"
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-[#005058] transition-colors hover:bg-[#005058]/8"
               >
                 <EyeIcon size={14} />
                 Détail
