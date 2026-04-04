@@ -79,6 +79,9 @@ UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN
 RESEND_WEBHOOK_SECRET
 UNSUBSCRIBE_SECRET
+ADMIN_EMAIL
+ADMIN_PASSWORD_HASH
+ADMIN_JWT_SECRET
 ```
 
 ## Base de données (Supabase)
@@ -86,6 +89,7 @@ UNSUBSCRIBE_SECRET
 ### Tables principales
 - **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code (VARCHAR UNIQUE), referred_by (UUID FK profiles), created_at
 - **lifecycle_emails** : id, user_id, email_type, sent_at (tracking des emails lifecycle envoyés, UNIQUE user_id+email_type)
+- **admin_sessions** : id, email, ip_address, user_agent, created_at, expires_at (audit trail des connexions admin)
 - **newsletter_config** : user_id, topics (array), custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics (array)
 - **newsletters** (historique) : id, user_id, content, subject, created_at, sent_at
 - **referrals** : id (UUID), referrer_id (UUID FK profiles), referee_id (UUID FK profiles), code (VARCHAR UNIQUE), status ("pending"/"converted"), created_at, converted_at, expires_at (default NOW + 30 jours). RLS activée.
@@ -409,6 +413,9 @@ Double couche Upstash Redis :
 | 31/03/2026 | Upstash Redis | Rate limiting distribué compatible Vercel serverless | /architect |
 | 31/03/2026 | supabaseAdmin (service_role) | Bypass RLS dans les API routes, auth au niveau applicatif | /security |
 | 31/03/2026 | Vitest | Tests unitaires rapides, compatible Next.js + TypeScript | /tester |
+| 04/04/2026 | Dashboard Admin CEO | Auth JWT séparée, cookie httpOnly, Recharts, pipeline lifecycle | /architect + /security |
+| 04/04/2026 | jsonwebtoken + bcryptjs | Auth admin indépendante de Supabase Auth, plus sûr pour un single admin | /security |
+| 04/04/2026 | Recharts | Graphiques légers pour dashboard admin (pie chart, line chart) | /architect |
 
 ## Tests
 
@@ -449,3 +456,46 @@ Double couche Upstash Redis :
 ## Notes d'optimisation
 
 - hero-visual.webp : hero convertie en WebP qualite 95, 240KB (-84% vs PNG 1.5MB)
+
+## Dashboard Admin CEO
+
+### Accès
+- URL : /admin-login (page de connexion)
+- Auth : JWT indépendant de Supabase Auth (bcrypt + jsonwebtoken)
+- Cookie : admin_token (httpOnly, secure, sameSite strict, 7 jours)
+- Rate limiting : 5 tentatives / 15 minutes sur /api/admin/login
+- Session logging dans table admin_sessions
+
+### Pages
+- /admin — Dashboard KPIs (total users, new users, active users, MRR, conversion, plan distribution, graphiques Recharts)
+- /admin/users — Liste paginée + filtres (plan, recherche) + détail par utilisateur
+- /admin/users/[id] — Fiche complète (profil, config, newsletters, lifecycle, events, modifier plan, supprimer)
+- /admin/newsletters — Toutes les newsletters de tous les utilisateurs avec taux d'ouverture/clic
+- /admin/lifecycle — Pipeline lifecycle emails (étape actuelle de chaque utilisateur dans le funnel)
+- /admin/prompts — Voir le prompt complet reconstruit pour chaque utilisateur + dernière génération
+
+### API Routes Admin
+- GET /api/admin/stats — KPIs globaux + MRR Stripe
+- GET /api/admin/users — Liste paginée avec filtres
+- GET /api/admin/users/[id] — Détail complet
+- PATCH /api/admin/users/[id] — Modifier plan
+- DELETE /api/admin/users/[id] — Supprimer utilisateur
+- GET /api/admin/newsletters — Liste toutes newsletters
+- GET /api/admin/newsletters/[id] — Détail newsletter + events
+- GET /api/admin/lifecycle — Pipeline lifecycle complet
+- GET /api/admin/prompts/[userId] — Prompt reconstruit + dernière génération
+- POST /api/admin/login — Authentification admin
+- POST /api/admin/logout — Déconnexion
+- GET /api/admin/verify — Vérification token
+
+### Sécurité
+- Middleware protège /admin/* et /api/admin/* (sauf /admin-login et /api/admin/login)
+- Toutes les API routes admin vérifient le JWT via getAuthenticatedAdmin()
+- Utilise supabaseAdmin (service_role) pour bypass RLS
+- Aucun lien admin dans la navigation publique/utilisateur
+- Variables env : ADMIN_EMAIL, ADMIN_PASSWORD_HASH, ADMIN_JWT_SECRET
+
+### Dépendances ajoutées
+- jsonwebtoken + @types/jsonwebtoken
+- bcryptjs + @types/bcryptjs
+- recharts (graphiques)
