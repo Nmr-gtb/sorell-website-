@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AdminButton from "@/components/admin/AdminButton";
+import { AdminInput } from "@/components/admin/AdminInput";
+import { MailIcon } from "@/components/admin/AdminIcons";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -38,60 +41,64 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">Sorell Admin</h1>
-          <p className="text-gray-400 text-sm mt-1">Accès réservé</p>
+    <div className="flex min-h-screen items-center justify-center bg-[#0F1117] px-4">
+      <div className="w-full max-w-sm animate-[fadeInUp_0.4s_ease-out]">
+        {/* Logo */}
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/10">
+            <MailIcon className="text-teal-400" size={24} />
+          </div>
+          <h1
+            className="text-2xl font-bold text-[#F3F4F6]"
+            style={{ fontFamily: "'Quiglet', sans-serif" }}
+          >
+            Sorell
+          </h1>
+          <p className="mt-1 text-sm text-[#6B7280]">Administration</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="bg-red-900/30 border border-red-800 text-red-300 text-sm px-4 py-3 rounded-lg">
+            <div className="animate-[fadeInUp_0.2s_ease-out] rounded-lg border border-red-800/50 bg-red-950/30 px-4 py-3 text-sm text-red-400">
               {error}
             </div>
           )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              placeholder="admin@sorell.fr"
-              required
-              autoComplete="email"
-            />
-          </div>
+          <AdminInput
+            id="email"
+            type="email"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@sorell.fr"
+            required
+            autoComplete="email"
+          />
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
-              Mot de passe
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
-          </div>
+          <AdminInput
+            id="password"
+            type="password"
+            label="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mot de passe"
+            required
+            autoComplete="current-password"
+          />
 
-          <button
+          <AdminButton
             type="submit"
-            disabled={loading}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+            loading={loading}
+            className="w-full"
+            size="lg"
           >
             {loading ? "Connexion..." : "Se connecter"}
-          </button>
+          </AdminButton>
         </form>
+
+        <p className="mt-8 text-center text-xs text-[#6B7280]">
+          Accès réservé aux administrateurs Sorell
+        </p>
       </div>
     </div>
   );

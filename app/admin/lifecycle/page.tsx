@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import AdminCard from "@/components/admin/AdminCard";
+import AdminTable from "@/components/admin/AdminTable";
+import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
+import { SkeletonDashboard } from "@/components/admin/Skeleton";
+import { CheckIcon } from "@/components/admin/AdminIcons";
 
 interface PipelineUser {
   id: string;
@@ -18,18 +23,22 @@ interface PipelineUser {
   is_paid: boolean;
 }
 
-const STAGE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  inscrit: { label: "Inscrit", color: "text-gray-400", bg: "bg-gray-800" },
-  welcome_sent: { label: "Welcome envoyé", color: "text-blue-400", bg: "bg-blue-900/30" },
-  onboarding_sent: { label: "Onboarding J+1", color: "text-cyan-400", bg: "bg-cyan-900/30" },
-  configured: { label: "Config faite", color: "text-teal-400", bg: "bg-teal-900/30" },
-  first_newsletter_sent: { label: "1ère NL envoyée", color: "text-green-400", bg: "bg-green-900/30" },
-  trial_reminder_3d: { label: "Trial J-3", color: "text-yellow-400", bg: "bg-yellow-900/30" },
-  trial_reminder_1d: { label: "Trial J-1", color: "text-orange-400", bg: "bg-orange-900/30" },
-  trial_expired: { label: "Trial expiré", color: "text-red-400", bg: "bg-red-900/30" },
-  converted: { label: "Converti", color: "text-emerald-400", bg: "bg-emerald-900/30" },
-  payment_failed: { label: "Paiement échoué", color: "text-red-400", bg: "bg-red-900/30" },
+type BadgeVariant = "gray" | "blue" | "cyan" | "teal" | "green" | "yellow" | "orange" | "red" | "emerald";
+
+const STAGE_CONFIG: Record<string, { label: string; variant: BadgeVariant; order: number }> = {
+  inscrit: { label: "Inscrit", variant: "gray", order: 0 },
+  welcome_sent: { label: "Welcome envoyé", variant: "blue", order: 1 },
+  onboarding_sent: { label: "Onboarding J+1", variant: "cyan", order: 2 },
+  configured: { label: "Config faite", variant: "teal", order: 3 },
+  first_newsletter_sent: { label: "1ère NL envoyée", variant: "green", order: 4 },
+  trial_reminder_3d: { label: "Trial J-3", variant: "yellow", order: 5 },
+  trial_reminder_1d: { label: "Trial J-1", variant: "orange", order: 6 },
+  trial_expired: { label: "Trial expiré", variant: "red", order: 7 },
+  converted: { label: "Converti", variant: "emerald", order: 8 },
+  payment_failed: { label: "Paiement échoué", variant: "red", order: 9 },
 };
+
+const PIPELINE_STAGES = Object.entries(STAGE_CONFIG).sort((a, b) => a[1].order - b[1].order);
 
 export default function AdminLifecyclePage() {
   const [pipeline, setPipeline] = useState<PipelineUser[]>([]);
@@ -50,118 +59,178 @@ export default function AdminLifecyclePage() {
 
   const filtered = stageFilter === "all" ? pipeline : pipeline.filter((u) => u.current_stage === stageFilter);
 
-  if (loading) return <div className="text-gray-400">Chargement du pipeline...</div>;
+  if (loading) return <SkeletonDashboard />;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Pipeline Lifecycle Emails</h1>
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
+      <h1 className="text-2xl font-bold text-[#F3F4F6]">Pipeline Lifecycle Emails</h1>
 
-      {/* Stage summary cards */}
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => setStageFilter("all")}
-          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-            stageFilter === "all" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-          }`}
-        >
-          Tous ({pipeline.length})
-        </button>
-        {Object.entries(STAGE_CONFIG).map(([stage, cfg]) => {
-          const count = stageCounts[stage] || 0;
-          if (count === 0) return null;
-          return (
-            <button
-              key={stage}
-              onClick={() => setStageFilter(stage)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                stageFilter === stage
-                  ? `${cfg.bg} ${cfg.color} ring-1 ring-current`
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-              }`}
-            >
-              {cfg.label} ({count})
-            </button>
-          );
-        })}
-      </div>
+      {/* Visual pipeline stages */}
+      <AdminCard padding="lg">
+        <div className="flex items-center overflow-x-auto pb-2">
+          {PIPELINE_STAGES.map(([stage, cfg], idx) => {
+            const count = stageCounts[stage] || 0;
+            const isActive = stageFilter === stage;
+            const isAll = stageFilter === "all";
+            return (
+              <div key={stage} className="flex items-center flex-shrink-0">
+                <button
+                  onClick={() => setStageFilter(isActive ? "all" : stage)}
+                  className={`group relative flex flex-col items-center gap-2 rounded-xl px-4 py-3 transition-all duration-200 ${
+                    isActive
+                      ? "bg-teal-500/10 ring-1 ring-teal-500/30"
+                      : isAll && count > 0
+                        ? "hover:bg-[#1E2030]"
+                        : "opacity-40 hover:opacity-70"
+                  }`}
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                      isActive
+                        ? "bg-teal-500 text-white"
+                        : count > 0
+                          ? "bg-[#2A2D38] text-[#F3F4F6]"
+                          : "bg-[#1E2030] text-[#6B7280]"
+                    }`}
+                  >
+                    {count}
+                  </div>
+                  <span className={`whitespace-nowrap text-[10px] font-medium ${
+                    isActive ? "text-teal-400" : "text-[#6B7280]"
+                  }`}>
+                    {cfg.label}
+                  </span>
+                </button>
+                {idx < PIPELINE_STAGES.length - 1 && (
+                  <div className="mx-1 h-px w-6 bg-[#2A2D38] flex-shrink-0" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {stageFilter !== "all" && (
+          <button
+            onClick={() => setStageFilter("all")}
+            className="mt-3 text-xs text-[#6B7280] hover:text-[#9CA3AF] transition-colors"
+          >
+            Afficher toutes les étapes
+          </button>
+        )}
+      </AdminCard>
 
       {/* Pipeline table */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-gray-500 border-b border-gray-800">
-              <th className="px-4 py-3 font-medium">Utilisateur</th>
-              <th className="px-4 py-3 font-medium">Plan</th>
-              <th className="px-4 py-3 font-medium">Étape actuelle</th>
-              <th className="px-4 py-3 font-medium">Jours depuis inscription</th>
-              <th className="px-4 py-3 font-medium">Trial restant</th>
-              <th className="px-4 py-3 font-medium">Emails reçus</th>
-              <th className="px-4 py-3 font-medium">Config</th>
-              <th className="px-4 py-3 font-medium">NL envoyée</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500">Aucun utilisateur dans cette étape.</td></tr>
-            ) : (
-              filtered.map((user) => {
-                const stage = STAGE_CONFIG[user.current_stage] || STAGE_CONFIG.inscrit;
-                return (
-                  <tr key={user.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="px-4 py-3">
-                      <Link href={`/admin/users/${user.id}`} className="text-blue-400 hover:text-blue-300">
-                        <div className="text-sm">{user.full_name || "—"}</div>
-                        <div className="text-xs text-gray-500">{user.email}</div>
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{user.plan}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${stage.bg} ${stage.color}`}>
-                        {stage.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-400">{user.days_since_signup}j</td>
-                    <td className="px-4 py-3 text-gray-400">
-                      {user.trial_days_remaining !== null
-                        ? user.trial_days_remaining > 0
-                          ? `${user.trial_days_remaining}j`
-                          : "Expiré"
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
-                        {user.emails_received.length === 0 ? (
-                          <span className="text-gray-600 text-xs">Aucun</span>
-                        ) : (
-                          user.emails_received.map((e, i) => (
-                            <span key={i} className="px-1.5 py-0.5 bg-gray-800 rounded text-xs text-gray-400">
-                              {e}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {user.has_config ? (
-                        <span className="text-green-400 text-xs">Oui</span>
-                      ) : (
-                        <span className="text-red-400 text-xs">Non</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {user.has_sent_newsletter ? (
-                        <span className="text-green-400 text-xs">Oui</span>
-                      ) : (
-                        <span className="text-red-400 text-xs">Non</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AdminTable
+        columns={[
+          {
+            key: "user",
+            header: "Utilisateur",
+            render: (user: PipelineUser) => (
+              <Link
+                href={`/admin/users/${user.id}`}
+                className="group"
+              >
+                <div className="text-sm font-medium text-teal-400 transition-colors group-hover:text-teal-300">
+                  {user.full_name || "\u2014"}
+                </div>
+                <div className="text-xs text-[#6B7280]">{user.email}</div>
+              </Link>
+            ),
+          },
+          {
+            key: "plan",
+            header: "Plan",
+            render: (user: PipelineUser) => (
+              <StatusBadge
+                label={user.plan}
+                variant={getPlanBadgeVariant(user.plan)}
+              />
+            ),
+          },
+          {
+            key: "stage",
+            header: "Étape actuelle",
+            render: (user: PipelineUser) => {
+              const stage = STAGE_CONFIG[user.current_stage] || STAGE_CONFIG.inscrit;
+              return (
+                <StatusBadge
+                  label={stage.label}
+                  variant={stage.variant}
+                  size="md"
+                />
+              );
+            },
+          },
+          {
+            key: "days",
+            header: "Jours",
+            render: (user: PipelineUser) => (
+              <span className="text-sm text-[#9CA3AF]">{user.days_since_signup}j</span>
+            ),
+          },
+          {
+            key: "trial",
+            header: "Trial",
+            render: (user: PipelineUser) => (
+              <span className={`text-sm ${
+                user.trial_days_remaining !== null && user.trial_days_remaining <= 0
+                  ? "text-red-400"
+                  : "text-[#9CA3AF]"
+              }`}>
+                {user.trial_days_remaining !== null
+                  ? user.trial_days_remaining > 0
+                    ? `${user.trial_days_remaining}j`
+                    : "Expiré"
+                  : "\u2014"}
+              </span>
+            ),
+          },
+          {
+            key: "emails",
+            header: "Emails reçus",
+            render: (user: PipelineUser) => (
+              <div className="flex flex-wrap gap-1">
+                {user.emails_received.length === 0 ? (
+                  <span className="text-xs text-[#3A3D4A]">Aucun</span>
+                ) : (
+                  user.emails_received.map((e, i) => (
+                    <span
+                      key={i}
+                      className="rounded border border-[#2A2D38] bg-[#161820] px-1.5 py-0.5 text-[10px] text-[#6B7280]"
+                    >
+                      {e}
+                    </span>
+                  ))
+                )}
+              </div>
+            ),
+          },
+          {
+            key: "config",
+            header: "Config",
+            render: (user: PipelineUser) => (
+              user.has_config ? (
+                <CheckIcon size={16} className="text-emerald-400" />
+              ) : (
+                <span className="text-xs text-[#3A3D4A]">\u2014</span>
+              )
+            ),
+          },
+          {
+            key: "nl",
+            header: "NL",
+            render: (user: PipelineUser) => (
+              user.has_sent_newsletter ? (
+                <CheckIcon size={16} className="text-emerald-400" />
+              ) : (
+                <span className="text-xs text-[#3A3D4A]">\u2014</span>
+              )
+            ),
+          },
+        ]}
+        data={filtered}
+        keyExtractor={(user: PipelineUser) => user.id}
+        emptyMessage="Aucun utilisateur dans cette étape."
+      />
     </div>
   );
 }

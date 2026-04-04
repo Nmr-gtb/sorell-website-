@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import AdminTable from "@/components/admin/AdminTable";
+import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
+import { AdminSearchInput, AdminSelect } from "@/components/admin/AdminInput";
+import AdminButton from "@/components/admin/AdminButton";
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from "@/components/admin/AdminIcons";
 
 interface User {
   id: string;
@@ -16,11 +21,11 @@ interface User {
   recipient_count: number;
 }
 
-const PLAN_COLORS: Record<string, string> = {
-  free: "#6B7280",
-  pro: "#3B82F6",
-  business: "#8B5CF6",
-  enterprise: "#F59E0B",
+const PLAN_LABELS: Record<string, string> = {
+  free: "Free",
+  pro: "Pro",
+  business: "Business",
+  enterprise: "Enterprise",
 };
 
 export default function AdminUsersPage() {
@@ -74,129 +79,158 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Utilisateurs</h1>
-        <span className="text-sm text-gray-400">{total} au total</span>
+        <h1 className="text-2xl font-bold text-[#F3F4F6]">Utilisateurs</h1>
+        <span className="rounded-full bg-[#2A2D38] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
+          {total} au total
+        </span>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="text"
-          placeholder="Rechercher par email ou nom..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-        />
-        <select
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex-1">
+          <AdminSearchInput
+            placeholder="Rechercher par email ou nom..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          />
+        </div>
+        <AdminSelect
           value={planFilter}
           onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
-          className="px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-        >
-          <option value="all">Tous les plans</option>
-          <option value="free">Free</option>
-          <option value="pro">Pro</option>
-          <option value="business">Business</option>
-          <option value="enterprise">Enterprise</option>
-        </select>
+          options={[
+            { value: "all", label: "Tous les plans" },
+            { value: "free", label: "Free" },
+            { value: "pro", label: "Pro" },
+            { value: "business", label: "Business" },
+            { value: "enterprise", label: "Enterprise" },
+          ]}
+          className="sm:w-44"
+        />
       </div>
 
       {/* Table */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-gray-500 border-b border-gray-800">
-              <th className="px-4 py-3 font-medium">Utilisateur</th>
-              <th className="px-4 py-3 font-medium">Plan</th>
-              <th className="px-4 py-3 font-medium">Statut</th>
-              <th className="px-4 py-3 font-medium">Newsletters</th>
-              <th className="px-4 py-3 font-medium">Destinataires</th>
-              <th className="px-4 py-3 font-medium">Dernière NL</th>
-              <th className="px-4 py-3 font-medium">Inscription</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-gray-500">Chargement...</td>
-              </tr>
-            ) : users.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-gray-500">Aucun utilisateur trouvé.</td>
-              </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-300">
-                        {(user.full_name || user.email)[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="text-white text-sm">{user.full_name || "—"}</div>
-                        <div className="text-gray-500 text-xs">{user.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className="px-2 py-0.5 rounded text-xs font-medium"
-                      style={{
-                        backgroundColor: `${PLAN_COLORS[user.plan] || "#6B7280"}20`,
-                        color: PLAN_COLORS[user.plan] || "#6B7280",
-                      }}
-                    >
-                      {user.plan}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-gray-400">{getTrialStatus(user)}</td>
-                  <td className="px-4 py-3 text-white">{user.newsletters_sent}</td>
-                  <td className="px-4 py-3 text-white">{user.recipient_count}</td>
-                  <td className="px-4 py-3 text-xs text-gray-400">
-                    {user.last_newsletter_at
-                      ? new Date(user.last_newsletter_at).toLocaleDateString("fr-FR")
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-gray-400">
-                    {new Date(user.created_at).toLocaleDateString("fr-FR")}
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/admin/users/${user.id}`}
-                      className="text-blue-400 hover:text-blue-300 text-xs font-medium"
-                    >
-                      Détail
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AdminTable
+        columns={[
+          {
+            key: "user",
+            header: "Utilisateur",
+            render: (user: User) => (
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-xs font-bold text-teal-400">
+                  {(user.full_name || user.email)[0].toUpperCase()}
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-[#F3F4F6]">{user.full_name || "\u2014"}</div>
+                  <div className="text-xs text-[#6B7280]">{user.email}</div>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: "plan",
+            header: "Plan",
+            render: (user: User) => (
+              <StatusBadge
+                label={PLAN_LABELS[user.plan] || user.plan}
+                variant={getPlanBadgeVariant(user.plan)}
+              />
+            ),
+          },
+          {
+            key: "status",
+            header: "Statut",
+            render: (user: User) => {
+              const status = getTrialStatus(user);
+              if (!status) return <span className="text-xs text-[#6B7280]">\u2014</span>;
+              const isExpired = status === "Trial expiré";
+              return (
+                <StatusBadge
+                  label={status}
+                  variant={isExpired ? "red" : status === "Actif" ? "green" : "amber"}
+                />
+              );
+            },
+          },
+          {
+            key: "newsletters",
+            header: "Newsletters",
+            render: (user: User) => (
+              <span className="text-sm font-medium text-[#F3F4F6]">{user.newsletters_sent}</span>
+            ),
+          },
+          {
+            key: "recipients",
+            header: "Destinataires",
+            render: (user: User) => (
+              <span className="text-sm font-medium text-[#F3F4F6]">{user.recipient_count}</span>
+            ),
+          },
+          {
+            key: "last_nl",
+            header: "Dernière NL",
+            render: (user: User) => (
+              <span className="text-xs text-[#9CA3AF]">
+                {user.last_newsletter_at
+                  ? new Date(user.last_newsletter_at).toLocaleDateString("fr-FR")
+                  : "\u2014"}
+              </span>
+            ),
+          },
+          {
+            key: "created",
+            header: "Inscription",
+            render: (user: User) => (
+              <span className="text-xs text-[#9CA3AF]">
+                {new Date(user.created_at).toLocaleDateString("fr-FR")}
+              </span>
+            ),
+          },
+          {
+            key: "actions",
+            header: "Actions",
+            render: (user: User) => (
+              <Link
+                href={`/admin/users/${user.id}`}
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-teal-400 transition-colors hover:bg-teal-500/10"
+              >
+                <EyeIcon size={14} />
+                Détail
+              </Link>
+            ),
+          },
+        ]}
+        data={users}
+        keyExtractor={(user: User) => user.id}
+        loading={loading}
+        emptyMessage="Aucun utilisateur trouvé."
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <button
+        <div className="flex items-center justify-center gap-3">
+          <AdminButton
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1.5 bg-gray-800 rounded text-sm text-gray-300 disabled:opacity-50 hover:bg-gray-700"
+            icon={<ChevronLeftIcon size={14} />}
           >
             Précédent
-          </button>
-          <span className="text-sm text-gray-400">
-            Page {page} / {totalPages}
+          </AdminButton>
+          <span className="text-sm text-[#6B7280]">
+            Page <span className="font-medium text-[#9CA3AF]">{page}</span> / {totalPages}
           </span>
-          <button
+          <AdminButton
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-3 py-1.5 bg-gray-800 rounded text-sm text-gray-300 disabled:opacity-50 hover:bg-gray-700"
+            icon={<ChevronRightIcon size={14} />}
           >
             Suivant
-          </button>
+          </AdminButton>
         </div>
       )}
     </div>

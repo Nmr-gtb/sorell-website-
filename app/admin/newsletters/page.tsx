@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import AdminTable from "@/components/admin/AdminTable";
+import StatusBadge, { getStatusBadgeVariant } from "@/components/admin/StatusBadge";
+import { AdminSelect } from "@/components/admin/AdminInput";
+import AdminButton from "@/components/admin/AdminButton";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/admin/AdminIcons";
 
 interface Newsletter {
   id: string;
@@ -17,6 +22,20 @@ interface Newsletter {
   clicks: number;
   open_rate: number;
   click_rate: number;
+}
+
+function RateBar({ rate, color }: { rate: number; color: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[#2A2D38]">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          style={{ width: `${Math.min(rate, 100)}%` }}
+        />
+      </div>
+      <span className="text-xs text-[#6B7280]">{rate}%</span>
+    </div>
+  );
 }
 
 export default function AdminNewslettersPage() {
@@ -50,91 +69,127 @@ export default function AdminNewslettersPage() {
   const totalPages = Math.ceil(total / 25);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Newsletters</h1>
+        <h1 className="text-2xl font-bold text-[#F3F4F6]">Newsletters</h1>
         <div className="flex items-center gap-3">
-          <select
+          <AdminSelect
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            className="px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="">Tous les statuts</option>
-            <option value="sent">Envoyées</option>
-            <option value="draft">Brouillons</option>
-          </select>
-          <span className="text-sm text-gray-400">{total} au total</span>
+            options={[
+              { value: "", label: "Tous les statuts" },
+              { value: "sent", label: "Envoyées" },
+              { value: "draft", label: "Brouillons" },
+            ]}
+            className="w-44"
+          />
+          <span className="rounded-full bg-[#2A2D38] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
+            {total} au total
+          </span>
         </div>
       </div>
 
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-gray-500 border-b border-gray-800">
-              <th className="px-4 py-3 font-medium">Utilisateur</th>
-              <th className="px-4 py-3 font-medium">Sujet</th>
-              <th className="px-4 py-3 font-medium">Statut</th>
-              <th className="px-4 py-3 font-medium">Dest.</th>
-              <th className="px-4 py-3 font-medium">Ouvertures</th>
-              <th className="px-4 py-3 font-medium">Clics</th>
-              <th className="px-4 py-3 font-medium">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500">Chargement...</td></tr>
-            ) : newsletters.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500">Aucune newsletter.</td></tr>
-            ) : (
-              newsletters.map((nl) => (
-                <tr key={nl.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/users/${nl.user_id}`} className="text-blue-400 hover:text-blue-300 text-xs">
-                      {nl.user_name || nl.user_email}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3 text-white max-w-[300px] truncate">{nl.subject || "Sans sujet"}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded text-xs ${nl.status === "sent" ? "bg-green-900/30 text-green-400" : "bg-yellow-900/30 text-yellow-400"}`}>
-                      {nl.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400">{nl.recipient_count}</td>
-                  <td className="px-4 py-3 text-gray-400">
-                    {nl.opens} <span className="text-gray-600">({nl.open_rate}%)</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400">
-                    {nl.clicks} <span className="text-gray-600">({nl.click_rate}%)</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
-                    {nl.sent_at
-                      ? new Date(nl.sent_at).toLocaleDateString("fr-FR")
-                      : new Date(nl.created_at).toLocaleDateString("fr-FR")}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <AdminTable
+        columns={[
+          {
+            key: "user",
+            header: "Utilisateur",
+            render: (nl: Newsletter) => (
+              <Link
+                href={`/admin/users/${nl.user_id}`}
+                className="text-xs font-medium text-teal-400 transition-colors hover:text-teal-300"
+              >
+                {nl.user_name || nl.user_email}
+              </Link>
+            ),
+          },
+          {
+            key: "subject",
+            header: "Sujet",
+            render: (nl: Newsletter) => (
+              <span className="block max-w-[300px] truncate text-sm font-medium text-[#F3F4F6]">
+                {nl.subject || "Sans sujet"}
+              </span>
+            ),
+          },
+          {
+            key: "status",
+            header: "Statut",
+            render: (nl: Newsletter) => (
+              <StatusBadge
+                label={nl.status}
+                variant={getStatusBadgeVariant(nl.status)}
+              />
+            ),
+          },
+          {
+            key: "recipients",
+            header: "Dest.",
+            render: (nl: Newsletter) => (
+              <span className="text-sm text-[#9CA3AF]">{nl.recipient_count}</span>
+            ),
+          },
+          {
+            key: "opens",
+            header: "Ouvertures",
+            render: (nl: Newsletter) => (
+              <div>
+                <span className="text-sm font-medium text-[#F3F4F6]">{nl.opens}</span>
+                <RateBar rate={nl.open_rate} color="bg-teal-400" />
+              </div>
+            ),
+          },
+          {
+            key: "clicks",
+            header: "Clics",
+            render: (nl: Newsletter) => (
+              <div>
+                <span className="text-sm font-medium text-[#F3F4F6]">{nl.clicks}</span>
+                <RateBar rate={nl.click_rate} color="bg-purple-400" />
+              </div>
+            ),
+          },
+          {
+            key: "date",
+            header: "Date",
+            render: (nl: Newsletter) => (
+              <span className="text-xs text-[#9CA3AF]">
+                {nl.sent_at
+                  ? new Date(nl.sent_at).toLocaleDateString("fr-FR")
+                  : new Date(nl.created_at).toLocaleDateString("fr-FR")}
+              </span>
+            ),
+          },
+        ]}
+        data={newsletters}
+        keyExtractor={(nl: Newsletter) => nl.id}
+        loading={loading}
+        emptyMessage="Aucune newsletter."
+      />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <button
+        <div className="flex items-center justify-center gap-3">
+          <AdminButton
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1.5 bg-gray-800 rounded text-sm text-gray-300 disabled:opacity-50 hover:bg-gray-700"
+            icon={<ChevronLeftIcon size={14} />}
           >
             Précédent
-          </button>
-          <span className="text-sm text-gray-400">Page {page} / {totalPages}</span>
-          <button
+          </AdminButton>
+          <span className="text-sm text-[#6B7280]">
+            Page <span className="font-medium text-[#9CA3AF]">{page}</span> / {totalPages}
+          </span>
+          <AdminButton
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-3 py-1.5 bg-gray-800 rounded text-sm text-gray-300 disabled:opacity-50 hover:bg-gray-700"
+            icon={<ChevronRightIcon size={14} />}
           >
             Suivant
-          </button>
+          </AdminButton>
         </div>
       )}
     </div>

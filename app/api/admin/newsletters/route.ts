@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedAdmin } from "@/lib/admin/auth";
+import { getAuthenticatedAdmin, isValidUUID } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET(request: Request) {
   const admin = getAuthenticatedAdmin(request);
   if (!admin) {
-    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
   }
 
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "25");
+    const page = Math.max(1, Math.min(parseInt(searchParams.get("page") || "1") || 1, 1000));
+    const limit = Math.max(1, Math.min(parseInt(searchParams.get("limit") || "25") || 25, 100));
     const userId = searchParams.get("userId");
     const status = searchParams.get("status");
     const offset = (page - 1) * limit;
+
+    if (userId && !isValidUUID(userId)) {
+      return NextResponse.json({ error: "Identifiant utilisateur invalide." }, { status: 400 });
+    }
+
+    const VALID_STATUSES = ["sent", "draft", "failed"];
+    if (status && !VALID_STATUSES.includes(status)) {
+      return NextResponse.json({ error: "Statut invalide." }, { status: 400 });
+    }
 
     let query = supabaseAdmin
       .from("newsletters")

@@ -3,6 +3,18 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import AdminCard from "@/components/admin/AdminCard";
+import AdminButton from "@/components/admin/AdminButton";
+import AdminTable from "@/components/admin/AdminTable";
+import StatusBadge, { getPlanBadgeVariant, getStatusBadgeVariant } from "@/components/admin/StatusBadge";
+import { AdminSelect } from "@/components/admin/AdminInput";
+import { SkeletonDashboard } from "@/components/admin/Skeleton";
+import {
+  ArrowLeftIcon,
+  TrashIcon,
+  ExternalLinkIcon,
+  AlertTriangleIcon,
+} from "@/components/admin/AdminIcons";
 
 interface UserDetail {
   profile: {
@@ -43,6 +55,22 @@ interface UserDetail {
   referrals: { id: string; code: string; status: string; created_at: string }[];
 }
 
+const PLAN_LABELS: Record<string, string> = {
+  free: "Free",
+  pro: "Pro",
+  business: "Business",
+  enterprise: "Enterprise",
+};
+
+const TAB_LIST = [
+  { key: "overview", label: "Config" },
+  { key: "newsletters", label: "Newsletters" },
+  { key: "lifecycle", label: "Lifecycle" },
+  { key: "events", label: "Events" },
+] as const;
+
+type TabKey = typeof TAB_LIST[number]["key"];
+
 export default function AdminUserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -50,7 +78,7 @@ export default function AdminUserDetailPage() {
   const [loading, setLoading] = useState(true);
   const [editPlan, setEditPlan] = useState("");
   const [saving, setSaving] = useState(false);
-  const [tab, setTab] = useState<"overview" | "newsletters" | "lifecycle" | "events">("overview");
+  const [tab, setTab] = useState<TabKey>("overview");
 
   useEffect(() => {
     fetch(`/api/admin/users/${id}`, { credentials: "include" })
@@ -93,243 +121,335 @@ export default function AdminUserDetailPage() {
     }
   }
 
-  if (loading) return <div className="text-gray-400">Chargement...</div>;
-  if (!data?.profile) return <div className="text-red-400">Utilisateur non trouvé.</div>;
+  if (loading) return <SkeletonDashboard />;
+  if (!data?.profile) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="rounded-xl border border-red-800/50 bg-red-950/20 px-6 py-4 text-sm text-red-400">
+          Utilisateur non trouvé.
+        </div>
+      </div>
+    );
+  }
 
   const { profile, config, newsletters, recipients, lifecycleEmails, events } = data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/admin/users" className="text-gray-400 hover:text-white text-sm">&larr; Retour</Link>
-        <h1 className="text-2xl font-bold text-white">{profile.full_name || profile.email}</h1>
+        <Link
+          href="/admin/users"
+          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[#6B7280] transition-colors hover:bg-[#1E2030] hover:text-[#F3F4F6]"
+        >
+          <ArrowLeftIcon size={16} />
+          Retour
+        </Link>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500/10 text-sm font-bold text-teal-400">
+            {(profile.full_name || profile.email)[0].toUpperCase()}
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-[#F3F4F6]">{profile.full_name || profile.email}</h1>
+            <span className="text-xs text-[#6B7280]">{profile.email}</span>
+          </div>
+        </div>
       </div>
 
       {/* Profile card */}
-      <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <div className="text-xs text-gray-500">Email</div>
-          <div className="text-white text-sm">{profile.email}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Plan</div>
-          <div className="flex items-center gap-2">
-            <select
-              value={editPlan}
-              onChange={(e) => setEditPlan(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white"
-            >
-              <option value="free">Free</option>
-              <option value="pro">Pro</option>
-              <option value="business">Business</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
-            {editPlan !== profile.plan && (
-              <button
-                onClick={handlePlanChange}
-                disabled={saving}
-                className="px-2 py-1 bg-blue-600 rounded text-xs text-white hover:bg-blue-700"
-              >
-                {saving ? "..." : "Sauver"}
-              </button>
-            )}
+      <AdminCard>
+        <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <InfoField label="Email" value={profile.email} />
+          <div>
+            <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Plan</div>
+            <div className="flex items-center gap-2">
+              <AdminSelect
+                value={editPlan}
+                onChange={(e) => setEditPlan(e.target.value)}
+                options={[
+                  { value: "free", label: "Free" },
+                  { value: "pro", label: "Pro" },
+                  { value: "business", label: "Business" },
+                  { value: "enterprise", label: "Enterprise" },
+                ]}
+                className="!w-auto"
+              />
+              {editPlan !== profile.plan && (
+                <AdminButton
+                  size="sm"
+                  onClick={handlePlanChange}
+                  loading={saving}
+                >
+                  Sauver
+                </AdminButton>
+              )}
+            </div>
           </div>
+          <InfoField
+            label="Inscription"
+            value={new Date(profile.created_at).toLocaleDateString("fr-FR")}
+          />
+          <InfoField
+            label="Trial"
+            value={
+              profile.trial_ends_at
+                ? new Date(profile.trial_ends_at).toLocaleDateString("fr-FR")
+                : "\u2014"
+            }
+          />
+          <InfoField
+            label="Stripe ID"
+            value={profile.stripe_customer_id || "\u2014"}
+            mono
+          />
+          <InfoField
+            label="Code parrainage"
+            value={profile.referral_code || "\u2014"}
+          />
+          <InfoField
+            label="Newsletters envoyées"
+            value={String(newsletters.filter((n) => n.status === "sent").length)}
+          />
+          <InfoField
+            label="Destinataires"
+            value={String(recipients.length)}
+          />
         </div>
-        <div>
-          <div className="text-xs text-gray-500">Inscription</div>
-          <div className="text-white text-sm">{new Date(profile.created_at).toLocaleDateString("fr-FR")}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Trial</div>
-          <div className="text-white text-sm">
-            {profile.trial_ends_at
-              ? new Date(profile.trial_ends_at).toLocaleDateString("fr-FR")
-              : "—"}
-          </div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Stripe ID</div>
-          <div className="text-white text-sm font-mono text-xs">{profile.stripe_customer_id || "—"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Referral Code</div>
-          <div className="text-white text-sm">{profile.referral_code || "—"}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Newsletters envoyées</div>
-          <div className="text-white text-sm">{newsletters.filter((n) => n.status === "sent").length}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500">Destinataires</div>
-          <div className="text-white text-sm">{recipients.length}</div>
-        </div>
-      </div>
+      </AdminCard>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-900 rounded-lg p-1 border border-gray-800 w-fit">
-        {(["overview", "newsletters", "lifecycle", "events"] as const).map((t) => (
+      <div className="flex gap-1 rounded-lg border border-[#2A2D38] bg-[#161820] p-1 w-fit">
+        {TAB_LIST.map((t) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              tab === t ? "bg-gray-800 text-white" : "text-gray-400 hover:text-gray-200"
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all duration-150 ${
+              tab === t.key
+                ? "bg-teal-500/10 text-teal-400 shadow-sm"
+                : "text-[#6B7280] hover:text-[#9CA3AF]"
             }`}
           >
-            {t === "overview" ? "Config" : t === "newsletters" ? "Newsletters" : t === "lifecycle" ? "Lifecycle" : "Events"}
+            {t.label}
           </button>
         ))}
       </div>
 
       {/* Tab content */}
       {tab === "overview" && config && (
-        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 space-y-4">
-          <h2 className="text-lg font-semibold text-white">Configuration Newsletter</h2>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">Topics : </span>
-              <span className="text-white">{[...(config.topics || []), ...(config.custom_topics || [])].join(", ") || "—"}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Fréquence : </span>
-              <span className="text-white">{config.frequency || "—"} — {config.send_day || "—"} à {config.send_hour}h</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Sources : </span>
-              <span className="text-white">{config.sources || "—"}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Couleur : </span>
-              <span className="text-white">{config.brand_color || "défaut"}</span>
-            </div>
+        <AdminCard>
+          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">Configuration Newsletter</h2>
+          <div className="grid grid-cols-2 gap-5 text-sm">
+            <InfoField
+              label="Topics"
+              value={[...(config.topics || []), ...(config.custom_topics || [])].join(", ") || "\u2014"}
+            />
+            <InfoField
+              label="Fréquence"
+              value={`${config.frequency || "\u2014"} - ${config.send_day || "\u2014"} à ${config.send_hour}h`}
+            />
+            <InfoField label="Sources" value={config.sources || "\u2014"} />
+            <InfoField label="Couleur" value={config.brand_color || "défaut"} />
           </div>
           {config.custom_brief && (
-            <div>
-              <span className="text-gray-500 text-sm">Brief custom : </span>
-              <p className="text-white text-sm mt-1 bg-gray-800 rounded p-3">{config.custom_brief}</p>
+            <div className="mt-5">
+              <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Brief custom</div>
+              <p className="rounded-lg border border-[#2A2D38] bg-[#161820] p-4 text-sm text-[#9CA3AF]">
+                {config.custom_brief}
+              </p>
             </div>
           )}
-          <div>
-            <span className="text-gray-500 text-sm">Destinataires : </span>
-            <div className="flex flex-wrap gap-2 mt-1">
+          <div className="mt-5">
+            <div className="mb-2 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Destinataires</div>
+            <div className="flex flex-wrap gap-2">
               {recipients.map((r) => (
-                <span key={r.id} className="px-2 py-1 bg-gray-800 rounded text-xs text-gray-300">{r.email}</span>
+                <span
+                  key={r.id}
+                  className="rounded-md border border-[#2A2D38] bg-[#161820] px-2.5 py-1 text-xs text-[#9CA3AF]"
+                >
+                  {r.email}
+                </span>
               ))}
             </div>
           </div>
           <Link
             href={`/admin/prompts?userId=${id}`}
-            className="inline-block mt-2 text-blue-400 hover:text-blue-300 text-sm"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-teal-400 transition-colors hover:text-teal-300"
           >
-            Voir le prompt complet &rarr;
+            <ExternalLinkIcon size={14} />
+            Voir le prompt complet
           </Link>
-        </div>
+        </AdminCard>
       )}
 
       {tab === "overview" && !config && (
-        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-          <p className="text-gray-400 text-sm">Cet utilisateur n'a pas encore configuré sa newsletter.</p>
-        </div>
+        <AdminCard>
+          <p className="text-sm text-[#6B7280]">Cet utilisateur n&apos;a pas encore configuré sa newsletter.</p>
+        </AdminCard>
       )}
 
       {tab === "newsletters" && (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-500 border-b border-gray-800">
-                <th className="px-4 py-3 font-medium">Sujet</th>
-                <th className="px-4 py-3 font-medium">Statut</th>
-                <th className="px-4 py-3 font-medium">Destinataires</th>
-                <th className="px-4 py-3 font-medium">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {newsletters.length === 0 ? (
-                <tr><td colSpan={4} className="px-4 py-6 text-center text-gray-500">Aucune newsletter.</td></tr>
-              ) : newsletters.map((nl) => (
-                <tr key={nl.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                  <td className="px-4 py-3 text-white">{nl.subject || "Sans sujet"}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded text-xs ${nl.status === "sent" ? "bg-green-900/30 text-green-400" : "bg-yellow-900/30 text-yellow-400"}`}>
-                      {nl.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400">{nl.recipient_count || 0}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
-                    {nl.sent_at ? new Date(nl.sent_at).toLocaleDateString("fr-FR") : new Date(nl.created_at).toLocaleDateString("fr-FR")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminTable
+          columns={[
+            {
+              key: "subject",
+              header: "Sujet",
+              render: (nl) => (
+                <span className="text-sm font-medium text-[#F3F4F6]">
+                  {nl.subject || "Sans sujet"}
+                </span>
+              ),
+            },
+            {
+              key: "status",
+              header: "Statut",
+              render: (nl) => (
+                <StatusBadge
+                  label={nl.status}
+                  variant={getStatusBadgeVariant(nl.status)}
+                />
+              ),
+            },
+            {
+              key: "recipients",
+              header: "Destinataires",
+              render: (nl) => (
+                <span className="text-sm text-[#9CA3AF]">{nl.recipient_count || 0}</span>
+              ),
+            },
+            {
+              key: "date",
+              header: "Date",
+              render: (nl) => (
+                <span className="text-xs text-[#9CA3AF]">
+                  {nl.sent_at
+                    ? new Date(nl.sent_at).toLocaleDateString("fr-FR")
+                    : new Date(nl.created_at).toLocaleDateString("fr-FR")}
+                </span>
+              ),
+            },
+          ]}
+          data={newsletters}
+          keyExtractor={(nl) => nl.id}
+          emptyMessage="Aucune newsletter."
+        />
       )}
 
       {tab === "lifecycle" && (
-        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-          <h2 className="text-lg font-semibold text-white mb-4">Timeline Lifecycle Emails</h2>
+        <AdminCard>
+          <h2 className="mb-5 text-base font-semibold text-[#F3F4F6]">Timeline Lifecycle Emails</h2>
           {lifecycleEmails.length === 0 ? (
-            <p className="text-gray-500 text-sm">Aucun email lifecycle envoyé.</p>
+            <p className="text-sm text-[#6B7280]">Aucun email lifecycle envoyé.</p>
           ) : (
-            <div className="space-y-3">
+            <div className="relative space-y-0">
               {lifecycleEmails.map((le, i) => (
-                <div key={i} className="flex items-center gap-4 text-sm">
-                  <div className="w-2 h-2 rounded-full bg-blue-400" />
-                  <span className="text-white font-medium min-w-[180px]">{le.email_type}</span>
-                  <span className="text-gray-400 text-xs">
-                    {new Date(le.sent_at).toLocaleDateString("fr-FR")} à {new Date(le.sent_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                  </span>
+                <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
+                  {/* Timeline line */}
+                  {i < lifecycleEmails.length - 1 && (
+                    <div className="absolute left-[7px] top-4 h-full w-px bg-[#2A2D38]" />
+                  )}
+                  {/* Dot */}
+                  <div className="relative z-10 mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                    <div className="h-3 w-3 rounded-full bg-teal-400 ring-4 ring-[#1A1C25]" />
+                  </div>
+                  {/* Content */}
+                  <div className="flex flex-1 items-center justify-between rounded-lg border border-[#2A2D38] bg-[#161820] px-4 py-3">
+                    <span className="text-sm font-medium text-[#F3F4F6]">{le.email_type}</span>
+                    <span className="text-xs text-[#6B7280]">
+                      {new Date(le.sent_at).toLocaleDateString("fr-FR")} à{" "}
+                      {new Date(le.sent_at).toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </AdminCard>
       )}
 
       {tab === "events" && (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-500 border-b border-gray-800">
-                <th className="px-4 py-3 font-medium">Type</th>
-                <th className="px-4 py-3 font-medium">Email destinataire</th>
-                <th className="px-4 py-3 font-medium">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.length === 0 ? (
-                <tr><td colSpan={3} className="px-4 py-6 text-center text-gray-500">Aucun événement.</td></tr>
-              ) : events.map((e, i) => (
-                <tr key={i} className="border-b border-gray-800/50">
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded text-xs ${
-                      e.event_type === "open" ? "bg-green-900/30 text-green-400" :
-                      e.event_type === "click" ? "bg-blue-900/30 text-blue-400" :
-                      "bg-red-900/30 text-red-400"
-                    }`}>
-                      {e.event_type}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-400">{e.recipient_email}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
-                    {new Date(e.created_at).toLocaleString("fr-FR")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminTable
+          columns={[
+            {
+              key: "type",
+              header: "Type",
+              render: (e) => (
+                <StatusBadge
+                  label={e.event_type}
+                  variant={getStatusBadgeVariant(e.event_type)}
+                />
+              ),
+            },
+            {
+              key: "email",
+              header: "Email destinataire",
+              render: (e) => (
+                <span className="text-sm text-[#9CA3AF]">{e.recipient_email}</span>
+              ),
+            },
+            {
+              key: "date",
+              header: "Date",
+              render: (e) => (
+                <span className="text-xs text-[#9CA3AF]">
+                  {new Date(e.created_at).toLocaleString("fr-FR")}
+                </span>
+              ),
+            },
+          ]}
+          data={events}
+          keyExtractor={(_, i) => String(i)}
+          emptyMessage="Aucun événement."
+        />
       )}
 
       {/* Danger zone */}
-      <div className="bg-red-950/30 rounded-xl p-6 border border-red-900/50">
-        <h2 className="text-lg font-semibold text-red-400 mb-2">Zone dangereuse</h2>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm text-white font-medium"
-        >
-          Supprimer cet utilisateur
-        </button>
+      <AdminCard variant="danger">
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-red-500/10">
+            <AlertTriangleIcon size={20} className="text-red-400" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold text-red-400">Zone dangereuse</h2>
+            <p className="mt-1 text-sm text-[#6B7280]">
+              La suppression est irréversible. Toutes les données seront perdues.
+            </p>
+            <AdminButton
+              variant="danger"
+              size="sm"
+              onClick={handleDelete}
+              icon={<TrashIcon size={14} />}
+              className="mt-3"
+            >
+              Supprimer cet utilisateur
+            </AdminButton>
+          </div>
+        </div>
+      </AdminCard>
+    </div>
+  );
+}
+
+function InfoField({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div>
+      <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">
+        {label}
+      </div>
+      <div
+        className={`text-sm text-[#F3F4F6] ${mono ? "font-mono text-xs" : ""}`}
+      >
+        {value}
       </div>
     </div>
   );

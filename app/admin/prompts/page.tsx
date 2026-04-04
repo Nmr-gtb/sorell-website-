@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import AdminCard from "@/components/admin/AdminCard";
+import { AdminSelect } from "@/components/admin/AdminInput";
+import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
+import { SkeletonTable } from "@/components/admin/Skeleton";
+import AdminButton from "@/components/admin/AdminButton";
+import { CopyIcon, CheckIcon } from "@/components/admin/AdminIcons";
 
 interface PromptData {
   profile: { id: string; email: string; full_name: string; plan: string };
@@ -38,6 +44,7 @@ export default function AdminPromptsPage() {
   const [promptData, setPromptData] = useState<PromptData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   // Load user list
   useEffect(() => {
@@ -64,126 +71,206 @@ export default function AdminPromptsPage() {
       .finally(() => setLoading(false));
   }, [selectedUserId]);
 
+  async function handleCopyPrompt() {
+    if (!promptData?.prompt) return;
+    try {
+      await navigator.clipboard.writeText(promptData.prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard not available
+    }
+  }
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Prompts Utilisateurs</h1>
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
+      <h1 className="text-2xl font-bold text-[#F3F4F6]">Prompts Utilisateurs</h1>
 
       {/* User selector */}
-      <div className="flex items-center gap-3">
-        <label className="text-sm text-gray-400">Sélectionner un utilisateur :</label>
-        {loadingUsers ? (
-          <span className="text-gray-500 text-sm">Chargement...</span>
-        ) : (
-          <select
-            value={selectedUserId}
-            onChange={(e) => setSelectedUserId(e.target.value)}
-            className="flex-1 max-w-md px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="">-- Choisir --</option>
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.full_name || u.email} ({u.email})
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
+      <AdminCard padding="sm">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-[#6B7280]">Utilisateur :</span>
+          {loadingUsers ? (
+            <div className="h-9 w-64 animate-pulse rounded-lg bg-[#2A2D38]" />
+          ) : (
+            <AdminSelect
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              options={[
+                { value: "", label: "-- Choisir un utilisateur --" },
+                ...users.map((u) => ({
+                  value: u.id,
+                  label: `${u.full_name || u.email} (${u.email})`,
+                })),
+              ]}
+              className="max-w-md flex-1"
+            />
+          )}
+        </div>
+      </AdminCard>
 
-      {loading && <div className="text-gray-400 text-sm">Chargement du prompt...</div>}
+      {loading && <SkeletonTable rows={3} cols={2} />}
 
       {promptData && !loading && (
         <div className="space-y-6">
           {/* User info */}
-          <div className="bg-gray-900 rounded-xl p-4 border border-gray-800 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold text-gray-300">
-              {(promptData.profile.full_name || promptData.profile.email)[0].toUpperCase()}
+          <AdminCard padding="sm">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-sm font-bold text-teal-400">
+                {(promptData.profile.full_name || promptData.profile.email)[0].toUpperCase()}
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-[#F3F4F6]">
+                  {promptData.profile.full_name || promptData.profile.email}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+                  {promptData.profile.email}
+                  <StatusBadge
+                    label={promptData.profile.plan}
+                    variant={getPlanBadgeVariant(promptData.profile.plan)}
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-white font-medium">{promptData.profile.full_name || promptData.profile.email}</div>
-              <div className="text-gray-500 text-xs">{promptData.profile.email} — {promptData.profile.plan}</div>
-            </div>
-          </div>
+          </AdminCard>
 
           {promptData.message && !promptData.config && (
-            <div className="bg-yellow-900/20 border border-yellow-800 rounded-xl p-4 text-yellow-300 text-sm">
+            <div className="rounded-xl border border-yellow-800/50 bg-yellow-950/20 px-5 py-4 text-sm text-yellow-400">
               {promptData.message}
             </div>
           )}
 
           {/* Config summary */}
           {promptData.config && (
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-lg font-semibold text-white mb-3">Configuration</h2>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+            <AdminCard>
+              <h2 className="mb-4 text-base font-semibold text-[#F3F4F6]">Configuration</h2>
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Topics : </span>
-                  <span className="text-white">{[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].join(", ")}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Topics</span>
+                  <p className="mt-1 text-[#F3F4F6]">
+                    {[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].join(", ")}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-gray-500">Sources : </span>
-                  <span className="text-white">{promptData.config.sources || "Aucune"}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Sources</span>
+                  <p className="mt-1 text-[#F3F4F6]">{promptData.config.sources || "Aucune"}</p>
                 </div>
                 <div>
-                  <span className="text-gray-500">Fréquence : </span>
-                  <span className="text-white">{promptData.config.frequency}</span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Fréquence</span>
+                  <p className="mt-1 text-[#F3F4F6]">{promptData.config.frequency}</p>
                 </div>
                 {promptData.config.custom_brief && (
                   <div className="col-span-2">
-                    <span className="text-gray-500">Brief : </span>
-                    <span className="text-white">{promptData.config.custom_brief}</span>
+                    <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Brief</span>
+                    <p className="mt-1 text-[#F3F4F6]">{promptData.config.custom_brief}</p>
                   </div>
                 )}
               </div>
-            </div>
+            </AdminCard>
           )}
 
           {/* Full prompt */}
           {promptData.prompt && (
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-lg font-semibold text-white mb-3">Prompt complet (envoyé à Claude)</h2>
-              <pre className="bg-gray-950 rounded-lg p-4 text-xs text-gray-300 overflow-x-auto whitespace-pre-wrap max-h-[500px] overflow-y-auto border border-gray-800">
-                {promptData.prompt}
-              </pre>
-            </div>
+            <AdminCard>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-base font-semibold text-[#F3F4F6]">
+                  Prompt complet (envoyé à Claude)
+                </h2>
+                <AdminButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopyPrompt}
+                  icon={copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+                >
+                  {copied ? "Copié" : "Copier"}
+                </AdminButton>
+              </div>
+              <div className="relative overflow-hidden rounded-lg border border-[#2A2D38] bg-[#0F1117]">
+                <div className="flex items-center gap-2 border-b border-[#2A2D38] px-4 py-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+                  <span className="ml-2 text-[10px] text-[#6B7280]">system-prompt.txt</span>
+                </div>
+                <pre className="max-h-[500px] overflow-y-auto p-4 text-xs leading-relaxed text-[#9CA3AF] whitespace-pre-wrap">
+                  {promptData.prompt}
+                </pre>
+              </div>
+            </AdminCard>
           )}
 
-          {/* Previous titles (anti-duplication) */}
+          {/* Previous titles */}
           {promptData.previousTitles && promptData.previousTitles.length > 0 && (
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-lg font-semibold text-white mb-3">Titres précédents (anti-duplication)</h2>
-              <ul className="space-y-1">
+            <AdminCard>
+              <h2 className="mb-4 text-base font-semibold text-[#F3F4F6]">
+                Titres précédents (anti-duplication)
+              </h2>
+              <ul className="space-y-2">
                 {promptData.previousTitles.map((t, i) => (
-                  <li key={i} className="text-sm text-gray-400">• {t}</li>
+                  <li
+                    key={i}
+                    className="flex items-center gap-2 rounded-lg border border-[#2A2D38] bg-[#161820] px-3 py-2 text-sm text-[#9CA3AF]"
+                  >
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-[#2A2D38] text-[10px] font-bold text-[#6B7280]">
+                      {i + 1}
+                    </span>
+                    {t}
+                  </li>
                 ))}
               </ul>
-            </div>
+            </AdminCard>
           )}
 
           {/* Last generation */}
           {promptData.lastGeneration && (
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-lg font-semibold text-white mb-3">Dernière génération</h2>
-              <div className="text-sm text-gray-400 mb-2">
-                <span className="text-gray-500">Sujet : </span>
-                <span className="text-white">{promptData.lastGeneration.subject}</span>
-                <span className="text-gray-600 ml-2">
+            <AdminCard>
+              <h2 className="mb-4 text-base font-semibold text-[#F3F4F6]">Dernière génération</h2>
+              <div className="mb-3 flex items-center gap-3 text-sm">
+                <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Sujet</span>
+                <span className="text-[#F3F4F6]">{promptData.lastGeneration.subject}</span>
+                <span className="text-xs text-[#6B7280]">
                   ({new Date(promptData.lastGeneration.created_at).toLocaleDateString("fr-FR")})
                 </span>
               </div>
-              <pre className="bg-gray-950 rounded-lg p-4 text-xs text-gray-300 overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto border border-gray-800">
-                {typeof promptData.lastGeneration.content === "string"
-                  ? promptData.lastGeneration.content
-                  : JSON.stringify(promptData.lastGeneration.content, null, 2)}
-              </pre>
-            </div>
+              <div className="relative overflow-hidden rounded-lg border border-[#2A2D38] bg-[#0F1117]">
+                <div className="flex items-center gap-2 border-b border-[#2A2D38] px-4 py-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+                  <span className="ml-2 text-[10px] text-[#6B7280]">output.json</span>
+                </div>
+                <pre className="max-h-[400px] overflow-y-auto p-4 text-xs leading-relaxed text-[#9CA3AF] whitespace-pre-wrap">
+                  {typeof promptData.lastGeneration.content === "string"
+                    ? promptData.lastGeneration.content
+                    : JSON.stringify(promptData.lastGeneration.content, null, 2)}
+                </pre>
+              </div>
+            </AdminCard>
           )}
         </div>
       )}
 
       {!selectedUserId && !loading && (
-        <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 text-center">
-          <p className="text-gray-500">Sélectionne un utilisateur pour voir son prompt de génération.</p>
-        </div>
+        <AdminCard className="flex flex-col items-center justify-center py-16">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#2A2D38]">
+            <svg
+              className="h-6 w-6 text-[#6B7280]"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8V4H8M12 8V4h4M12 8v4m0 4v4m0-4H8m4 0h4"
+              />
+            </svg>
+          </div>
+          <p className="mt-4 text-sm text-[#6B7280]">
+            Sélectionne un utilisateur pour voir son prompt de génération.
+          </p>
+        </AdminCard>
       )}
     </div>
   );

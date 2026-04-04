@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedAdmin } from "@/lib/admin/auth";
+import { getAuthenticatedAdmin, isValidUUID } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { buildNewsletterPrompt, extractPreviousTitles } from "@/lib/newsletter-generator";
 
@@ -9,10 +9,14 @@ export async function GET(
 ) {
   const admin = getAuthenticatedAdmin(request);
   if (!admin) {
-    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+    return NextResponse.json({ error: "Non autorise." }, { status: 401 });
   }
 
   const { userId } = await params;
+
+  if (!isValidUUID(userId)) {
+    return NextResponse.json({ error: "Identifiant invalide." }, { status: 400 });
+  }
 
   try {
     // Get user profile

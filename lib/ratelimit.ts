@@ -47,3 +47,10 @@ export const chatAnonDailyLimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(40, "1 d"),
   prefix: "ratelimit:chat:anon:daily",
 });
+
+// Admin login rate limiting — 5 tentatives par 15 minutes par IP
+export const adminLoginRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "15 m"),
+  prefix: "ratelimit:admin:login",
+});

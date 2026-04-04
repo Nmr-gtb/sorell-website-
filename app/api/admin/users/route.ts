@@ -10,8 +10,8 @@ export async function GET(request: Request) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "25");
+    const page = Math.max(1, Math.min(parseInt(searchParams.get("page") || "1") || 1, 1000));
+    const limit = Math.max(1, Math.min(parseInt(searchParams.get("limit") || "25") || 25, 100));
     const plan = searchParams.get("plan");
     const search = searchParams.get("search");
     const offset = (page - 1) * limit;
@@ -22,12 +22,20 @@ export async function GET(request: Request) {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
+    const VALID_PLANS = ["free", "pro", "business", "enterprise"];
     if (plan && plan !== "all") {
+      if (!VALID_PLANS.includes(plan)) {
+        return NextResponse.json({ error: "Plan invalide." }, { status: 400 });
+      }
       query = query.eq("plan", plan);
     }
 
     if (search) {
-      query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`);
+      // Sanitize search input: remove PostgREST special characters to prevent injection
+      const sanitized = search.replace(/[%_\\(),.]/g, "").trim().slice(0, 100);
+      if (sanitized.length > 0) {
+        query = query.or(`email.ilike.%${sanitized}%,full_name.ilike.%${sanitized}%`);
+      }
     }
 
     const { data: users, count } = await query;

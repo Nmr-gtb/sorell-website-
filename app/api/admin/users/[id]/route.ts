@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedAdmin } from "@/lib/admin/auth";
+import { getAuthenticatedAdmin, isValidUUID } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+
+const VALID_PLANS = ["free", "pro", "business", "enterprise"] as const;
 
 export async function GET(
   request: Request,
@@ -12,6 +14,10 @@ export async function GET(
   }
 
   const { id } = await params;
+
+  if (!isValidUUID(id)) {
+    return NextResponse.json({ error: "Identifiant invalide." }, { status: 400 });
+  }
 
   try {
     // Profile
@@ -97,19 +103,32 @@ export async function PATCH(
 
   const { id } = await params;
 
+  if (!isValidUUID(id)) {
+    return NextResponse.json({ error: "Identifiant invalide." }, { status: 400 });
+  }
+
   try {
     const body = await request.json();
-    const allowedFields = ["plan", "full_name"];
     const updates: Record<string, string> = {};
 
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updates[field] = body[field];
+    // Validate plan against whitelist
+    if (body.plan !== undefined) {
+      if (typeof body.plan !== "string" || !VALID_PLANS.includes(body.plan as typeof VALID_PLANS[number])) {
+        return NextResponse.json({ error: "Plan invalide." }, { status: 400 });
       }
+      updates.plan = body.plan;
+    }
+
+    // Validate full_name
+    if (body.full_name !== undefined) {
+      if (typeof body.full_name !== "string" || body.full_name.length > 200) {
+        return NextResponse.json({ error: "Nom invalide." }, { status: 400 });
+      }
+      updates.full_name = body.full_name.trim();
     }
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "Aucun champ à mettre à jour." }, { status: 400 });
+      return NextResponse.json({ error: "Aucun champ a mettre a jour." }, { status: 400 });
     }
 
     const { data, error } = await supabaseAdmin
@@ -139,6 +158,10 @@ export async function DELETE(
   }
 
   const { id } = await params;
+
+  if (!isValidUUID(id)) {
+    return NextResponse.json({ error: "Identifiant invalide." }, { status: 400 });
+  }
 
   try {
     // Delete in order: events, newsletters, recipients, config, lifecycle, referrals, profile
