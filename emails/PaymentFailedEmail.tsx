@@ -4,6 +4,9 @@ import {
   Body,
   Container,
   Section,
+  Row,
+  Column,
+  Img,
   Text,
   Button,
   Link,
@@ -48,21 +51,46 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
             <Section
               style={{
                 backgroundColor: "#005058",
-                padding: "32px 40px",
-                textAlign: "center" as const,
+                padding: "24px 40px",
               }}
             >
-              <Text
-                style={{
-                  fontSize: "28px",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  letterSpacing: "1px",
-                  margin: 0,
-                }}
-              >
-                Sorell
-              </Text>
+              <Row>
+                <Column style={{ width: "40px" }}>
+                  <Img
+                    src="https://www.sorell.fr/icone.png"
+                    alt="Sorell"
+                    width="36"
+                    height="36"
+                    style={{ borderRadius: "4px" }}
+                  />
+                </Column>
+                <Column>
+                  <Text
+                    style={{
+                      fontSize: "22px",
+                      fontWeight: 700,
+                      color: "#ffffff",
+                      letterSpacing: "0.5px",
+                      margin: 0,
+                      paddingLeft: "12px",
+                    }}
+                  >
+                    Sorell
+                  </Text>
+                </Column>
+                <Column align="right">
+                  <Link
+                    href="https://sorell.fr"
+                    style={{
+                      fontSize: "12px",
+                      color: "#5EEAD4",
+                      textDecoration: "none",
+                    }}
+                  >
+                    sorell.fr
+                  </Link>
+                </Column>
+              </Row>
             </Section>
 
             {/* Body */}
@@ -150,24 +178,37 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
               style={{
                 backgroundColor: "#f9fafb",
                 padding: "24px 40px",
-                textAlign: "center" as const,
                 borderTop: "1px solid #e5e7eb",
               }}
             >
+              <Row>
+                <Column style={{ width: "32px" }}>
+                  <Img
+                    src="https://www.sorell.fr/icone.png"
+                    alt="Sorell"
+                    width="24"
+                    height="24"
+                  />
+                </Column>
+                <Column>
+                  <Text
+                    style={{
+                      margin: 0,
+                      fontSize: "13px",
+                      color: "#9ca3af",
+                      paddingLeft: "8px",
+                    }}
+                  >
+                    Sorell — Votre veille sectorielle automatisée
+                  </Text>
+                </Column>
+              </Row>
               <Text
                 style={{
-                  margin: 0,
-                  fontSize: "13px",
-                  color: "#9ca3af",
-                }}
-              >
-                Sorell - Votre veille sectorielle automatisée
-              </Text>
-              <Text
-                style={{
-                  margin: "8px 0 0",
+                  margin: "12px 0 0",
                   fontSize: "12px",
                   color: "#9ca3af",
+                  textAlign: "center" as const,
                 }}
               >
                 Cet email a été envoyé automatiquement suite à un problème de
