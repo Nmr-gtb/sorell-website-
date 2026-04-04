@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { render } from "@react-email/render";
+import { render } from "@react-email/components";
 import React from "react";
 import { NewsletterEmail } from "@/emails/NewsletterEmail";
 import { WelcomeEmail } from "@/emails/WelcomeEmail";
