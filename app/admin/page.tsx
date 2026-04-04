@@ -188,7 +188,7 @@ export default function AdminDashboardPage() {
                 outerRadius={80}
                 innerRadius={45}
                 strokeWidth={0}
-                label={({ name, value }: { name: string; value: number }) => `${name}: ${value}`}
+                label={({ name, value }: { name?: string; value?: number }) => `${name ?? ""}: ${value ?? 0}`}
               >
                 {pieData.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
