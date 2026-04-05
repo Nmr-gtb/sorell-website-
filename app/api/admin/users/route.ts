@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
     if (search) {
       // Sanitize search input: remove PostgREST special characters to prevent injection
-      const sanitized = search.replace(/[%_\\(),.]/g, "").trim().slice(0, 100);
+      const sanitized = search.replace(/[^a-zA-Z0-9À-ÿ@.\-+\s]/g, "").trim().slice(0, 100);
       if (sanitized.length > 0) {
         query = query.or(`email.ilike.%${sanitized}%,full_name.ilike.%${sanitized}%`);
       }

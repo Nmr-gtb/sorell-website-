@@ -25,7 +25,8 @@ export async function GET(request: Request) {
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
       .select("id, email, full_name, plan, trial_ends_at, created_at")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(500);
 
     // Get all lifecycle emails
     const { data: allLifecycleEmails } = await supabaseAdmin

@@ -26,6 +26,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const origin = request.headers.get("origin");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
+    if (origin && !origin.startsWith(siteUrl)) {
+      return NextResponse.json({ error: "Requête non autorisée." }, { status: 403 });
+    }
+
     let body: Record<string, unknown>;
     try {
       body = await request.json();

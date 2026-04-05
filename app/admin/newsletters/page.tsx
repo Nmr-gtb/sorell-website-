@@ -97,7 +97,7 @@ export default function AdminNewslettersPage() {
             render: (nl: Newsletter) => (
               <Link
                 href={`/admin/users/${nl.user_id}`}
-                className="text-xs font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent)]"
+                className="text-xs font-medium text-[var(--accent)] transition-colors hover:underline"
               >
                 {nl.user_name || nl.user_email}
               </Link>

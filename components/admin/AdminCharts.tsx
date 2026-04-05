@@ -76,7 +76,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
       {/* Plan distribution */}
       <AdminCard>
         <h2 className="mb-5 text-base font-semibold text-[var(--text)]">
-          Repartition des plans
+          Répartition des plans
         </h2>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>

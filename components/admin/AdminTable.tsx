@@ -22,7 +22,7 @@ export default function AdminTable<T>({
   data,
   keyExtractor,
   loading = false,
-  emptyMessage = "Aucune donnee.",
+  emptyMessage = "Aucune donnée.",
   loadingRows = 5,
   onRowClick,
 }: AdminTableProps<T>) {

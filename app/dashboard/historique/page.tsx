@@ -213,9 +213,9 @@ export default function HistoriquePage() {
             ))}
 
             {/* Chiffres clés */}
-            {parsedContent.keyFigures?.length > 0 && (
+            {(parsedContent.keyFigures?.length ?? 0) > 0 && (
               <div className="historique-keyfigures" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                {parsedContent.keyFigures.map((fig: KeyFigure, i: number) => (
+                {parsedContent.keyFigures!.map((fig: KeyFigure, i: number) => (
                   <div key={i} style={{
                     flex: 1,
                     padding: 12,

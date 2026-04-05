@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
       {/* Recent signups */}
       <div>
         <h2 className="mb-4 text-base font-semibold text-[var(--text)]">
-          Dernieres inscriptions
+          Dernières inscriptions
         </h2>
         <AdminTable
           columns={[

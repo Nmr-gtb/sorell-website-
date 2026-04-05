@@ -129,7 +129,7 @@ export default function AdminLifecyclePage() {
                 href={`/admin/users/${user.id}`}
                 className="group"
               >
-                <div className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:text-[var(--accent)]">
+                <div className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:underline">
                   {user.full_name || "\u2014"}
                 </div>
                 <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>

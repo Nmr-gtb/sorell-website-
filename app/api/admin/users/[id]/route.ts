@@ -101,6 +101,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
+  const origin = request.headers.get("origin");
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
+  if (origin && !origin.startsWith(siteUrl)) {
+    return NextResponse.json({ error: "Requête non autorisée." }, { status: 403 });
+  }
+
   const { id } = await params;
 
   if (!isValidUUID(id)) {
@@ -155,6 +161,12 @@ export async function DELETE(
   const admin = getAuthenticatedAdmin(request);
   if (!admin) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+  }
+
+  const origin = request.headers.get("origin");
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
+  if (origin && !origin.startsWith(siteUrl)) {
+    return NextResponse.json({ error: "Requête non autorisée." }, { status: 403 });
   }
 
   const { id } = await params;

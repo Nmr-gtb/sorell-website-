@@ -273,7 +273,7 @@ export default function AdminUserDetailPage() {
           </div>
           <Link
             href={`/admin/prompts?userId=${id}`}
-            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent)]"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] transition-colors hover:underline"
           >
             <ExternalLinkIcon size={14} />
             Voir le prompt complet

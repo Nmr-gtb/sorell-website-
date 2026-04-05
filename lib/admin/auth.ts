@@ -34,8 +34,10 @@ function getJwtSecret(): string {
 
 export async function verifyAdminCredentials(email: string, password: string): Promise<boolean> {
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD_HASH) return false;
-  if (email !== ADMIN_EMAIL) return false;
-  return bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+  const isEmailValid = email === ADMIN_EMAIL;
+  // Always run bcrypt to prevent timing attacks on email enumeration
+  const isPasswordValid = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+  return isEmailValid && isPasswordValid;
 }
 
 export function generateAdminToken(email: string): string {
