@@ -79,11 +79,11 @@ export default function AdminDashboardPage() {
     .map(([plan, count]) => ({ name: PLAN_LABELS[plan], value: count, color: PLAN_COLORS[plan] }));
 
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
       <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
         <KpiCard
           icon={<UsersIcon size={20} />}
           label="Total utilisateurs"

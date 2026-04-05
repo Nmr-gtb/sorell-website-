@@ -14,9 +14,7 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
     <div className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-sm)] transition-all duration-200 hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)]">
       <div className="flex items-start justify-between">
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-full ${
-            accent ? "bg-[rgba(0,80,88,0.1)] text-[var(--accent)]" : "bg-[var(--surface-hover)] text-[var(--text-secondary)]"
-          }`}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(0,80,88,0.1)] text-[var(--accent)]"
         >
           {icon}
         </div>
