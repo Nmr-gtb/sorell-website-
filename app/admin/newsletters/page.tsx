@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import AdminCard from "@/components/admin/AdminCard";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge, { getStatusBadgeVariant } from "@/components/admin/StatusBadge";
 import { AdminSelect } from "@/components/admin/AdminInput";
 import AdminButton from "@/components/admin/AdminButton";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/admin/AdminIcons";
+import { ChevronLeftIcon, ChevronRightIcon, MailIcon } from "@/components/admin/AdminIcons";
 
 interface Newsletter {
   id: string;
@@ -24,16 +25,19 @@ interface Newsletter {
   click_rate: number;
 }
 
-function RateBar({ rate, color }: { rate: number; color: string }) {
+function RateBar({ rate, color, label }: { rate: number; color: string; label: string }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[var(--border)]">
+    <div className="flex items-center gap-2.5">
+      <div className="flex flex-col items-end gap-0.5">
+        <span className="text-xs font-semibold text-[var(--text)]">{rate}%</span>
+        <span className="text-[10px] text-[var(--text-muted)]">{label}</span>
+      </div>
+      <div className="h-2 w-20 overflow-hidden rounded-full bg-[var(--surface-alt)] border border-[var(--border-subtle)]">
         <div
           className={`h-full rounded-full transition-all duration-500 ${color}`}
           style={{ width: `${Math.min(rate, 100)}%` }}
         />
       </div>
-      <span className="text-xs text-[var(--text-secondary)]">{rate}%</span>
     </div>
   );
 }
@@ -69,10 +73,30 @@ export default function AdminNewslettersPage() {
   const totalPages = Math.ceil(total / 25);
 
   return (
-    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--text)]">Newsletters</h1>
+    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+      {/* Page header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text)]">Newsletters</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Historique et performance de toutes les newsletters</p>
+        </div>
         <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)]">
+            <MailIcon size={18} className="text-[var(--accent)]" />
+          </div>
+          <div>
+            <div className="text-xl font-bold text-[var(--text)]">{total}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">au total</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters card */}
+      <AdminCard padding="sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-[var(--text-secondary)]">Filtrer par statut</span>
+          </div>
           <AdminSelect
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
@@ -81,14 +105,12 @@ export default function AdminNewslettersPage() {
               { value: "sent", label: "Envoyées" },
               { value: "draft", label: "Brouillons" },
             ]}
-            className="w-44"
+            className="w-48"
           />
-          <span className="rounded-full bg-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-            {total} au total
-          </span>
         </div>
-      </div>
+      </AdminCard>
 
+      {/* Table */}
       <AdminTable
         columns={[
           {
@@ -97,9 +119,14 @@ export default function AdminNewslettersPage() {
             render: (nl: Newsletter) => (
               <Link
                 href={`/admin/users/${nl.user_id}`}
-                className="text-xs font-medium text-[var(--accent)] transition-colors hover:underline"
+                className="group flex items-center gap-2.5"
               >
-                {nl.user_name || nl.user_email}
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
+                  {(nl.user_name || nl.user_email)[0].toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:underline">
+                  {nl.user_name || nl.user_email}
+                </span>
               </Link>
             ),
           },
@@ -107,7 +134,7 @@ export default function AdminNewslettersPage() {
             key: "subject",
             header: "Sujet",
             render: (nl: Newsletter) => (
-              <span className="block max-w-[300px] truncate text-sm font-medium text-[var(--text)]">
+              <span className="block max-w-[280px] truncate text-sm font-medium text-[var(--text)]">
                 {nl.subject || "Sans sujet"}
               </span>
             ),
@@ -117,7 +144,7 @@ export default function AdminNewslettersPage() {
             header: "Statut",
             render: (nl: Newsletter) => (
               <StatusBadge
-                label={nl.status}
+                label={nl.status === "sent" ? "Envoyée" : nl.status === "draft" ? "Brouillon" : nl.status}
                 variant={getStatusBadgeVariant(nl.status)}
               />
             ),
@@ -126,26 +153,16 @@ export default function AdminNewslettersPage() {
             key: "recipients",
             header: "Dest.",
             render: (nl: Newsletter) => (
-              <span className="text-sm text-[var(--text-muted)]">{nl.recipient_count}</span>
+              <span className="text-sm font-medium text-[var(--text)]">{nl.recipient_count}</span>
             ),
           },
           {
-            key: "opens",
-            header: "Ouvertures",
+            key: "engagement",
+            header: "Engagement",
             render: (nl: Newsletter) => (
-              <div>
-                <span className="text-sm font-medium text-[var(--text)]">{nl.opens}</span>
-                <RateBar rate={nl.open_rate} color="bg-teal-400" />
-              </div>
-            ),
-          },
-          {
-            key: "clicks",
-            header: "Clics",
-            render: (nl: Newsletter) => (
-              <div>
-                <span className="text-sm font-medium text-[var(--text)]">{nl.clicks}</span>
-                <RateBar rate={nl.click_rate} color="bg-purple-400" />
+              <div className="flex flex-col gap-1.5">
+                <RateBar rate={nl.open_rate} color="bg-teal-400" label={`${nl.opens} ouv.`} />
+                <RateBar rate={nl.click_rate} color="bg-purple-400" label={`${nl.clicks} clics`} />
               </div>
             ),
           },
@@ -155,8 +172,8 @@ export default function AdminNewslettersPage() {
             render: (nl: Newsletter) => (
               <span className="text-xs text-[var(--text-muted)]">
                 {nl.sent_at
-                  ? new Date(nl.sent_at).toLocaleDateString("fr-FR")
-                  : new Date(nl.created_at).toLocaleDateString("fr-FR")}
+                  ? new Date(nl.sent_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })
+                  : new Date(nl.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}
               </span>
             ),
           },
@@ -167,30 +184,38 @@ export default function AdminNewslettersPage() {
         emptyMessage="Aucune newsletter."
       />
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3">
-          <AdminButton
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            icon={<ChevronLeftIcon size={14} />}
-          >
-            Précédent
-          </AdminButton>
-          <span className="text-sm text-[var(--text-secondary)]">
-            Page <span className="font-medium text-[var(--text-muted)]">{page}</span> / {totalPages}
-          </span>
-          <AdminButton
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            icon={<ChevronRightIcon size={14} />}
-          >
-            Suivant
-          </AdminButton>
-        </div>
+        <AdminCard padding="sm">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[var(--text-muted)]">
+              {(page - 1) * 25 + 1}-{Math.min(page * 25, total)} sur {total} newsletters
+            </span>
+            <div className="flex items-center gap-3">
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                icon={<ChevronLeftIcon size={14} />}
+              >
+                Précédent
+              </AdminButton>
+              <span className="text-sm text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text)]">{page}</span> / {totalPages}
+              </span>
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                icon={<ChevronRightIcon size={14} />}
+              >
+                Suivant
+              </AdminButton>
+            </div>
+          </div>
+        </AdminCard>
       )}
     </div>
   );

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import AdminCard from "@/components/admin/AdminCard";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
 import { AdminSearchInput, AdminSelect } from "@/components/admin/AdminInput";
 import AdminButton from "@/components/admin/AdminButton";
-import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from "@/components/admin/AdminIcons";
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon, UsersIcon } from "@/components/admin/AdminIcons";
 
 interface User {
   id: string;
@@ -79,36 +80,48 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--text)]">Utilisateurs</h1>
-        <span className="rounded-full bg-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
-          {total} au total
-        </span>
+    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+      {/* Page header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text)]">Utilisateurs</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Gérez et suivez tous vos utilisateurs</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)]">
+            <UsersIcon size={18} className="text-[var(--accent)]" />
+          </div>
+          <div>
+            <div className="text-xl font-bold text-[var(--text)]">{total}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">au total</div>
+          </div>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex-1">
-          <AdminSearchInput
-            placeholder="Rechercher par email ou nom..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+      {/* Filters card */}
+      <AdminCard padding="sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex-1">
+            <AdminSearchInput
+              placeholder="Rechercher par email ou nom..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            />
+          </div>
+          <AdminSelect
+            value={planFilter}
+            onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
+            options={[
+              { value: "all", label: "Tous les plans" },
+              { value: "free", label: "Free" },
+              { value: "pro", label: "Pro" },
+              { value: "business", label: "Business" },
+              { value: "enterprise", label: "Enterprise" },
+            ]}
+            className="sm:w-44"
           />
         </div>
-        <AdminSelect
-          value={planFilter}
-          onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
-          options={[
-            { value: "all", label: "Tous les plans" },
-            { value: "free", label: "Free" },
-            { value: "pro", label: "Pro" },
-            { value: "business", label: "Business" },
-            { value: "enterprise", label: "Enterprise" },
-          ]}
-          className="sm:w-44"
-        />
-      </div>
+      </AdminCard>
 
       {/* Table */}
       <AdminTable
@@ -118,7 +131,7 @@ export default function AdminUsersPage() {
             header: "Utilisateur",
             render: (user: User) => (
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
                   {(user.full_name || user.email)[0].toUpperCase()}
                 </div>
                 <div>
@@ -143,7 +156,7 @@ export default function AdminUsersPage() {
             header: "Statut",
             render: (user: User) => {
               const status = getTrialStatus(user);
-              if (!status) return <span className="text-xs text-[var(--text-secondary)]">\u2014</span>;
+              if (!status) return <span className="text-xs text-[var(--text-secondary)]">{"\u2014"}</span>;
               const isExpired = status === "Trial expiré";
               return (
                 <StatusBadge
@@ -189,11 +202,11 @@ export default function AdminUsersPage() {
           },
           {
             key: "actions",
-            header: "Actions",
+            header: "",
             render: (user: User) => (
               <Link
                 href={`/admin/users/${user.id}`}
-                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-subtle)]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-subtle)]"
               >
                 <EyeIcon size={14} />
                 Détail
@@ -209,29 +222,36 @@ export default function AdminUsersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3">
-          <AdminButton
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            icon={<ChevronLeftIcon size={14} />}
-          >
-            Précédent
-          </AdminButton>
-          <span className="text-sm text-[var(--text-secondary)]">
-            Page <span className="font-medium text-[var(--text-muted)]">{page}</span> / {totalPages}
-          </span>
-          <AdminButton
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            icon={<ChevronRightIcon size={14} />}
-          >
-            Suivant
-          </AdminButton>
-        </div>
+        <AdminCard padding="sm">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[var(--text-muted)]">
+              {(page - 1) * 25 + 1}-{Math.min(page * 25, total)} sur {total} utilisateurs
+            </span>
+            <div className="flex items-center gap-3">
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                icon={<ChevronLeftIcon size={14} />}
+              >
+                Précédent
+              </AdminButton>
+              <span className="text-sm text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text)]">{page}</span> / {totalPages}
+              </span>
+              <AdminButton
+                variant="secondary"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                icon={<ChevronRightIcon size={14} />}
+              >
+                Suivant
+              </AdminButton>
+            </div>
+          </div>
+        </AdminCard>
       )}
     </div>
   );

@@ -80,7 +80,10 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&apos;ensemble de votre activité Sorell</p>
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
@@ -123,9 +126,14 @@ export default function AdminDashboardPage() {
 
       {/* Recent signups */}
       <div>
-        <h2 className="mb-4 text-[15px] font-semibold text-[var(--text)]">
-          Dernières inscriptions
-        </h2>
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-[15px] font-semibold text-[var(--text)]">
+            Dernières inscriptions
+          </h2>
+          <span className="rounded-full bg-[var(--surface-alt)] border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
+            {stats.recentUsers.length} récents
+          </span>
+        </div>
         <AdminTable
           columns={[
             {

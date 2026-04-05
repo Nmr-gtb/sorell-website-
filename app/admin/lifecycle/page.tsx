@@ -6,7 +6,7 @@ import AdminCard from "@/components/admin/AdminCard";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
 import { SkeletonDashboard } from "@/components/admin/Skeleton";
-import { CheckIcon } from "@/components/admin/AdminIcons";
+import { CheckIcon, LifecycleIcon } from "@/components/admin/AdminIcons";
 
 interface PipelineUser {
   id: string;
@@ -25,17 +25,17 @@ interface PipelineUser {
 
 type BadgeVariant = "gray" | "blue" | "cyan" | "teal" | "green" | "yellow" | "orange" | "red" | "emerald";
 
-const STAGE_CONFIG: Record<string, { label: string; variant: BadgeVariant; order: number }> = {
-  inscrit: { label: "Inscrit", variant: "gray", order: 0 },
-  welcome_sent: { label: "Welcome envoyé", variant: "blue", order: 1 },
-  onboarding_sent: { label: "Onboarding J+1", variant: "cyan", order: 2 },
-  configured: { label: "Config faite", variant: "teal", order: 3 },
-  first_newsletter_sent: { label: "1ère NL envoyée", variant: "green", order: 4 },
-  trial_reminder_3d: { label: "Trial J-3", variant: "yellow", order: 5 },
-  trial_reminder_1d: { label: "Trial J-1", variant: "orange", order: 6 },
-  trial_expired: { label: "Trial expiré", variant: "red", order: 7 },
-  converted: { label: "Converti", variant: "emerald", order: 8 },
-  payment_failed: { label: "Paiement échoué", variant: "red", order: 9 },
+const STAGE_CONFIG: Record<string, { label: string; variant: BadgeVariant; order: number; icon: string }> = {
+  inscrit: { label: "Inscrit", variant: "gray", order: 0, icon: "1" },
+  welcome_sent: { label: "Welcome envoyé", variant: "blue", order: 1, icon: "2" },
+  onboarding_sent: { label: "Onboarding J+1", variant: "cyan", order: 2, icon: "3" },
+  configured: { label: "Config faite", variant: "teal", order: 3, icon: "4" },
+  first_newsletter_sent: { label: "1ère NL envoyée", variant: "green", order: 4, icon: "5" },
+  trial_reminder_3d: { label: "Trial J-3", variant: "yellow", order: 5, icon: "6" },
+  trial_reminder_1d: { label: "Trial J-1", variant: "orange", order: 6, icon: "7" },
+  trial_expired: { label: "Trial expiré", variant: "red", order: 7, icon: "8" },
+  converted: { label: "Converti", variant: "emerald", order: 8, icon: "\u2713" },
+  payment_failed: { label: "Paiement échoué", variant: "red", order: 9, icon: "!" },
 };
 
 const PIPELINE_STAGES = Object.entries(STAGE_CONFIG).sort((a, b) => a[1].order - b[1].order);
@@ -58,65 +58,95 @@ export default function AdminLifecyclePage() {
   }, []);
 
   const filtered = stageFilter === "all" ? pipeline : pipeline.filter((u) => u.current_stage === stageFilter);
+  const totalUsers = Object.values(stageCounts).reduce((a, b) => a + b, 0);
 
   if (loading) return <SkeletonDashboard />;
 
   return (
-    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Pipeline Lifecycle Emails</h1>
+    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+      {/* Page header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text)]">Pipeline Lifecycle</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Suivez la progression de chaque utilisateur dans le funnel</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)]">
+            <LifecycleIcon size={18} className="text-[var(--accent)]" />
+          </div>
+          <div>
+            <div className="text-xl font-bold text-[var(--text)]">{totalUsers}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">dans le pipeline</div>
+          </div>
+        </div>
+      </div>
 
-      {/* Visual pipeline stages */}
+      {/* Pipeline stages visualization */}
       <AdminCard padding="lg">
-        <div className="flex items-center overflow-x-auto pb-2">
-          {PIPELINE_STAGES.map(([stage, cfg], idx) => {
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-[var(--text)]">Étapes du pipeline</h2>
+          {stageFilter !== "all" && (
+            <button
+              onClick={() => setStageFilter("all")}
+              className="rounded-lg border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              Voir tout
+            </button>
+          )}
+        </div>
+        <div className="flex items-stretch gap-2 overflow-x-auto pb-2">
+          {PIPELINE_STAGES.map(([stage, cfg]) => {
             const count = stageCounts[stage] || 0;
             const isActive = stageFilter === stage;
             const isAll = stageFilter === "all";
+            const hasUsers = count > 0;
             return (
-              <div key={stage} className="flex items-center flex-shrink-0">
-                <button
-                  onClick={() => setStageFilter(isActive ? "all" : stage)}
-                  className={`group relative flex flex-col items-center gap-2 rounded-xl px-4 py-3 transition-all duration-200 ${
+              <button
+                key={stage}
+                onClick={() => setStageFilter(isActive ? "all" : stage)}
+                className={`group relative flex min-w-[100px] flex-1 flex-col items-center gap-2.5 rounded-xl border px-3 py-4 transition-all duration-200 ${
+                  isActive
+                    ? "border-[var(--accent)] bg-[var(--accent-subtle)] shadow-[0_0_0_1px_var(--accent)]"
+                    : hasUsers
+                      ? "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-sm)]"
+                      : "border-[var(--border-subtle)] bg-[var(--surface-alt)] opacity-50 hover:opacity-70"
+                }`}
+              >
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                     isActive
-                      ? "bg-[var(--accent-subtle)] ring-1 ring-[var(--accent)]/20"
-                      : isAll && count > 0
-                        ? "hover:bg-[var(--surface-hover)]"
-                        : "opacity-40 hover:opacity-70"
+                      ? "bg-[var(--accent)] text-white"
+                      : hasUsers
+                        ? "bg-[var(--surface-alt)] text-[var(--text)]"
+                        : "bg-[var(--border-subtle)] text-[var(--text-muted)]"
                   }`}
                 >
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                      isActive
-                        ? "bg-[var(--accent)] text-white"
-                        : count > 0
-                          ? "bg-[var(--border)] text-[var(--text)]"
-                          : "bg-[var(--surface-hover)] text-[var(--text-muted)]"
-                    }`}
-                  >
-                    {count}
-                  </div>
-                  <span className={`whitespace-nowrap text-[10px] font-medium ${
-                    isActive ? "text-[var(--accent)]" : "text-[var(--text-secondary)]"
-                  }`}>
-                    {cfg.label}
-                  </span>
-                </button>
-                {idx < PIPELINE_STAGES.length - 1 && (
-                  <div className="mx-1 h-px w-6 bg-[var(--border)] flex-shrink-0" />
-                )}
-              </div>
+                  {count}
+                </div>
+                <span className={`whitespace-nowrap text-[11px] font-medium leading-tight text-center ${
+                  isActive ? "text-[var(--accent)]" : isAll && hasUsers ? "text-[var(--text-secondary)]" : "text-[var(--text-muted)]"
+                }`}>
+                  {cfg.label}
+                </span>
+              </button>
             );
           })}
         </div>
-        {stageFilter !== "all" && (
-          <button
-            onClick={() => setStageFilter("all")}
-            className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-muted)] transition-colors"
-          >
-            Afficher toutes les étapes
-          </button>
-        )}
       </AdminCard>
+
+      {/* Filtered indicator */}
+      {stageFilter !== "all" && (
+        <div className="flex items-center gap-2 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-subtle)] px-4 py-2.5">
+          <StatusBadge
+            label={STAGE_CONFIG[stageFilter]?.label || stageFilter}
+            variant={STAGE_CONFIG[stageFilter]?.variant || "gray"}
+            size="md"
+          />
+          <span className="text-sm text-[var(--text-secondary)]">
+            - {filtered.length} utilisateur{filtered.length > 1 ? "s" : ""}
+          </span>
+        </div>
+      )}
 
       {/* Pipeline table */}
       <AdminTable
@@ -125,14 +155,16 @@ export default function AdminLifecyclePage() {
             key: "user",
             header: "Utilisateur",
             render: (user: PipelineUser) => (
-              <Link
-                href={`/admin/users/${user.id}`}
-                className="group"
-              >
-                <div className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:underline">
-                  {user.full_name || "\u2014"}
+              <Link href={`/admin/users/${user.id}`} className="group flex items-center gap-3">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
+                  {(user.full_name || user.email)[0].toUpperCase()}
                 </div>
-                <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>
+                <div>
+                  <div className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:underline">
+                    {user.full_name || "\u2014"}
+                  </div>
+                  <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>
+                </div>
               </Link>
             ),
           },
@@ -162,7 +194,7 @@ export default function AdminLifecyclePage() {
           },
           {
             key: "days",
-            header: "Jours",
+            header: "Ancienneté",
             render: (user: PipelineUser) => (
               <span className="text-sm text-[var(--text-muted)]">{user.days_since_signup}j</span>
             ),
@@ -171,14 +203,16 @@ export default function AdminLifecyclePage() {
             key: "trial",
             header: "Trial",
             render: (user: PipelineUser) => (
-              <span className={`text-sm ${
+              <span className={`text-sm font-medium ${
                 user.trial_days_remaining !== null && user.trial_days_remaining <= 0
                   ? "text-red-500"
-                  : "text-[var(--text-muted)]"
+                  : user.trial_days_remaining !== null && user.trial_days_remaining <= 3
+                    ? "text-amber-500"
+                    : "text-[var(--text-muted)]"
               }`}>
                 {user.trial_days_remaining !== null
                   ? user.trial_days_remaining > 0
-                    ? `${user.trial_days_remaining}j`
+                    ? `${user.trial_days_remaining}j restant${user.trial_days_remaining > 1 ? "s" : ""}`
                     : "Expiré"
                   : "\u2014"}
               </span>
@@ -188,14 +222,14 @@ export default function AdminLifecyclePage() {
             key: "emails",
             header: "Emails reçus",
             render: (user: PipelineUser) => (
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1 max-w-[200px]">
                 {user.emails_received.length === 0 ? (
-                  <span className="text-xs text-[var(--border-hover)]">Aucun</span>
+                  <span className="text-xs text-[var(--text-muted)]">Aucun</span>
                 ) : (
                   user.emails_received.map((e, i) => (
                     <span
                       key={i}
-                      className="rounded border border-[var(--border)] bg-[var(--surface-alt)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)]"
+                      className="rounded-md border border-[var(--border)] bg-[var(--surface-alt)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]"
                     >
                       {e}
                     </span>
@@ -209,9 +243,13 @@ export default function AdminLifecyclePage() {
             header: "Config",
             render: (user: PipelineUser) => (
               user.has_config ? (
-                <CheckIcon size={16} className="text-emerald-500" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50">
+                  <CheckIcon size={14} className="text-emerald-500" />
+                </div>
               ) : (
-                <span className="text-xs text-[var(--border-hover)]">\u2014</span>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--surface-alt)]">
+                  <span className="text-xs text-[var(--text-muted)]">{"\u2014"}</span>
+                </div>
               )
             ),
           },
@@ -220,9 +258,13 @@ export default function AdminLifecyclePage() {
             header: "NL",
             render: (user: PipelineUser) => (
               user.has_sent_newsletter ? (
-                <CheckIcon size={16} className="text-emerald-500" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50">
+                  <CheckIcon size={14} className="text-emerald-500" />
+                </div>
               ) : (
-                <span className="text-xs text-[var(--border-hover)]">\u2014</span>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--surface-alt)]">
+                  <span className="text-xs text-[var(--text-muted)]">{"\u2014"}</span>
+                </div>
               )
             ),
           },
