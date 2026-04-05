@@ -28,7 +28,11 @@ export async function POST(request: Request) {
 
     const origin = request.headers.get("origin");
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
-    if (origin && !origin.startsWith(siteUrl)) {
+    const allowedOrigins = [
+      siteUrl,
+      siteUrl.replace("https://", "https://www."),
+    ];
+    if (origin && !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
       return NextResponse.json({ error: "Requête non autorisée." }, { status: 403 });
     }
 
