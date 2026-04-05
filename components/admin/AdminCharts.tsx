@@ -28,7 +28,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
   const totalUsers = pieData.reduce((sum, p) => sum + p.value, 0);
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[#F3F4F6] p-6 shadow-[var(--shadow-sm)]">
+    <div className="rounded-xl border border-[var(--border)] bg-[#EEF0F4] p-6 shadow-[var(--shadow-sm)]">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Signups chart */}
         <div className="lg:col-span-2">
