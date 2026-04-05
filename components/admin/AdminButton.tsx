@@ -10,13 +10,13 @@ interface AdminButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles = {
   primary:
-    "bg-[#005058] text-white hover:bg-[#00404A] focus-visible:ring-[#005058]/50 disabled:bg-[#005058]/50 disabled:text-white/70",
+    "bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] focus-visible:ring-[var(--accent)] disabled:opacity-50 disabled:text-white/70",
   secondary:
-    "bg-white text-[#374151] hover:bg-[#F9FAFB] focus-visible:ring-[#E5E7EB] border border-[#E5E7EB] disabled:opacity-50",
+    "bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-alt)] focus-visible:ring-[var(--border)] border border-[var(--border)] disabled:opacity-50",
   danger:
     "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500/50 disabled:bg-red-300 disabled:text-white/70",
   ghost:
-    "bg-transparent text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] focus-visible:ring-[#E5E7EB] disabled:opacity-50",
+    "bg-transparent text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface-hover)] focus-visible:ring-[var(--border)] disabled:opacity-50",
 };
 
 const sizeStyles = {
@@ -38,7 +38,7 @@ export default function AdminButton({
   return (
     <button
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       {...props}
     >
       {loading ? (

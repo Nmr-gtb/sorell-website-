@@ -84,14 +84,14 @@ export default function AdminPromptsPage() {
 
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[#111827]">Prompts Utilisateurs</h1>
+      <h1 className="text-2xl font-bold text-[var(--text)]">Prompts Utilisateurs</h1>
 
       {/* User selector */}
       <AdminCard padding="sm">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-[#6B7280]">Utilisateur :</span>
+          <span className="text-sm text-[var(--text-secondary)]">Utilisateur :</span>
           {loadingUsers ? (
-            <div className="h-9 w-64 animate-pulse rounded-lg bg-[#E5E7EB]" />
+            <div className="h-9 w-64 animate-pulse rounded-lg bg-[var(--border)]" />
           ) : (
             <AdminSelect
               value={selectedUserId}
@@ -116,14 +116,14 @@ export default function AdminPromptsPage() {
           {/* User info */}
           <AdminCard padding="sm">
             <div className="flex items-center gap-4">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#005058]/8 text-sm font-bold text-[#005058]">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-sm font-bold text-[var(--accent)]">
                 {(promptData.profile.full_name || promptData.profile.email)[0].toUpperCase()}
               </div>
               <div className="flex-1">
-                <div className="text-sm font-medium text-[#111827]">
+                <div className="text-sm font-medium text-[var(--text)]">
                   {promptData.profile.full_name || promptData.profile.email}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-[#6B7280]">
+                <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                   {promptData.profile.email}
                   <StatusBadge
                     label={promptData.profile.plan}
@@ -143,37 +143,37 @@ export default function AdminPromptsPage() {
           {/* Config summary */}
           {promptData.config && (
             <AdminCard>
-              <h2 className="mb-4 text-base font-semibold text-[#111827]">Configuration</h2>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text)]">Configuration</h2>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Topics</span>
-                  <p className="mt-1 text-[#111827]">
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Topics</span>
+                  <p className="mt-1 text-[var(--text)]">
                     {[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].join(", ")}
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Sources</span>
-                  <p className="mt-1 text-[#111827]">{promptData.config.sources || "Aucune"}</p>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Sources</span>
+                  <p className="mt-1 text-[var(--text)]">{promptData.config.sources || "Aucune"}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Fréquence</span>
-                  <p className="mt-1 text-[#111827]">{promptData.config.frequency}</p>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Fréquence</span>
+                  <p className="mt-1 text-[var(--text)]">{promptData.config.frequency}</p>
                 </div>
                 {promptData.config.custom_brief && (
                   <div className="col-span-2">
-                    <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Brief</span>
-                    <p className="mt-1 text-[#111827]">{promptData.config.custom_brief}</p>
+                    <span className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Brief</span>
+                    <p className="mt-1 text-[var(--text)]">{promptData.config.custom_brief}</p>
                   </div>
                 )}
               </div>
             </AdminCard>
           )}
 
-          {/* Full prompt */}
+          {/* Full prompt — intentionally dark code block */}
           {promptData.prompt && (
             <AdminCard>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[#111827]">
+                <h2 className="text-base font-semibold text-[var(--text)]">
                   Prompt complet (envoyé à Claude)
                 </h2>
                 <AdminButton
@@ -202,16 +202,16 @@ export default function AdminPromptsPage() {
           {/* Previous titles */}
           {promptData.previousTitles && promptData.previousTitles.length > 0 && (
             <AdminCard>
-              <h2 className="mb-4 text-base font-semibold text-[#111827]">
+              <h2 className="mb-4 text-base font-semibold text-[var(--text)]">
                 Titres précédents (anti-duplication)
               </h2>
               <ul className="space-y-2">
                 {promptData.previousTitles.map((t, i) => (
                   <li
                     key={i}
-                    className="flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#9CA3AF]"
+                    className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] px-3 py-2 text-sm text-[var(--text-muted)]"
                   >
-                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-[#E5E7EB] text-[10px] font-bold text-[#6B7280]">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-[var(--border)] text-[10px] font-bold text-[var(--text-secondary)]">
                       {i + 1}
                     </span>
                     {t}
@@ -221,14 +221,14 @@ export default function AdminPromptsPage() {
             </AdminCard>
           )}
 
-          {/* Last generation */}
+          {/* Last generation — intentionally dark code block */}
           {promptData.lastGeneration && (
             <AdminCard>
-              <h2 className="mb-4 text-base font-semibold text-[#111827]">Dernière génération</h2>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text)]">Dernière génération</h2>
               <div className="mb-3 flex items-center gap-3 text-sm">
-                <span className="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Sujet</span>
-                <span className="text-[#111827]">{promptData.lastGeneration.subject}</span>
-                <span className="text-xs text-[#6B7280]">
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Sujet</span>
+                <span className="text-[var(--text)]">{promptData.lastGeneration.subject}</span>
+                <span className="text-xs text-[var(--text-secondary)]">
                   ({new Date(promptData.lastGeneration.created_at).toLocaleDateString("fr-FR")})
                 </span>
               </div>
@@ -252,9 +252,9 @@ export default function AdminPromptsPage() {
 
       {!selectedUserId && !loading && (
         <AdminCard className="flex flex-col items-center justify-center py-16">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#F3F4F6]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--surface-hover)]">
             <svg
-              className="h-6 w-6 text-[#6B7280]"
+              className="h-6 w-6 text-[var(--text-secondary)]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -267,7 +267,7 @@ export default function AdminPromptsPage() {
               />
             </svg>
           </div>
-          <p className="mt-4 text-sm text-[#6B7280]">
+          <p className="mt-4 text-sm text-[var(--text-secondary)]">
             Sélectionne un utilisateur pour voir son prompt de génération.
           </p>
         </AdminCard>

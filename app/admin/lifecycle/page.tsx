@@ -63,7 +63,7 @@ export default function AdminLifecyclePage() {
 
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[#111827]">Pipeline Lifecycle Emails</h1>
+      <h1 className="text-2xl font-bold text-[var(--text)]">Pipeline Lifecycle Emails</h1>
 
       {/* Visual pipeline stages */}
       <AdminCard padding="lg">
@@ -78,31 +78,31 @@ export default function AdminLifecyclePage() {
                   onClick={() => setStageFilter(isActive ? "all" : stage)}
                   className={`group relative flex flex-col items-center gap-2 rounded-xl px-4 py-3 transition-all duration-200 ${
                     isActive
-                      ? "bg-[#005058]/8 ring-1 ring-[#005058]/20"
+                      ? "bg-[var(--accent-subtle)] ring-1 ring-[var(--accent)]/20"
                       : isAll && count > 0
-                        ? "hover:bg-[#F3F4F6]"
+                        ? "hover:bg-[var(--surface-hover)]"
                         : "opacity-40 hover:opacity-70"
                   }`}
                 >
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                       isActive
-                        ? "bg-[#005058] text-white"
+                        ? "bg-[var(--accent)] text-white"
                         : count > 0
-                          ? "bg-[#E5E7EB] text-[#111827]"
-                          : "bg-[#F3F4F6] text-[#9CA3AF]"
+                          ? "bg-[var(--border)] text-[var(--text)]"
+                          : "bg-[var(--surface-hover)] text-[var(--text-muted)]"
                     }`}
                   >
                     {count}
                   </div>
                   <span className={`whitespace-nowrap text-[10px] font-medium ${
-                    isActive ? "text-[#005058]" : "text-[#6B7280]"
+                    isActive ? "text-[var(--accent)]" : "text-[var(--text-secondary)]"
                   }`}>
                     {cfg.label}
                   </span>
                 </button>
                 {idx < PIPELINE_STAGES.length - 1 && (
-                  <div className="mx-1 h-px w-6 bg-[#E5E7EB] flex-shrink-0" />
+                  <div className="mx-1 h-px w-6 bg-[var(--border)] flex-shrink-0" />
                 )}
               </div>
             );
@@ -111,7 +111,7 @@ export default function AdminLifecyclePage() {
         {stageFilter !== "all" && (
           <button
             onClick={() => setStageFilter("all")}
-            className="mt-3 text-xs text-[#6B7280] hover:text-[#9CA3AF] transition-colors"
+            className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-muted)] transition-colors"
           >
             Afficher toutes les étapes
           </button>
@@ -129,10 +129,10 @@ export default function AdminLifecyclePage() {
                 href={`/admin/users/${user.id}`}
                 className="group"
               >
-                <div className="text-sm font-medium text-[#005058] transition-colors group-hover:text-[#0D9488]">
+                <div className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:text-[var(--accent)]">
                   {user.full_name || "\u2014"}
                 </div>
-                <div className="text-xs text-[#6B7280]">{user.email}</div>
+                <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>
               </Link>
             ),
           },
@@ -164,7 +164,7 @@ export default function AdminLifecyclePage() {
             key: "days",
             header: "Jours",
             render: (user: PipelineUser) => (
-              <span className="text-sm text-[#9CA3AF]">{user.days_since_signup}j</span>
+              <span className="text-sm text-[var(--text-muted)]">{user.days_since_signup}j</span>
             ),
           },
           {
@@ -174,7 +174,7 @@ export default function AdminLifecyclePage() {
               <span className={`text-sm ${
                 user.trial_days_remaining !== null && user.trial_days_remaining <= 0
                   ? "text-red-500"
-                  : "text-[#9CA3AF]"
+                  : "text-[var(--text-muted)]"
               }`}>
                 {user.trial_days_remaining !== null
                   ? user.trial_days_remaining > 0
@@ -190,12 +190,12 @@ export default function AdminLifecyclePage() {
             render: (user: PipelineUser) => (
               <div className="flex flex-wrap gap-1">
                 {user.emails_received.length === 0 ? (
-                  <span className="text-xs text-[#D1D5DB]">Aucun</span>
+                  <span className="text-xs text-[var(--border-hover)]">Aucun</span>
                 ) : (
                   user.emails_received.map((e, i) => (
                     <span
                       key={i}
-                      className="rounded border border-[#E5E7EB] bg-[#F9FAFB] px-1.5 py-0.5 text-[10px] text-[#6B7280]"
+                      className="rounded border border-[var(--border)] bg-[var(--surface-alt)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)]"
                     >
                       {e}
                     </span>
@@ -211,7 +211,7 @@ export default function AdminLifecyclePage() {
               user.has_config ? (
                 <CheckIcon size={16} className="text-emerald-500" />
               ) : (
-                <span className="text-xs text-[#D1D5DB]">\u2014</span>
+                <span className="text-xs text-[var(--border-hover)]">\u2014</span>
               )
             ),
           },
@@ -222,7 +222,7 @@ export default function AdminLifecyclePage() {
               user.has_sent_newsletter ? (
                 <CheckIcon size={16} className="text-emerald-500" />
               ) : (
-                <span className="text-xs text-[#D1D5DB]">\u2014</span>
+                <span className="text-xs text-[var(--border-hover)]">\u2014</span>
               )
             ),
           },

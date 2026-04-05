@@ -64,32 +64,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!verified) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-8">
+      <div className="min-h-screen bg-[var(--surface-alt)] p-8">
         <SkeletonDashboard />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-[#111827]">
+    <div className="min-h-screen bg-[var(--surface-alt)] text-[var(--text)]">
       {/* Mobile header */}
-      <div className="flex items-center justify-between border-b border-[#E5E7EB] bg-white px-4 py-3 lg:hidden">
+      <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-4 py-3 lg:hidden">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="rounded-lg p-1.5 text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
+          className="rounded-lg p-1.5 text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
           aria-label="Ouvrir le menu"
         >
           <MenuIcon size={22} />
         </button>
         <span
-          className="text-lg font-bold text-[#111827]"
+          className="text-lg font-bold text-[var(--text)]"
           style={{ fontFamily: "'Quiglet', sans-serif" }}
         >
           Sorell
         </span>
         <button
           onClick={handleLogout}
-          className="rounded-lg p-1.5 text-[#6B7280] transition-colors hover:text-red-500"
+          className="rounded-lg p-1.5 text-[var(--text-secondary)] transition-colors hover:text-red-500"
           aria-label="Se déconnecter"
         >
           <LogoutIcon size={20} />
@@ -99,25 +99,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#E5E7EB] bg-[#FAFBFC] transition-all duration-300 lg:static lg:z-auto ${
+          className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[var(--border)] bg-[var(--surface)] transition-all duration-300 lg:static lg:z-auto ${
             sidebarCollapsed ? "lg:w-[72px]" : "lg:w-60"
           } ${sidebarOpen ? "w-60 translate-x-0" : "w-60 -translate-x-full lg:translate-x-0"}`}
         >
           {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-[#E5E7EB] px-4 py-5">
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-5">
             {!sidebarCollapsed && (
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#005058]/8">
-                  <span className="text-sm font-bold text-[#005058]">S</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent-subtle)]">
+                  <span className="text-sm font-bold text-[var(--accent)]">S</span>
                 </div>
                 <div className="hidden lg:block">
                   <div
-                    className="text-base font-bold text-[#111827]"
+                    className="text-base font-bold text-[var(--text)]"
                     style={{ fontFamily: "'Quiglet', sans-serif" }}
                   >
                     Sorell
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-widest text-[#9CA3AF]">
+                  <div className="text-[10px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
                     Admin
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="hidden rounded-lg p-1 text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#6B7280] lg:block"
+              className="hidden rounded-lg p-1 text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text-secondary)] lg:block"
               aria-label={sidebarCollapsed ? "Étendre le menu" : "Réduire le menu"}
             >
               {sidebarCollapsed ? <SidebarExpandIcon size={18} /> : <SidebarCollapseIcon size={18} />}
@@ -144,8 +144,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   onClick={() => setSidebarOpen(false)}
                   className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                     isActive
-                      ? "bg-[#005058]/8 text-[#005058] border-l-[3px] border-[#005058]"
-                      : "text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#111827]"
+                      ? "bg-[var(--accent-subtle)] text-[var(--accent)] border-l-[3px] border-[var(--accent)]"
+                      : "text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
                   } ${sidebarCollapsed ? "justify-center" : ""}`}
                   title={sidebarCollapsed ? item.label : undefined}
                   aria-label={item.label}
@@ -153,7 +153,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Icon
                     size={20}
                     className={`flex-shrink-0 transition-colors ${
-                      isActive ? "text-[#005058]" : "text-[#9CA3AF] group-hover:text-[#6B7280]"
+                      isActive ? "text-[var(--accent)]" : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -163,10 +163,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           {/* Logout */}
-          <div className="border-t border-[#E5E7EB] px-3 py-4">
+          <div className="border-t border-[var(--border)] px-3 py-4">
             <button
               onClick={handleLogout}
-              className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#6B7280] transition-all duration-150 hover:bg-red-50 hover:text-red-500 ${
+              className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-all duration-150 hover:bg-red-50 hover:text-red-500 ${
                 sidebarCollapsed ? "justify-center" : ""
               }`}
               aria-label="Se déconnecter"
@@ -189,10 +189,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main content */}
         <main className="flex-1 min-h-screen">
           {/* Breadcrumb header */}
-          <div className="hidden lg:flex items-center gap-2 border-b border-[#E5E7EB] bg-white px-8 py-3">
-            <span className="text-xs text-[#9CA3AF]">Admin</span>
-            <span className="text-xs text-[#D1D5DB]">/</span>
-            <span className="text-xs font-medium text-[#6B7280]">{getBreadcrumb()}</span>
+          <div className="hidden lg:flex items-center gap-2 border-b border-[var(--border)] bg-[var(--surface)] px-8 py-3">
+            <span className="text-xs text-[var(--text-muted)]">Admin</span>
+            <span className="text-xs text-[var(--border-hover)]">/</span>
+            <span className="text-xs font-medium text-[var(--text-secondary)]">{getBreadcrumb()}</span>
           </div>
           <div className="p-6 lg:p-8">
             {children}

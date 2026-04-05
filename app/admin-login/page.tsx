@@ -41,20 +41,20 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F9FAFB] px-4">
-      <div className="w-full max-w-sm animate-[fadeInUp_0.4s_ease-out] rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--surface-alt)] px-4">
+      <div className="w-full max-w-sm animate-[fadeInUp_0.4s_ease-out] rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-lg">
         {/* Logo */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#005058]/8">
-            <MailIcon className="text-[#005058]" size={24} />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-subtle)]">
+            <MailIcon className="text-[var(--accent)]" size={24} />
           </div>
           <h1
-            className="text-2xl font-bold text-[#111827]"
+            className="text-2xl font-bold text-[var(--text)]"
             style={{ fontFamily: "'Quiglet', sans-serif" }}
           >
             Sorell
           </h1>
-          <p className="mt-1 text-sm text-[#6B7280]">Administration</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Administration</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
           </AdminButton>
         </form>
 
-        <p className="mt-8 text-center text-xs text-[#6B7280]">
+        <p className="mt-8 text-center text-xs text-[var(--text-secondary)]">
           Accès réservé aux administrateurs Sorell
         </p>
       </div>

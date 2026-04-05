@@ -11,11 +11,11 @@ interface KpiCardProps {
 
 export default function KpiCard({ icon, label, value, trend, accent = false }: KpiCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-[#D1D5DB] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07)]">
+    <div className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-sm)] transition-all duration-200 hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)]">
       <div className="flex items-start justify-between">
         <div
           className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-            accent ? "bg-[#005058]/8 text-[#005058]" : "bg-[#F3F4F6] text-[#6B7280]"
+            accent ? "bg-[var(--accent-subtle)] text-[var(--accent)]" : "bg-[var(--surface-hover)] text-[var(--text-secondary)]"
           }`}
         >
           {icon}
@@ -34,10 +34,10 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
         )}
       </div>
       <div className="mt-4">
-        <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.05em]">{label}</div>
+        <div className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.05em]">{label}</div>
         <div
           className={`mt-1 text-2xl font-bold tracking-tight ${
-            accent ? "text-[#005058]" : "text-[#111827]"
+            accent ? "text-[var(--accent)]" : "text-[var(--text)]"
           }`}
         >
           {value}

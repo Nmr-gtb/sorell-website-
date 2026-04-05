@@ -30,7 +30,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Signups chart */}
       <AdminCard className="lg:col-span-2">
-        <h2 className="mb-5 text-base font-semibold text-[#111827]">
+        <h2 className="mb-5 text-base font-semibold text-[var(--text)]">
           Inscriptions (30 derniers jours)
         </h2>
         <ResponsiveContainer width="100%" height={260}>
@@ -53,13 +53,13 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E5E7EB",
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
                 borderRadius: "8px",
                 boxShadow: "0 10px 15px -3px rgba(0,0,0,0.07)",
               }}
-              labelStyle={{ color: "#6B7280", fontSize: 12 }}
-              itemStyle={{ color: "#0D9488", fontSize: 12 }}
+              labelStyle={{ color: "var(--text-secondary)", fontSize: 12 }}
+              itemStyle={{ color: "var(--accent)", fontSize: 12 }}
             />
             <Line
               type="monotone"
@@ -75,7 +75,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
 
       {/* Plan distribution */}
       <AdminCard>
-        <h2 className="mb-5 text-base font-semibold text-[#111827]">
+        <h2 className="mb-5 text-base font-semibold text-[var(--text)]">
           Repartition des plans
         </h2>
         <ResponsiveContainer width="100%" height={200}>
@@ -97,8 +97,8 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E5E7EB",
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
                 borderRadius: "8px",
               }}
             />
@@ -106,7 +106,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
         </ResponsiveContainer>
         <div className="mt-4 flex flex-wrap gap-3">
           {pieData.map((p) => (
-            <div key={p.name} className="flex items-center gap-2 text-xs text-[#6B7280]">
+            <div key={p.name} className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
               <span
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: p.color }}

@@ -81,8 +81,8 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#111827]">Utilisateurs</h1>
-        <span className="rounded-full bg-[#E5E7EB] px-3 py-1 text-xs font-medium text-[#9CA3AF]">
+        <h1 className="text-2xl font-bold text-[var(--text)]">Utilisateurs</h1>
+        <span className="rounded-full bg-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
           {total} au total
         </span>
       </div>
@@ -118,12 +118,12 @@ export default function AdminUsersPage() {
             header: "Utilisateur",
             render: (user: User) => (
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#005058]/8 text-xs font-bold text-[#005058]">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
                   {(user.full_name || user.email)[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[#111827]">{user.full_name || "\u2014"}</div>
-                  <div className="text-xs text-[#6B7280]">{user.email}</div>
+                  <div className="text-sm font-medium text-[var(--text)]">{user.full_name || "\u2014"}</div>
+                  <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>
                 </div>
               </div>
             ),
@@ -143,7 +143,7 @@ export default function AdminUsersPage() {
             header: "Statut",
             render: (user: User) => {
               const status = getTrialStatus(user);
-              if (!status) return <span className="text-xs text-[#6B7280]">\u2014</span>;
+              if (!status) return <span className="text-xs text-[var(--text-secondary)]">\u2014</span>;
               const isExpired = status === "Trial expiré";
               return (
                 <StatusBadge
@@ -157,21 +157,21 @@ export default function AdminUsersPage() {
             key: "newsletters",
             header: "Newsletters",
             render: (user: User) => (
-              <span className="text-sm font-medium text-[#111827]">{user.newsletters_sent}</span>
+              <span className="text-sm font-medium text-[var(--text)]">{user.newsletters_sent}</span>
             ),
           },
           {
             key: "recipients",
             header: "Destinataires",
             render: (user: User) => (
-              <span className="text-sm font-medium text-[#111827]">{user.recipient_count}</span>
+              <span className="text-sm font-medium text-[var(--text)]">{user.recipient_count}</span>
             ),
           },
           {
             key: "last_nl",
             header: "Dernière NL",
             render: (user: User) => (
-              <span className="text-xs text-[#9CA3AF]">
+              <span className="text-xs text-[var(--text-muted)]">
                 {user.last_newsletter_at
                   ? new Date(user.last_newsletter_at).toLocaleDateString("fr-FR")
                   : "\u2014"}
@@ -182,7 +182,7 @@ export default function AdminUsersPage() {
             key: "created",
             header: "Inscription",
             render: (user: User) => (
-              <span className="text-xs text-[#9CA3AF]">
+              <span className="text-xs text-[var(--text-muted)]">
                 {new Date(user.created_at).toLocaleDateString("fr-FR")}
               </span>
             ),
@@ -193,7 +193,7 @@ export default function AdminUsersPage() {
             render: (user: User) => (
               <Link
                 href={`/admin/users/${user.id}`}
-                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-[#005058] transition-colors hover:bg-[#005058]/8"
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-subtle)]"
               >
                 <EyeIcon size={14} />
                 Détail
@@ -219,8 +219,8 @@ export default function AdminUsersPage() {
           >
             Précédent
           </AdminButton>
-          <span className="text-sm text-[#6B7280]">
-            Page <span className="font-medium text-[#9CA3AF]">{page}</span> / {totalPages}
+          <span className="text-sm text-[var(--text-secondary)]">
+            Page <span className="font-medium text-[var(--text-muted)]">{page}</span> / {totalPages}
           </span>
           <AdminButton
             variant="secondary"

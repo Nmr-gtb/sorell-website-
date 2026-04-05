@@ -140,18 +140,18 @@ export default function AdminUserDetailPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/users"
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
+          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
         >
           <ArrowLeftIcon size={16} />
           Retour
         </Link>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#005058]/8 text-sm font-bold text-[#005058]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-sm font-bold text-[var(--accent)]">
             {(profile.full_name || profile.email)[0].toUpperCase()}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#111827]">{profile.full_name || profile.email}</h1>
-            <span className="text-xs text-[#6B7280]">{profile.email}</span>
+            <h1 className="text-xl font-bold text-[var(--text)]">{profile.full_name || profile.email}</h1>
+            <span className="text-xs text-[var(--text-secondary)]">{profile.email}</span>
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function AdminUserDetailPage() {
         <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
           <InfoField label="Email" value={profile.email} />
           <div>
-            <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Plan</div>
+            <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Plan</div>
             <div className="flex items-center gap-2">
               <AdminSelect
                 value={editPlan}
@@ -218,15 +218,15 @@ export default function AdminUserDetailPage() {
       </AdminCard>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-lg border border-[#E5E7EB] bg-white p-1 w-fit">
+      <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 w-fit">
         {TAB_LIST.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition-all duration-150 ${
               tab === t.key
-                ? "bg-[#005058]/8 text-[#005058] shadow-sm"
-                : "text-[#6B7280] hover:text-[#9CA3AF]"
+                ? "bg-[var(--accent-subtle)] text-[var(--accent)] shadow-sm"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-muted)]"
             }`}
           >
             {t.label}
@@ -237,7 +237,7 @@ export default function AdminUserDetailPage() {
       {/* Tab content */}
       {tab === "overview" && config && (
         <AdminCard>
-          <h2 className="mb-5 text-base font-semibold text-[#111827]">Configuration Newsletter</h2>
+          <h2 className="mb-5 text-base font-semibold text-[var(--text)]">Configuration Newsletter</h2>
           <div className="grid grid-cols-2 gap-5 text-sm">
             <InfoField
               label="Topics"
@@ -252,19 +252,19 @@ export default function AdminUserDetailPage() {
           </div>
           {config.custom_brief && (
             <div className="mt-5">
-              <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Brief custom</div>
-              <p className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-4 text-sm text-[#9CA3AF]">
+              <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Brief custom</div>
+              <p className="rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] p-4 text-sm text-[var(--text-muted)]">
                 {config.custom_brief}
               </p>
             </div>
           )}
           <div className="mt-5">
-            <div className="mb-2 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Destinataires</div>
+            <div className="mb-2 text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">Destinataires</div>
             <div className="flex flex-wrap gap-2">
               {recipients.map((r) => (
                 <span
                   key={r.id}
-                  className="rounded-md border border-[#E5E7EB] bg-[#F9FAFB] px-2.5 py-1 text-xs text-[#9CA3AF]"
+                  className="rounded-md border border-[var(--border)] bg-[var(--surface-alt)] px-2.5 py-1 text-xs text-[var(--text-muted)]"
                 >
                   {r.email}
                 </span>
@@ -273,7 +273,7 @@ export default function AdminUserDetailPage() {
           </div>
           <Link
             href={`/admin/prompts?userId=${id}`}
-            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[#005058] transition-colors hover:text-[#0D9488]"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent)]"
           >
             <ExternalLinkIcon size={14} />
             Voir le prompt complet
@@ -283,7 +283,7 @@ export default function AdminUserDetailPage() {
 
       {tab === "overview" && !config && (
         <AdminCard>
-          <p className="text-sm text-[#6B7280]">Cet utilisateur n&apos;a pas encore configuré sa newsletter.</p>
+          <p className="text-sm text-[var(--text-secondary)]">Cet utilisateur n&apos;a pas encore configuré sa newsletter.</p>
         </AdminCard>
       )}
 
@@ -294,7 +294,7 @@ export default function AdminUserDetailPage() {
               key: "subject",
               header: "Sujet",
               render: (nl) => (
-                <span className="text-sm font-medium text-[#111827]">
+                <span className="text-sm font-medium text-[var(--text)]">
                   {nl.subject || "Sans sujet"}
                 </span>
               ),
@@ -313,14 +313,14 @@ export default function AdminUserDetailPage() {
               key: "recipients",
               header: "Destinataires",
               render: (nl) => (
-                <span className="text-sm text-[#9CA3AF]">{nl.recipient_count || 0}</span>
+                <span className="text-sm text-[var(--text-muted)]">{nl.recipient_count || 0}</span>
               ),
             },
             {
               key: "date",
               header: "Date",
               render: (nl) => (
-                <span className="text-xs text-[#9CA3AF]">
+                <span className="text-xs text-[var(--text-muted)]">
                   {nl.sent_at
                     ? new Date(nl.sent_at).toLocaleDateString("fr-FR")
                     : new Date(nl.created_at).toLocaleDateString("fr-FR")}
@@ -336,25 +336,25 @@ export default function AdminUserDetailPage() {
 
       {tab === "lifecycle" && (
         <AdminCard>
-          <h2 className="mb-5 text-base font-semibold text-[#111827]">Timeline Lifecycle Emails</h2>
+          <h2 className="mb-5 text-base font-semibold text-[var(--text)]">Timeline Lifecycle Emails</h2>
           {lifecycleEmails.length === 0 ? (
-            <p className="text-sm text-[#6B7280]">Aucun email lifecycle envoyé.</p>
+            <p className="text-sm text-[var(--text-secondary)]">Aucun email lifecycle envoyé.</p>
           ) : (
             <div className="relative space-y-0">
               {lifecycleEmails.map((le, i) => (
                 <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
                   {/* Timeline line */}
                   {i < lifecycleEmails.length - 1 && (
-                    <div className="absolute left-[7px] top-4 h-full w-px bg-[#E5E7EB]" />
+                    <div className="absolute left-[7px] top-4 h-full w-px bg-[var(--border)]" />
                   )}
                   {/* Dot */}
                   <div className="relative z-10 mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center">
-                    <div className="h-3 w-3 rounded-full bg-[#0D9488] ring-4 ring-white" />
+                    <div className="h-3 w-3 rounded-full bg-[var(--accent)] ring-4 ring-[var(--bg)]" />
                   </div>
                   {/* Content */}
-                  <div className="flex flex-1 items-center justify-between rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3">
-                    <span className="text-sm font-medium text-[#111827]">{le.email_type}</span>
-                    <span className="text-xs text-[#6B7280]">
+                  <div className="flex flex-1 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-3">
+                    <span className="text-sm font-medium text-[var(--text)]">{le.email_type}</span>
+                    <span className="text-xs text-[var(--text-secondary)]">
                       {new Date(le.sent_at).toLocaleDateString("fr-FR")} à{" "}
                       {new Date(le.sent_at).toLocaleTimeString("fr-FR", {
                         hour: "2-digit",
@@ -386,14 +386,14 @@ export default function AdminUserDetailPage() {
               key: "email",
               header: "Email destinataire",
               render: (e) => (
-                <span className="text-sm text-[#9CA3AF]">{e.recipient_email}</span>
+                <span className="text-sm text-[var(--text-muted)]">{e.recipient_email}</span>
               ),
             },
             {
               key: "date",
               header: "Date",
               render: (e) => (
-                <span className="text-xs text-[#9CA3AF]">
+                <span className="text-xs text-[var(--text-muted)]">
                   {new Date(e.created_at).toLocaleString("fr-FR")}
                 </span>
               ),
@@ -413,7 +413,7 @@ export default function AdminUserDetailPage() {
           </div>
           <div>
             <h2 className="text-base font-semibold text-red-600">Zone dangereuse</h2>
-            <p className="mt-1 text-sm text-[#6B7280]">
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
               La suppression est irréversible. Toutes les données seront perdues.
             </p>
             <AdminButton
@@ -443,11 +443,11 @@ function InfoField({
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">
+      <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
         {label}
       </div>
       <div
-        className={`text-sm text-[#111827] ${mono ? "font-mono text-xs" : ""}`}
+        className={`text-sm text-[var(--text)] ${mono ? "font-mono text-xs" : ""}`}
       >
         {value}
       </div>
