@@ -80,7 +80,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>

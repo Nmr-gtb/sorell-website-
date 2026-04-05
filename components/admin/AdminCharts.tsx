@@ -28,14 +28,14 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
   const totalUsers = pieData.reduce((sum, p) => sum + p.value, 0);
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[#EEF0F4] p-6 shadow-[var(--shadow-sm)]">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="rounded-2xl border border-[var(--border)] bg-[#EEF0F4] p-8 shadow-[var(--shadow-sm)]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Signups chart */}
         <div className="lg:col-span-2">
-          <h2 className="mb-5 text-[15px] font-semibold text-[var(--text)]">
+          <h2 className="mb-6 text-[15px] font-semibold text-[var(--text)]">
             Inscriptions (30 derniers jours)
           </h2>
-          <div className="rounded-xl bg-[var(--surface)] p-4">
+          <div className="rounded-xl bg-[var(--surface)] p-5">
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={signupsChart}>
                 <defs>
@@ -88,10 +88,10 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
 
         {/* Plan distribution */}
         <div>
-          <h2 className="mb-5 text-[15px] font-semibold text-[var(--text)]">
+          <h2 className="mb-6 text-[15px] font-semibold text-[var(--text)]">
             Répartition des plans
           </h2>
-          <div className="rounded-xl bg-[var(--surface)] p-4">
+          <div className="rounded-xl bg-[var(--surface)] p-5">
             <div className="relative flex items-center justify-center" style={{ height: 200 }}>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -129,7 +129,7 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
                 </div>
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+            <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2.5">
               {pieData.map((p) => (
                 <div key={p.name} className="flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
                   <span

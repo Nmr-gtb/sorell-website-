@@ -13,12 +13,12 @@ export function SkeletonText({ className = "" }: SkeletonProps) {
 
 export function SkeletonCard({ className = "" }: SkeletonProps) {
   return (
-    <div className={`rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-sm)] ${className}`}>
+    <div className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[var(--shadow-sm)] ${className}`}>
       <div className="flex items-start justify-between">
         <SkeletonBase className="h-10 w-10 rounded-lg" />
         <SkeletonBase className="h-5 w-12 rounded-full" />
       </div>
-      <div className="mt-4 space-y-2">
+      <div className="mt-5 space-y-2">
         <SkeletonBase className="h-3 w-20" />
         <SkeletonBase className="h-7 w-16" />
       </div>
@@ -70,9 +70,9 @@ export function SkeletonChart({ className = "" }: SkeletonProps) {
 
 export function SkeletonDashboard() {
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-12 animate-[fadeInUp_0.3s_ease-out]">
       <SkeletonBase className="h-8 w-40" />
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}

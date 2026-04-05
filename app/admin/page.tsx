@@ -79,14 +79,14 @@ export default function AdminDashboardPage() {
     .map(([plan, count]) => ({ name: PLAN_LABELS[plan], value: count, color: PLAN_COLORS[plan] }));
 
   return (
-    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-12 animate-[fadeInUp_0.3s_ease-out]">
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
         <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&apos;ensemble de votre activité Sorell</p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         <KpiCard
           icon={<UsersIcon size={20} />}
           label="Total utilisateurs"
@@ -126,7 +126,7 @@ export default function AdminDashboardPage() {
 
       {/* Recent signups */}
       <div>
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="text-[15px] font-semibold text-[var(--text)]">
             Dernières inscriptions
           </h2>

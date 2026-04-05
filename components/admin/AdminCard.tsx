@@ -15,9 +15,9 @@ const variantStyles = {
 };
 
 const paddingStyles = {
-  sm: "p-4",
-  md: "p-6",
-  lg: "p-8",
+  sm: "p-5",
+  md: "p-8",
+  lg: "p-10",
 };
 
 export default function AdminCard({
@@ -29,7 +29,7 @@ export default function AdminCard({
 }: AdminCardProps) {
   return (
     <div
-      className={`rounded-xl border shadow-[var(--shadow-sm)] transition-all duration-200 ${variantStyles[variant]} ${paddingStyles[padding]} ${
+      className={`rounded-2xl border shadow-[var(--shadow-sm)] transition-all duration-200 ${variantStyles[variant]} ${paddingStyles[padding]} ${
         hover ? "hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)]" : ""
       } ${className}`}
     >

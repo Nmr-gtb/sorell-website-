@@ -133,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Nav items */}
-          <nav className="flex-1 px-3 py-4 space-y-1">
+          <nav className="flex-1 px-3 py-5 space-y-1.5">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -194,7 +194,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-xs text-[var(--border)]">/</span>
             <span className="text-xs font-medium text-[var(--text-secondary)]">{getBreadcrumb()}</span>
           </div>
-          <div className="p-6 lg:px-8 lg:py-7">
+          <div className="p-8 lg:px-12 lg:py-10">
             {children}
           </div>
         </main>

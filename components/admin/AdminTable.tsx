@@ -27,7 +27,7 @@ export default function AdminTable<T>({
   onRowClick,
 }: AdminTableProps<T>) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -35,7 +35,7 @@ export default function AdminTable<T>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)] ${col.className || ""}`}
+                  className={`px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)] ${col.className || ""}`}
                 >
                   {col.header}
                 </th>
@@ -47,7 +47,7 @@ export default function AdminTable<T>({
               ? Array.from({ length: loadingRows }).map((_, i) => (
                   <tr key={`skeleton-${i}`}>
                     {columns.map((col) => (
-                      <td key={col.key} className="px-5 py-4">
+                      <td key={col.key} className="px-6 py-5">
                         <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--border)]" />
                       </td>
                     ))}
@@ -57,7 +57,7 @@ export default function AdminTable<T>({
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="px-5 py-12 text-center text-sm text-[var(--text-muted)]"
+                      className="px-6 py-16 text-center text-sm text-[var(--text-muted)]"
                     >
                       {emptyMessage}
                     </td>
@@ -72,7 +72,7 @@ export default function AdminTable<T>({
                       onClick={() => onRowClick?.(item)}
                     >
                       {columns.map((col) => (
-                        <td key={col.key} className={`px-5 py-4 ${col.className || ""}`}>
+                        <td key={col.key} className={`px-6 py-5 ${col.className || ""}`}>
                           {col.render(item, index)}
                         </td>
                       ))}

@@ -83,7 +83,7 @@ export default function AdminPromptsPage() {
   }
 
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">Prompts Utilisateurs</h1>
@@ -123,7 +123,7 @@ export default function AdminPromptsPage() {
       {loading && <SkeletonTable rows={3} cols={2} />}
 
       {promptData && !loading && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* User info card */}
           <AdminCard padding="md">
             <div className="flex items-center gap-4">
@@ -159,9 +159,9 @@ export default function AdminPromptsPage() {
           {/* Config summary */}
           {promptData.config && (
             <AdminCard padding="md">
-              <h2 className="mb-5 text-base font-semibold text-[var(--text)]">Configuration</h2>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-4">
+              <h2 className="mb-6 text-base font-semibold text-[var(--text)]">Configuration</h2>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Topics</span>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].map((topic, i) => (
@@ -171,16 +171,16 @@ export default function AdminPromptsPage() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-4">
+                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Sources</span>
                   <p className="mt-2 text-sm text-[var(--text)]">{promptData.config.sources || "Aucune"}</p>
                 </div>
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-4">
+                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Fréquence</span>
                   <p className="mt-2 text-sm font-medium text-[var(--text)]">{promptData.config.frequency}</p>
                 </div>
                 {promptData.config.custom_brief && (
-                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-4 sm:col-span-2">
+                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5 sm:col-span-2">
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Brief</span>
                     <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{promptData.config.custom_brief}</p>
                   </div>
@@ -212,7 +212,7 @@ export default function AdminPromptsPage() {
                   <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]/30" />
                   <span className="ml-2 text-[10px] font-medium text-[#6B7280]">system-prompt.txt</span>
                 </div>
-                <pre className="max-h-[500px] overflow-y-auto p-5 text-[13px] leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">
+                <pre className="max-h-[500px] overflow-y-auto p-6 text-[13px] leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">
                   {promptData.prompt}
                 </pre>
               </div>
@@ -261,7 +261,7 @@ export default function AdminPromptsPage() {
                   <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]/30" />
                   <span className="ml-2 text-[10px] font-medium text-[#6B7280]">output.json</span>
                 </div>
-                <pre className="max-h-[400px] overflow-y-auto p-5 text-[13px] leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">
+                <pre className="max-h-[400px] overflow-y-auto p-6 text-[13px] leading-relaxed text-[#D1D5DB] whitespace-pre-wrap font-mono">
                   {typeof promptData.lastGeneration.content === "string"
                     ? promptData.lastGeneration.content
                     : JSON.stringify(promptData.lastGeneration.content, null, 2)}

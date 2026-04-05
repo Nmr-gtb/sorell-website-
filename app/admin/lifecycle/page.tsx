@@ -63,7 +63,7 @@ export default function AdminLifecyclePage() {
   if (loading) return <SkeletonDashboard />;
 
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
@@ -94,7 +94,7 @@ export default function AdminLifecyclePage() {
             </button>
           )}
         </div>
-        <div className="flex items-stretch gap-2 overflow-x-auto pb-2">
+        <div className="flex items-stretch gap-3 overflow-x-auto pb-3">
           {PIPELINE_STAGES.map(([stage, cfg]) => {
             const count = stageCounts[stage] || 0;
             const isActive = stageFilter === stage;
@@ -104,7 +104,7 @@ export default function AdminLifecyclePage() {
               <button
                 key={stage}
                 onClick={() => setStageFilter(isActive ? "all" : stage)}
-                className={`group relative flex min-w-[100px] flex-1 flex-col items-center gap-2.5 rounded-xl border px-3 py-4 transition-all duration-200 ${
+                className={`group relative flex min-w-[110px] flex-1 flex-col items-center gap-3 rounded-xl border px-4 py-5 transition-all duration-200 ${
                   isActive
                     ? "border-[var(--accent)] bg-[var(--accent-subtle)] shadow-[0_0_0_1px_var(--accent)]"
                     : hasUsers
