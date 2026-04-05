@@ -116,7 +116,6 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
                   boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)",
                   padding: "8px 12px",
                 }}
-                formatter={(value: number, name: string) => [`${value}`, name]}
               />
             </PieChart>
           </ResponsiveContainer>
