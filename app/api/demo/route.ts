@@ -169,7 +169,18 @@ CRITICAL: Your response must start with { or [ and end with } or ]. No text befo
 
     cleanJson = cleanJson.substring(startIndex, lastIndex + 1);
     const rawArticles = JSON.parse(cleanJson);
-    const articles = (Array.isArray(rawArticles) ? rawArticles : rawArticles.articles || []).map((a: any) => ({
+    interface RawArticle {
+      title?: string;
+      hook?: string;
+      content?: string;
+      summary?: string;
+      image_url?: string | null;
+      tag?: string;
+      source?: string;
+      url?: string;
+      featured?: boolean;
+    }
+    const articles = (Array.isArray(rawArticles) ? rawArticles : rawArticles.articles || []).map((a: RawArticle) => ({
       ...a,
       title: cleanCiteTags(a.title || ""),
       hook: cleanCiteTags(a.hook || ""),

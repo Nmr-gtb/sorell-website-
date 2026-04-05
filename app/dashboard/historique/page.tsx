@@ -105,7 +105,32 @@ export default function HistoriquePage() {
 
   // Vue détail d'une newsletter
   if (selectedNewsletter) {
-    let parsedContent: any = null;
+    interface NewsletterArticle {
+      tag?: string;
+      title?: string;
+      hook?: string;
+      content?: string;
+      summary?: string;
+      source?: string;
+    }
+    interface KeyFigure {
+      value?: string;
+      label?: string;
+      context?: string;
+    }
+    interface ParsedNewsletter {
+      editorial?: string;
+      featuredArticle?: {
+        title?: string;
+        hook?: string;
+        content?: string;
+        summary?: string;
+        source?: string;
+      };
+      articles?: NewsletterArticle[];
+      keyFigures?: KeyFigure[];
+    }
+    let parsedContent: ParsedNewsletter | null = null;
     try {
       parsedContent = typeof selectedNewsletter.content === "string"
         ? JSON.parse(selectedNewsletter.content)
@@ -172,7 +197,7 @@ export default function HistoriquePage() {
             )}
 
             {/* Autres articles */}
-            {parsedContent.articles?.map((article: any, i: number) => (
+            {parsedContent.articles?.map((article: NewsletterArticle, i: number) => (
               <div key={i} style={{
                 padding: 16,
                 background: "var(--surface)",
@@ -190,7 +215,7 @@ export default function HistoriquePage() {
             {/* Chiffres clés */}
             {parsedContent.keyFigures?.length > 0 && (
               <div className="historique-keyfigures" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                {parsedContent.keyFigures.map((fig: any, i: number) => (
+                {parsedContent.keyFigures.map((fig: KeyFigure, i: number) => (
                   <div key={i} style={{
                     flex: 1,
                     padding: 12,
