@@ -80,10 +80,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&#39;ensemble de votre plateforme</p>
-      </div>
+      <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">

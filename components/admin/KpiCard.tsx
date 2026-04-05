@@ -15,7 +15,7 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
       <div className="flex items-start justify-between">
         <div
           className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-            accent ? "bg-[var(--accent-subtle)] text-[var(--accent)]" : "bg-[var(--surface-hover)] text-[var(--text-secondary)]"
+            accent ? "bg-[rgba(0,80,88,0.1)] text-[var(--accent)]" : "bg-[var(--surface-hover)] text-[var(--text-secondary)]"
           }`}
         >
           {icon}

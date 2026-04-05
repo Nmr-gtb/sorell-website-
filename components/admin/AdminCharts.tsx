@@ -90,8 +90,8 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
         <h2 className="mb-6 text-[15px] font-semibold text-[var(--text)]">
           Répartition des plans
         </h2>
-        <div className="relative">
-          <ResponsiveContainer width="100%" height={200}>
+        <div className="relative flex items-center justify-center" style={{ height: 220 }}>
+          <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie
                 data={pieData}
@@ -99,10 +99,10 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={85}
-                innerRadius={52}
-                strokeWidth={0}
-                label={({ name, value }: { name?: string; value?: number }) => `${name ?? ""}: ${value ?? 0}`}
+                outerRadius={90}
+                innerRadius={55}
+                strokeWidth={2}
+                stroke="#FFFFFF"
               >
                 {pieData.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
@@ -116,14 +116,15 @@ export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps)
                   boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)",
                   padding: "8px 12px",
                 }}
+                formatter={(value: number, name: string) => [`${value}`, name]}
               />
             </PieChart>
           </ResponsiveContainer>
           {/* Center total */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ marginTop: -4 }}>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center">
-              <div className="text-xl font-bold text-[var(--text)]">{totalUsers}</div>
-              <div className="text-[10px] text-[var(--text-muted)] font-medium">total</div>
+              <div className="text-2xl font-bold text-[var(--text)]">{totalUsers}</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-medium tracking-wide">total</div>
             </div>
           </div>
         </div>
