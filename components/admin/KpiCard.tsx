@@ -34,9 +34,9 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
         )}
       </div>
       <div className="mt-4">
-        <div className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-[0.05em]">{label}</div>
+        <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.06em]">{label}</div>
         <div
-          className={`mt-1 text-2xl font-bold tracking-tight ${
+          className={`mt-1.5 text-[26px] font-bold leading-tight tracking-tight ${
             accent ? "text-[var(--accent)]" : "text-[var(--text)]"
           }`}
         >

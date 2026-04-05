@@ -189,12 +189,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main content */}
         <main className="flex-1 min-h-screen">
           {/* Breadcrumb header */}
-          <div className="hidden lg:flex items-center gap-2 border-b border-[var(--border)] bg-[var(--surface)] px-8 py-3">
+          <div className="hidden lg:flex items-center gap-2 border-b border-[var(--border)] bg-[var(--surface)] px-8 py-3.5">
             <span className="text-xs text-[var(--text-muted)]">Admin</span>
-            <span className="text-xs text-[var(--border-hover)]">/</span>
+            <span className="text-xs text-[var(--border)]">/</span>
             <span className="text-xs font-medium text-[var(--text-secondary)]">{getBreadcrumb()}</span>
           </div>
-          <div className="p-6 lg:p-8">
+          <div className="p-6 lg:px-8 lg:py-7">
             {children}
           </div>
         </main>

@@ -80,7 +80,10 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&#39;ensemble de votre plateforme</p>
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -123,7 +126,7 @@ export default function AdminDashboardPage() {
 
       {/* Recent signups */}
       <div>
-        <h2 className="mb-4 text-base font-semibold text-[var(--text)]">
+        <h2 className="mb-4 text-[15px] font-semibold text-[var(--text)]">
           Dernières inscriptions
         </h2>
         <AdminTable
@@ -133,12 +136,12 @@ export default function AdminDashboardPage() {
               header: "Utilisateur",
               render: (user) => (
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
                     {(user.full_name || user.email)[0].toUpperCase()}
                   </div>
                   <div>
                     <div className="text-sm font-medium text-[var(--text)]">{user.full_name || "-"}</div>
-                    <div className="text-xs text-[var(--text-secondary)]">{user.email}</div>
+                    <div className="text-xs text-[var(--text-muted)]">{user.email}</div>
                   </div>
                 </div>
               ),

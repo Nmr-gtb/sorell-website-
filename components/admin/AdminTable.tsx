@@ -35,19 +35,19 @@ export default function AdminTable<T>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-[0.05em] text-[var(--text-muted)] ${col.className || ""}`}
+                  className={`px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)] ${col.className || ""}`}
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--surface-hover)]">
+          <tbody className="divide-y divide-[var(--border-subtle)]">
             {loading
               ? Array.from({ length: loadingRows }).map((_, i) => (
                   <tr key={`skeleton-${i}`}>
                     {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3.5">
+                      <td key={col.key} className="px-5 py-4">
                         <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--border)]" />
                       </td>
                     ))}
@@ -57,7 +57,7 @@ export default function AdminTable<T>({
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="px-4 py-12 text-center text-[var(--text-muted)]"
+                      className="px-5 py-12 text-center text-sm text-[var(--text-muted)]"
                     >
                       {emptyMessage}
                     </td>
@@ -72,7 +72,7 @@ export default function AdminTable<T>({
                       onClick={() => onRowClick?.(item)}
                     >
                       {columns.map((col) => (
-                        <td key={col.key} className={`px-4 py-3.5 ${col.className || ""}`}>
+                        <td key={col.key} className={`px-5 py-4 ${col.className || ""}`}>
                           {col.render(item, index)}
                         </td>
                       ))}

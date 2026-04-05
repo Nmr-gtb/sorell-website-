@@ -26,92 +26,115 @@ interface AdminChartsProps {
 }
 
 export default function AdminCharts({ signupsChart, pieData }: AdminChartsProps) {
+  const totalUsers = pieData.reduce((sum, p) => sum + p.value, 0);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Signups chart */}
       <AdminCard className="lg:col-span-2">
-        <h2 className="mb-5 text-base font-semibold text-[var(--text)]">
+        <h2 className="mb-6 text-[15px] font-semibold text-[var(--text)]">
           Inscriptions (30 derniers jours)
         </h2>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={signupsChart}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-            <XAxis
-              dataKey="date"
-              stroke="#9CA3AF"
-              tick={{ fontSize: 11, fill: "#9CA3AF" }}
-              tickFormatter={(d: string) => d.slice(5)}
-              axisLine={{ stroke: "#E5E7EB" }}
-              tickLine={false}
-            />
-            <YAxis
-              stroke="#9CA3AF"
-              tick={{ fontSize: 11, fill: "#9CA3AF" }}
-              allowDecimals={false}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                boxShadow: "0 10px 15px -3px rgba(0,0,0,0.07)",
-              }}
-              labelStyle={{ color: "var(--text-secondary)", fontSize: 12 }}
-              itemStyle={{ color: "var(--accent)", fontSize: 12 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="count"
-              stroke="#0D9488"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 4, fill: "#0D9488", stroke: "#FFFFFF", strokeWidth: 2 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="rounded-lg bg-[var(--surface-alt)] p-4">
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={signupsChart}>
+              <defs>
+                <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0D9488" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="#0D9488" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+              <XAxis
+                dataKey="date"
+                stroke="#9CA3AF"
+                tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                tickFormatter={(d: string) => d.slice(5)}
+                axisLine={{ stroke: "#E5E7EB" }}
+                tickLine={false}
+              />
+              <YAxis
+                stroke="#9CA3AF"
+                tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                allowDecimals={false}
+                axisLine={false}
+                tickLine={false}
+                width={30}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "10px",
+                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)",
+                  padding: "8px 12px",
+                }}
+                labelStyle={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 4 }}
+                itemStyle={{ color: "#0D9488", fontSize: 13, fontWeight: 600 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke="#0D9488"
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 5, fill: "#0D9488", stroke: "#FFFFFF", strokeWidth: 2.5 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </AdminCard>
 
       {/* Plan distribution */}
       <AdminCard>
-        <h2 className="mb-5 text-base font-semibold text-[var(--text)]">
+        <h2 className="mb-6 text-[15px] font-semibold text-[var(--text)]">
           Répartition des plans
         </h2>
-        <ResponsiveContainer width="100%" height={200}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              innerRadius={45}
-              strokeWidth={0}
-              label={({ name, value }: { name?: string; value?: number }) => `${name ?? ""}: ${value ?? 0}`}
-            >
-              {pieData.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="relative">
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={85}
+                innerRadius={52}
+                strokeWidth={0}
+                label={({ name, value }: { name?: string; value?: number }) => `${name ?? ""}: ${value ?? 0}`}
+              >
+                {pieData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "10px",
+                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)",
+                  padding: "8px 12px",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          {/* Center total */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ marginTop: -4 }}>
+            <div className="text-center">
+              <div className="text-xl font-bold text-[var(--text)]">{totalUsers}</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-medium">total</div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-2">
           {pieData.map((p) => (
             <div key={p.name} className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
               <span
-                className="h-2.5 w-2.5 rounded-full"
+                className="h-2.5 w-2.5 rounded-full flex-shrink-0"
                 style={{ backgroundColor: p.color }}
               />
-              {p.name}: {p.value}
+              <span>{p.name}: <span className="font-medium text-[var(--text)]">{p.value}</span></span>
             </div>
           ))}
         </div>
