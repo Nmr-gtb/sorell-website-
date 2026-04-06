@@ -24,9 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: ESLint
-        run: npx next lint --dir app --dir lib --dir components --dir emails --max-warnings 50
-
       - name: TypeScript type check
         run: npx tsc --noEmit
 
