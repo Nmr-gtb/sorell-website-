@@ -174,9 +174,6 @@ export default function DashboardPage() {
   const [onboardingError, setOnboardingError] = useState("");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [promoCode, setPromoCode] = useState("");
-  const [promoValid, setPromoValid] = useState<{ valid: boolean; description: string } | null>(null);
-  const [promoChecking, setPromoChecking] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -275,27 +272,6 @@ export default function DashboardPage() {
     setSelectedTopics((prev) => prev.filter((t) => t !== id));
   }
 
-  async function validatePromoCode() {
-    if (!promoCode.trim()) return;
-    setPromoChecking(true);
-    try {
-      const res = await fetch("/api/promo/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: promoCode.trim() }),
-      });
-      const data = await res.json();
-      if (data.valid) {
-        setPromoValid({ valid: true, description: data.description });
-      } else {
-        setPromoValid({ valid: false, description: data.error || "Code invalide" });
-      }
-    } catch {
-      setPromoValid({ valid: false, description: "Erreur de validation" });
-    }
-    setPromoChecking(false);
-  }
-
   async function handlePlanCheckout(planKey: "pro" | "business") {
     if (!user) return;
     const priceId = PRICE_IDS[planKey][billingPeriod];
@@ -306,7 +282,6 @@ export default function DashboardPage() {
         body: JSON.stringify({
           priceId,
           fromOnboarding: true,
-          promoCode: promoValid?.valid ? promoCode.trim() : undefined,
         }),
       });
       const data = await res.json();
@@ -591,65 +566,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Promo code */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", maxWidth: 400, width: "100%" }}>
-              <input
-                type="text"
-                placeholder={t("dashboard.promo_placeholder") || "Code promo"}
-                value={promoCode}
-                onChange={(e) => {
-                  setPromoCode(e.target.value);
-                  setPromoValid(null);
-                }}
-                onKeyDown={(e) => { if (e.key === "Enter") validatePromoCode(); }}
-                style={{
-                  flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: 8,
-                  border: promoValid === null
-                    ? "1px solid var(--border)"
-                    : promoValid.valid
-                      ? "1.5px solid var(--success)"
-                      : "1.5px solid var(--error, #ef4444)",
-                  background: "var(--surface)",
-                  color: "var(--text)",
-                  fontSize: 13,
-                  outline: "none",
-                }}
-              />
-              <button
-                onClick={validatePromoCode}
-                disabled={promoChecking || !promoCode.trim()}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: 8,
-                  border: "1px solid var(--border)",
-                  background: "var(--surface)",
-                  color: "var(--text)",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: promoChecking || !promoCode.trim() ? "not-allowed" : "pointer",
-                  opacity: promoChecking || !promoCode.trim() ? 0.5 : 1,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {promoChecking ? "..." : t("dashboard.promo_apply") || "Appliquer"}
-              </button>
-            </div>
-          </div>
-          {promoValid && (
-            <div style={{
-              textAlign: "center",
-              marginBottom: 16,
-              fontSize: 13,
-              fontWeight: 500,
-              color: promoValid.valid ? "var(--success)" : "var(--error, #ef4444)",
-            }}>
-              {promoValid.valid ? `${promoValid.description}` : promoValid.description}
-            </div>
-          )}
-
           {/* Plan cards */}
           <div
             className="onboarding-plan-grid"
@@ -767,7 +683,7 @@ export default function DashboardPage() {
                   {/* Trial or promo note for paid plans */}
                   {!isFree && !isEnterprise && (
                     <p style={{ fontSize: 11, color: "var(--success)", fontWeight: 500, textAlign: "center", margin: 0 }}>
-                      {promoValid?.valid ? promoValid.description : t("dashboard.trial_note")}
+                      {t("dashboard.trial_note")}
                     </p>
                   )}
 
