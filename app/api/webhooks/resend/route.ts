@@ -81,15 +81,19 @@ export async function POST(request: Request) {
 
   const { type, data } = body;
 
-  if (type === "email.bounced" || type === "email.complained") {
-    const bouncedEmail = data?.to?.[0];
-    if (bouncedEmail) {
-      // Remove bounced email from recipients table
-      await supabaseAdmin
-        .from("recipients")
-        .delete()
-        .eq("email", bouncedEmail);
+  try {
+    if (type === "email.bounced" || type === "email.complained") {
+      const bouncedEmail = data?.to?.[0];
+      if (bouncedEmail) {
+        // Remove bounced email from recipients table
+        await supabaseAdmin
+          .from("recipients")
+          .delete()
+          .eq("email", bouncedEmail);
+      }
     }
+  } catch {
+    return NextResponse.json({ error: "Erreur de traitement du webhook." }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

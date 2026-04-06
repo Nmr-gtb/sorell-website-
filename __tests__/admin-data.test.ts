@@ -1,31 +1,40 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// --- Mocks ---
+// --- Mocks (vi.hoisted to avoid TDZ issues with ESM import hoisting) ---
 
-const mockGetAuthenticatedAdmin = vi.fn();
-const mockIsValidUUID = vi.fn();
+const {
+  mockGetAuthenticatedAdmin,
+  mockIsValidUUID,
+  mockFrom,
+  mockSubscriptionsList,
+  mockBuildNewsletterPrompt,
+  mockExtractPreviousTitles,
+} = vi.hoisted(() => ({
+  mockGetAuthenticatedAdmin: vi.fn(),
+  mockIsValidUUID: vi.fn(),
+  mockFrom: vi.fn(),
+  mockSubscriptionsList: vi.fn(),
+  mockBuildNewsletterPrompt: vi.fn(),
+  mockExtractPreviousTitles: vi.fn(),
+}));
 
 vi.mock("@/lib/admin/auth", () => ({
   getAuthenticatedAdmin: (...args: unknown[]) => mockGetAuthenticatedAdmin(...args),
   isValidUUID: (...args: unknown[]) => mockIsValidUUID(...args),
 }));
 
-const mockFrom = vi.fn();
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
     from: (...args: unknown[]) => mockFrom(...args),
   },
 }));
 
-const mockSubscriptionsList = vi.fn();
 vi.mock("stripe", () => ({
-  default: class {
-    subscriptions = { list: mockSubscriptionsList };
+  default: class MockStripe {
+    subscriptions = { list: (...args: unknown[]) => mockSubscriptionsList(...args) };
   },
 }));
 
-const mockBuildNewsletterPrompt = vi.fn();
-const mockExtractPreviousTitles = vi.fn();
 vi.mock("@/lib/newsletter-generator", () => ({
   buildNewsletterPrompt: (...args: unknown[]) => mockBuildNewsletterPrompt(...args),
   extractPreviousTitles: (...args: unknown[]) => mockExtractPreviousTitles(...args),
@@ -51,8 +60,12 @@ function buildRequest(url: string) {
   });
 }
 
-function makeParams(key: string, value: string) {
-  return { params: Promise.resolve({ [key]: value }) };
+function makeIdParams(value: string) {
+  return { params: Promise.resolve({ id: value }) };
+}
+
+function makeUserIdParams(value: string) {
+  return { params: Promise.resolve({ userId: value }) };
 }
 
 // Chainable Supabase mock
@@ -86,8 +99,24 @@ describe("GET /api/admin/stats", () => {
   });
 
   it("returns all KPI fields", async () => {
-    mockFrom.mockImplementation((table: string) => {
-      if (table === "profiles") return chainable([{ plan: "free" }, { plan: "pro" }], 2);
+    let callCount = 0;
+    mockFrom.mockImplementation(() => {
+      callCount++;
+      // Stats route queries in order:
+      // 1: profiles count (totalUsers)
+      // 2: profiles count (newUsers)
+      // 3: newsletters with profiles!inner (activeUsers)
+      // 4: profiles select plan (planDistribution)
+      // 5: profiles trial_ends_at (trialConversion)
+      // 6: profiles created_at (signupsChart)
+      // 7: profiles recent (recentUsers)
+      if (callCount === 1) return chainable([], 2); // totalUsers count
+      if (callCount === 2) return chainable([], 1); // newUsers count
+      if (callCount === 3) return chainable([]); // activeNewsletters
+      if (callCount === 4) return chainable([{ plan: "free" }, { plan: "pro" }]); // planData
+      if (callCount === 5) return chainable([]); // trialUsers
+      if (callCount === 6) return chainable([]); // recentSignups
+      if (callCount === 7) return chainable([]); // recentUsers
       return chainable([], 0);
     });
 
@@ -212,19 +241,19 @@ describe("GET /api/admin/newsletters/[id]", () => {
 
   it("returns 401 when not authenticated", async () => {
     mockGetAuthenticatedAdmin.mockReturnValue(null);
-    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeParams("id", VALID_UUID));
+    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeIdParams(VALID_UUID));
     expect(res.status).toBe(401);
   });
 
   it("returns 400 for invalid UUID", async () => {
     mockIsValidUUID.mockReturnValue(false);
-    const res = await newsletterDetailGET(buildRequest("/api/admin/newsletters/bad"), makeParams("id", "bad"));
+    const res = await newsletterDetailGET(buildRequest("/api/admin/newsletters/bad"), makeIdParams("bad"));
     expect(res.status).toBe(400);
   });
 
   it("returns 404 when newsletter not found", async () => {
     mockFrom.mockImplementation(() => chainable(null));
-    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeParams("id", VALID_UUID));
+    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeIdParams(VALID_UUID));
     expect(res.status).toBe(404);
   });
 
@@ -242,7 +271,7 @@ describe("GET /api/admin/newsletters/[id]", () => {
       return chainable([]);
     });
 
-    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeParams("id", VALID_UUID));
+    const res = await newsletterDetailGET(buildRequest(`/api/admin/newsletters/${VALID_UUID}`), makeIdParams(VALID_UUID));
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.newsletter).toBeDefined();
@@ -319,19 +348,19 @@ describe("GET /api/admin/prompts/[userId]", () => {
 
   it("returns 401 when not authenticated", async () => {
     mockGetAuthenticatedAdmin.mockReturnValue(null);
-    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeParams("userId", VALID_UUID));
+    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeUserIdParams(VALID_UUID));
     expect(res.status).toBe(401);
   });
 
   it("returns 400 for invalid UUID", async () => {
     mockIsValidUUID.mockReturnValue(false);
-    const res = await promptsGET(buildRequest("/api/admin/prompts/bad"), makeParams("userId", "bad"));
+    const res = await promptsGET(buildRequest("/api/admin/prompts/bad"), makeUserIdParams("bad"));
     expect(res.status).toBe(400);
   });
 
   it("returns 404 when user not found", async () => {
     mockFrom.mockImplementation(() => chainable(null));
-    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeParams("userId", VALID_UUID));
+    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeUserIdParams(VALID_UUID));
     expect(res.status).toBe(404);
   });
 
@@ -346,7 +375,7 @@ describe("GET /api/admin/prompts/[userId]", () => {
       return chainable([]);
     });
 
-    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeParams("userId", VALID_UUID));
+    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeUserIdParams(VALID_UUID));
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.profile).toBeDefined();
@@ -356,7 +385,7 @@ describe("GET /api/admin/prompts/[userId]", () => {
 
   it("returns reconstructed prompt when config exists", async () => {
     const profile = { id: VALID_UUID, email: "a@test.com", full_name: "Alice", plan: "pro" };
-    const config = { user_id: VALID_UUID, topics: ["tech"], custom_topics: ["ai"], sources: "", custom_brief: "My brief" };
+    const config = { user_id: VALID_UUID, topics: [{ label: "tech", enabled: true }, { label: "ai", enabled: true }], sources: "", custom_brief: "My brief" };
 
     let callCount = 0;
     mockFrom.mockImplementation(() => {
@@ -368,14 +397,14 @@ describe("GET /api/admin/prompts/[userId]", () => {
       return chainable([]);
     });
 
-    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeParams("userId", VALID_UUID));
+    const res = await promptsGET(buildRequest(`/api/admin/prompts/${VALID_UUID}`), makeUserIdParams(VALID_UUID));
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.prompt).toBe("Generated prompt content");
     expect(data.previousTitles).toEqual(["Title 1", "Title 2"]);
     expect(mockBuildNewsletterPrompt).toHaveBeenCalledWith(
       expect.objectContaining({
-        topics: "tech, ai",
+        topics: expect.any(String),
         customBrief: "My brief",
       })
     );

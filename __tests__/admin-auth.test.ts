@@ -75,7 +75,7 @@ describe("POST /api/admin/login", () => {
     const setCookie = res.headers.get("set-cookie");
     expect(setCookie).toContain("admin_token=jwt-token-123");
     expect(setCookie).toContain("HttpOnly");
-    expect(setCookie).toContain("SameSite=Strict");
+    expect(setCookie?.toLowerCase()).toContain("samesite=strict");
   });
 
   it("returns 429 when rate limited", async () => {
@@ -147,8 +147,12 @@ describe("POST /api/admin/login", () => {
 
 describe("POST /api/admin/logout", () => {
   it("returns 200 and clears the admin_token cookie", async () => {
-    const req = new Request("http://localhost/api/admin/logout", { method: "POST" });
-    const res = await logoutPOST();
+    mockGetAuthenticatedAdmin.mockReturnValue({ email: "noe@sorell.fr", role: "admin" });
+    const req = new Request("http://localhost/api/admin/logout", {
+      method: "POST",
+      headers: { cookie: "admin_token=jwt-token-123" },
+    });
+    const res = await logoutPOST(req);
     expect(res.status).toBe(200);
 
     const data = await res.json();

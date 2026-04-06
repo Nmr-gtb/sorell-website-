@@ -119,7 +119,7 @@ export async function POST(request: Request) {
         });
         results.push({ email: recipient.email, success: true, id: result.data?.id });
       } catch (e) {
-        results.push({ email: recipient.email, success: false, error: String(e) });
+        results.push({ email: recipient.email, success: false, error: "Échec de l'envoi." });
       }
     }
 

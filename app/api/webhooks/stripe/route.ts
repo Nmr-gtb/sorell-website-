@@ -55,129 +55,129 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const userId = session.metadata?.userId;
-    const subscriptionId = session.subscription as string;
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      const userId = session.metadata?.userId;
+      const subscriptionId = session.subscription as string;
 
-    if (userId && subscriptionId) {
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      const priceId = subscription.items.data[0]?.price.id;
-      const plan = PRICE_TO_PLAN[priceId] || "free";
+      if (userId && subscriptionId) {
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const priceId = subscription.items.data[0]?.price.id;
+        const plan = PRICE_TO_PLAN[priceId] || "free";
 
-      const updateData: Record<string, unknown> = {
-        plan,
-        stripe_customer_id: session.customer as string,
-        stripe_subscription_id: subscriptionId,
-        updated_at: new Date().toISOString(),
-      };
+        const updateData: Record<string, unknown> = {
+          plan,
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: subscriptionId,
+          updated_at: new Date().toISOString(),
+        };
 
-      // Stocker la date de fin de trial si applicable
-      if (subscription.trial_end) {
-        updateData.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
-      }
+        // Stocker la date de fin de trial si applicable
+        if (subscription.trial_end) {
+          updateData.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
+        }
 
-      await supabaseAdmin
-        .from("profiles")
-        .update(updateData)
-        .eq("id", userId);
+        await supabaseAdmin
+          .from("profiles")
+          .update(updateData)
+          .eq("id", userId);
 
-      // Traiter le parrainage si présent
-      const referralId = session.metadata?.referralId;
-      if (referralId) {
-        // Marquer le referral comme converti
-        const { data: referral } = await supabaseAdmin
-          .from("referrals")
-          .select("referrer_id")
-          .eq("id", referralId)
-          .eq("status", "pending")
-          .maybeSingle();
-
-        if (referral) {
-          await supabaseAdmin
+        // Traiter le parrainage si présent
+        const referralId = session.metadata?.referralId;
+        if (referralId) {
+          // Marquer le referral comme converti
+          const { data: referral } = await supabaseAdmin
             .from("referrals")
-            .update({
-              status: "converted",
-              converted_at: new Date().toISOString(),
-            })
-            .eq("id", referralId);
+            .select("referrer_id")
+            .eq("id", referralId)
+            .eq("status", "pending")
+            .maybeSingle();
 
-          // Récompenser le parrain (+15 jours gratuits)
-          await rewardReferrer(referral.referrer_id);
+          if (referral) {
+            await supabaseAdmin
+              .from("referrals")
+              .update({
+                status: "converted",
+                converted_at: new Date().toISOString(),
+              })
+              .eq("id", referralId);
+
+            // Récompenser le parrain (+15 jours gratuits)
+            await rewardReferrer(referral.referrer_id);
+          }
         }
       }
     }
-  }
 
-  if (event.type === "customer.subscription.updated") {
-    const subscription = event.data.object;
-    const priceId = subscription.items.data[0]?.price.id;
-    const plan = PRICE_TO_PLAN[priceId] || "free";
-    const customerId = subscription.customer as string;
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object;
+      const priceId = subscription.items.data[0]?.price.id;
+      const plan = PRICE_TO_PLAN[priceId] || "free";
+      const customerId = subscription.customer as string;
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("stripe_customer_id", customerId)
-      .maybeSingle();
-
-    if (profile) {
-      await supabaseAdmin
+      const { data: profile } = await supabaseAdmin
         .from("profiles")
-        .update({ plan, updated_at: new Date().toISOString() })
-        .eq("id", profile.id);
-    }
-  }
+        .select("id")
+        .eq("stripe_customer_id", customerId)
+        .maybeSingle();
 
-  if (event.type === "invoice.payment_failed") {
-    const invoice = event.data.object;
-    const customerId = invoice.customer as string;
-
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id, email, full_name")
-      .eq("stripe_customer_id", customerId)
-      .maybeSingle();
-
-    if (profile) {
-      await supabaseAdmin
-        .from("profiles")
-        .update({ plan: "free", updated_at: new Date().toISOString() })
-        .eq("id", profile.id);
-
-      // Envoyer un email de notification de paiement échoué
-      try {
-        const firstName = profile.full_name?.split(" ")[0] || "";
-        const html = await render(PaymentFailedEmail({ firstName }));
-
-        await resend.emails.send({
-          from: "Sorell <noe@sorell.fr>",
-          to: profile.email,
-          subject: "Problème de paiement \u2014 Action requise",
-          html,
-        });
-      } catch {
-        // Ne pas faire échouer le webhook si l'envoi d'email échoue
+      if (profile) {
+        await supabaseAdmin
+          .from("profiles")
+          .update({ plan, updated_at: new Date().toISOString() })
+          .eq("id", profile.id);
       }
     }
-  }
 
-  if (event.type === "customer.subscription.deleted") {
-    const subscription = event.data.object;
-    const customerId = subscription.customer as string;
+    if (event.type === "invoice.payment_failed") {
+      const invoice = event.data.object;
+      const customerId = invoice.customer as string;
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("stripe_customer_id", customerId)
-      .maybeSingle();
-
-    if (profile) {
-      await supabaseAdmin
+      const { data: profile } = await supabaseAdmin
         .from("profiles")
-        .update({ plan: "free", stripe_subscription_id: null, updated_at: new Date().toISOString() })
-        .eq("id", profile.id);
+        .select("id, email, full_name")
+        .eq("stripe_customer_id", customerId)
+        .maybeSingle();
+
+      if (profile) {
+        // Ne PAS downgrader ici — attendre customer.subscription.deleted
+        // Envoyer seulement un email d'alerte au client
+        try {
+          const firstName = profile.full_name?.split(" ")[0] || "";
+          const html = await render(PaymentFailedEmail({ firstName }));
+
+          await resend.emails.send({
+            from: "Sorell <noe@sorell.fr>",
+            to: profile.email,
+            subject: "Problème de paiement \u2014 Action requise",
+            html,
+          });
+        } catch {
+          // Ne pas faire échouer le webhook si l'envoi d'email échoue
+        }
+      }
     }
+
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object;
+      const customerId = subscription.customer as string;
+
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("id")
+        .eq("stripe_customer_id", customerId)
+        .maybeSingle();
+
+      if (profile) {
+        await supabaseAdmin
+          .from("profiles")
+          .update({ plan: "free", stripe_subscription_id: null, updated_at: new Date().toISOString() })
+          .eq("id", profile.id);
+      }
+    }
+  } catch {
+    return NextResponse.json({ error: "Erreur de traitement du webhook." }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });
