@@ -166,8 +166,14 @@ export function Layout({
             >
               {"G\u00e9n\u00e9r\u00e9 par Sorell \u00b7 Votre veille sectorielle par IA"}
               <br />
+              {"Sorell \u00b7 France"}
+              <br />
               <Link href={unsubscribeUrl} style={{ color: secondaryText }}>
                 {"Se d\u00e9sabonner"}
+              </Link>
+              {" \u00b7 "}
+              <Link href="https://sorell.fr/confidentialite" style={{ color: secondaryText }}>
+                {"Politique de confidentialit\u00e9"}
               </Link>
             </Text>
           </Section>

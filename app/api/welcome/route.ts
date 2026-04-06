@@ -50,6 +50,7 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: "Sorell <noe@sorell.fr>",
         to: "noe@sorell.fr",
+        replyTo: "noe@sorell.fr",
         subject: `Nouvel inscrit Sorell - ${email}`,
         html: `<!DOCTYPE html>
 <html>
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
   </div>
 </body>
 </html>`,
+        text: `Nouvel inscrit Sorell\n\nNom : ${name || "Non renseigné"}\nEmail : ${email}\nDate : ${now}`,
       });
     } catch {
       // silently ignore

@@ -44,6 +44,7 @@ export async function POST(request: Request) {
       replyTo: email,
       subject: `[Sorell Contact] ${subject || "Nouveau message"} - ${name}`,
       html: adminHtml,
+      text: `Nouveau message de ${name} (${email})\n\nSujet : ${subject || "Non renseigné"}\n\n${message}`,
     });
 
     const userHtml = await render(
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
       replyTo: "noe@sorell.fr",
       subject: "Nous avons bien reçu votre message - Sorell",
       html: userHtml,
+      text: `Bonjour ${name},\n\nNous avons bien reçu votre message et reviendrons vers vous rapidement.\n\nSujet : ${subject || "Non renseigné"}\nVotre message : ${message}\n\nÀ bientôt,\nNoé - Sorell\nhttps://www.sorell.fr`,
     });
 
     return NextResponse.json({ success: true });

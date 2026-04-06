@@ -92,8 +92,10 @@ async function sendAdminAlert(subject: string, html: string): Promise<void> {
     await resend.emails.send({
       from: "Sorell Alertes <noe@sorell.fr>",
       to: "noe@sorell.fr",
+      replyTo: "noe@sorell.fr",
       subject,
       html,
+      text: `${subject}\n\nVoir les détails sur https://www.sorell.fr/admin`,
     });
   } catch {
     // Silently fail - don't crash the CRON
@@ -235,6 +237,7 @@ export async function GET(request: Request) {
                 replyTo: "noe@sorell.fr",
                 subject,
                 html,
+                text: `${subject}\n\n${name}, vous avez atteint votre limite de newsletters ce mois-ci. Passez au plan supérieur pour continuer.\n\nhttps://www.sorell.fr/tarifs\n\nSorell - https://www.sorell.fr`,
               });
               await markAsSent(user.id, monthKey);
               results.limit_reached++;

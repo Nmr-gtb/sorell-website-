@@ -45,6 +45,7 @@ export async function POST(request: Request) {
       replyTo: "noe@sorell.fr",
       subject: "Bienvenue sur Sorell",
       html: welcomeHtml,
+      text: `Bienvenue sur Sorell, ${displayName} !\n\nVotre veille automatique est en route. Connectez-vous sur https://www.sorell.fr/dashboard pour configurer votre newsletter.\n\nÀ bientôt,\nNoé - Sorell`,
     });
 
     return NextResponse.json({ success: true });

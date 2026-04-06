@@ -124,11 +124,27 @@ export function LifecycleLayout({ preheader, children }: LifecycleLayoutProps) {
             >
               Vous recevez cet email car vous avez un compte sur Sorell.
               <br />
+              Sorell · France
+              <br />
               <Link
                 href="mailto:noe@sorell.fr"
                 style={{ color: SECONDARY_TEXT }}
               >
                 Besoin d&apos;aide ? Répondez à cet email
+              </Link>
+              {" · "}
+              <Link
+                href="https://sorell.fr/confidentialite"
+                style={{ color: SECONDARY_TEXT }}
+              >
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link
+                href="https://sorell.fr/dashboard/profile"
+                style={{ color: SECONDARY_TEXT }}
+              >
+                Gérer mes préférences
               </Link>
             </Text>
           </Section>

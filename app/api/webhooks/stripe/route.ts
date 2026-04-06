@@ -150,8 +150,10 @@ export async function POST(request: Request) {
           await resend.emails.send({
             from: "Sorell <noe@sorell.fr>",
             to: profile.email,
+            replyTo: "noe@sorell.fr",
             subject: "Problème de paiement \u2014 Action requise",
             html,
+            text: `Problème de paiement - Action requise\n\n${firstName ? `Bonjour ${firstName},\n\n` : ""}Votre dernier paiement Sorell a échoué. Veuillez mettre à jour vos informations de paiement pour continuer à profiter de votre abonnement.\n\nhttps://www.sorell.fr/dashboard/profile\n\nSorell - https://www.sorell.fr`,
           });
         } catch {
           // Ne pas faire échouer le webhook si l'envoi d'email échoue
