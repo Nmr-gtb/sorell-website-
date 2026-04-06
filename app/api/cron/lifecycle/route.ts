@@ -9,6 +9,8 @@ import { FeedbackEmail } from "@/emails/FeedbackEmail";
 import { UpsellEmail } from "@/emails/UpsellEmail";
 import { AdminAlertEmail } from "@/emails/AdminAlertEmail";
 
+export const maxDuration = 60;
+
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 // ─── Types ───────────────────────────────────────────────────────

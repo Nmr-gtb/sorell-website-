@@ -44,7 +44,10 @@ export async function GET(request: NextRequest) {
           if (refCode) {
             await fetch(new URL("/api/referral", request.url).toString(), {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`,
+              },
               body: JSON.stringify({
                 code: refCode,
                 refereeId: session.user.id,

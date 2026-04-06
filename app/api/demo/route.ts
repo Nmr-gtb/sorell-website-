@@ -8,6 +8,8 @@ function cleanCiteTags(text: string): string {
   return text.replace(/<cite[^>]*>/g, "").replace(/<\/cite>/g, "").trim();
 }
 
+export const maxDuration = 60;
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
 const SECTOR_PROMPTS: Record<string, Record<string, string>> = {
@@ -52,7 +54,11 @@ export async function GET(request: Request) {
       );
     }
   } catch {
-    // Rate limiter unavailable (e.g. Redis not configured) — allow demo to proceed
+    // Rate limiter unavailable — fail close to prevent uncontrolled API costs
+    return NextResponse.json(
+      { error: "Service temporairement indisponible. Réessayez dans quelques minutes." },
+      { status: 503 }
+    );
   }
 
   try {

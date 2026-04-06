@@ -447,7 +447,7 @@ export default function DashboardPage() {
           key: "pro",
           name: "Pro",
           price: 19,
-          annualPrice: 15,
+          annualPrice: 190,
           tagline: t("dashboard.plan_pro_tagline"),
           features: [
             t("dashboard.plan_pro_f1"),
@@ -465,7 +465,7 @@ export default function DashboardPage() {
           key: "business",
           name: "Business",
           price: 49,
-          annualPrice: 39,
+          annualPrice: 490,
           tagline: t("dashboard.plan_biz_tagline"),
           features: [
             t("dashboard.plan_biz_f1"),

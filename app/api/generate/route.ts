@@ -2,6 +2,8 @@ import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
+
+export const maxDuration = 60;
 import {
   extractPreviousTitles,
   buildNewsletterPrompt,
@@ -33,7 +35,11 @@ export async function POST(request: Request) {
         );
       }
     } catch {
-      // Rate limiter unavailable — fail open to avoid blocking users
+      // Rate limiter unavailable — fail close to prevent uncontrolled API costs
+      return NextResponse.json(
+        { error: "Service temporairement indisponible. Réessayez dans quelques minutes." },
+        { status: 503 }
+      );
     }
 
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", verifiedUserId).single();

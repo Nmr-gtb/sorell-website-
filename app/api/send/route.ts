@@ -31,7 +31,11 @@ export async function POST(request: Request) {
         );
       }
     } catch {
-      // Rate limiter unavailable — fail open to avoid blocking users
+      // Rate limiter unavailable — fail close to prevent uncontrolled email costs
+      return NextResponse.json(
+        { error: "Service temporairement indisponible. Réessayez dans quelques minutes." },
+        { status: 503 }
+      );
     }
 
     const { data: newsletter, error: nlError } = await supabase

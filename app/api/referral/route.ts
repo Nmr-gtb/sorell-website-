@@ -80,10 +80,20 @@ export async function GET(request: Request) {
 // POST — Enregistrer qu'un filleul s'est inscrit via un code de parrainage
 export async function POST(request: Request) {
   try {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
     const { code, refereeId } = await request.json();
 
     if (!code || !refereeId) {
       return NextResponse.json({ error: "Données manquantes" }, { status: 400 });
+    }
+
+    // Vérifier que le refereeId correspond à l'utilisateur authentifié
+    if (refereeId !== user.id) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
     // Validation du format des inputs

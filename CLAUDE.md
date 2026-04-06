@@ -377,6 +377,7 @@ Double couche Upstash Redis :
 - Ne pas utiliser de tirets longs "---"
 - Spécifier les fichiers exacts à modifier
 - Toujours préciser les clés de traduction FR et EN
+- Toujours vérifier les Deployements sur Vercel error ou ready
 
 ## État actuel et prochaines étapes
 

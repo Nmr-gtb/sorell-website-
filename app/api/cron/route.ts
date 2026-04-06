@@ -9,6 +9,8 @@ import {
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
 
+export const maxDuration = 60;
+
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 const DAY_MAP: Record<string, number> = {

@@ -103,25 +103,27 @@ export default function LoginPage() {
     e.preventDefault();
     clearMessages();
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
+    // Passer le code de parrainage dans le redirect URL pour que le callback puisse l'utiliser
+    const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
+    const redirectUrl = refCode
+      ? `${window.location.origin}/auth/callback?ref=${encodeURIComponent(refCode)}`
+      : `${window.location.origin}/auth/callback`;
+
+    const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: name } },
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: redirectUrl,
+      },
     });
     if (error) {
       setError(error.message);
     } else {
       setSuccess(t("login.verify_email"));
-      // Enregistrer le parrainage si un code ref est stocké en localStorage
-      const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
-      if (refCode && data.user) {
-        fetch("/api/referral", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: refCode, refereeId: data.user.id }),
-        }).then(() => {
-          localStorage.removeItem("sorell_ref");
-        }).catch(() => {});
+      // Le parrainage sera enregistré de façon authentifiée dans auth/callback
+      if (refCode) {
+        localStorage.removeItem("sorell_ref");
       }
     }
     setLoading(false);
