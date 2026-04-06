@@ -16,7 +16,6 @@ import {
   TrendUpIcon,
   ActivityIcon,
   DollarIcon,
-  BarChartIcon,
 } from "@/components/admin/AdminIcons";
 
 interface Stats {
@@ -79,45 +78,38 @@ export default function AdminDashboardPage() {
     .map(([plan, count]) => ({ name: PLAN_LABELS[plan], value: count, color: PLAN_COLORS[plan] }));
 
   return (
-    <div className="space-y-12 animate-[fadeInUp_0.3s_ease-out]">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&apos;ensemble de votre activité Sorell</p>
-      </div>
-
+    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
         <KpiCard
           icon={<UsersIcon size={20} />}
           label="Total utilisateurs"
           value={stats.totalUsers}
+          iconBg="bg-[#E6F0F1]"
+          iconColor="text-[#005058]"
         />
         <KpiCard
           icon={<TrendUpIcon size={20} />}
           label="Nouveaux (7j)"
           value={stats.newUsers}
+          iconBg="bg-[#ECFDF5]"
+          iconColor="text-[#059669]"
+          accent
+        />
+        <KpiCard
+          icon={<DollarIcon size={20} />}
+          label="MRR"
+          value={`${stats.mrr}\u00A0\u20AC`}
+          iconBg="bg-[#FEF3C7]"
+          iconColor="text-[#D97706]"
           accent
         />
         <KpiCard
           icon={<ActivityIcon size={20} />}
           label="Actifs (30j)"
           value={stats.activeUsers}
-        />
-        <KpiCard
-          icon={<DollarIcon size={20} />}
-          label="MRR"
-          value={`${stats.mrr}\u00A0\u20AC`}
-          accent
-        />
-        <KpiCard
-          icon={<BarChartIcon size={20} />}
-          label="Conversion trial"
-          value={`${stats.trialConversionRate}%`}
-        />
-        <KpiCard
-          icon={<UsersIcon size={20} />}
-          label="Plans payants"
-          value={stats.planDistribution.pro + stats.planDistribution.business + stats.planDistribution.enterprise}
+          iconBg="bg-[#F3E8FF]"
+          iconColor="text-[#7C3AED]"
         />
       </div>
 
@@ -125,12 +117,18 @@ export default function AdminDashboardPage() {
       <AdminCharts signupsChart={stats.signupsChart} pieData={pieData} />
 
       {/* Recent signups */}
-      <div>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-[15px] font-semibold text-[var(--text)]">
-            Dernières inscriptions
-          </h2>
-          <span className="rounded-full bg-[var(--surface-alt)] border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--text-muted)]">
+      <div className="rounded-[20px] border border-[#E8ECF1] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="flex items-center justify-between border-b border-[#F3F4F6] px-7 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#DBEAFE]">
+              <UsersIcon size={18} className="text-[#2563EB]" />
+            </div>
+            <div>
+              <h2 className="text-[15px] font-semibold text-[#111827]">Dernières inscriptions</h2>
+              <p className="text-[12px] text-[#9CA3AF]">Utilisateurs récemment inscrits</p>
+            </div>
+          </div>
+          <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-medium text-[#6B7280]">
             {stats.recentUsers.length} récents
           </span>
         </div>

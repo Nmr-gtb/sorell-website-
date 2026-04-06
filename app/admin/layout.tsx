@@ -100,15 +100,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Sidebar */}
         <aside
           className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[var(--border)] bg-[var(--surface)] transition-all duration-300 lg:static lg:z-auto ${
-            sidebarCollapsed ? "lg:w-[72px]" : "lg:w-60"
+            sidebarCollapsed ? "lg:w-[72px]" : "lg:w-[260px]"
           } ${sidebarOpen ? "w-60 translate-x-0" : "w-60 -translate-x-full lg:translate-x-0"}`}
         >
           {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-5">
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-6">
             {!sidebarCollapsed && (
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent-subtle)]">
-                  <span className="text-sm font-bold text-[var(--accent)]">S</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-subtle)]">
+                  <span className="text-base font-bold text-[var(--accent)]">S</span>
                 </div>
                 <div className="hidden lg:block">
                   <div
@@ -133,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Nav items */}
-          <nav className="flex-1 px-3 py-5 space-y-1.5">
+          <nav className="flex-1 px-4 py-5 space-y-1.5">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -142,9 +142,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
+                  className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150 ${
                     isActive
-                      ? "bg-[var(--accent-subtle)] text-[var(--accent)] border-l-[3px] border-[var(--accent)]"
+                      ? "bg-[var(--accent)] text-white shadow-sm"
                       : "text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
                   } ${sidebarCollapsed ? "justify-center" : ""}`}
                   title={sidebarCollapsed ? item.label : undefined}
@@ -153,7 +153,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Icon
                     size={20}
                     className={`flex-shrink-0 transition-colors ${
-                      isActive ? "text-[var(--accent)]" : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
+                      isActive ? "text-white" : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -188,13 +188,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Main content */}
         <main className="flex-1 min-h-screen">
-          {/* Breadcrumb header */}
-          <div className="hidden lg:flex items-center gap-2 border-b border-[var(--border)] bg-[var(--surface)] px-8 py-3.5">
-            <span className="text-xs text-[var(--text-muted)]">Admin</span>
-            <span className="text-xs text-[var(--border)]">/</span>
-            <span className="text-xs font-medium text-[var(--text-secondary)]">{getBreadcrumb()}</span>
+          {/* Top bar — InsightHub style */}
+          <div className="hidden lg:flex items-center gap-4 border-b border-[var(--border)] bg-[var(--surface)] px-10 py-4">
+            <div className="flex-1">
+              <div className="text-lg font-bold text-[var(--text)]">Bonjour, Noé</div>
+              <div className="text-[13px] text-[var(--text-muted)]">
+                {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-2.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span className="text-sm text-[var(--text-muted)]">Rechercher...</span>
+              </div>
+              <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)]" aria-label="Paramètres">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+              <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)]" aria-label="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </button>
+            </div>
           </div>
-          <div className="p-8 lg:px-12 lg:py-10">
+          <div className="p-8 lg:px-10 lg:py-10">
             {children}
           </div>
         </main>

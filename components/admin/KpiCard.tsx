@@ -7,17 +7,15 @@ interface KpiCardProps {
   value: string | number;
   trend?: { value: string; positive: boolean } | null;
   accent?: boolean;
+  iconBg?: string;
+  iconColor?: string;
 }
 
-export default function KpiCard({ icon, label, value, trend, accent = false }: KpiCardProps) {
+export default function KpiCard({ icon, label, value, trend, accent = false, iconBg, iconColor }: KpiCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-[var(--shadow-sm)] transition-all duration-200 hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)]">
-      <div className="flex items-start justify-between">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(0,80,88,0.15)] text-[var(--accent)]"
-        >
-          {icon}
-        </div>
+    <div className="group relative overflow-hidden rounded-[20px] border border-[#E8ECF1] bg-white px-7 py-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-[var(--border-hover)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9CA3AF]">{label}</div>
         {trend && (
           <div
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -31,11 +29,15 @@ export default function KpiCard({ icon, label, value, trend, accent = false }: K
           </div>
         )}
       </div>
-      <div className="mt-5">
-        <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.06em]">{label}</div>
+      <div className="mt-4 flex items-center gap-3">
         <div
-          className={`mt-2 text-[28px] font-bold leading-tight tracking-tight ${
-            accent ? "text-[var(--accent)]" : "text-[var(--text)]"
+          className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full ${iconBg || "bg-[#E6F0F1]"} ${iconColor || "text-[#005058]"}`}
+        >
+          {icon}
+        </div>
+        <div
+          className={`text-[32px] font-bold leading-tight tracking-tight ${
+            accent ? "text-[#005058]" : "text-[#111827]"
           }`}
         >
           {value}
