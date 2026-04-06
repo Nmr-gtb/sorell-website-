@@ -49,6 +49,7 @@ interface UserDetail {
     recipient_count: number;
     content: unknown;
   }[];
+  totalSentCount: number;
   recipients: { id: string; email: string; created_at: string }[];
   lifecycleEmails: { email_type: string; sent_at: string }[];
   events: { newsletter_id: string; event_type: string; recipient_email: string; created_at: string }[];
@@ -208,7 +209,7 @@ export default function AdminUserDetailPage() {
           />
           <InfoField
             label="Newsletters envoyées"
-            value={String(newsletters.filter((n) => n.status === "sent").length)}
+            value={String(data.totalSentCount ?? newsletters.filter((n) => n.status === "sent").length)}
           />
           <InfoField
             label="Destinataires"
@@ -241,7 +242,7 @@ export default function AdminUserDetailPage() {
           <div className="grid grid-cols-2 gap-5 text-sm">
             <InfoField
               label="Topics"
-              value={[...(config.topics || []), ...(config.custom_topics || [])].join(", ") || "\u2014"}
+              value={[...(config.topics || []), ...(config.custom_topics || [])].map((t: unknown) => (typeof t === "string" ? t : (t as { label?: string })?.label || "")).filter(Boolean).join(", ") || "\u2014"}
             />
             <InfoField
               label="Fréquence"

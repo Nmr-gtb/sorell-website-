@@ -38,13 +38,20 @@ export async function GET(
       .eq("user_id", id)
       .single();
 
-    // Newsletters history
+    // Newsletters history (last 20 for display)
     const { data: newsletters } = await supabaseAdmin
       .from("newsletters")
       .select("*")
       .eq("user_id", id)
       .order("generated_at", { ascending: false })
       .limit(20);
+
+    // Total sent count (no limit)
+    const { count: totalSentCount } = await supabaseAdmin
+      .from("newsletters")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", id)
+      .eq("status", "sent");
 
     // Recipients
     const { data: recipients } = await supabaseAdmin
@@ -82,6 +89,7 @@ export async function GET(
       profile,
       config,
       newsletters: newsletters || [],
+      totalSentCount: totalSentCount ?? 0,
       recipients: recipients || [],
       lifecycleEmails: lifecycleEmails || [],
       events,
