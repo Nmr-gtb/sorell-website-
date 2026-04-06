@@ -4,9 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
-import dynamic from "next/dynamic";
-
-const ChatWidget = dynamic(() => import("@/components/ChatWidget"), { ssr: false });
+import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -193,7 +191,7 @@ export default function RootLayout({
               <div data-page-content="">
                 {children}
               </div>
-              <ChatWidget />
+              <ChatWidgetWrapper />
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
