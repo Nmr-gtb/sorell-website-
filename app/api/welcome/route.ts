@@ -38,9 +38,11 @@ export async function POST(request: Request) {
 
     await resend.emails.send({
       from: "Sorell <noe@sorell.fr>",
+      replyTo: "noe@sorell.fr",
       to: email,
       subject: "Bienvenue sur Sorell - votre veille automatique est en route",
       html: welcomeHtml,
+      text: `Bienvenue sur Sorell, ${name || ""}!\n\nVotre veille automatique est en route. Connectez-vous sur https://www.sorell.fr/dashboard pour configurer votre newsletter.\n\nÀ bientôt,\nNoé - Sorell`,
     });
 
     try {

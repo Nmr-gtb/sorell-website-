@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
 import { buildNewsletterHtml, Article, KeyFigure } from "@/lib/email-template";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -114,12 +115,19 @@ export async function POST(request: Request) {
         plan,
       });
 
+      const unsubscribeUrl = buildUnsubscribeUrl(recipient.email);
       try {
         const result = await resend.emails.send({
           from: "Sorell <newsletter@sorell.fr>",
+          replyTo: "noe@sorell.fr",
           to: recipient.email,
           subject: newsletter.subject,
           html: emailHtml,
+          text: `${newsletter.subject}\n\nPour lire cette newsletter, ouvrez-la dans un client email compatible HTML.\n\nSe désabonner : ${unsubscribeUrl}`,
+          headers: {
+            "List-Unsubscribe": `<${unsubscribeUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
         });
         results.push({ email: recipient.email, success: true, id: result.data?.id });
       } catch (e) {

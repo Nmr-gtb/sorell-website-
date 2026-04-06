@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { buildNewsletterHtml } from "@/lib/email-template";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import {
   extractPreviousTitles,
   buildNewsletterPrompt,
@@ -201,12 +202,19 @@ export async function GET(request: Request) {
           plan: userPlan,
         });
 
+        const unsubscribeUrl = buildUnsubscribeUrl(recipient.email);
         try {
           await resend.emails.send({
             from: "Sorell <newsletter@sorell.fr>",
+            replyTo: "noe@sorell.fr",
             to: recipient.email,
             subject,
             html: emailHtml,
+            text: `${subject}\n\nPour lire cette newsletter, ouvrez-la dans un client email compatible HTML.\n\nSe désabonner : ${unsubscribeUrl}`,
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           });
         } catch {
           // silently ignore

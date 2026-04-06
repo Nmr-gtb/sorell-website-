@@ -76,6 +76,7 @@ async function sendLifecycleEmail(
       replyTo: "noe@sorell.fr",
       subject,
       html,
+      text: `${subject}\n\nPour voir ce message, ouvrez-le dans un client email compatible HTML.\n\nSorell - https://www.sorell.fr`,
     });
 
     await markAsSent(userId, emailType);
