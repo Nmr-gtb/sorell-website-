@@ -306,6 +306,8 @@ const fr: Record<string, string> = {
   "dashboard.add_topic": "+ Ajouter une thématique",
   "dashboard.per_year": "/an",
   "dashboard.trial_note": "15 jours gratuits, sans engagement",
+  "dashboard.promo_placeholder": "Code promo",
+  "dashboard.promo_apply": "Appliquer",
   "dashboard.rate_limit_error": "Vous avez atteint la limite de requêtes. Réessayez dans une heure.",
   "dashboard.generating": "Génération en cours...",
   "dashboard.receive_first": "Recevoir ma première newsletter",

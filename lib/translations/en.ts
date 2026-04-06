@@ -306,6 +306,8 @@ const en: Record<string, string> = {
   "dashboard.add_topic": "+ Add a topic",
   "dashboard.per_year": "/yr",
   "dashboard.trial_note": "15-day free trial, no commitment",
+  "dashboard.promo_placeholder": "Promo code",
+  "dashboard.promo_apply": "Apply",
   "dashboard.rate_limit_error": "You have reached the request limit. Please try again in one hour.",
   "dashboard.generating": "Generating...",
   "dashboard.receive_first": "Receive my first newsletter",
