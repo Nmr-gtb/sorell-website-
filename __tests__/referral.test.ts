@@ -144,6 +144,7 @@ describe("POST /api/referral", () => {
     maybeSingleIndex = 0;
     countResult = { count: 0 };
     insertResult = { error: null };
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "00000000-0000-0000-0000-000000000001" });
   });
 
   it("returns 400 when code is missing", async () => {
@@ -181,6 +182,8 @@ describe("POST /api/referral", () => {
   });
 
   it("returns 400 when refereeId is not a valid UUID", async () => {
+    // Override auth to match the invalid refereeId so the 403 check passes
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "not-a-uuid" });
     const response = await POST(makePostRequest({
       code: "ABCD1234",
       refereeId: "not-a-uuid",

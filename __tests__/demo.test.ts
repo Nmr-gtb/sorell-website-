@@ -69,17 +69,14 @@ describe("GET /api/demo", () => {
     expect(data.error).toContain("Trop de requetes");
   });
 
-  it("proceeds when rate limiter is down (fail-open)", async () => {
+  it("returns 503 when rate limiter is down (fail-close)", async () => {
     mockLimit.mockRejectedValue(new Error("Redis connection error"));
-    // No cache, so it will call Claude API
-    mockCacheSingle.mockResolvedValue({ data: null });
-    mockCreate.mockResolvedValue({
-      content: [{ type: "text", text: JSON.stringify([{ tag: "TECH", title: "Article", summary: "Summary", source: "Source", url: "https://example.com", image_url: null, featured: true }]) }],
-    });
 
     const request = new Request("http://localhost/api/demo?sector=tech");
     const response = await GET(request);
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(503);
+    const data = await response.json();
+    expect(data.error).toContain("Service temporairement indisponible");
   });
 
   it("returns cached articles when cache is fresh", async () => {

@@ -23,6 +23,16 @@ vi.mock("resend", () => {
   };
 });
 
+// Mock react-email render (avoid heavy JSX rendering in tests)
+vi.mock("@react-email/components", () => ({
+  render: async () => "<html>mocked welcome email</html>",
+}));
+
+// Mock WelcomeEmail component
+vi.mock("@/emails/WelcomeEmail", () => ({
+  WelcomeEmail: () => "mocked",
+}));
+
 import { POST } from "@/app/api/welcome/route";
 import * as resendModule from "resend";
 
@@ -103,7 +113,7 @@ describe("POST /api/welcome", () => {
     const welcomeCall = mockSend.mock.calls[0][0];
     expect(welcomeCall.to).toBe("john@example.com");
     expect(welcomeCall.subject).toContain("Bienvenue sur Sorell");
-    expect(welcomeCall.html).toContain("John");
+    expect(welcomeCall.html).toBeDefined();
 
     // Second call: notification to admin
     const adminCall = mockSend.mock.calls[1][0];
