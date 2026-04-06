@@ -321,6 +321,7 @@ const fr: Record<string, string> = {
   "dashboard.step2_placeholder": "Ex : Nous sommes un cabinet de recrutement spécialisé IT en Île-de-France. Concurrents : Hays, Michael Page, Robert Half. Clients : PME et ETI du secteur tech.\nJe veux suivre : marché de l'emploi tech en France, nouvelles réglementations RH et droit du travail, levées de fonds des startups qui recrutent, tendances télétravail et salaires, IA appliquée au recrutement.",
   "dashboard.step2_tip_title": "Plus votre brief est détaillé, plus votre newsletter sera riche et variée :",
   "dashboard.step2_tip_desc": "Mentionnez vos concurrents par nom, vos clients importants, les réglementations qui vous concernent, les innovations qui vous intéressent, les marchés géographiques que vous suivez, les salons ou événements de votre secteur.",
+  "dashboard.step2_soly_help": "Soly m'aide à rédiger mon brief",
   "dashboard.step3_title": "Choisissez vos thématiques",
   "dashboard.step3_desc": "Sélectionnez les sujets qui vous intéressent. Vous pourrez les modifier à tout moment.",
   "dashboard.step4_title": "Où envoyer votre newsletter ?",

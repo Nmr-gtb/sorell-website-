@@ -321,6 +321,7 @@ const en: Record<string, string> = {
   "dashboard.step2_placeholder": "E.g.: We are an IT recruitment firm based in Paris. Competitors: Hays, Michael Page, Robert Half. Clients: SMEs and mid-size tech companies.\nI want to follow: tech job market in France, new HR regulations and labor law, startup fundraising, remote work and salary trends, AI applied to recruitment.",
   "dashboard.step2_tip_title": "The more detailed your brief, the richer your newsletter will be:",
   "dashboard.step2_tip_desc": "Mention your competitors by name, key clients, relevant regulations, innovations that interest you, geographic markets you follow, trade shows or events in your industry.",
+  "dashboard.step2_soly_help": "Soly helps me write my brief",
   "dashboard.step3_title": "Choose your topics",
   "dashboard.step3_desc": "Select the topics that interest you. You can change them anytime.",
   "dashboard.step4_title": "Where should we send your newsletter?",

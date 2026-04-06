@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { useLanguage } from "@/lib/LanguageContext";
+import { openSolyBrief } from "@/components/ChatWidget";
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
   pro: {
@@ -761,7 +762,27 @@ export default function DashboardPage() {
               boxSizing: "border-box",
             }}
           />
-          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "left", lineHeight: 1.6 }}>
+          <button
+            onClick={() => openSolyBrief((generatedBrief) => setBrief(generatedBrief))}
+            style={{
+              marginTop: 16,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 20px",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+              color: "var(--accent)",
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ fontSize: 18 }}>✦</span>
+            {t("dashboard.step2_soly_help")}
+          </button>
+          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 12, textAlign: "left", lineHeight: 1.6 }}>
             <p style={{ marginBottom: 6, fontWeight: 600, color: "var(--text-secondary)" }}>{t("dashboard.step2_tip_title")}</p>
             <p style={{ margin: 0 }}>{t("dashboard.step2_tip_desc")}</p>
           </div>
