@@ -166,7 +166,7 @@ export default function AdminPromptsPage() {
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].map((topic, i) => (
                       <span key={i} className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
-                        {topic}
+                        {typeof topic === "string" ? topic : (topic as { label?: string })?.label || ""}
                       </span>
                     ))}
                   </div>
