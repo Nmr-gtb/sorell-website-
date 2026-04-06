@@ -8,13 +8,8 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "react/no-unescaped-entities": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
-    },
-  },
-  {
-    files: ["__tests__/**"],
-    rules: {
       "@typescript-eslint/no-unused-vars": "off",
+      "@next/next/no-html-link-for-pages": "warn",
     },
   },
   // Override default ignores of eslint-config-next.
@@ -24,6 +19,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Non-TS files
+    "scripts/**",
+    "__tests__/**",
   ]),
 ]);
 
