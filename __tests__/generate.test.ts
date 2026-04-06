@@ -13,14 +13,14 @@ vi.mock("@/lib/ratelimit", () => ({
 }));
 
 // Mock Supabase admin
-const mockEq = vi.fn();
-const mockSingle = vi.fn();
-const mockSelect = vi.fn();
-const mockInsert = vi.fn();
-const mockUpsert = vi.fn();
-const mockOrder = vi.fn();
-const mockLimitDb = vi.fn();
-const mockGte = vi.fn();
+const _mockEq = vi.fn();
+const _mockSingle = vi.fn();
+const _mockSelect = vi.fn();
+const _mockInsert = vi.fn();
+const _mockUpsert = vi.fn();
+const _mockOrder = vi.fn();
+const _mockLimitDb = vi.fn();
+const _mockGte = vi.fn();
 const mockHead = vi.fn();
 
 vi.mock("@/lib/supabase-admin", () => ({

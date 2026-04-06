@@ -105,9 +105,9 @@ describe("GET /api/analytics", () => {
     ];
 
     // Chain for newsletters: from("newsletters").select("*").eq("user_id", ...).eq("status", "sent").order(...)
-    let eqCallCount = 0;
+    let _eqCallCount = 0;
     mockEq.mockImplementation(() => {
-      eqCallCount++;
+      _eqCallCount++;
       // The chain is .eq("user_id").eq("status").order()
       // We need eq to return something with eq and order
       return {
@@ -117,9 +117,9 @@ describe("GET /api/analytics", () => {
       };
     });
 
-    let fromCallCount = 0;
+    let _fromCallCount = 0;
     mockFrom.mockImplementation((table: string) => {
-      fromCallCount++;
+      _fromCallCount++;
       if (table === "newsletters") {
         return {
           select: () => ({

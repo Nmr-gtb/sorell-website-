@@ -37,7 +37,7 @@ export default function CGVPage() {
         <Section title="1. Objet">
           <p>
             Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles
-            entre Noé Mur, entrepreneur individuel, exploitant le service Sorell accessible à l'adresse
+            entre Noé Mur, entrepreneur individuel, exploitant le service Sorell accessible à l&apos;adresse
             sorell.fr, et tout utilisateur souscrivant à un abonnement payant.
           </p>
         </Section>
@@ -45,7 +45,7 @@ export default function CGVPage() {
         <Section title="2. Description du service">
           <p>
             Sorell est un service en ligne de génération automatisée de newsletters par intelligence
-            artificielle. L'utilisateur configure ses thématiques, sources et fréquence d'envoi, et
+            artificielle. L&apos;utilisateur configure ses thématiques, sources et fréquence d&apos;envoi, et
             Sorell génère et envoie des newsletters personnalisées à ses destinataires.
           </p>
         </Section>
@@ -58,48 +58,48 @@ export default function CGVPage() {
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>
           <ul>
             <li><strong>Free</strong> : gratuit - 2 newsletters automatiques par mois, 1 aperçu manuel, 1 destinataire</li>
-            <li><strong>Pro</strong> : 19€/mois ou 190€/an - 4 newsletters automatiques par mois, 4 aperçus manuels, jusqu'à 5 destinataires, sources custom, analytics complets, historique des envois. Essai gratuit de 15 jours.</li>
-            <li><strong>Business</strong> : 49€/mois ou 490€/an - newsletters et aperçus illimités, jusqu'à 25 destinataires, logo personnalisé, toutes les fonctionnalités Pro incluses. Essai gratuit de 15 jours.</li>
+            <li><strong>Pro</strong> : 19€/mois ou 190€/an - 4 newsletters automatiques par mois, 4 aperçus manuels, jusqu&apos;à 5 destinataires, sources custom, analytics complets, historique des envois. Essai gratuit de 15 jours.</li>
+            <li><strong>Business</strong> : 49€/mois ou 490€/an - newsletters et aperçus illimités, jusqu&apos;à 25 destinataires, logo personnalisé, toutes les fonctionnalités Pro incluses. Essai gratuit de 15 jours.</li>
             <li><strong>Enterprise</strong> : sur devis - destinataires illimités, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>
             Sorell se réserve le droit de modifier ses tarifs à tout moment. Les modifications
-            n'affecteront pas les abonnements en cours.
+            n&apos;affecteront pas les abonnements en cours.
           </p>
         </Section>
 
         <Section title="4. Essai gratuit">
           <p>
             Les plans Pro et Business incluent un essai gratuit de 15 jours. Durant cette période,
-            l'utilisateur bénéficie de l'intégralité des fonctionnalités du plan choisi. À l'issue des
-            15 jours, l'abonnement est automatiquement activé et le premier prélèvement effectué, sauf
-            si l'utilisateur résilie avant la fin de la période d'essai.
+            l&apos;utilisateur bénéficie de l&apos;intégralité des fonctionnalités du plan choisi. À l&apos;issue des
+            15 jours, l&apos;abonnement est automatiquement activé et le premier prélèvement effectué, sauf
+            si l&apos;utilisateur résilie avant la fin de la période d&apos;essai.
           </p>
         </Section>
 
         <Section title="5. Paiement">
           <p>
             Les paiements sont effectués par carte bancaire via la plateforme sécurisée Stripe.
-            L'abonnement est facturé de manière récurrente (mensuelle ou annuelle) selon le plan choisi.
+            L&apos;abonnement est facturé de manière récurrente (mensuelle ou annuelle) selon le plan choisi.
           </p>
         </Section>
 
         <Section title="6. Droit de rétractation">
           <p>
-            Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne
-            s'applique pas aux contrats de fourniture de contenu numérique non fourni sur un support
-            matériel dont l'exécution a commencé avec l'accord du consommateur.
+            Conformément à l&apos;article L221-28 du Code de la consommation, le droit de rétractation ne
+            s&apos;applique pas aux contrats de fourniture de contenu numérique non fourni sur un support
+            matériel dont l&apos;exécution a commencé avec l&apos;accord du consommateur.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Toutefois, l'utilisateur peut annuler son abonnement à tout moment depuis son espace client.
-            L'accès au service sera maintenu jusqu'à la fin de la période en cours.
+            Toutefois, l&apos;utilisateur peut annuler son abonnement à tout moment depuis son espace client.
+            L&apos;accès au service sera maintenu jusqu&apos;à la fin de la période en cours.
           </p>
         </Section>
 
         <Section title="7. Résiliation">
           <p>
-            L'utilisateur peut résilier son abonnement à tout moment via le portail de gestion
-            d'abonnement accessible depuis son profil. La résiliation prend effet à la fin de la période
+            L&apos;utilisateur peut résilier son abonnement à tout moment via le portail de gestion
+            d&apos;abonnement accessible depuis son profil. La résiliation prend effet à la fin de la période
             de facturation en cours. Aucun remboursement prorata ne sera effectué.
           </p>
         </Section>
@@ -107,8 +107,8 @@ export default function CGVPage() {
         <Section title="8. Responsabilité">
           <p>
             Le contenu des newsletters est généré par intelligence artificielle (Claude, Anthropic).
-            Sorell ne garantit pas l'exactitude, l'exhaustivité ou la pertinence du contenu généré.
-            L'utilisateur est seul responsable de l'utilisation qu'il fait du contenu.
+            Sorell ne garantit pas l&apos;exactitude, l&apos;exhaustivité ou la pertinence du contenu généré.
+            L&apos;utilisateur est seul responsable de l&apos;utilisation qu&apos;il fait du contenu.
           </p>
           <p style={{ marginTop: "1rem" }}>
             L&apos;assistant Soly, intégré au site, utilise l&apos;intelligence artificielle (Claude, Anthropic)
@@ -117,7 +117,7 @@ export default function CGVPage() {
             l&apos;exactitude des réponses fournies par l&apos;assistant.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Sorell s'engage à mettre en œuvre les moyens nécessaires pour assurer la disponibilité du
+            Sorell s&apos;engage à mettre en œuvre les moyens nécessaires pour assurer la disponibilité du
             service, sans obligation de résultat.
           </p>
         </Section>
@@ -139,19 +139,19 @@ export default function CGVPage() {
         <Section title="11. Propriété intellectuelle du contenu généré">
           <p>
             Les newsletters générées par Sorell sont créées par intelligence artificielle à partir
-            de sources publiques. L'utilisateur est libre d'utiliser, partager et diffuser le contenu
+            de sources publiques. L&apos;utilisateur est libre d&apos;utiliser, partager et diffuser le contenu
             de ses newsletters dans le cadre de son activité professionnelle.
           </p>
           <p style={{ marginTop: "1rem" }}>
             Sorell ne revendique aucun droit de propriété intellectuelle sur le contenu généré pour
-            l'utilisateur. L'utilisateur reste toutefois responsable de l'usage qu'il fait de ce contenu.
+            l&apos;utilisateur. L&apos;utilisateur reste toutefois responsable de l&apos;usage qu&apos;il fait de ce contenu.
           </p>
         </Section>
 
         <Section title="12. Médiation">
           <p>
             Conformément aux articles L611-1 et suivants du Code de la consommation, en cas de litige
-            non résolu, l'utilisateur peut recourir gratuitement à un médiateur de la consommation.
+            non résolu, l&apos;utilisateur peut recourir gratuitement à un médiateur de la consommation.
           </p>
           <p style={{ marginTop: "1rem" }}>
             Plateforme de règlement en ligne des litiges de la Commission européenne :{" "}
@@ -164,7 +164,7 @@ export default function CGVPage() {
         <Section title="13. Droit applicable et litiges">
           <p>
             Les présentes CGV sont régies par le droit français. En cas de litige, les parties
-            s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut, les
+            s&apos;engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut, les
             tribunaux de Paris seront seuls compétents.
           </p>
         </Section>
