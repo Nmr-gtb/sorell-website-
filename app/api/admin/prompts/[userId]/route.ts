@@ -66,10 +66,10 @@ export async function GET(
       day: "numeric",
     });
 
-    const topics = [
-      ...(config.topics || []),
-      ...(config.custom_topics || []),
-    ].join(", ");
+    const enabledTopics = (config.topics || [])
+      .filter((t: { enabled?: boolean }) => t.enabled)
+      .map((t: { label?: string }) => t.label || "");
+    const topics = enabledTopics.join(", ");
 
     const prompt = buildNewsletterPrompt({
       topics,

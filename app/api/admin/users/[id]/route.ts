@@ -43,7 +43,7 @@ export async function GET(
       .from("newsletters")
       .select("*")
       .eq("user_id", id)
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .limit(20);
 
     // Recipients

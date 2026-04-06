@@ -27,10 +27,10 @@ export async function GET(request: Request) {
       .select("*", { count: "exact", head: true })
       .gte("created_at", sevenDaysAgo.toISOString());
 
-    // Active users (sent a newsletter in last 30 days)
+    // Active users (sent a newsletter in last 30 days, only existing profiles)
     const { data: activeNewsletters } = await supabaseAdmin
       .from("newsletters")
-      .select("user_id")
+      .select("user_id, profiles!inner(id)")
       .eq("status", "sent")
       .gte("sent_at", thirtyDaysAgo.toISOString());
 

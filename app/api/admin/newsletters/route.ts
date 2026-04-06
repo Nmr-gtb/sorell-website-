@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     let query = supabaseAdmin
       .from("newsletters")
       .select("*", { count: "exact" })
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (userId) {
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
       subject: n.subject,
       status: n.status,
       recipient_count: n.recipient_count || 0,
-      created_at: n.created_at,
+      created_at: n.generated_at,
       sent_at: n.sent_at,
       opens: eventCounts[n.id]?.opens || 0,
       clicks: eventCounts[n.id]?.clicks || 0,
