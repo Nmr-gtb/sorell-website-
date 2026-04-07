@@ -108,7 +108,7 @@ export function WelcomeEmail({ name, email, verifyUrl }: WelcomeEmailProps) {
 
       {/* CTA */}
       <Section
-        style={{ padding: "0 32px 32px", textAlign: "center" as const }}
+        style={{ padding: "0 32px 24px", textAlign: "center" as const }}
       >
         <Button
           href={ctaHref}
@@ -125,6 +125,28 @@ export function WelcomeEmail({ name, email, verifyUrl }: WelcomeEmailProps) {
         >
           {verifyUrl ? "Confirmer mon adresse email" : "Accéder à mon tableau de bord"}
         </Button>
+      </Section>
+
+      {/* Anti-spam tip */}
+      <Section style={{ padding: "0 32px 32px", textAlign: "center" as const }}>
+        <Text
+          style={{
+            fontSize: "12px",
+            color: "#9CA3AF",
+            lineHeight: "1.5",
+            margin: "0",
+          }}
+        >
+          Pour ne rien manquer, ajoutez{" "}
+          <span style={{ color: "#6B7280" }}>newsletters@sorell.fr</span>{" "}
+          à vos contacts.{" "}
+          <a
+            href="https://www.sorell.fr/blog/ajouter-contact-email-eviter-spams"
+            style={{ color: "#6B7280", textDecoration: "underline" }}
+          >
+            Comment faire ?
+          </a>
+        </Text>
       </Section>
     </LifecycleLayout>
   );

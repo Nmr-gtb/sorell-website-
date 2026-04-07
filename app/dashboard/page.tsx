@@ -176,6 +176,7 @@ export default function DashboardPage() {
   const [onboardingError, setOnboardingError] = useState("");
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   const searchParams = useSearchParams();
   const emailVerifiedParam = searchParams.get("email_verified");
@@ -397,6 +398,78 @@ export default function DashboardPage() {
     return (
       <div style={{ padding: "32px", maxWidth: 900 }}>
         <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
+      </div>
+    );
+  }
+
+  // ── ECRAN BLOCANT : VERIFICATION EMAIL ───────────────────────────
+  if (emailVerified === false && emailVerifiedParam !== "success") {
+    async function handleResendEmail() {
+      if (!user?.email) return;
+      setResendingEmail(true);
+      try {
+        await authFetch("/api/welcome", {
+          method: "POST",
+          body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
+        });
+      } catch {
+        // silently fail
+      }
+      setResendingEmail(false);
+    }
+
+    return (
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "80px 20px", textAlign: "center" }}>
+        <div style={{
+          width: 80, height: 80, borderRadius: "50%",
+          background: "rgba(245, 158, 11, 0.1)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          margin: "0 auto 24px",
+        }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
+        </div>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>
+          {lang === "fr" ? "Vérifiez votre boîte mail" : "Check your inbox"}
+        </h1>
+        <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 8 }}>
+          {lang === "fr"
+            ? "Un email de confirmation a été envoyé à :"
+            : "A confirmation email has been sent to:"}
+        </p>
+        <p style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 24 }}>
+          {user?.email}
+        </p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 32 }}>
+          {lang === "fr"
+            ? "Cliquez sur le lien dans l'email pour confirmer votre adresse et accéder à votre espace. Pensez à vérifier vos spams."
+            : "Click the link in the email to confirm your address and access your dashboard. Check your spam folder."}
+        </p>
+        <button
+          onClick={handleResendEmail}
+          disabled={resendingEmail}
+          style={{
+            padding: "12px 28px",
+            background: resendingEmail ? "var(--border)" : "var(--accent)",
+            color: "white",
+            border: "none",
+            borderRadius: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: resendingEmail ? "not-allowed" : "pointer",
+          }}
+        >
+          {resendingEmail
+            ? (lang === "fr" ? "Envoi en cours..." : "Sending...")
+            : (lang === "fr" ? "Renvoyer l'email" : "Resend email")}
+        </button>
+        <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 16 }}>
+          {lang === "fr"
+            ? "Vous ne trouvez pas l'email ? Vérifiez vos spams ou cliquez sur le bouton ci-dessus."
+            : "Can't find the email? Check your spam or click the button above."}
+        </p>
       </div>
     );
   }
@@ -1102,33 +1175,6 @@ export default function DashboardPage() {
           {loadingData || loadingNewsletter ? t("dashboard.summary") : getContextualMessage()}
         </p>
       </div>
-
-      {/* Banniere verification email */}
-      {emailVerified === false && (
-        <div style={{
-          background: "#FEF3C7",
-          border: "1px solid #F59E0B",
-          borderRadius: 10,
-          padding: "14px 20px",
-          marginBottom: 16,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          fontSize: 14,
-          color: "#92400E",
-        }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>
-            {lang === "fr"
-              ? "Confirmez votre adresse email pour recevoir vos newsletters. Consultez votre boite de reception."
-              : "Confirm your email address to receive your newsletters. Check your inbox."}
-          </span>
-        </div>
-      )}
 
       {emailVerifiedParam === "success" && (
         <div style={{

@@ -340,4 +340,61 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       </ul>
     `
   },
+  {
+    slug: "ajouter-contact-email-eviter-spams",
+    title: "Comment ajouter un expéditeur à vos contacts pour éviter les spams",
+    description: "Tutoriel pas à pas pour ajouter newsletters@sorell.fr à vos contacts sur Gmail, Outlook, Apple Mail, Yahoo et Thunderbird. Ne manquez plus aucune newsletter.",
+    date: "2026-04-07",
+    readTime: "3 min",
+    tags: ["Tutoriel", "Email"],
+    content: `
+      <p>Vous venez de vous inscrire sur Sorell et votre première newsletter arrive bientôt. Pour être sûr de la recevoir dans votre boîte de réception (et pas dans les spams), il suffit d'ajouter notre adresse d'envoi à vos contacts.</p>
+
+      <p>L'adresse à ajouter : <strong>newsletters@sorell.fr</strong></p>
+
+      <h2>Gmail (web)</h2>
+      <p>1. Ouvrez <a href="https://contacts.google.com" target="_blank" rel="noopener">Google Contacts</a></p>
+      <p>2. Cliquez sur <strong>Créer un contact</strong></p>
+      <p>3. Dans le champ email, saisissez <strong>newsletters@sorell.fr</strong></p>
+      <p>4. Vous pouvez ajouter "Sorell" comme nom si vous le souhaitez</p>
+      <p>5. Cliquez sur <strong>Enregistrer</strong></p>
+      <p>Si vous avez déjà reçu un email de Sorell dans vos spams : ouvrez-le, puis cliquez sur <strong>"Signaler comme non-spam"</strong> en haut du message. Gmail retiendra votre choix.</p>
+
+      <h2>Outlook / Hotmail (web)</h2>
+      <p>1. Ouvrez <a href="https://outlook.live.com/people/" target="_blank" rel="noopener">Contacts Outlook</a></p>
+      <p>2. Cliquez sur <strong>Nouveau contact</strong></p>
+      <p>3. Remplissez le champ email avec <strong>newsletters@sorell.fr</strong></p>
+      <p>4. Cliquez sur <strong>Créer</strong></p>
+      <p>Autre méthode : quand vous recevez un email de Sorell, cliquez sur les trois points en haut du message, puis sélectionnez <strong>"Ajouter aux expéditeurs approuvés"</strong>.</p>
+
+      <h2>Apple Mail (iPhone / Mac)</h2>
+      <p><strong>Sur iPhone :</strong></p>
+      <p>1. Ouvrez l'application <strong>Contacts</strong></p>
+      <p>2. Appuyez sur <strong>+</strong> en haut à droite</p>
+      <p>3. Ajoutez l'email <strong>newsletters@sorell.fr</strong></p>
+      <p>4. Appuyez sur <strong>OK</strong></p>
+      <p><strong>Sur Mac :</strong></p>
+      <p>1. Ouvrez l'application <strong>Contacts</strong></p>
+      <p>2. Cliquez sur <strong>+</strong> puis <strong>Nouveau contact</strong></p>
+      <p>3. Ajoutez l'email <strong>newsletters@sorell.fr</strong></p>
+      <p>4. Cliquez sur <strong>Terminé</strong></p>
+
+      <h2>Yahoo Mail</h2>
+      <p>1. Cliquez sur l'icône <strong>Contacts</strong> (carnet d'adresses) à gauche</p>
+      <p>2. Cliquez sur <strong>Ajouter un contact</strong></p>
+      <p>3. Remplissez le champ email avec <strong>newsletters@sorell.fr</strong></p>
+      <p>4. Cliquez sur <strong>Enregistrer</strong></p>
+
+      <h2>Thunderbird</h2>
+      <p>1. Cliquez sur le menu <strong>Carnet d'adresses</strong></p>
+      <p>2. Cliquez sur <strong>Nouveau contact</strong></p>
+      <p>3. Saisissez <strong>newsletters@sorell.fr</strong> dans le champ email</p>
+      <p>4. Cliquez sur <strong>Enregistrer</strong></p>
+
+      <h2>Pourquoi c'est important ?</h2>
+      <p>Les filtres anti-spam des messageries sont de plus en plus agressifs. Même un email légitime peut atterrir dans les indésirables si l'expéditeur n'est pas dans vos contacts. En ajoutant <strong>newsletters@sorell.fr</strong>, vous indiquez à votre messagerie que nos emails sont fiables.</p>
+
+      <p>Ça prend 30 secondes et ça garantit que vous recevrez chaque édition de votre newsletter dans votre boîte de réception principale.</p>
+    `
+  },
 ];
