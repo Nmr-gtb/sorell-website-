@@ -407,7 +407,7 @@ function KeyFiguresSection({
         >
           {"Chiffres cl\u00e9s"}
         </Text>
-        <table width="100%" cellPadding={0} cellSpacing={0}>
+        <table width="100%" cellPadding={0} cellSpacing={0} style={{ borderCollapse: "separate" as const, borderSpacing: 0 }}>
           <tbody>
             <tr>
               {keyFigures.map((fig, idx) => (
@@ -523,14 +523,13 @@ function SecondaryArticlesSection({
             cellSpacing={0}
             style={{
               marginBottom: "18px",
-              border: `1px solid ${warmBorder}`,
-              borderRadius: "10px",
-              overflow: "hidden",
+              borderCollapse: "separate" as const,
+              borderSpacing: 0,
             }}
           >
             <tbody>
               <tr>
-                <td style={{ padding: "22px", background: cardBg }}>
+                <td style={{ padding: "22px", background: cardBg, border: `1px solid ${warmBorder}`, borderRadius: "10px" }}>
                   {/* Tag + source row */}
                   <table width="100%" cellPadding={0} cellSpacing={0}>
                     <tbody>
@@ -669,11 +668,11 @@ function ContextualCtaSection({
         width="100%"
         cellPadding={0}
         cellSpacing={0}
-        style={{ borderRadius: "10px", overflow: "hidden" }}
+        style={{ borderCollapse: "separate" as const, borderSpacing: 0 }}
       >
         <tbody>
           <tr>
-            <td style={{ background: brandColor, padding: 0 }}>
+            <td style={{ background: brandColor, padding: 0, borderRadius: "10px" }}>
               <table width="100%" cellPadding={0} cellSpacing={0}>
                 <tbody>
                   <tr>
