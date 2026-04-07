@@ -397,4 +397,64 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>Ça prend 30 secondes et ça garantit que vous recevrez chaque édition de votre newsletter dans votre boîte de réception principale.</p>
     `
   },
+  {
+    slug: "parrainage-sorell-inviter-collegues",
+    title: "Parrainage Sorell : invitez vos collègues et gagnez 15 jours gratuits",
+    description: "Partagez Sorell autour de vous et profitez du programme de parrainage. 15 jours offerts pour vous, -20% pour votre filleul. On vous explique tout.",
+    date: "2026-04-07",
+    readTime: "3 min",
+    tags: ["Produit", "Parrainage"],
+    content: `
+      <p>Vous utilisez Sorell et votre veille sectorielle tourne toute seule. Vos collègues vous demandent comment vous faites ? C'est le moment de leur partager votre lien de parrainage.</p>
+
+      <h2>Comment fonctionne le parrainage ?</h2>
+      <p>Le principe est simple : vous partagez un lien unique, et quand la personne s'abonne à un plan payant (Pro ou Business), vous êtes tous les deux récompensés.</p>
+
+      <p><strong>Pour vous (le parrain) :</strong> +15 jours gratuits ajoutés automatiquement à votre abonnement en cours. Pas besoin de faire quoi que ce soit, c'est appliqué dès que le filleul s'abonne.</p>
+
+      <p><strong>Pour votre filleul :</strong> -20% sur son premier mois. Concrètement, le plan Pro passe de 19 à 15 euros et le plan Business de 49 à 39 euros.</p>
+
+      <h2>Qui peut parrainer ?</h2>
+      <p>Le parrainage est réservé aux abonnés <strong>Pro</strong> et <strong>Business</strong>. Si vous êtes sur le plan gratuit, vous devrez d'abord passer sur un plan payant pour débloquer votre lien de parrainage.</p>
+
+      <p>La limite est de <strong>3 parrainages convertis par mois</strong>. Si vous avez déjà 3 filleuls qui se sont abonnés ce mois-ci, vos liens restent actifs mais les récompenses reprendront le mois suivant.</p>
+
+      <h2>Comment trouver mon lien de parrainage ?</h2>
+      <p>Votre lien est disponible directement dans votre dashboard Sorell. Voici comment y accéder :</p>
+
+      <p>1. Connectez-vous sur <a href="https://sorell.fr/dashboard">sorell.fr/dashboard</a></p>
+      <p>2. Repérez le bloc <strong>"Inviter un collègue"</strong> sur votre tableau de bord</p>
+      <p>3. Cliquez sur <strong>"Copier"</strong> pour copier votre lien dans le presse-papier</p>
+      <p>4. Partagez-le par email, Slack, LinkedIn ou tout autre canal</p>
+
+      <p>Votre lien ressemble à ceci : <code>https://sorell.fr/?ref=VOTRECODE</code>. Chaque lien est unique et lié à votre compte.</p>
+
+      <h2>Suivre mes parrainages</h2>
+      <p>Dans le même bloc du dashboard, vous voyez trois indicateurs en temps réel :</p>
+
+      <p><strong>Convertis :</strong> le nombre de filleuls qui se sont abonnés grâce à votre lien.</p>
+      <p><strong>En attente :</strong> le nombre de personnes qui ont créé un compte via votre lien mais qui ne se sont pas encore abonnées.</p>
+      <p><strong>Restants ce mois :</strong> le nombre de parrainages encore disponibles ce mois-ci (maximum 3).</p>
+
+      <h2>Quand est-ce que je reçois mes jours gratuits ?</h2>
+      <p>Les 15 jours sont ajoutés automatiquement dès que votre filleul finalise son abonnement payant. Pas de code promo à saisir, pas de formulaire à remplir. Tout se fait en arrière-plan via Stripe.</p>
+
+      <p>Votre prochain renouvellement est simplement décalé de 15 jours. Vous pouvez le vérifier dans votre espace <a href="https://sorell.fr/dashboard/profile">Profil</a>.</p>
+
+      <h2>Bon à savoir</h2>
+      <p>- Le lien de parrainage expire après <strong>30 jours</strong> s'il n'est pas utilisé<br/>
+      - Le filleul ne bénéficie pas de l'essai gratuit de 15 jours quand il utilise un lien de parrainage (la réduction de -20% le remplace)<br/>
+      - Chaque filleul ne peut utiliser qu'un seul lien de parrainage<br/>
+      - Le parrainage fonctionne aussi bien pour les abonnements mensuels qu'annuels</p>
+
+      <h2>Commencez à parrainer</h2>
+      <p>Si vous êtes déjà abonné Pro ou Business, rendez-vous sur votre <a href="https://sorell.fr/dashboard">dashboard</a> pour copier votre lien. Sinon, <a href="https://sorell.fr/tarifs">découvrez nos offres</a> pour débloquer le parrainage et profiter de toutes les fonctionnalités de Sorell.</p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/automatiser-veille-sectorielle-5-minutes">Automatiser sa veille sectorielle en 5 minutes</a></li>
+        <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
+      </ul>
+    `
+  },
 ];
