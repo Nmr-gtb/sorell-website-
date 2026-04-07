@@ -44,7 +44,7 @@ export default function ContactPage() {
       <style>{`
         @media (max-width: 767px) {
           .contact-main {
-            padding-top: 48px !important;
+            padding-top: 120px !important;
             padding-bottom: 48px !important;
           }
           .contact-main > div:first-child {
