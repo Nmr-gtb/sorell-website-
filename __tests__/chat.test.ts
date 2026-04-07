@@ -19,6 +19,14 @@ vi.mock("@/lib/ratelimit", () => ({
   chatAnonDailyLimit: { limit: (...args: unknown[]) => mockChatAnonDailyLimit(...args) },
 }));
 
+// Mock supabaseAdmin
+const mockSupabaseFrom = vi.fn();
+vi.mock("@/lib/supabase-admin", () => ({
+  supabaseAdmin: {
+    from: (...args: unknown[]) => mockSupabaseFrom(...args),
+  },
+}));
+
 // Mock Anthropic
 vi.mock("@anthropic-ai/sdk", () => {
   const mockCreate = vi.fn();
@@ -49,6 +57,17 @@ function buildRequest(body: unknown, options?: { auth?: boolean }) {
   });
 }
 
+// Helper for supabase chain mock
+function mockSupabaseChain(data: unknown) {
+  return {
+    select: () => ({
+      eq: () => ({
+        single: () => Promise.resolve({ data, error: null }),
+      }),
+    }),
+  };
+}
+
 describe("POST /api/chat", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -64,6 +83,13 @@ describe("POST /api/chat", () => {
     mockChatAnonDailyLimit.mockResolvedValue({ success: true });
     mockCreate.mockResolvedValue({
       content: [{ type: "text", text: "Bonjour, je suis Soly." }],
+    });
+
+    // Mock supabase queries for user context
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === "profiles") return mockSupabaseChain({ plan: "free" });
+      if (table === "newsletter_config") return mockSupabaseChain({ topics: [], custom_brief: "", sources: [] });
+      return mockSupabaseChain(null);
     });
   });
 
@@ -111,6 +137,12 @@ describe("POST /api/chat", () => {
     expect(data.error).toContain("Role invalide");
   });
 
+  it("rejette la requete si messages manquants", async () => {
+    const request = buildRequest({ mode: "general" }, { auth: true });
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+  });
+
   // --- Succes ---
 
   it("retourne 200 avec une reponse valide en mode general", async () => {
@@ -137,13 +169,35 @@ describe("POST /api/chat", () => {
     expect(mockCreate).toHaveBeenCalledOnce();
   });
 
+  it("injecte le contexte utilisateur dans le prompt si authentifie", async () => {
+    mockSupabaseFrom.mockImplementation((table: string) => {
+      if (table === "profiles") return mockSupabaseChain({ plan: "pro" });
+      if (table === "newsletter_config") return mockSupabaseChain({
+        topics: [{ label: "Tech", enabled: true }, { label: "Finance", enabled: false }],
+        custom_brief: "Mon brief test",
+        sources: [],
+      });
+      return mockSupabaseChain(null);
+    });
+
+    const request = buildRequest(
+      { messages: [{ role: "user", content: "Salut" }], mode: "general" },
+      { auth: true }
+    );
+    await POST(request);
+
+    const callArgs = mockCreate.mock.calls[0][0];
+    expect(callArgs.system).toContain("Plan actuel : pro");
+    expect(callArgs.system).toContain("Tech");
+    expect(callArgs.system).toContain("Mon brief test");
+  });
+
   // --- Auth optionnelle ---
 
   it("fonctionne sans token Authorization (auth optionnelle)", async () => {
     mockGetAuthenticatedUser.mockRejectedValue(new Error("no auth"));
     const request = buildRequest(
       { messages: [{ role: "user", content: "Bonjour" }], mode: "general" }
-      // pas de auth: true
     );
     const response = await POST(request);
     expect(response.status).toBe(200);
@@ -189,7 +243,6 @@ describe("POST /api/chat", () => {
     // Verify only last 20 messages were sent to Anthropic
     const callArgs = mockCreate.mock.calls[0][0];
     expect(callArgs.messages).toHaveLength(20);
-    // Should be the last 20 (messages 6-25)
     expect(callArgs.messages[0].content).toBe("Message 6");
     expect(callArgs.messages[19].content).toBe("Message 25");
   });
@@ -200,15 +253,12 @@ describe("POST /api/chat", () => {
     mockGetAuthenticatedUser.mockRejectedValue(new Error("no auth"));
     const request = buildRequest(
       { messages: [{ role: "user", content: "Question?" }], mode: "general" }
-      // pas de auth
     );
     const response = await POST(request);
     expect(response.status).toBe(200);
 
-    // Anon limiters should have been called
     expect(mockChatAnonHourlyLimit).toHaveBeenCalledOnce();
     expect(mockChatAnonDailyLimit).toHaveBeenCalledOnce();
-    // Auth limiters should NOT have been called
     expect(mockChatHourlyLimit).not.toHaveBeenCalled();
     expect(mockChatDailyLimit).not.toHaveBeenCalled();
   });
@@ -256,14 +306,36 @@ describe("getSolySystemPrompt", () => {
     const general = getSolySystemPrompt("general");
     const brief = getSolySystemPrompt("brief");
 
-    // Both contain base context
     expect(general).toContain("Sorell");
     expect(brief).toContain("Sorell");
     expect(general).toContain("Soly");
     expect(brief).toContain("Soly");
 
-    // Neither mentions the model name
     expect(general).not.toContain("Haiku");
     expect(brief).not.toContain("Haiku");
+  });
+
+  it("injecte le contexte utilisateur quand fourni", () => {
+    const prompt = getSolySystemPrompt("general", {
+      plan: "pro",
+      sector: "fintech",
+      topics: ["IA", "Blockchain"],
+      existingBrief: "Mon brief test",
+    });
+    expect(prompt).toContain("Plan actuel : pro");
+    expect(prompt).toContain("Secteur : fintech");
+    expect(prompt).toContain("IA, Blockchain");
+    expect(prompt).toContain("Mon brief test");
+  });
+
+  it("brief mode skip la question secteur si deja connu", () => {
+    const prompt = getSolySystemPrompt("brief", { sector: "finance" });
+    expect(prompt).toContain("Le secteur est deja connu");
+  });
+
+  it("brief mode propose d'ameliorer le brief existant", () => {
+    const prompt = getSolySystemPrompt("brief", { existingBrief: "Brief existant" });
+    expect(prompt).toContain("ameliorer");
+    expect(prompt).toContain("Brief existant");
   });
 });
