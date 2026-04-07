@@ -97,7 +97,7 @@ function HeroSection({
           <Text
             style={{
               fontSize: "11px",
-              color: "rgba(255,255,255,0.6)",
+              color: "#a3b8bb",
               textTransform: "uppercase" as const,
               letterSpacing: "0.1em",
               margin: "0 0 16px",
@@ -128,13 +128,13 @@ function HeroSection({
             padding: 0,
           }}
         >
-          <div
-            style={{
-              height: "140px",
-              background: "rgba(255,255,255,0.08)",
-              borderRadius: "8px 0 0 0",
-            }}
-          />
+          <table cellPadding={0} cellSpacing={0} width="100%" style={{ borderCollapse: "collapse" as const }}>
+            <tbody>
+              <tr>
+                <td style={{ height: "140px", background: "#0a5c65" }} />
+              </tr>
+            </tbody>
+          </table>
         </Column>
       </Row>
     </Section>
@@ -217,7 +217,7 @@ function FeaturedArticleSection({
             </table>
 
             {/* Title */}
-            <Link href={clickUrl} style={{ textDecoration: "none" }}>
+            <Link href={clickUrl} style={{ textDecoration: "none", color: textColor }}>
               <Text
                 style={{
                   fontSize: "22px",
@@ -302,7 +302,9 @@ function FeaturedArticleSection({
         </Row>
       </Section>
       <Section style={{ padding: "0 32px" }}>
-        <div style={{ borderTop: `1px solid ${warmBorder}` }} />
+        <table width="100%" cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse" as const }}>
+          <tbody><tr><td style={{ borderTop: `1px solid ${warmBorder}`, fontSize: "1px", lineHeight: "1px", height: "1px" }}>&nbsp;</td></tr></tbody>
+        </table>
       </Section>
     </>
   );
@@ -326,43 +328,45 @@ function EditorialSection({
   return (
     <>
       <Section style={{ padding: "24px 32px" }}>
-        <div
-          style={{
-            borderLeft: `3px solid ${brandColor}`,
-            padding: "18px 22px",
-            background: warmBg,
-            borderRadius: "0 8px 8px 0",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              color: brandColor,
-              textTransform: "uppercase" as const,
-              letterSpacing: "0.08em",
-              margin: "0 0 12px",
-              fontFamily: fontSans,
-            }}
-          >
-            Le point de vue
-          </Text>
-          <Text
-            style={{
-              fontSize: "15px",
-              color: bodyTextColor,
-              lineHeight: "1.7",
-              margin: 0,
-              fontStyle: "italic",
-              fontFamily: fontSerif,
-            }}
-          >
-            {editorial}
-          </Text>
-        </div>
+        <table cellPadding={0} cellSpacing={0} width="100%" style={{ borderCollapse: "collapse" as const }}>
+          <tbody>
+            <tr>
+              <td style={{ width: "3px", background: brandColor }} />
+              <td style={{ padding: "18px 22px", background: warmBg }}>
+                <Text
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: brandColor,
+                    textTransform: "uppercase" as const,
+                    letterSpacing: "0.08em",
+                    margin: "0 0 12px",
+                    fontFamily: fontSans,
+                  }}
+                >
+                  Le point de vue
+                </Text>
+                <Text
+                  style={{
+                    fontSize: "15px",
+                    color: bodyTextColor,
+                    lineHeight: "1.7",
+                    margin: 0,
+                    fontStyle: "italic",
+                    fontFamily: fontSerif,
+                  }}
+                >
+                  {editorial}
+                </Text>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </Section>
       <Section style={{ padding: "0 32px" }}>
-        <div style={{ borderTop: `1px solid ${warmBorder}` }} />
+        <table width="100%" cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse" as const }}>
+          <tbody><tr><td style={{ borderTop: `1px solid ${warmBorder}`, fontSize: "1px", lineHeight: "1px", height: "1px" }}>&nbsp;</td></tr></tbody>
+        </table>
       </Section>
     </>
   );
@@ -458,7 +462,9 @@ function KeyFiguresSection({
         </table>
       </Section>
       <Section style={{ padding: "0 32px" }}>
-        <div style={{ borderTop: `1px solid ${warmBorder}` }} />
+        <table width="100%" cellPadding={0} cellSpacing={0} style={{ borderCollapse: "collapse" as const }}>
+          <tbody><tr><td style={{ borderTop: `1px solid ${warmBorder}`, fontSize: "1px", lineHeight: "1px", height: "1px" }}>&nbsp;</td></tr></tbody>
+        </table>
       </Section>
     </>
   );
@@ -563,7 +569,7 @@ function SecondaryArticlesSection({
                   </table>
 
                   {/* Title */}
-                  <Link href={clickUrl} style={{ textDecoration: "none" }}>
+                  <Link href={clickUrl} style={{ textDecoration: "none", color: textColor }}>
                     <Text
                       style={{
                         fontSize: "17px",
@@ -693,7 +699,7 @@ function ContextualCtaSection({
                       <Text
                         style={{
                           fontSize: "13px",
-                          color: "rgba(255,255,255,0.7)",
+                          color: "#a3b8bb",
                           margin: "0 0 18px",
                           lineHeight: "1.5",
                           fontFamily: fontSans,
@@ -725,13 +731,13 @@ function ContextualCtaSection({
                         padding: 0,
                       }}
                     >
-                      <div
-                        style={{
-                          height: "120px",
-                          background: "rgba(255,255,255,0.06)",
-                          borderRadius: "8px 0 0 0",
-                        }}
-                      />
+                      <table cellPadding={0} cellSpacing={0} width="100%" style={{ borderCollapse: "collapse" as const }}>
+                        <tbody>
+                          <tr>
+                            <td style={{ height: "120px", background: "#0a5c65" }} />
+                          </tr>
+                        </tbody>
+                      </table>
                     </td>
                   </tr>
                 </tbody>
