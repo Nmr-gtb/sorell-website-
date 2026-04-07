@@ -17,6 +17,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
 import { openSolyBrief } from "@/components/ChatWidget";
+import CrownBadge from "@/components/CrownBadge";
 
 const ALL_SOURCES = [
   "Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune",
@@ -352,7 +353,9 @@ export default function ConfigPage() {
     if (plan === "free") {
       savedFrequency = "monthly";
       savedSendDay = "1st";
-    } else if ((plan === "business" || plan === "enterprise") && frequency === "biweekly") {
+    } else if (frequency === "monthly") {
+      savedSendDay = "1st";
+    } else if (frequency === "biweekly") {
       savedSendDay = `${sendDay},${sendDay2}`;
     }
 
@@ -487,7 +490,7 @@ export default function ConfigPage() {
     const dayLabel2 = t(dayKey2) || sendDay2;
     const timeStr = `${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}`;
     if (plan === "free") return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
-    if (plan === "pro") return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", `${sendHour}h00`);
+    if (frequency === "monthly") return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
     if (frequency === "daily") return t("config.confirm_daily").replace("{hour}", timeStr);
     if (frequency === "biweekly") return t("config.confirm_biweekly").replace("{day1}", dayLabel).replace("{day2}", dayLabel2).replace("{hour}", timeStr);
     return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", timeStr);
@@ -656,72 +659,90 @@ export default function ConfigPage() {
                     </button>
                   ))}
                 </div>
-                {showAddTopic ? (
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <input
-                      className="input-field"
-                      value={newTopicLabel}
-                      onChange={(e) => setNewTopicLabel(e.target.value)}
-                      placeholder={t("config.topic_placeholder")}
-                      onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
-                      autoFocus
-                      style={{ flex: 1 }}
-                    />
+                {limits.customTopics ? (
+                  showAddTopic ? (
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      <input
+                        className="input-field"
+                        value={newTopicLabel}
+                        onChange={(e) => setNewTopicLabel(e.target.value)}
+                        placeholder={t("config.topic_placeholder")}
+                        onKeyDown={(e) => e.key === "Enter" && addCustomTopic()}
+                        autoFocus
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        onClick={addCustomTopic}
+                        disabled={!newTopicLabel.trim()}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "8px 16px",
+                          borderRadius: 8,
+                          border: "none",
+                          background: "var(--accent)",
+                          color: "white",
+                          fontSize: 13,
+                          fontWeight: 500,
+                          cursor: newTopicLabel.trim() ? "pointer" : "not-allowed",
+                          opacity: newTopicLabel.trim() ? 1 : 0.5,
+                        }}
+                      >
+                        <IconPlus />
+                        {t("common.add")}
+                      </button>
+                      <button
+                        onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
+                        style={{
+                          padding: "8px 14px",
+                          borderRadius: 8,
+                          border: "1px solid var(--border)",
+                          background: "transparent",
+                          color: "var(--text-secondary)",
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {t("common.cancel")}
+                      </button>
+                    </div>
+                  ) : (
                     <button
-                      onClick={addCustomTopic}
-                      disabled={!newTopicLabel.trim()}
+                      onClick={() => setShowAddTopic(true)}
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 6,
                         padding: "8px 16px",
                         borderRadius: 8,
-                        border: "none",
-                        background: "var(--accent)",
-                        color: "white",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        cursor: newTopicLabel.trim() ? "pointer" : "not-allowed",
-                        opacity: newTopicLabel.trim() ? 1 : 0.5,
-                      }}
-                    >
-                      <IconPlus />
-                      {t("common.add")}
-                    </button>
-                    <button
-                      onClick={() => { setShowAddTopic(false); setNewTopicLabel(""); }}
-                      style={{
-                        padding: "8px 14px",
-                        borderRadius: 8,
-                        border: "1px solid var(--border)",
+                        border: "1px dashed var(--border)",
                         background: "transparent",
-                        color: "var(--text-secondary)",
+                        color: "var(--text-muted)",
                         fontSize: 13,
                         cursor: "pointer",
                       }}
                     >
-                      {t("common.cancel")}
+                      <IconPlus />
+                      {t("config.add_topic")}
                     </button>
-                  </div>
+                  )
                 ) : (
-                  <button
-                    onClick={() => setShowAddTopic(true)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "8px 16px",
-                      borderRadius: 8,
-                      border: "1px dashed var(--border)",
-                      background: "transparent",
-                      color: "var(--text-muted)",
-                      fontSize: 13,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <IconPlus />
-                    {t("config.add_topic")}
-                  </button>
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "10px 16px",
+                    borderRadius: 8,
+                    background: "var(--surface-alt, #f9fafb)",
+                    border: "1px solid var(--border)",
+                  }}>
+                    <CrownBadge tooltip={t("config.custom_topics_locked")} />
+                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                      {t("config.custom_topics_locked")}{" "}
+                      <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>{t("dash.upgrade_btn")}</a>
+                    </span>
+                  </div>
                 )}
               </div>
 
@@ -731,7 +752,48 @@ export default function ConfigPage() {
           )}
 
           {/* ═══════ TAB: SOURCES ═══════ */}
-          {activeTab === "sources" && (
+          {activeTab === "sources" && !limits.customSources && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 48,
+                textAlign: "center",
+              }}>
+                <div style={{ marginBottom: 16 }}>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-muted)" }}>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 10 }}>
+                  {t("config.custom_sources_locked")}
+                </div>
+                <p style={{ fontSize: 14, color: "var(--text-secondary)", maxWidth: 420, margin: "0 auto 24px" }}>
+                  {t("config.verified_sources_desc")}
+                </p>
+                <button
+                  onClick={() => window.location.href = "/tarifs"}
+                  style={{
+                    display: "inline-block",
+                    background: "var(--accent)",
+                    color: "#fff",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    padding: "10px 20px",
+                    borderRadius: 8,
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {t("dash.upgrade_btn")}
+                </button>
+              </div>
+            </div>
+          )}
+          {activeTab === "sources" && limits.customSources && (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {/* Verified sources grid */}
               <div style={{
@@ -923,18 +985,50 @@ export default function ConfigPage() {
                   </div>
                 ) : plan === "pro" ? (
                   <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 200px" }}>
-                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.day")}</label>
-                      <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)} style={{ height: 42 }}>
-                        <option value="monday">{t("config.monday")}</option>
-                        <option value="tuesday">{t("config.tuesday")}</option>
-                        <option value="wednesday">{t("config.wednesday")}</option>
-                        <option value="thursday">{t("config.thursday")}</option>
-                        <option value="friday">{t("config.friday")}</option>
-                        <option value="saturday">{t("config.saturday")}</option>
-                        <option value="sunday">{t("config.sunday")}</option>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 160px" }}>
+                      <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.frequency")}</label>
+                      <select
+                        className="select-field"
+                        value={frequency}
+                        onChange={(e) => {
+                          setFrequency(e.target.value);
+                          if (e.target.value === "weekly" || e.target.value === "biweekly") setSendDay("monday");
+                        }}
+                        style={{ height: 42 }}
+                      >
+                        <option value="weekly">{t("config.freq_weekly")}</option>
+                        <option value="biweekly">{t("config.freq_biweekly")}</option>
+                        <option value="monthly">{t("config.freq_monthly")}</option>
                       </select>
                     </div>
+                    {(frequency === "weekly" || frequency === "biweekly") && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
+                          {frequency === "biweekly" ? t("config.first_day") : t("config.day")}
+                        </label>
+                        <select className="select-field" value={sendDay} onChange={(e) => setSendDay(e.target.value)} style={{ height: 42 }}>
+                          <option value="monday">{t("config.monday")}</option>
+                          <option value="tuesday">{t("config.tuesday")}</option>
+                          <option value="wednesday">{t("config.wednesday")}</option>
+                          <option value="thursday">{t("config.thursday")}</option>
+                          <option value="friday">{t("config.friday")}</option>
+                          <option value="saturday">{t("config.saturday")}</option>
+                          <option value="sunday">{t("config.sunday")}</option>
+                        </select>
+                      </div>
+                    )}
+                    {frequency === "biweekly" && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 140px" }}>
+                        <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.second_day")}</label>
+                        <select className="select-field" value={sendDay2} onChange={(e) => setSendDay2(e.target.value)} style={{ height: 42 }}>
+                          <option value="monday">{t("config.monday")}</option>
+                          <option value="tuesday">{t("config.tuesday")}</option>
+                          <option value="wednesday">{t("config.wednesday")}</option>
+                          <option value="thursday">{t("config.thursday")}</option>
+                          <option value="friday">{t("config.friday")}</option>
+                        </select>
+                      </div>
+                    )}
                     <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 150px" }}>
                       <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>{t("config.hour")}</label>
                       <select className="select-field" value={sendHour} onChange={(e) => setSendHour(Number(e.target.value))} style={{ height: 42 }}>

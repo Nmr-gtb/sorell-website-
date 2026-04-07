@@ -57,7 +57,7 @@ export default function HistoriquePage() {
     );
   }
 
-  if (limits.analytics === "none") {
+  if (!limits.historique) {
     return (
       <div style={{ padding: 32, maxWidth: 800 }}>
         <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 24 }}>{t("history.title")}</h1>
