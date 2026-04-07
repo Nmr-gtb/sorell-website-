@@ -284,7 +284,7 @@ export default function HomeContent() {
             </div>
 
             <p
-              className="text-[0.5rem] sm:text-xs"
+              className="text-[0.6875rem] sm:text-xs"
               style={{
                 color: "rgba(255,255,255,0.4)",
                 fontFamily: "var(--font-inter, 'Inter', sans-serif)",
@@ -708,7 +708,7 @@ export default function HomeContent() {
           .metric-item:last-child {
             padding-right: 0;
           }
-          @media (max-width: 640px) {
+          @media (max-width: 768px) {
             .metrics-grid {
               grid-template-columns: repeat(2, 1fr);
             }
@@ -942,8 +942,8 @@ export default function HomeContent() {
                   justifyContent: "center",
                   padding: "14px 32px",
                   borderRadius: 8,
-                  background: "#FFFFFF",
-                  color: "#005058",
+                  background: "var(--accent)",
+                  color: "#FFFFFF",
                   fontFamily: "var(--font-inter, 'Inter', sans-serif)",
                   fontWeight: 600,
                   fontSize: "0.9375rem",

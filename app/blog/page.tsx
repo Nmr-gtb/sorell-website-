@@ -56,8 +56,9 @@ export default function BlogPage() {
           .blog-list-wrapper { padding-top: 80px !important; padding-bottom: 40px !important; }
           .blog-article-card { padding: 16px !important; }
           .blog-search-input { font-size: 16px !important; }
-          .blog-tags-row { gap: 6px !important; }
-          .blog-tag-btn { font-size: 11px !important; padding: 4px 10px !important; }
+          .blog-tags-row { gap: 8px !important; }
+          .blog-tag-btn { font-size: 12px !important; padding: 6px 14px !important; }
+          .blog-list-wrapper h1 { font-size: 26px !important; }
         }
       `}</style>
       <Navbar />

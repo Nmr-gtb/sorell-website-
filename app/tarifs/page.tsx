@@ -126,6 +126,11 @@ export default function PricingPage() {
             padding-top: 48px !important;
             padding-bottom: 48px !important;
           }
+          .tarifs-grid {
+            grid-template-columns: 1fr !important;
+            max-width: 400px !important;
+            margin: 0 auto !important;
+          }
         }
       `}</style>
       <script
@@ -251,6 +256,7 @@ export default function PricingPage() {
       <section className="tarifs-cards" style={{ padding: "0 1.5rem 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div
+            className="tarifs-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",

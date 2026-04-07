@@ -16,7 +16,8 @@ export default function PrivacyPage() {
         style={{
           maxWidth: "720px",
           margin: "0 auto",
-          padding: "80px 1.5rem 4rem",
+          padding: "120px 1.5rem 4rem",
+          overflowWrap: "break-word",
         }}
       >
         <h1
@@ -191,6 +192,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
           color: "var(--text-secondary)",
         }}
       >
+        <style>{`
+          section ul { list-style-type: disc; padding-left: 1.5rem; }
+          section li { margin-bottom: 0.25rem; }
+        `}</style>
         {children}
       </div>
     </section>

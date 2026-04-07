@@ -16,7 +16,7 @@ export default function BlogArticleClient() {
         <Navbar />
         <div style={{ maxWidth: 700, margin: "0 auto", padding: "120px 1.5rem 60px", textAlign: "center" }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)" }}>Article introuvable</h1>
-          <Link href="/blog" style={{ color: "var(--accent)", marginTop: 16, display: "inline-block" }}>← Retour au blog</Link>
+          <Link href="/blog" style={{ color: "var(--accent)", marginTop: 16, display: "inline-block" }}>&#8592; Retour au blog</Link>
         </div>
         <Footer />
       </div>
@@ -31,9 +31,19 @@ export default function BlogArticleClient() {
         article p { margin: 0 0 16px; }
         article a { color: var(--accent); text-decoration: underline; }
         article strong { color: var(--text); font-weight: 600; }
+        article ul { padding-left: 1.5em; margin-bottom: 16px; list-style-type: disc; }
+        article li { margin-bottom: 8px; }
+        article code { background: var(--surface); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: break-word; }
+        @media (max-width: 767px) {
+          .blog-article-wrapper { padding-top: 80px !important; padding-bottom: 40px !important; }
+          .blog-article-wrapper h1 { font-size: 22px !important; }
+          article h2 { font-size: 18px !important; }
+          .blog-article-cta { padding: 16px !important; }
+          .blog-article-cta h3 { font-size: 16px !important; }
+        }
       `}</style>
-      <article style={{ maxWidth: 700, margin: "0 auto", padding: "120px 1.5rem 60px" }}>
-        <Link href="/blog" style={{ fontSize: 13, color: "var(--accent)", textDecoration: "none", marginBottom: 24, display: "inline-block" }}>← Retour au blog</Link>
+      <article className="blog-article-wrapper" style={{ maxWidth: 700, margin: "0 auto", padding: "120px 1.5rem 60px" }}>
+        <Link href="/blog" style={{ fontSize: 13, color: "var(--accent)", textDecoration: "none", marginBottom: 24, display: "inline-block", padding: "8px 0" }}>&#8592; Retour au blog</Link>
 
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           {article.tags.map((tag) => (
@@ -57,7 +67,7 @@ export default function BlogArticleClient() {
 
         <div style={{ display: "flex", gap: 12, fontSize: 13, color: "var(--text-muted)", marginBottom: 32 }}>
           <span>{new Date(article.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
-          <span>·</span>
+          <span>&middot;</span>
           <span>{article.readTime} de lecture</span>
         </div>
 
@@ -66,11 +76,12 @@ export default function BlogArticleClient() {
             fontSize: 15,
             color: "var(--text-secondary)",
             lineHeight: 1.75,
+            overflowWrap: "break-word",
           }}
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
-        <div style={{
+        <div className="blog-article-cta" style={{
           marginTop: 40,
           padding: 24,
           background: "var(--surface)",
