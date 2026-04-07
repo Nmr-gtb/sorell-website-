@@ -92,7 +92,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>Nous avons testé et comparé les principales solutions du marché pour vous aider à faire le bon choix.</p>
 
       <h2>1. Sorell - La newsletter sectorielle 100% automatique</h2>
-      <p><strong>Prix :</strong> Gratuit (2 newsletters/mois) | Pro à 19€/mois | Business à 49€/mois</p>
+      <p><strong>Prix :</strong> Gratuit (1 newsletter/mois) | Pro à 19€/mois | Business à 49€/mois</p>
       <p><strong>Idéal pour :</strong> Dirigeants PME, managers, équipes B2B qui veulent recevoir une veille sectorielle personnalisée sans effort.</p>
       <p>Sorell se distingue par son approche entièrement automatique. Vous décrivez votre activité en quelques lignes (votre secteur, vos concurrents, les sujets qui vous intéressent), et Sorell génère et envoie automatiquement une newsletter chaque semaine. L'outil analyse plus de 147 sources (Les Echos, Bloomberg, Reuters, McKinsey...) et sélectionne les actualités les plus pertinentes pour votre secteur. La génération prend 12 secondes. Aucune action n'est requise après la configuration initiale de 5 minutes.</p>
       <p><strong>Points forts :</strong> Entièrement automatique, brief personnalisé, multi-destinataires (jusqu'à 25 avec le plan Business), analytics de lecture, personnalisation visuelle (couleurs, logo), 15 jours d'essai gratuit.</p>
@@ -170,7 +170,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p><strong>Régularité :</strong> Manuel = dépend de la disponibilité | Automatique = chaque semaine sans exception</p>
       <p><strong>Couverture des sources :</strong> Manuel = 5-10 sources habituelles | Automatique = 147+ sources analysées</p>
       <p><strong>Coût annuel :</strong> Manuel = 7 200€+ | Automatique = 228€/an (Pro Sorell)</p>
-      <p><strong>Distribution équipe :</strong> Manuel = email forwarding informel | Automatique = envoi à 25 destinataires avec analytics</p>
+      <p><strong>Distribution équipe :</strong> Manuel = email forwarding informel | Automatique = envoi à 50 destinataires avec analytics</p>
 
       <h2>Les limites de l'automatisation</h2>
       <p>L'IA ne remplace pas l'expertise humaine. Une newsletter automatique est un point de départ - elle vous donne les informations clés rapidement. Pour une analyse approfondie d'un sujet spécifique, le travail humain reste indispensable. C'est pourquoi les meilleures newsletters IA, comme celles de Sorell, incluent des liens vers les sources originales pour que vous puissiez approfondir les sujets qui vous intéressent.</p>
@@ -217,9 +217,9 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <h2>Et après ?</h2>
       <p>C'est tout. Vous n'avez plus rien à faire. Sorell enverra automatiquement votre newsletter au créneau choisi. Vous pouvez modifier votre configuration à tout moment - les changements sont pris en compte dès la prochaine newsletter.</p>
 
-      <p><strong>Avec le plan gratuit :</strong> 2 newsletters par mois, 1 destinataire.</p>
-      <p><strong>Avec le plan Pro (19€/mois) :</strong> 4 newsletters par mois, 5 destinataires, sources au choix, analytics.</p>
-      <p><strong>Avec le plan Business (49€/mois) :</strong> Newsletters illimitées, 25 destinataires, logo personnalisé.</p>
+      <p><strong>Avec le plan gratuit :</strong> 1 newsletter par mois, 1 destinataire, thématiques prédéfinies.</p>
+      <p><strong>Avec le plan Pro (19€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique + aperçu, analytics.</p>
+      <p><strong>Avec le plan Business (49€/mois) :</strong> Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle.</p>
 
       <p><a href="https://sorell.fr">Commencez maintenant</a> - 15 jours d'essai Pro gratuit.</p>
 
@@ -259,7 +259,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p><strong>Automatisation :</strong> ChatGPT = Manuel chaque semaine | Sorell = Entièrement automatique</p>
       <p><strong>Sources :</strong> ChatGPT = Peut inventer | Sorell = 147+ sources réelles avec liens</p>
       <p><strong>Format :</strong> ChatGPT = Texte brut | Sorell = Email HTML professionnel</p>
-      <p><strong>Distribution :</strong> ChatGPT = Copier-coller | Sorell = Envoi automatique à 25 personnes</p>
+      <p><strong>Distribution :</strong> ChatGPT = Copier-coller | Sorell = Envoi automatique à 50 personnes</p>
       <p><strong>Analytics :</strong> ChatGPT = Aucun | Sorell = Taux d'ouverture, clics, articles populaires</p>
       <p><strong>Personnalisation visuelle :</strong> ChatGPT = Non | Sorell = Couleurs, logo personnalisé</p>
       <p><strong>Prix :</strong> ChatGPT Plus = 20$/mois | Sorell Pro = 19€/mois (avec 15 jours d'essai gratuit)</p>
@@ -306,9 +306,9 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <h2>Combien ça coûte ?</h2>
       <p>Les prix varient selon les outils, mais pour Sorell, la grille est simple :</p>
-      <p><strong>Gratuit :</strong> 2 newsletters par mois, 1 destinataire. Parfait pour tester.</p>
-      <p><strong>Pro (19€/mois) :</strong> 4 newsletters par mois, 5 destinataires, sources personnalisées, analytics. Idéal pour un dirigeant ou un indépendant.</p>
-      <p><strong>Business (49€/mois) :</strong> Newsletters illimitées, 25 destinataires, logo personnalisé, planification avancée. Conçu pour les équipes.</p>
+      <p><strong>Gratuit :</strong> 1 newsletter par mois, 1 destinataire, thématiques prédéfinies. Parfait pour tester.</p>
+      <p><strong>Pro (19€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique + aperçu, analytics. Idéal pour un dirigeant ou un indépendant.</p>
+      <p><strong>Business (49€/mois) :</strong> Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle. Conçu pour les équipes.</p>
       <p>Tous les plans payants incluent 15 jours d'essai gratuit.</p>
 
       <h2>La qualité est-elle au rendez-vous ?</h2>
@@ -1152,7 +1152,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <p>Avec Sorell, vous automatisez ce processus. Configurez votre veille sectorielle, ajoutez les emails de vos collaborateurs comme destinataires, et toute l'équipe reçoit la même newsletter de veille structurée. Zéro effort de production de votre côté.</p>
 
-      <p>Le plan Pro permet jusqu'à 5 destinataires, le plan Business jusqu'à 25. De quoi couvrir une équipe complète.</p>
+      <p>Le plan Pro permet jusqu'à 10 destinataires, le plan Business jusqu'à 50. De quoi couvrir une équipe complète.</p>
 
       <p><strong><a href="https://sorell.fr">Créer ma newsletter interne avec Sorell</a></strong></p>
 

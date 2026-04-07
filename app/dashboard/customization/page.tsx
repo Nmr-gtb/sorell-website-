@@ -608,7 +608,7 @@ export default function CustomizationPage() {
                       Essayez Sorell gratuitement
                     </p>
                     <p style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", margin: "0 0 14px", lineHeight: 1.5 }}>
-                      2 newsletters par mois, sans engagement.
+                      1 newsletter par mois, sans engagement.
                     </p>
                     <span style={{ display: "inline-block", padding: "8px 18px", background: "white", color: brandColor, fontSize: 11, fontWeight: 600, borderRadius: 6 }}>
                       Commencer →

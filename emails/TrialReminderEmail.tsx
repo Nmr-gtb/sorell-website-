@@ -16,9 +16,9 @@ interface TrialReminderEmailProps {
 
 function getPlanBenefits(plan: string): string {
   if (plan === "Pro") {
-    return "\u00B7\u00A0\u00A04 newsletters/mois\u00A0\u00A0\u00B7\u00A0\u00A05 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Sources custom";
+    return "\u00B7\u00A0\u00A0Newsletters illimitées\u00A0\u00A0\u00B7\u00A0\u00A010 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Historique + aperçu";
   }
-  return "\u00B7\u00A0\u00A0Newsletters illimitées\u00A0\u00A0\u00B7\u00A0\u00A025 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Logo personnalisé";
+  return "\u00B7\u00A0\u00A0Newsletters illimitées\u00A0\u00A0\u00B7\u00A0\u00A050 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Logo personnalisé";
 }
 
 export function TrialReminderEmail({

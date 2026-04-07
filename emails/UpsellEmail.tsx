@@ -17,8 +17,8 @@ export function UpsellEmail({ name, currentPlan }: UpsellEmailProps) {
   const nextPlan = isPro ? "Business" : "Pro";
   const nextPrice = isPro ? "49" : "19";
   const nextBenefits = isPro
-    ? "Newsletters illimitées, 25 destinataires, logo personnalisé"
-    : "4 newsletters/mois, 5 destinataires, sources custom, analytics, historique";
+    ? "Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne"
+    : "Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique + aperçu, analytics";
 
   return (
     <LifecycleLayout preheader={`${name}, découvrez le plan ${nextPlan}`}>

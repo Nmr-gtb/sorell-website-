@@ -1635,7 +1635,7 @@ export default function ConfigPage() {
                             <div style={{ borderRadius: 6, background: brandColor, display: "flex", overflow: "hidden" }}>
                               <div style={{ padding: "16px 16px 16px 20px", flex: "0 0 65%" }}>
                                 <p style={{ fontSize: 11, fontWeight: 600, color: "#FFFFFF", margin: "0 0 4px", lineHeight: 1.4 }}>Essayez Sorell gratuitement</p>
-                                <p style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", margin: "0 0 10px", lineHeight: 1.4 }}>2 newsletters par mois, sans engagement.</p>
+                                <p style={{ fontSize: 9, color: "rgba(255,255,255,0.7)", margin: "0 0 10px", lineHeight: 1.4 }}>1 newsletter par mois, sans engagement.</p>
                                 <span style={{ display: "inline-block", padding: "6px 14px", background: "white", color: brandColor, fontSize: 9, fontWeight: 600, borderRadius: 5 }}>Commencer →</span>
                               </div>
                               <div style={{ flex: "0 0 35%", display: "flex", alignItems: "flex-end" }}>

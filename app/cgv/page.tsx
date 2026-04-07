@@ -58,9 +58,9 @@ export default function CGVPage() {
           </p>
           <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Plans disponibles :</p>
           <ul>
-            <li><strong>Free</strong> : gratuit - 2 newsletters automatiques par mois, 1 aperçu manuel, 1 destinataire</li>
-            <li><strong>Pro</strong> : 19€/mois ou 190€/an - 4 newsletters automatiques par mois, 4 aperçus manuels, jusqu&apos;à 5 destinataires, sources custom, analytics complets, historique des envois. Essai gratuit de 15 jours.</li>
-            <li><strong>Business</strong> : 49€/mois ou 490€/an - newsletters et aperçus illimités, jusqu&apos;à 25 destinataires, logo personnalisé, toutes les fonctionnalités Pro incluses. Essai gratuit de 15 jours.</li>
+            <li><strong>Free</strong> : gratuit - 1 newsletter automatique par mois, 1 destinataire, thématiques prédéfinies</li>
+            <li><strong>Pro</strong> : 19€/mois ou 190€/an - newsletters illimitées, jusqu&apos;à 10 destinataires, thématiques et sources au choix, aperçu avant envoi, historique, analytics complets. Essai gratuit de 15 jours.</li>
+            <li><strong>Business</strong> : 49€/mois ou 490€/an - newsletters illimitées, jusqu&apos;à 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle, toutes les fonctionnalités Pro incluses. Essai gratuit de 15 jours.</li>
             <li><strong>Enterprise</strong> : sur devis - destinataires illimités, API et intégrations, CRM connecté, CSM dédié, SLA 99,9%</li>
           </ul>
           <p style={{ marginTop: "1rem" }}>

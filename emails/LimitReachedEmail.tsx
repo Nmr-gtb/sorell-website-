@@ -22,8 +22,8 @@ export function LimitReachedEmail({
   const nextPrice = plan === "Free" ? "19" : "49";
   const nextBenefits =
     plan === "Free"
-      ? "4 newsletters/mois, 5 destinataires, analytics, sources custom"
-      : "Newsletters illimitées, 25 destinataires, logo personnalisé";
+      ? "Newsletters illimitées, 10 destinataires, thématiques et sources au choix, analytics"
+      : "Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne";
 
   return (
     <LifecycleLayout

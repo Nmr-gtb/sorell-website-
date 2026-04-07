@@ -18,9 +18,9 @@ L'utilisateur decrit son activite (le "brief"), l'IA analyse 147+ sources, redig
 Ce n'est PAS du email marketing. C'est de la veille sectorielle automatique.
 
 ## Tarifs
-- Free (0 EUR) : 2 newsletters/mois, 1 destinataire
-- Pro (19 EUR/mois) : 4/mois, 5 destinataires, analytics, sources custom. Essai 15j gratuit.
-- Business (49 EUR/mois) : illimite, 25 destinataires, logo custom. Essai 15j gratuit.
+- Free (0 EUR) : 1 newsletter/mois, 1 destinataire, thematiques predefinies
+- Pro (19 EUR/mois) : illimite, 10 destinataires, thematiques et sources au choix, historique, apercu, analytics. Essai 15j gratuit.
+- Business (49 EUR/mois) : illimite, 50 destinataires, logo custom, frequence quotidienne a mensuelle. Essai 15j gratuit.
 - Inscription gratuite, sans carte bancaire, 5 min de config.`;
 
   if (mode === "general") {

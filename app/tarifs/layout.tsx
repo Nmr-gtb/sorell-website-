@@ -44,7 +44,7 @@ const faqJsonLd = {
       name: "Le plan gratuit est-il vraiment gratuit ?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Oui, sans carte bancaire et sans engagement. Vous recevez 2 newsletters par mois, entièrement personnalisées avec la recherche web. Aucune fonctionnalité n'est dégradée.",
+        text: "Oui, sans carte bancaire et sans engagement. Vous recevez 1 newsletter par mois, entièrement personnalisée avec la recherche web IA. La première s'envoie instantanément après l'inscription.",
       },
     },
     {
@@ -60,7 +60,7 @@ const faqJsonLd = {
       name: "Pourquoi payer 19€/mois alors que le plan gratuit existe ?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Le plan gratuit est limité à 1 destinataire et 2 newsletters par mois. Le plan Pro permet d'envoyer la newsletter à votre équipe (jusqu'à 5 personnes), 4 newsletters par mois, avec analytics complets et personnalisation couleur.",
+        text: "Le plan gratuit est limité à 1 destinataire et 1 newsletter par mois avec des thématiques prédéfinies. Le plan Pro offre des newsletters illimitées, jusqu'à 10 destinataires, des thématiques et sources au choix, l'historique, l'aperçu avant envoi et les analytics complets.",
       },
     },
     {

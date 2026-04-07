@@ -119,7 +119,7 @@ export default function RootLayout({
                       "name": "Free",
                       "price": "0",
                       "priceCurrency": "EUR",
-                      "description": "2 newsletters par mois, 1 destinataire, brief personnalisé"
+                      "description": "1 newsletter par mois, 1 destinataire, thématiques prédéfinies, brief personnalisé"
                     },
                     {
                       "@type": "Offer",
@@ -127,7 +127,7 @@ export default function RootLayout({
                       "price": "19",
                       "priceCurrency": "EUR",
                       "priceValidUntil": "2026-12-31",
-                      "description": "4 newsletters par mois, 5 destinataires, sources au choix, analytics complets, personnalisation couleur"
+                      "description": "Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique, aperçu, analytics complets"
                     },
                     {
                       "@type": "Offer",
@@ -135,7 +135,7 @@ export default function RootLayout({
                       "price": "49",
                       "priceCurrency": "EUR",
                       "priceValidUntil": "2026-12-31",
-                      "description": "Newsletters illimitées, 25 destinataires, logo personnalisé, planification avancée, support prioritaire"
+                      "description": "Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle"
                     }
                   ],
                   "featureList": [
