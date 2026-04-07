@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", verifiedUserId).single();
     const plan = profile?.plan || "free";
 
-    const previewLimits: Record<string, number> = { free: 1, pro: 4, business: -1, enterprise: -1 };
-    const maxPreviews = previewLimits[plan] ?? 1;
+    const previewLimits: Record<string, number> = { free: 0, pro: -1, business: -1, enterprise: -1 };
+    const maxPreviews = previewLimits[plan] ?? 0;
 
     if (maxPreviews !== -1) {
       const startOfMonth = new Date();

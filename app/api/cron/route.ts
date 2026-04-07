@@ -93,8 +93,8 @@ export async function GET(request: Request) {
       // Double opt-in : skip les utilisateurs qui n'ont pas verifie leur email
       if (!profileData.email_verified) continue;
 
-      const autoLimits: Record<string, number> = { free: 2, pro: 4, business: -1, enterprise: -1 };
-      const maxAuto = autoLimits[userPlan] ?? 2;
+      const autoLimits: Record<string, number> = { free: 1, pro: -1, business: -1, enterprise: -1 };
+      const maxAuto = autoLimits[userPlan] ?? 1;
 
       if (maxAuto !== -1) {
         const startOfMonth = new Date();

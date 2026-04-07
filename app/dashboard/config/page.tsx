@@ -350,10 +350,8 @@ export default function ConfigPage() {
     const savedSendHour = sendHour;
 
     if (plan === "free") {
-      savedFrequency = "bimonthly";
-      savedSendDay = "1st-15th";
-    } else if (plan === "pro") {
-      savedFrequency = "weekly";
+      savedFrequency = "monthly";
+      savedSendDay = "1st";
     } else if ((plan === "business" || plan === "enterprise") && frequency === "biweekly") {
       savedSendDay = `${sendDay},${sendDay2}`;
     }

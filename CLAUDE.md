@@ -106,13 +106,17 @@ ADMIN_JWT_SECRET
 
 | | Free | Pro (19€/mois) | Business (49€/mois) | Enterprise |
 |---|---|---|---|---|
-| Newsletters auto/mois | 2 | 4 | Illimité | Illimité |
-| Aperçus manuels/mois | 1 | 4 | Illimité | Illimité |
-| Destinataires | 1 | 5 | 25 | Illimité |
+| Newsletters/mois | 1 (+ 1re instantanée) | Illimité | Illimité | Illimité |
+| Fréquence | Mensuelle | Hebdo à mensuelle | Quotidienne à mensuelle | Quotidienne à mensuelle |
+| Destinataires | 1 (soi-même) | 10 | 50 | Illimité |
+| Thématiques custom | Non (prédéfinies) | Oui | Oui | Oui |
 | Sources custom | Non | Oui | Oui | Oui |
+| Aperçu avant envoi | Non | Oui | Oui | Oui |
 | Analytics | Non | Oui | Oui | Oui |
 | Historique | Non | Oui | Oui | Oui |
+| Personnalisation couleur | Non | Oui | Oui | Oui |
 | Logo personnalisé | Non | Non | Oui | Oui |
+| Parrainage | Non | Oui | Oui | Oui |
 | Trial | - | 15 jours | 15 jours | - |
 
 ## Architecture du projet
