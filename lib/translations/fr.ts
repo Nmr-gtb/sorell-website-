@@ -625,6 +625,7 @@ const fr: Record<string, string> = {
   "login.sub_signup": "Commencez gratuitement avec Sorell",
   "login.sub_reset": "Recevez un lien par email",
   "login.verify_email": "Vérifiez votre email pour confirmer votre compte.",
+  "login.disposable_email_error": "Les adresses email temporaires ne sont pas acceptées. Utilisez une adresse permanente.",
   "login.reset_sent": "Lien de réinitialisation envoyé !",
   "login.back_home": "Retour à l'accueil",
   "login.back_to_login": "← Retour à la connexion",

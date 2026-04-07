@@ -85,6 +85,54 @@ export function suggestEmailCorrection(email: string): string | null {
 }
 
 /**
+ * Verifie si un domaine email est un service d'adresses jetables (temporaires).
+ */
+export function isDisposableEmail(email: string): boolean {
+  if (!email || !email.includes("@")) return false;
+  const domain = email.toLowerCase().trim().split("@")[1];
+  if (!domain) return false;
+
+  const disposableDomains = new Set([
+    "yopmail.com", "yopmail.fr", "yopmail.net",
+    "tempmail.com", "temp-mail.org", "temp-mail.io",
+    "guerrillamail.com", "guerrillamail.net", "guerrillamail.org", "guerrillamail.de",
+    "guerrillamailblock.com", "grr.la", "sharklasers.com",
+    "mailinator.com", "mailinator.net",
+    "throwaway.email", "throwaway.com",
+    "trashmail.com", "trashmail.net", "trashmail.me",
+    "tempail.com", "tempr.email",
+    "dispostable.com",
+    "mailnesia.com",
+    "maildrop.cc",
+    "fakeinbox.com", "fakemail.net",
+    "10minutemail.com", "10minutemail.net",
+    "minutemail.com",
+    "emailondeck.com",
+    "getnada.com", "nada.email",
+    "mohmal.com",
+    "tempinbox.com",
+    "burnermail.io",
+    "mailcatch.com",
+    "mytemp.email",
+    "harakirimail.com",
+    "jetable.org", "jetable.com", "jetable.net",
+    "crazymailing.com",
+    "tempmailaddress.com",
+    "tmpmail.net", "tmpmail.org",
+    "disposableemailaddresses.emailmiser.com",
+    "mailexpire.com",
+    "incognitomail.org", "incognitomail.com",
+    "spamgourmet.com",
+    "getairmail.com",
+    "discard.email",
+    "mailsac.com",
+    "guerrillamail.info",
+  ]);
+
+  return disposableDomains.has(domain);
+}
+
+/**
  * Tronque une chaine a la longueur maximale specifiee.
  */
 export function truncateInput(str: string, maxLength: number): string {

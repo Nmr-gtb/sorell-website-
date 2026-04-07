@@ -625,6 +625,7 @@ const en: Record<string, string> = {
   "login.sub_signup": "Get started for free with Sorell",
   "login.sub_reset": "Receive a reset link by email",
   "login.verify_email": "Check your email to confirm your account.",
+  "login.disposable_email_error": "Disposable email addresses are not accepted. Please use a permanent email.",
   "login.reset_sent": "Reset link sent!",
   "login.back_home": "Back to home",
   "login.back_to_login": "← Back to sign in",

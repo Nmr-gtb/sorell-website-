@@ -7,7 +7,7 @@ import SorellLogo from "@/components/SorellLogo";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
-import { suggestEmailCorrection } from "@/lib/utils";
+import { suggestEmailCorrection, isDisposableEmail } from "@/lib/utils";
 
 type Mode = "login" | "signup" | "reset";
 
@@ -104,6 +104,12 @@ export default function LoginPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessages();
+
+    if (isDisposableEmail(email)) {
+      setError(t("login.disposable_email_error"));
+      return;
+    }
+
     setLoading(true);
     // Passer le code de parrainage dans le redirect URL pour que le callback puisse l'utiliser
     const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
