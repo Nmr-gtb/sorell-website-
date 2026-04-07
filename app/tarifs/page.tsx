@@ -109,7 +109,7 @@ export default function PricingPage() {
       <style>{`
         @media (max-width: 767px) {
           .tarifs-header {
-            padding-top: 80px !important;
+            padding-top: 120px !important;
             padding-bottom: 48px !important;
           }
           .tarifs-cards {

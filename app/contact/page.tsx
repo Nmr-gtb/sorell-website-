@@ -61,9 +61,9 @@ export default function ContactPage() {
         className="contact-main"
         style={{
           flex: 1,
-          paddingTop: 80,
+          paddingTop: 120,
           paddingBottom: 80,
-          padding: "80px 1.5rem",
+          padding: "120px 1.5rem 80px",
           maxWidth: 600,
           margin: "0 auto",
           width: "100%",

@@ -35,7 +35,7 @@ export default function CommentCaMarchePage() {
       <style>{`
         @media (max-width: 768px) {
           .hiw-hero {
-            padding-top: 80px !important;
+            padding-top: 120px !important;
           }
           .hiw-hero-title {
             font-size: 1.75rem !important;

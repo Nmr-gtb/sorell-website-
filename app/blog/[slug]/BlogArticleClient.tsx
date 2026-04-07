@@ -35,7 +35,7 @@ export default function BlogArticleClient() {
         article li { margin-bottom: 8px; }
         article code { background: var(--surface); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; overflow-wrap: break-word; }
         @media (max-width: 767px) {
-          .blog-article-wrapper { padding-top: 80px !important; padding-bottom: 40px !important; }
+          .blog-article-wrapper { padding-top: 100px !important; padding-bottom: 40px !important; }
           .blog-article-wrapper h1 { font-size: 22px !important; }
           article h2 { font-size: 18px !important; }
           .blog-article-cta { padding: 16px !important; }

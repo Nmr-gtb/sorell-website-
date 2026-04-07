@@ -53,7 +53,7 @@ export default function BlogPage() {
     <div style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <style>{`
         @media (max-width: 767px) {
-          .blog-list-wrapper { padding-top: 80px !important; padding-bottom: 40px !important; }
+          .blog-list-wrapper { padding-top: 100px !important; padding-bottom: 40px !important; }
           .blog-article-card { padding: 16px !important; }
           .blog-search-input { font-size: 16px !important; }
           .blog-tags-row { gap: 8px !important; }
