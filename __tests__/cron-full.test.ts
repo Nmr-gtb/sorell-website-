@@ -165,7 +165,7 @@ describe("GET /api/cron", () => {
     });
 
     mockProfilesSelect.mockResolvedValue({
-      data: [{ id: "user-123", plan: "pro" }],
+      data: [{ id: "user-123", plan: "pro", email_verified: true }],
     });
 
     // Newsletter count this month: 0 (under limit)
@@ -222,7 +222,7 @@ describe("GET /api/cron", () => {
     });
 
     mockProfilesSelect.mockResolvedValue({
-      data: [{ id: "user-free", plan: "free" }],
+      data: [{ id: "user-free", plan: "free", email_verified: true }],
     });
 
     // Free plan limit = 2, already sent 2 this month
@@ -250,7 +250,7 @@ describe("GET /api/cron", () => {
     });
 
     mockProfilesSelect.mockResolvedValue({
-      data: [{ id: "user-123", plan: "pro" }],
+      data: [{ id: "user-123", plan: "pro", email_verified: true }],
     });
 
     mockNewslettersCountSelect.mockResolvedValue({ count: 0 });

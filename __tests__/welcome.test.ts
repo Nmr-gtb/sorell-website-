@@ -33,6 +33,11 @@ vi.mock("@/emails/WelcomeEmail", () => ({
   WelcomeEmail: () => "mocked",
 }));
 
+// Mock verify-email-token
+vi.mock("@/lib/verify-email-token", () => ({
+  buildVerifyEmailUrl: (email: string) => `https://www.sorell.fr/api/verify-email?email=${email}&token=mock-token`,
+}));
+
 import { POST } from "@/app/api/welcome/route";
 import * as resendModule from "resend";
 
