@@ -334,15 +334,19 @@ export default function DashboardPage() {
       send_hour: selectedSlot,
     });
 
-    // 2. Add user email as recipient
-    await supabase.from("recipients").upsert(
-      {
-        user_id: user.id,
-        email: user.email,
-        name: user.user_metadata?.full_name || "",
-      },
-      { onConflict: "user_id,email" }
-    );
+    // 2. Add user email as recipient (via authFetch to ensure server-side insert)
+    try {
+      await authFetch("/api/recipients", {
+        method: "POST",
+        body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
+      });
+    } catch {
+      // fallback: client-side upsert
+      await supabase.from("recipients").upsert(
+        { user_id: user.id, email: user.email, name: user.user_metadata?.full_name || "" },
+        { onConflict: "user_id,email" }
+      );
+    }
 
     // 3. Generate and send first newsletter
     try {
@@ -361,7 +365,7 @@ export default function DashboardPage() {
           });
         }
       }
-    } catch (e) {
+    } catch {
       // silently ignore
     }
 
