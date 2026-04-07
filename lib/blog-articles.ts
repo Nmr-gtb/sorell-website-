@@ -15,7 +15,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Découvrez Soly, l'assistant intégré à Sorell qui vous aide à configurer votre newsletter en 2 minutes. Plus besoin de chercher quoi écrire dans votre brief.",
     date: "2026-04-03",
     readTime: "4 min",
-    tags: ["Produit", "IA", "Newsletter"],
+    tags: ["Guide", "Newsletter"],
     content: `
       <p>Tu viens de créer ton compte Sorell. Tu arrives sur le dashboard, et là, on te demande de décrire ton activité pour personnaliser ta newsletter. Le champ est vide. Tu fixes l'écran. Tu tapes "je suis dans la tech" et tu valides.</p>
 
@@ -85,7 +85,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Comparatif complet des outils de newsletter automatique par IA. Découvrez quelle solution choisir pour automatiser votre veille sectorielle en 2026.",
     date: "2026-03-20",
     readTime: "8 min",
-    tags: ["Comparatif", "Newsletter IA", "Outils"],
+    tags: ["Comparatif"],
     content: `
       <p>En 2026, les outils de newsletter alimentés par l'intelligence artificielle transforment la façon dont les entreprises suivent leur secteur. Fini le temps où il fallait passer des heures à compiler des articles manuellement. Aujourd'hui, l'IA fait le travail pour vous.</p>
 
@@ -153,7 +153,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Comparaison détaillée entre la veille manuelle et les newsletters automatiques par IA. Temps gagné, coûts, qualité - tout ce qu'il faut savoir.",
     date: "2026-03-18",
     readTime: "6 min",
-    tags: ["Guide", "Automatisation", "Veille"],
+    tags: ["Guide", "Veille"],
     content: `
       <p>En 2026, les professionnels passent encore en moyenne 4 heures par semaine à compiler leur veille sectorielle. C'est 200 heures par an - l'équivalent de 5 semaines de travail. La question n'est plus "faut-il automatiser ?" mais "pourquoi ne l'avez-vous pas encore fait ?"</p>
 
@@ -193,7 +193,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Guide pas à pas pour mettre en place une veille sectorielle automatique avec l'IA. De la configuration au premier email en 5 minutes chrono.",
     date: "2026-03-15",
     readTime: "5 min",
-    tags: ["Tutoriel", "Veille", "IA"],
+    tags: ["Guide", "Veille"],
     content: `
       <p>Vous passez du temps chaque semaine à chercher les actualités de votre secteur ? Voici comment automatiser votre veille sectorielle en 5 minutes avec l'intelligence artificielle, sans aucune compétence technique.</p>
 
@@ -237,7 +237,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Comparaison détaillée entre Sorell et ChatGPT pour automatiser sa veille sectorielle. Avantages, limites et cas d'usage de chaque solution.",
     date: "2026-03-12",
     readTime: "7 min",
-    tags: ["Comparatif", "ChatGPT", "Veille"],
+    tags: ["Comparatif", "Veille"],
     content: `
       <p>ChatGPT est devenu un outil incontournable pour les professionnels en 2026. Beaucoup l'utilisent pour compiler leur veille sectorielle. Mais est-ce vraiment la meilleure solution ? Comparaison avec Sorell, un outil spécialisé dans la newsletter automatique par IA.</p>
 
@@ -289,7 +289,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Tout ce que les PME doivent savoir sur les newsletters générées par IA. Comment choisir, combien ça coûte, et comment démarrer en 5 minutes.",
     date: "2026-03-10",
     readTime: "9 min",
-    tags: ["Guide", "PME", "Newsletter IA"],
+    tags: ["Guide", "Newsletter"],
     content: `
       <p>Les PME françaises découvrent en 2026 les avantages des newsletters générées par intelligence artificielle. Un outil comme Sorell permet de recevoir automatiquement un résumé des actualités de son secteur, personnalisé et envoyé par email à toute l'équipe. Mais comment ça marche concrètement ? Combien ça coûte ? Et surtout, est-ce que la qualité est au rendez-vous ?</p>
 
@@ -346,7 +346,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Tutoriel pas à pas pour ajouter newsletters@sorell.fr à vos contacts sur Gmail, Outlook, Apple Mail, Yahoo et Thunderbird. Ne manquez plus aucune newsletter.",
     date: "2026-04-07",
     readTime: "3 min",
-    tags: ["Tutoriel", "Email"],
+    tags: ["Guide"],
     content: `
       <p>Vous venez de vous inscrire sur Sorell et votre première newsletter arrive bientôt. Pour être sûr de la recevoir dans votre boîte de réception (et pas dans les spams), il suffit d'ajouter notre adresse d'envoi à vos contacts.</p>
 
@@ -403,7 +403,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Partagez Sorell autour de vous et profitez du programme de parrainage. 15 jours offerts pour vous, -20% pour votre filleul. On vous explique tout.",
     date: "2026-04-07",
     readTime: "3 min",
-    tags: ["Produit", "Parrainage"],
+    tags: ["Guide"],
     content: `
       <p>Vous utilisez Sorell et votre veille sectorielle tourne toute seule. Vos collègues vous demandent comment vous faites ? C'est le moment de leur partager votre lien de parrainage.</p>
 
@@ -463,7 +463,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Mettre en place une veille concurrentielle efficace prend du temps. Découvrez comment automatiser la surveillance de vos concurrents avec les bons outils et méthodes.",
     date: "2026-04-06",
     readTime: "6 min",
-    tags: ["Veille", "Stratégie", "Guide"],
+    tags: ["Veille", "Guide"],
     content: `
       <p>Vous savez que vos concurrents bougent. Nouveau produit, levée de fonds, recrutement massif, changement de positionnement. Mais entre votre quotidien de dirigeant et la gestion de votre équipe, qui a le temps de surveiller tout ça ?</p>
 
@@ -521,7 +521,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "La veille sectorielle est devenue indispensable pour les dirigeants. Méthodes, outils, fréquence : tout ce qu'il faut savoir pour une veille sectorielle qui produit des résultats.",
     date: "2026-04-05",
     readTime: "7 min",
-    tags: ["Veille", "Guide", "Stratégie"],
+    tags: ["Veille", "Guide"],
     content: `
       <p>La <strong>veille sectorielle</strong> consiste à surveiller en continu les évolutions de votre secteur d'activité : tendances de marché, innovations, réglementations, mouvements de concurrents, nouvelles technologies. C'est le radar qui vous permet d'anticiper au lieu de subir.</p>
 
@@ -579,7 +579,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Quelles sources utiliser pour une veille stratégique B2B de qualité ? Presse, données légales, brevets, réseaux sociaux : notre sélection des 10 incontournables.",
     date: "2026-04-04",
     readTime: "5 min",
-    tags: ["Veille", "B2B", "Guide"],
+    tags: ["Veille", "Guide"],
     content: `
       <p>La qualité de votre <strong>veille stratégique B2B</strong> dépend directement de la qualité de vos sources. Trop de dirigeants se limitent à Google News et LinkedIn. C'est un bon début, mais c'est insuffisant pour prendre des décisions éclairées.</p>
 
@@ -638,7 +638,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "La plupart des dirigeants font de la veille marché de manière sporadique et désorganisée. Les 5 erreurs les plus courantes et comment les corriger.",
     date: "2026-04-03",
     readTime: "5 min",
-    tags: ["Veille", "Stratégie"],
+    tags: ["Veille"],
     content: `
       <p>Presque tous les dirigeants affirment faire de la <strong>veille marché</strong>. En réalité, la majorité la pratique de manière sporadique, désorganisée et sans méthodologie. Le résultat : des décisions prises avec des informations incomplètes ou obsolètes.</p>
 
@@ -684,7 +684,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "La curation de contenu manuelle prend des heures. Découvrez comment automatiser votre curation avec l'IA pour gagner du temps sans perdre en qualité.",
     date: "2026-04-02",
     readTime: "5 min",
-    tags: ["Curation", "IA", "Guide"],
+    tags: ["Veille", "Guide"],
     content: `
       <p>La <strong>curation de contenu</strong> consiste à sélectionner, organiser et partager les meilleures informations sur un sujet donné. C'est le travail d'un rédacteur en chef appliqué à votre secteur d'activité. Le problème : c'est extrêmement chronophage quand on le fait manuellement.</p>
 
@@ -737,7 +737,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Professionnels de l'immobilier : les sources incontournables, les sujets clés et les outils pour une veille sectorielle immobilier efficace et automatisée.",
     date: "2026-04-01",
     readTime: "5 min",
-    tags: ["Veille", "Immobilier", "Sectoriel"],
+    tags: ["Veille", "Secteur"],
     content: `
       <p>Le secteur immobilier évolue sous l'effet de multiples facteurs : taux d'intérêt, réglementations énergétiques, démographie, urbanisation, PropTech. Une <strong>veille sectorielle immobilier</strong> structurée est devenue indispensable pour les professionnels qui veulent anticiper plutôt que réagir.</p>
 
@@ -781,7 +781,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Le secteur santé-pharma évolue vite. Sources, sujets, outils : comment structurer une veille sectorielle santé efficace pour ne rien rater.",
     date: "2026-03-31",
     readTime: "5 min",
-    tags: ["Veille", "Santé", "Sectoriel"],
+    tags: ["Veille", "Secteur"],
     content: `
       <p>Le secteur de la <strong>santé et de la pharma</strong> est l'un des plus régulés et des plus dynamiques. Entre les nouvelles molécules, les dispositifs médicaux connectés, les réformes hospitalières et les réglementations européennes, le volume d'informations à traiter est considérable.</p>
 
@@ -823,7 +823,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Fintech, régulation bancaire, crypto, Open Banking : les sujets et sources essentiels pour une veille sectorielle finance et fintech complète.",
     date: "2026-03-30",
     readTime: "5 min",
-    tags: ["Veille", "Finance", "Sectoriel"],
+    tags: ["Veille", "Secteur"],
     content: `
       <p>Le secteur <strong>fintech et finance</strong> est en mutation permanente. Nouvelles réglementations européennes, montée des néobanques, Open Banking, crypto-actifs, IA appliquée au crédit scoring : les sujets à surveiller se multiplient.</p>
 
@@ -863,7 +863,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Le e-commerce évolue à grande vitesse. Sources, tendances et outils pour structurer une veille sectorielle e-commerce efficace et ne rien rater.",
     date: "2026-03-29",
     readTime: "5 min",
-    tags: ["Veille", "E-commerce", "Sectoriel"],
+    tags: ["Veille", "Secteur"],
     content: `
       <p>Le <strong>e-commerce</strong> est un secteur où les tendances changent à chaque saison. Nouveaux canaux de vente, évolution des comportements d'achat, réglementations sur le numérique, logistique du dernier kilomètre : les sujets de veille sont nombreux et stratégiques.</p>
 
@@ -903,7 +903,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Industrie 4.0, normes ISO, supply chain, décarbonation : les sujets et sources essentiels pour une veille sectorielle industrie et manufacturing efficace.",
     date: "2026-03-28",
     readTime: "5 min",
-    tags: ["Veille", "Industrie", "Sectoriel"],
+    tags: ["Veille", "Secteur"],
     content: `
       <p>L'<strong>industrie et le manufacturing</strong> traversent une transformation profonde : digitalisation des usines, décarbonation, relocalisation, nouvelles normes qualité, tensions sur les matières premières. Une veille sectorielle structurée est devenue un outil de pilotage stratégique pour les industriels.</p>
 
@@ -943,7 +943,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Sorell et Feedly sont deux approches différentes de la veille. Comparatif détaillé pour choisir l'outil le plus adapté à vos besoins de veille sectorielle.",
     date: "2026-03-27",
     readTime: "5 min",
-    tags: ["Comparatif", "Veille", "Outil"],
+    tags: ["Comparatif"],
     content: `
       <p>Feedly est l'un des agrégateurs RSS les plus populaires au monde. <strong>Sorell</strong> est un outil de veille sectorielle automatisée par IA. Les deux servent à s'informer, mais leur approche est fondamentalement différente.</p>
 
@@ -987,7 +987,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Google Alerts est gratuit mais limité. Découvrez pourquoi les alertes Google ne suffisent plus pour une veille sectorielle efficace et quelles alternatives existent.",
     date: "2026-03-26",
     readTime: "4 min",
-    tags: ["Comparatif", "Veille", "Outil"],
+    tags: ["Comparatif"],
     content: `
       <p><strong>Google Alerts</strong> est souvent le premier outil de veille que découvrent les dirigeants. Gratuit, simple à configurer, il envoie des emails quand un mot-clé apparaît sur le web. Mais en 2026, ses limites sont devenues évidentes.</p>
 
@@ -1033,7 +1033,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Mention n'est pas le seul outil de veille. Découvrez les meilleures alternatives pour surveiller votre marché, vos concurrents et votre réputation en 2026.",
     date: "2026-03-25",
     readTime: "5 min",
-    tags: ["Comparatif", "Veille", "Outil"],
+    tags: ["Comparatif"],
     content: `
       <p><strong>Mention</strong> est un outil de veille médiatique et sociale qui surveille les mentions de mots-clés sur le web, les réseaux sociaux et la presse. Mais en 2026, le paysage des outils de veille s'est enrichi avec des approches différentes.</p>
 
@@ -1079,7 +1079,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "La qualité de votre newsletter dépend de votre brief. Méthode, exemples et erreurs à éviter pour rédiger un brief de newsletter qui produit du contenu pertinent.",
     date: "2026-03-24",
     readTime: "4 min",
-    tags: ["Newsletter", "Guide", "Produit"],
+    tags: ["Newsletter", "Guide"],
     content: `
       <p>Le <strong>brief de newsletter</strong> est le document qui guide la création de votre contenu. Que vous rédigiez votre newsletter vous-même, que vous la déléguiez à un rédacteur ou que vous utilisiez l'IA, la qualité du résultat dépend directement de la précision de votre brief.</p>
 
@@ -1121,7 +1121,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Une newsletter interne diffuse la veille sectorielle à toute votre équipe. Avantages, format, fréquence : guide complet pour créer une newsletter interne efficace.",
     date: "2026-03-23",
     readTime: "5 min",
-    tags: ["Newsletter", "Guide", "B2B"],
+    tags: ["Newsletter", "Guide"],
     content: `
       <p>La <strong>newsletter interne</strong> est un outil sous-estimé. Dans beaucoup d'entreprises, la veille sectorielle reste dans la tête du dirigeant ou de quelques managers. Le reste de l'équipe n'y a pas accès. Résultat : des décisions prises sans contexte et des opportunités manquées.</p>
 
@@ -1223,7 +1223,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     description: "Votre veille sectorielle produit-elle des résultats ? Les indicateurs clés pour mesurer l'efficacité de votre veille et l'améliorer en continu.",
     date: "2026-03-21",
     readTime: "4 min",
-    tags: ["Veille", "Stratégie", "Guide"],
+    tags: ["Veille", "Guide"],
     content: `
       <p>Vous investissez du temps (ou de l'argent) dans votre <strong>veille sectorielle</strong>. Mais comment savoir si elle produit des résultats concrets ? Mesurer l'efficacité de sa veille est essentiel pour l'améliorer et justifier l'investissement.</p>
 
