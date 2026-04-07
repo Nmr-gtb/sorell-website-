@@ -22,12 +22,13 @@
 - **Frontend** : Next.js (App Router, "use client" pour la plupart des pages) + TypeScript + Tailwind CSS
 - **Backend / BDD** : Supabase (auth, database, storage)
 - **IA** : Claude API (Haiku 4.5 — modèle claude-haiku-4-5-20251001) avec web search
-- **Email** : Resend (depuis noe@sorell.fr)
+- **Email** : Resend (newsletters@sorell.fr pour les newsletters, noreply@sorell.fr pour le transactionnel)
 - **Paiement** : Stripe (mode production)
 - **Hébergement** : Vercel (plan gratuit)
 - **CRON** : cron-job.org (externe, chaque heure, https://www.sorell.fr/api/cron)
 - **Domaine** : sorell.fr (OVH)
-- **Email pro** : noe@sorell.fr (OVH Email Pro, pro2.mail.ovh.net)
+- **Email pro** : OVH Email Pro (pro2.mail.ovh.net) — noe@sorell.fr, noreply@sorell.fr, newsletters@sorell.fr
+- **Cold email** : sorell-group.fr (domaine dédié) — laurent@sorell-group.fr, matis@sorell-group.fr via Emelia
 - **Versioning** : GitHub (https://github.com/Nmr-gtb/sorell-website-)
 
 ## Projet local
@@ -87,7 +88,7 @@ ADMIN_JWT_SECRET
 ## Base de données (Supabase)
 
 ### Tables principales
-- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code (VARCHAR UNIQUE), referred_by (UUID FK profiles), created_at
+- **profiles** : id, email, plan ("free"/"pro"/"business"/"enterprise"), full_name, email_verified (BOOLEAN DEFAULT false), stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code (VARCHAR UNIQUE), referred_by (UUID FK profiles), created_at
 - **lifecycle_emails** : id, user_id, email_type, sent_at (tracking des emails lifecycle envoyés, UNIQUE user_id+email_type)
 - **admin_sessions** : id, email, ip_address, user_agent, created_at, expires_at (audit trail des connexions admin)
 - **newsletter_config** : user_id, topics (array), custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics (array)
@@ -124,7 +125,8 @@ sorell-website/
 │   │   ├── send/route.ts             # Envoi newsletter (Resend + rate limiting)
 │   │   ├── cron/route.ts             # CRON auto-envoi (chaque heure)
 │   │   ├── checkout/route.ts         # Stripe checkout avec trial 15 jours
-│   │   ├── welcome/route.ts          # Email bienvenue + notification admin
+│   │   ├── welcome/route.ts          # Email bienvenue + vérification + notification admin
+│   │   ├── verify-email/route.ts     # Vérification email double opt-in (HMAC-SHA256)
 │   │   ├── webhooks/stripe/route.ts  # Webhook Stripe
 │   │   ├── webhooks/resend/route.ts  # Webhook Resend (bounces/complaints)
 │   │   ├── contact/route.ts          # Formulaire de contact
@@ -188,6 +190,7 @@ sorell-website/
 │   ├── supabase-admin.ts             # Client Supabase (service_role, côté serveur)
 │   ├── ratelimit.ts                  # Rate limiting Upstash Redis
 │   ├── auth.ts                       # getAuthenticatedUser() helper
+│   ├── verify-email-token.ts         # Génération/vérification tokens HMAC-SHA256 double opt-in
 │   └── database.ts                   # Helpers base de données
 ├── public/
 │   ├── hero-visual.png               # Image hero
@@ -232,7 +235,9 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 
 ## Flux principaux
 
-### Inscription → Onboarding (5 étapes)
+### Inscription → Vérification → Onboarding (5 étapes)
+0. Inscription → email de bienvenue avec lien de vérification envoyé immédiatement
+0b. Écran bloquant "Vérifiez votre boîte mail" tant que email non vérifié
 1. Choix du plan (Free avance, Pro/Business → Stripe Checkout avec trial 15j)
 2. Brief (description de l'activité)
 3. Thématiques (prédéfinies + custom)
@@ -245,9 +250,38 @@ Environ 0.10$/newsletter (Claude Haiku 4.5 + web search)
 - Webhook met à jour le plan dans profiles
 
 ### Emails
-- **Bienvenue** : envoyé à la fin de l'onboarding (3 étapes : enrichir brief, ajouter collaborateurs, laisser faire)
-- **Notification admin** : email à noe@sorell.fr à chaque nouvel inscrit
-- **Newsletters** : envoyées via Resend depuis noe@sorell.fr avec tracking opens/clicks
+
+#### Adresses par usage
+| Adresse | Usage | Domaine |
+|---------|-------|---------|
+| newsletters@sorell.fr | Envoi des newsletters automatiques | sorell.fr |
+| noreply@sorell.fr | Emails transactionnels (bienvenue, vérification, contact, paiement, lifecycle) | sorell.fr |
+| noe@sorell.fr | Réponses support, replyTo sur tous les emails | sorell.fr |
+| laurent@sorell-group.fr | Cold email (Emelia) | sorell-group.fr |
+| matis@sorell-group.fr | Cold email (Emelia) | sorell-group.fr |
+
+#### Double opt-in (vérification email)
+- A la création de compte, un email de bienvenue avec lien de vérification HMAC-SHA256 est envoyé
+- Token généré via lib/verify-email-token.ts (préfixe "verify:" pour éviter collision avec unsubscribe)
+- Route GET /api/verify-email valide le token et met email_verified=true dans profiles
+- Le dashboard affiche un écran bloquant tant que email_verified=false (pas d'accès à l'onboarding)
+- Le CRON /api/cron skip les utilisateurs non vérifiés (pas d'envoi de newsletter)
+
+#### Anti-spam
+- SPF, DKIM, DMARC configurés sur sorell.fr et sorell-group.fr
+- Emails jetables bloqués à l'inscription (isDisposableEmail dans lib/utils.ts, ~50 domaines)
+- Correction automatique des typos email (suggestEmailCorrection dans lib/utils.ts)
+- Texte "Ajoutez newsletters@sorell.fr à vos contacts" dans l'email de bienvenue
+- Article blog tutoriel : /blog/ajouter-contact-email-eviter-spams
+- Domaine sorell-group.fr isolé pour le cold email (protège la réputation de sorell.fr)
+
+#### Types d'emails
+- **Bienvenue + vérification** : envoyé à la création de compte (from: noreply@sorell.fr)
+- **Notification admin** : email à noe@sorell.fr à chaque nouvel inscrit (from: noreply@sorell.fr)
+- **Newsletters** : envoyées via Resend depuis newsletters@sorell.fr avec tracking opens/clicks
+- **Contact** : confirmation utilisateur + notification admin (from: noreply@sorell.fr)
+- **Paiement échoué** : alerte au client (from: noreply@sorell.fr)
+- **Lifecycle** : onboarding J+1, trial J-3/J-1/J0, limite atteinte, feedback J+14, upsell J+28 (from: noreply@sorell.fr)
 
 ## Chatbot Soly
 
@@ -367,6 +401,17 @@ Double couche Upstash Redis :
 - ✅ /api/welcome et /api/welcome-email proteges par getAuthenticatedUser() (401 si non authentifie)
 - ✅ Appelants mis a jour : dashboard utilise authFetch, auth/callback passe le Bearer token, connexion/page delegue au callback
 - ✅ unsubscribe-token.ts : secret HMAC separe (UNSUBSCRIBE_SECRET prioritaire sur CRON_SECRET), throw si vide au lieu de fallback silencieux
+
+### Failles CORRIGÉES (7 avril 2026)
+
+- ✅ Double opt-in : vérification email HMAC-SHA256 obligatoire avant accès au dashboard
+- ✅ Séparation des adresses email par usage (newsletters@, noreply@, noe@)
+- ✅ Écran bloquant vérification email (remplace la bannière non-bloquante)
+- ✅ Emails jetables bloqués à l'inscription (isDisposableEmail, ~50 domaines)
+- ✅ Correction automatique des typos email (suggestEmailCorrection)
+- ✅ DNS anti-spam : SPF, DKIM, DMARC sur sorell.fr et sorell-group.fr
+- ✅ Domaine cold email isolé (sorell-group.fr) pour protéger la réputation sorell.fr
+- ✅ CRON skip les utilisateurs non vérifiés (email_verified=false)
 
 ## Règles de travail avec Claude Code
 
