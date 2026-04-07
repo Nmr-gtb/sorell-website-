@@ -71,7 +71,7 @@ async function sendLifecycleEmail(
     if (alreadySent) return false;
 
     await resend.emails.send({
-      from: "Sorell <noe@sorell.fr>",
+      from: "Sorell <noreply@sorell.fr>",
       to,
       replyTo: "noe@sorell.fr",
       subject,
@@ -90,7 +90,7 @@ async function sendLifecycleEmail(
 async function sendAdminAlert(subject: string, html: string): Promise<void> {
   try {
     await resend.emails.send({
-      from: "Sorell Alertes <noe@sorell.fr>",
+      from: "Sorell Alertes <noreply@sorell.fr>",
       to: "noe@sorell.fr",
       replyTo: "noe@sorell.fr",
       subject,
@@ -232,7 +232,7 @@ export async function GET(request: Request) {
             const html = await render(LimitReachedEmail({ name, plan: planLabel, limit }));
             try {
               await resend.emails.send({
-                from: "Sorell <noe@sorell.fr>",
+                from: "Sorell <noreply@sorell.fr>",
                 to: user.email,
                 replyTo: "noe@sorell.fr",
                 subject,

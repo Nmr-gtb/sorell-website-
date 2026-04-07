@@ -58,12 +58,13 @@ export function LifecycleLayout({ preheader, children }: LifecycleLayoutProps) {
             }}
           >
             <Row>
-              <Column style={{ width: "36px" }}>
+              <Column>
                 <Img
-                  src="https://www.sorell.fr/icone.png"
-                  alt="S."
-                  width="32"
+                  src="https://www.sorell.fr/Sorell%20logo.png"
+                  alt="Sorell"
+                  width="100"
                   height="32"
+                  style={{ display: "block" }}
                 />
               </Column>
               <Column align="right">
@@ -93,12 +94,13 @@ export function LifecycleLayout({ preheader, children }: LifecycleLayoutProps) {
             }}
           >
             <Row>
-              <Column style={{ width: "32px" }}>
+              <Column>
                 <Img
-                  src="https://www.sorell.fr/icone.png"
-                  alt="S."
-                  width="24"
-                  height="24"
+                  src="https://www.sorell.fr/Sorell%20logo.png"
+                  alt="Sorell"
+                  width="80"
+                  height="26"
+                  style={{ display: "block" }}
                 />
               </Column>
               <Column align="right">

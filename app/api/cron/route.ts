@@ -46,8 +46,8 @@ export async function GET(request: Request) {
 
   // Batch fetch all profiles to avoid N+1 queries
   const userIds = configs.map((c: { user_id: string }) => c.user_id);
-  const { data: allProfiles } = await supabaseAdmin.from("profiles").select("id, plan").in("id", userIds);
-  const profileMap = new Map((allProfiles || []).map((p: { id: string; plan: string }) => [p.id, p.plan]));
+  const { data: allProfiles } = await supabaseAdmin.from("profiles").select("id, plan, email_verified").in("id", userIds);
+  const profileMap = new Map((allProfiles || []).map((p: { id: string; plan: string; email_verified: boolean }) => [p.id, { plan: p.plan, email_verified: p.email_verified }]));
 
   const results = [];
 
@@ -87,8 +87,11 @@ export async function GET(request: Request) {
         if (lastSentFrance.toDateString() === franceTime.toDateString()) continue;
       }
 
-      const profile = { plan: profileMap.get(config.user_id) || "free" };
-      const userPlan = profile?.plan || "free";
+      const profileData = profileMap.get(config.user_id) || { plan: "free", email_verified: false };
+      const userPlan = profileData.plan || "free";
+
+      // Double opt-in : skip les utilisateurs qui n'ont pas verifie leur email
+      if (!profileData.email_verified) continue;
 
       const autoLimits: Record<string, number> = { free: 2, pro: 4, business: -1, enterprise: -1 };
       const maxAuto = autoLimits[userPlan] ?? 2;
@@ -205,7 +208,7 @@ export async function GET(request: Request) {
         const unsubscribeUrl = buildUnsubscribeUrl(recipient.email);
         try {
           await resend.emails.send({
-            from: "Sorell <newsletter@sorell.fr>",
+            from: "Sorell <newsletters@sorell.fr>",
             replyTo: "noe@sorell.fr",
             to: recipient.email,
             subject,

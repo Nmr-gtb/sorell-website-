@@ -5,6 +5,7 @@ import { emailRateLimit } from "@/lib/ratelimit";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { isValidEmail, truncateInput } from "@/lib/utils";
 import { WelcomeEmail } from "@/emails/WelcomeEmail";
+import { buildVerifyEmailUrl } from "@/lib/verify-email-token";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -34,21 +35,22 @@ export async function POST(request: Request) {
       // Redis unavailable — allow welcome email to proceed
     }
 
-    const welcomeHtml = await render(WelcomeEmail({ name: name || "", email }));
+    const verifyUrl = buildVerifyEmailUrl(email);
+    const welcomeHtml = await render(WelcomeEmail({ name: name || "", email, verifyUrl }));
 
     await resend.emails.send({
-      from: "Sorell <noe@sorell.fr>",
+      from: "Sorell <noreply@sorell.fr>",
       replyTo: "noe@sorell.fr",
       to: email,
       subject: "Bienvenue sur Sorell - votre veille automatique est en route",
       html: welcomeHtml,
-      text: `Bienvenue sur Sorell, ${name || ""}!\n\nVotre veille automatique est en route. Connectez-vous sur https://www.sorell.fr/dashboard pour configurer votre newsletter.\n\nÀ bientôt,\nNoé - Sorell`,
+      text: `Bienvenue sur Sorell, ${name || ""} !\n\nVotre veille automatique est en route. Confirmez votre adresse email en cliquant sur ce lien :\n${verifyUrl}\n\nA bientot,\nNoe - Sorell`,
     });
 
     try {
       const now = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
       await resend.emails.send({
-        from: "Sorell <noe@sorell.fr>",
+        from: "Sorell <noreply@sorell.fr>",
         to: "noe@sorell.fr",
         replyTo: "noe@sorell.fr",
         subject: `Nouvel inscrit Sorell - ${email}`,

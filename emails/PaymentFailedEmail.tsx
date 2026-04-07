@@ -55,13 +55,13 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
               }}
             >
               <Row>
-                <Column style={{ width: "40px" }}>
+                <Column>
                   <Img
-                    src="https://www.sorell.fr/icone.png"
+                    src="https://www.sorell.fr/Sorell%20logo.png"
                     alt="Sorell"
-                    width="36"
-                    height="36"
-                    style={{ borderRadius: "4px" }}
+                    width="100"
+                    height="32"
+                    style={{ display: "block" }}
                   />
                 </Column>
                 <Column>
@@ -182,12 +182,13 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
               }}
             >
               <Row>
-                <Column style={{ width: "32px" }}>
+                <Column>
                   <Img
-                    src="https://www.sorell.fr/icone.png"
+                    src="https://www.sorell.fr/Sorell%20logo.png"
                     alt="Sorell"
-                    width="24"
-                    height="24"
+                    width="80"
+                    height="26"
+                    style={{ display: "block" }}
                   />
                 </Column>
                 <Column>

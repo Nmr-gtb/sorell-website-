@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     );
 
     await resend.emails.send({
-      from: "Sorell Contact <newsletter@sorell.fr>",
+      from: "Sorell Contact <noreply@sorell.fr>",
       to: "noe@sorell.fr",
       replyTo: email,
       subject: `[Sorell Contact] ${subject || "Nouveau message"} - ${name}`,
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     );
 
     await resend.emails.send({
-      from: "Sorell <newsletter@sorell.fr>",
+      from: "Sorell <noreply@sorell.fr>",
       to: email,
       replyTo: "noe@sorell.fr",
       subject: "Nous avons bien reçu votre message - Sorell",

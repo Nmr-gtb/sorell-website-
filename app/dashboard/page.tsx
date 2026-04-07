@@ -160,6 +160,7 @@ export default function DashboardPage() {
   const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
   const [loadingNewsletter, setLoadingNewsletter] = useState(true);
   const [config, setConfig] = useState<{ custom_brief?: string } | null>(null);
+  const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
 
   // Onboarding state
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null); // null = loading
@@ -177,6 +178,14 @@ export default function DashboardPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const searchParams = useSearchParams();
+  const emailVerifiedParam = searchParams.get("email_verified");
+
+  // Mettre a jour emailVerified si l'utilisateur vient de confirmer via le lien
+  useEffect(() => {
+    if (emailVerifiedParam === "success") {
+      setEmailVerified(true);
+    }
+  }, [emailVerifiedParam]);
 
   // Check if new user (no topics configured), and skip plan step if returning from checkout or already on paid plan
   useEffect(() => {
@@ -192,12 +201,13 @@ export default function DashboardPage() {
         .single(),
       supabase
         .from("profiles")
-        .select("plan")
+        .select("plan, email_verified")
         .eq("id", user.id)
         .single(),
     ]).then(([configResult, profileResult]) => {
       const hasTopics = !!(configResult.data?.topics && configResult.data.topics.length > 0);
       const plan = profileResult.data?.plan || "free";
+      setEmailVerified(profileResult.data?.email_verified ?? false);
       const hasPaidPlan = plan === "pro" || plan === "business" || plan === "enterprise";
 
       if (hasTopics) {
@@ -1092,6 +1102,58 @@ export default function DashboardPage() {
           {loadingData || loadingNewsletter ? t("dashboard.summary") : getContextualMessage()}
         </p>
       </div>
+
+      {/* Banniere verification email */}
+      {emailVerified === false && (
+        <div style={{
+          background: "#FEF3C7",
+          border: "1px solid #F59E0B",
+          borderRadius: 10,
+          padding: "14px 20px",
+          marginBottom: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          fontSize: 14,
+          color: "#92400E",
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>
+            {lang === "fr"
+              ? "Confirmez votre adresse email pour recevoir vos newsletters. Consultez votre boite de reception."
+              : "Confirm your email address to receive your newsletters. Check your inbox."}
+          </span>
+        </div>
+      )}
+
+      {emailVerifiedParam === "success" && (
+        <div style={{
+          background: "#ECFDF5",
+          border: "1px solid #059669",
+          borderRadius: 10,
+          padding: "14px 20px",
+          marginBottom: 16,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          fontSize: 14,
+          color: "#065F46",
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span>
+            {lang === "fr"
+              ? "Adresse email confirmee. Vos newsletters seront envoyees automatiquement."
+              : "Email address confirmed. Your newsletters will be sent automatically."}
+          </span>
+        </div>
+      )}
 
       {/* Checklist de progression */}
       {showChecklist && (

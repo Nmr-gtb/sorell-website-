@@ -93,14 +93,14 @@ export function Layout({
             }}
           >
             <Row>
-              <Column style={{ width: "36px" }}>
+              <Column>
                 <Img
-                  src={customLogo || "https://www.sorell.fr/icone.png"}
-                  alt={customLogo ? "Logo" : "S."}
+                  src={customLogo || "https://www.sorell.fr/Sorell%20logo.png"}
+                  alt={customLogo ? "Logo" : "Sorell"}
                   style={
                     customLogo
                       ? { maxHeight: "32px", maxWidth: "160px" }
-                      : { width: "32px", height: "32px" }
+                      : { display: "block", width: "100px", height: "32px" }
                   }
                 />
               </Column>
@@ -130,14 +130,14 @@ export function Layout({
             }}
           >
             <Row>
-              <Column style={{ width: "32px" }}>
+              <Column>
                 <Img
-                  src={customLogo || "https://www.sorell.fr/icone.png"}
-                  alt={customLogo ? "Logo" : "S."}
+                  src={customLogo || "https://www.sorell.fr/Sorell%20logo.png"}
+                  alt={customLogo ? "Logo" : "Sorell"}
                   style={
                     customLogo
                       ? { maxHeight: "24px", maxWidth: "120px" }
-                      : { width: "24px", height: "24px" }
+                      : { display: "block", width: "80px", height: "26px" }
                   }
                 />
               </Column>

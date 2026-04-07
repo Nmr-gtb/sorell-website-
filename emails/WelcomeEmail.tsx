@@ -10,10 +10,12 @@ import { LifecycleLayout } from "./components/LifecycleLayout";
 interface WelcomeEmailProps {
   name: string;
   email: string;
+  verifyUrl?: string;
 }
 
-export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
+export function WelcomeEmail({ name, email, verifyUrl }: WelcomeEmailProps) {
   const displayName = name || email.split("@")[0];
+  const ctaHref = verifyUrl || "https://sorell.fr/dashboard";
 
   return (
     <LifecycleLayout preheader="Votre veille sectorielle IA est prête">
@@ -42,10 +44,8 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0 0 16px",
           }}
         >
-          Bonjour {displayName}, merci de nous avoir rejoints. Vous avez
-          désormais accès à une veille sectorielle automatique, générée par IA à
-          partir de vraies actualités du web, et livrée dans votre boîte mail
-          chaque semaine.
+          Bonjour {displayName}, merci de nous avoir rejoints. Votre newsletter
+          de veille sectorielle est configurée et prête à fonctionner.
         </Text>
         <Text
           style={{
@@ -55,12 +55,13 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0 0 24px",
           }}
         >
-          Il ne reste que 5 minutes de configuration pour que Sorell comprenne
-          votre métier et commence à travailler pour vous.
+          Sorell va analyser le web pour vous et vous envoyer une synthèse
+          personnalisée directement dans votre boîte mail, au créneau que vous
+          avez choisi.
         </Text>
       </Section>
 
-      {/* Steps */}
+      {/* What's ready */}
       <Section style={{ padding: "0 32px 24px" }}>
         <Text
           style={{
@@ -71,7 +72,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0 0 14px",
           }}
         >
-          Ce qu&apos;on configure ensemble
+          Ce qui est en place
         </Text>
         <Text
           style={{
@@ -81,8 +82,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;Votre brief : décrivez votre activité en quelques
-          lignes
+          &middot;&nbsp;&nbsp;Votre brief et vos thématiques sont enregistrés
         </Text>
         <Text
           style={{
@@ -92,7 +92,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;Vos thématiques et sources préférées
+          &middot;&nbsp;&nbsp;Vos sources et destinataires sont configurés
         </Text>
         <Text
           style={{
@@ -102,7 +102,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             margin: "0",
           }}
         >
-          &middot;&nbsp;&nbsp;Votre créneau d&apos;envoi et vos destinataires
+          &middot;&nbsp;&nbsp;Votre première newsletter est en route
         </Text>
       </Section>
 
@@ -111,7 +111,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
         style={{ padding: "0 32px 32px", textAlign: "center" as const }}
       >
         <Button
-          href="https://sorell.fr/dashboard"
+          href={ctaHref}
           style={{
             display: "inline-block",
             padding: "14px 32px",
@@ -123,7 +123,7 @@ export function WelcomeEmail({ name, email }: WelcomeEmailProps) {
             borderRadius: "8px",
           }}
         >
-          Configurer ma newsletter
+          {verifyUrl ? "Confirmer mon adresse email" : "Accéder à mon tableau de bord"}
         </Button>
       </Section>
     </LifecycleLayout>

@@ -148,7 +148,7 @@ export async function POST(request: Request) {
           const html = await render(PaymentFailedEmail({ firstName }));
 
           await resend.emails.send({
-            from: "Sorell <noe@sorell.fr>",
+            from: "Sorell <noreply@sorell.fr>",
             to: profile.email,
             replyTo: "noe@sorell.fr",
             subject: "Problème de paiement \u2014 Action requise",
