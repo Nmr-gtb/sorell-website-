@@ -7,6 +7,7 @@ import SorellLogo from "@/components/SorellLogo";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { suggestEmailCorrection } from "@/lib/utils";
 
 type Mode = "login" | "signup" | "reset";
 
@@ -51,6 +52,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [emailSuggestion, setEmailSuggestion] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -351,12 +353,33 @@ export default function LoginPage() {
                   id="signup-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); setEmailSuggestion(null); }}
+                  onBlur={() => setEmailSuggestion(suggestEmailCorrection(email))}
                   placeholder="vous@entreprise.fr"
                   required
                   style={inputStyle}
                   className="input-field"
                 />
+                {emailSuggestion && (
+                  <button
+                    type="button"
+                    onClick={() => { setEmail(emailSuggestion); setEmailSuggestion(null); }}
+                    style={{
+                      marginTop: 6,
+                      padding: "6px 12px",
+                      background: "#FEF3C7",
+                      border: "1px solid #F59E0B",
+                      borderRadius: 6,
+                      fontSize: 13,
+                      color: "#92400E",
+                      cursor: "pointer",
+                      width: "100%",
+                      textAlign: "left",
+                    }}
+                  >
+                    Vouliez-vous dire <strong>{emailSuggestion}</strong> ?
+                  </button>
+                )}
               </div>
               <div>
                 <label htmlFor="signup-password" style={labelStyle}>{t("login.password_label")}</label>
