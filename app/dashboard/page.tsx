@@ -369,15 +369,8 @@ export default function DashboardPage() {
       // silently ignore
     }
 
-    // 4. Send welcome email
-    try {
-      await authFetch("/api/welcome", {
-        method: "POST",
-        body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
-      });
-    } catch (e) {
-      // silently ignore
-    }
+    // Welcome email deja envoye au moment de la creation du compte (auth/callback)
+    // Ne pas le renvoyer ici pour eviter le doublon
 
     setOnboardingSaving(false);
     setOnboardingComplete(true);
