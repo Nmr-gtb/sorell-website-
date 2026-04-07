@@ -59,8 +59,8 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
                   <Img
                     src="https://www.sorell.fr/Sorell%20logo.png"
                     alt="Sorell"
-                    width="100"
-                    height="32"
+                    width="40"
+                    height="40"
                     style={{ display: "block" }}
                   />
                 </Column>
@@ -186,8 +186,8 @@ export function PaymentFailedEmail({ firstName }: PaymentFailedEmailProps) {
                   <Img
                     src="https://www.sorell.fr/Sorell%20logo.png"
                     alt="Sorell"
-                    width="80"
-                    height="26"
+                    width="30"
+                    height="30"
                     style={{ display: "block" }}
                   />
                 </Column>

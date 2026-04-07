@@ -100,7 +100,7 @@ export function Layout({
                   style={
                     customLogo
                       ? { maxHeight: "32px", maxWidth: "160px" }
-                      : { display: "block", width: "100px", height: "32px" }
+                      : { display: "block", width: "40px", height: "40px" }
                   }
                 />
               </Column>
@@ -137,7 +137,7 @@ export function Layout({
                   style={
                     customLogo
                       ? { maxHeight: "24px", maxWidth: "120px" }
-                      : { display: "block", width: "80px", height: "26px" }
+                      : { display: "block", width: "30px", height: "30px" }
                   }
                 />
               </Column>
