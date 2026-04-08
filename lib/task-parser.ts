@@ -41,6 +41,10 @@ export type TaskIntent =
       searchQuery: string;
     }
   | {
+      intent: "conversation";
+      rawMessage: string;
+    }
+  | {
       intent: "unknown";
       rawMessage: string;
     };
@@ -57,7 +61,8 @@ Intents possibles :
 - "list_tasks" : lister les taches. Si un filtre de priorite est mentionne, l'extraire.
 - "update_task" : modifier une tache existante (priorite, notes, echeance). Extrais le nom et les champs a modifier.
 - "delete_task" : supprimer/archiver une tache. Extrais le nom.
-- "unknown" : si tu ne comprends pas l'intent.
+- "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches. Extrais le message brut.
+- "unknown" : UNIQUEMENT si le message est totalement incomprehensible (caracteres aleatoires, etc.).
 
 Regles :
 - La priorite par defaut est "Moyenne" si non mentionnee.
@@ -77,6 +82,11 @@ Exemples :
 "Mets la priorite haute sur landing page" -> {"intent":"update_task","searchQuery":"landing page","priority":"Haute"}
 "Ajoute une note sur SEO : checker les backlinks" -> {"intent":"update_task","searchQuery":"SEO","notes":"Checker les backlinks"}
 "Ajoute : preparer demo pour vendredi" -> {"intent":"add_task","title":"Preparer demo","dueDate":"(le vendredi suivant en ISO)"}
+"Salut Eva" -> {"intent":"conversation","rawMessage":"Salut Eva"}
+"Comment tu vas ?" -> {"intent":"conversation","rawMessage":"Comment tu vas ?"}
+"Tu me conseilles quoi aujourd'hui ?" -> {"intent":"conversation","rawMessage":"Tu me conseilles quoi aujourd'hui ?"}
+"C'est quoi la priorite du moment ?" -> {"intent":"conversation","rawMessage":"C'est quoi la priorite du moment ?"}
+"Je suis un peu perdu, aide-moi" -> {"intent":"conversation","rawMessage":"Je suis un peu perdu, aide-moi"}
 
 Reponds UNIQUEMENT avec le JSON, sans markdown, sans explication.`;
 
@@ -114,6 +124,7 @@ export async function parseTaskIntent(message: string): Promise<TaskIntent> {
       "list_tasks",
       "update_task",
       "delete_task",
+      "conversation",
       "unknown",
     ];
 

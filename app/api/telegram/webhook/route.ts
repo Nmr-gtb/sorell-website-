@@ -25,6 +25,7 @@ import {
   formatTaskList,
 } from "@/lib/notion-tasks";
 import type { NotionTask } from "@/lib/notion-tasks";
+import { generateEvaResponse } from "@/lib/eva-chat";
 
 // --- Helpers ---
 
@@ -156,8 +157,10 @@ async function executeIntent(intent: TaskIntent): Promise<string> {
       return handleUpdateTask(intent);
     case "delete_task":
       return handleDeleteTask(intent);
+    case "conversation":
+      return generateEvaResponse(intent.rawMessage);
     case "unknown":
-      return "Je n'ai pas compris. Essaie :\n- \"Ajoute : [tache]\"\n- \"Termine [tache]\"\n- \"Mes taches\"\n- \"Passe [tache] en cours\"\n- \"Supprime [tache]\"";
+      return generateEvaResponse(intent.rawMessage);
   }
 }
 
@@ -195,7 +198,7 @@ export async function POST(request: Request): Promise<Response> {
     if (text === "/start") {
       await sendTelegramMessage({
         chatId,
-        text: "Bot Sorell Tasks actif.\n\nCommandes :\n- \"Ajoute : [tache], priorite [haute/moyenne/basse]\"\n- \"Termine [tache]\"\n- \"Passe [tache] en cours\"\n- \"Mes taches\"\n- \"Modifie [tache] : [champs]\"\n- \"Supprime [tache]\"",
+        text: "Salut Noe ! Eva est la.\n\nTu peux me parler normalement, je comprends tout. Voici ce que je sais faire :\n\n<b>Gestion de taches :</b>\n- \"Ajoute : [tache]\"\n- \"Termine [tache]\"\n- \"Passe [tache] en cours\"\n- \"Mes taches\"\n- \"Supprime [tache]\"\n\n<b>Discussion :</b>\nTu peux aussi me demander conseil, me raconter ta journee, ou me demander de t'aider a prioriser. Je connais tes taches Notion.",
       });
       return NextResponse.json({ ok: true });
     }
