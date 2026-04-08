@@ -63,7 +63,7 @@ export default function AdminLifecyclePage() {
   if (loading) return <SkeletonDashboard />;
 
   return (
-    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
@@ -104,11 +104,11 @@ export default function AdminLifecyclePage() {
               <button
                 key={stage}
                 onClick={() => setStageFilter(isActive ? "all" : stage)}
-                className={`group relative flex min-w-[110px] flex-1 flex-col items-center gap-3 rounded-xl border px-4 py-5 transition-all duration-200 ${
+                className={`group relative flex min-w-[110px] flex-1 flex-col items-center gap-3 rounded-2xl border px-4 py-5 transition-all duration-200 ${
                   isActive
-                    ? "border-[var(--accent)] bg-[var(--accent-subtle)] shadow-[0_0_0_1px_var(--accent)]"
+                    ? "border-[var(--accent)] bg-[var(--accent-subtle)] shadow-[0_4px_16px_rgba(0,80,88,0.15)]"
                     : hasUsers
-                      ? "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-sm)]"
+                      ? "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5"
                       : "border-[var(--border-subtle)] bg-[var(--surface-alt)] opacity-50 hover:opacity-70"
                 }`}
               >
@@ -136,7 +136,7 @@ export default function AdminLifecyclePage() {
 
       {/* Filtered indicator */}
       {stageFilter !== "all" && (
-        <div className="flex items-center gap-2 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-subtle)] px-4 py-2.5">
+        <div className="flex items-center gap-2 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-subtle)] px-4 py-2.5">
           <StatusBadge
             label={STAGE_CONFIG[stageFilter]?.label || stageFilter}
             variant={STAGE_CONFIG[stageFilter]?.variant || "gray"}

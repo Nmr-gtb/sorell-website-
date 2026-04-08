@@ -138,21 +138,28 @@ export default function AdminUserDetailPage() {
   return (
     <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5">
         <Link
           href="/admin/users"
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
+          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm text-[var(--text-secondary)] transition-all hover:bg-[var(--surface-hover)] hover:text-[var(--text)]"
         >
           <ArrowLeftIcon size={16} />
           Retour
         </Link>
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-sm font-bold text-[var(--accent)]">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent)] text-lg font-bold text-white shadow-[0_4px_12px_rgba(0,80,88,0.3)]">
             {(profile.full_name || profile.email)[0].toUpperCase()}
           </div>
           <div>
             <h1 className="text-xl font-bold text-[var(--text)]">{profile.full_name || profile.email}</h1>
-            <span className="text-xs text-[var(--text-secondary)]">{profile.email}</span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-sm text-[var(--text-muted)]">{profile.email}</span>
+              <StatusBadge
+                label={PLAN_LABELS[profile.plan] || profile.plan}
+                variant={getPlanBadgeVariant(profile.plan)}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -219,15 +226,15 @@ export default function AdminUserDetailPage() {
       </AdminCard>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 w-fit">
+      <div className="flex gap-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-1.5 w-fit shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         {TAB_LIST.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-all duration-150 ${
+            className={`rounded-xl px-5 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
               tab === t.key
-                ? "bg-[var(--accent-subtle)] text-[var(--accent)] shadow-sm"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-muted)]"
+                ? "bg-[var(--accent)] text-white shadow-[0_2px_8px_rgba(0,80,88,0.3)]"
+                : "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface-hover)]"
             }`}
           >
             {t.label}
@@ -444,11 +451,11 @@ function InfoField({
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]">
+      <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
         {label}
       </div>
       <div
-        className={`text-sm text-[var(--text)] ${mono ? "font-mono text-xs" : ""}`}
+        className={`text-sm font-medium text-[var(--text)] ${mono ? "font-mono text-xs bg-[var(--surface-alt)] rounded-lg px-2 py-1 inline-block" : ""}`}
       >
         {value}
       </div>

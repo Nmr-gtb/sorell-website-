@@ -80,12 +80,12 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">Utilisateurs</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">Gérez et suivez tous vos utilisateurs</p>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Gerez et suivez tous vos utilisateurs</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)]">
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
                 className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-subtle)]"
               >
                 <EyeIcon size={14} />
-                Détail
+                Detail
               </Link>
             ),
           },

@@ -83,7 +83,7 @@ export default function AdminPromptsPage() {
   }
 
   return (
-    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">Prompts Utilisateurs</h1>
@@ -123,7 +123,7 @@ export default function AdminPromptsPage() {
       {loading && <SkeletonTable rows={3} cols={2} />}
 
       {promptData && !loading && (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* User info card */}
           <AdminCard padding="md">
             <div className="flex items-center gap-4">
@@ -160,8 +160,8 @@ export default function AdminPromptsPage() {
           {promptData.config && (
             <AdminCard padding="md">
               <h2 className="mb-6 text-base font-semibold text-[var(--text)]">Configuration</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Topics</span>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {[...(promptData.config.topics || []), ...(promptData.config.custom_topics || [])].map((topic, i) => (
@@ -171,16 +171,16 @@ export default function AdminPromptsPage() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
+                <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Sources</span>
                   <p className="mt-2 text-sm text-[var(--text)]">{promptData.config.sources || "Aucune"}</p>
                 </div>
-                <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
+                <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Fréquence</span>
                   <p className="mt-2 text-sm font-medium text-[var(--text)]">{promptData.config.frequency}</p>
                 </div>
                 {promptData.config.custom_brief && (
-                  <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5 sm:col-span-2">
+                  <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-alt)] p-5 sm:col-span-2">
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Brief</span>
                     <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{promptData.config.custom_brief}</p>
                   </div>
@@ -229,7 +229,7 @@ export default function AdminPromptsPage() {
                 {promptData.previousTitles.map((t, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-3"
+                    className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] px-4 py-3"
                   >
                     <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-[10px] font-bold text-[var(--accent)]">
                       {i + 1}

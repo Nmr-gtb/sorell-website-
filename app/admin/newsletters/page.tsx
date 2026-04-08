@@ -32,9 +32,9 @@ function RateBar({ rate, color, label }: { rate: number; color: string; label: s
         <span className="text-xs font-semibold text-[var(--text)]">{rate}%</span>
         <span className="text-[10px] text-[var(--text-muted)]">{label}</span>
       </div>
-      <div className="h-2 w-20 overflow-hidden rounded-full bg-[var(--surface-alt)] border border-[var(--border-subtle)]">
+      <div className="h-2.5 w-24 overflow-hidden rounded-full bg-[var(--surface-alt)]">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          className={`h-full rounded-full transition-all duration-700 ease-out ${color}`}
           style={{ width: `${Math.min(rate, 100)}%` }}
         />
       </div>
@@ -73,7 +73,7 @@ export default function AdminNewslettersPage() {
   const totalPages = Math.ceil(total / 25);
 
   return (
-    <div className="space-y-10 animate-[fadeInUp_0.3s_ease-out]">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
@@ -161,8 +161,8 @@ export default function AdminNewslettersPage() {
             header: "Engagement",
             render: (nl: Newsletter) => (
               <div className="flex flex-col gap-1.5">
-                <RateBar rate={nl.open_rate} color="bg-teal-400" label={`${nl.opens} ouv.`} />
-                <RateBar rate={nl.click_rate} color="bg-purple-400" label={`${nl.clicks} clics`} />
+                <RateBar rate={nl.open_rate} color="bg-gradient-to-r from-teal-400 to-teal-500" label={`${nl.opens} ouv.`} />
+                <RateBar rate={nl.click_rate} color="bg-gradient-to-r from-purple-400 to-purple-500" label={`${nl.clicks} clics`} />
               </div>
             ),
           },

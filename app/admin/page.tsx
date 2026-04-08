@@ -5,10 +5,11 @@ import dynamic from "next/dynamic";
 
 const AdminCharts = dynamic(
   () => import("@/components/admin/AdminCharts"),
-  { ssr: false, loading: () => <div className="h-[320px] animate-pulse rounded-xl bg-[var(--border)]" /> }
+  { ssr: false, loading: () => <div className="h-[320px] animate-pulse rounded-[20px] bg-[var(--border)]/40" /> }
 );
 import KpiCard from "@/components/admin/KpiCard";
 import AdminTable from "@/components/admin/AdminTable";
+import AdminCard from "@/components/admin/AdminCard";
 import StatusBadge, { getPlanBadgeVariant } from "@/components/admin/StatusBadge";
 import { SkeletonDashboard } from "@/components/admin/Skeleton";
 import {
@@ -66,9 +67,9 @@ export default function AdminDashboardPage() {
   if (error || !stats) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-600">
-          {error || "Erreur inconnue."}
-        </div>
+        <AdminCard variant="danger" padding="md">
+          <div className="text-sm text-red-600">{error || "Erreur inconnue."}</div>
+        </AdminCard>
       </div>
     );
   }
@@ -78,9 +79,28 @@ export default function AdminDashboardPage() {
     .map(([plan, count]) => ({ name: PLAN_LABELS[plan], value: count, color: PLAN_COLORS[plan] }));
 
   return (
-    <div className="space-y-8 animate-[fadeInUp_0.3s_ease-out]">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="space-y-6 animate-[fadeInUp_0.3s_ease-out]">
+      {/* Page header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text)]">Dashboard Analytics</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Vue d&apos;ensemble de votre activite</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <select className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] transition-all hover:border-[var(--border-hover)]">
+            <option>Ce mois</option>
+            <option>7 derniers jours</option>
+            <option>30 derniers jours</option>
+          </select>
+          <button className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_2px_8px_rgba(0,80,88,0.25)] transition-all hover:bg-[var(--accent-hover)] active:scale-[0.98]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
+        </div>
+      </div>
+
+      {/* KPI Cards — 5 columns like Bank-Maintain */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
         <KpiCard
           icon={<UsersIcon size={20} />}
           label="Total utilisateurs"
@@ -92,44 +112,54 @@ export default function AdminDashboardPage() {
           icon={<TrendUpIcon size={20} />}
           label="Nouveaux (7j)"
           value={stats.newUsers}
-          iconBg="bg-[#ECFDF5]"
-          iconColor="text-[#059669]"
-          accent
+          trend={stats.newUsers > 0 ? { value: "+18%", positive: true } : null}
+          iconBg="bg-emerald-50"
+          iconColor="text-emerald-600"
         />
         <KpiCard
           icon={<DollarIcon size={20} />}
           label="MRR"
           value={`${stats.mrr}\u00A0\u20AC`}
-          iconBg="bg-[#FEF3C7]"
-          iconColor="text-[#D97706]"
+          trend={stats.mrr > 0 ? { value: "+12%", positive: true } : null}
+          iconBg="bg-amber-50"
+          iconColor="text-amber-600"
           accent
         />
         <KpiCard
           icon={<ActivityIcon size={20} />}
           label="Actifs (30j)"
           value={stats.activeUsers}
-          iconBg="bg-[#F3E8FF]"
-          iconColor="text-[#7C3AED]"
+          iconBg="bg-purple-50"
+          iconColor="text-purple-600"
+        />
+        <KpiCard
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          }
+          label="Conversion trial"
+          value={`${stats.trialConversionRate}%`}
+          iconBg="bg-blue-50"
+          iconColor="text-blue-600"
         />
       </div>
 
-      {/* Charts — lazy loaded (Recharts ~45kb gzipped) */}
+      {/* Charts */}
       <AdminCharts signupsChart={stats.signupsChart} pieData={pieData} />
 
-      {/* Recent signups */}
-      <div className="rounded-[20px] border border-[#E8ECF1] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
-        <div className="flex items-center justify-between border-b border-[#F3F4F6] px-7 py-5">
+      {/* Recent signups table */}
+      <AdminCard padding="sm">
+        <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#DBEAFE]">
-              <UsersIcon size={18} className="text-[#2563EB]" />
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+              <UsersIcon size={18} />
             </div>
             <div>
-              <h2 className="text-[15px] font-semibold text-[#111827]">Dernières inscriptions</h2>
-              <p className="text-[12px] text-[#9CA3AF]">Utilisateurs récemment inscrits</p>
+              <h2 className="text-[15px] font-semibold text-[var(--text)]">Dernieres inscriptions</h2>
+              <p className="text-[12px] text-[var(--text-muted)]">Utilisateurs recemment inscrits</p>
             </div>
           </div>
-          <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-medium text-[#6B7280]">
-            {stats.recentUsers.length} récents
+          <span className="rounded-full bg-[var(--surface-alt)] px-3 py-1 text-xs font-semibold text-[var(--text-muted)]">
+            {stats.recentUsers.length} recents
           </span>
         </div>
         <AdminTable
@@ -143,8 +173,8 @@ export default function AdminDashboardPage() {
                     {(user.full_name || user.email)[0].toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-[var(--text)]">{user.full_name || "-"}</div>
-                    <div className="text-xs text-[var(--text-muted)]">{user.email}</div>
+                    <div className="text-sm font-semibold text-[var(--text)]">{user.full_name || "-"}</div>
+                    <div className="text-[12px] text-[var(--text-muted)]">{user.email}</div>
                   </div>
                 </div>
               ),
@@ -156,6 +186,7 @@ export default function AdminDashboardPage() {
                 <StatusBadge
                   label={PLAN_LABELS[user.plan] || user.plan}
                   variant={getPlanBadgeVariant(user.plan)}
+                  size="md"
                 />
               ),
             },
@@ -181,7 +212,7 @@ export default function AdminDashboardPage() {
           data={stats.recentUsers}
           keyExtractor={(user) => user.id}
         />
-      </div>
+      </AdminCard>
     </div>
   );
 }

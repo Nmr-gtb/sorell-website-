@@ -22,12 +22,12 @@ export default function AdminTable<T>({
   data,
   keyExtractor,
   loading = false,
-  emptyMessage = "Aucune donnée.",
+  emptyMessage = "Aucune donnee.",
   loadingRows = 5,
   onRowClick,
 }: AdminTableProps<T>) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+    <div className="overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -35,20 +35,26 @@ export default function AdminTable<T>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)] ${col.className || ""}`}
+                  className={`px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] ${col.className || ""}`}
                 >
-                  {col.header}
+                  <div className="flex items-center gap-1.5">
+                    {col.header}
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="opacity-30">
+                      <path d="M4 1L6.5 3.5H1.5L4 1Z" fill="currentColor" />
+                      <path d="M4 7L1.5 4.5H6.5L4 7Z" fill="currentColor" />
+                    </svg>
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--border-subtle)]">
+          <tbody>
             {loading
               ? Array.from({ length: loadingRows }).map((_, i) => (
-                  <tr key={`skeleton-${i}`}>
+                  <tr key={`skeleton-${i}`} className={i % 2 === 1 ? "bg-[var(--surface-alt)]/30" : ""}>
                     {columns.map((col) => (
                       <td key={col.key} className="px-6 py-5">
-                        <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--border)]" />
+                        <div className="h-4 w-3/4 animate-pulse rounded-md bg-[var(--border)]" />
                       </td>
                     ))}
                   </tr>
@@ -66,13 +72,13 @@ export default function AdminTable<T>({
                   data.map((item, index) => (
                     <tr
                       key={keyExtractor(item, index)}
-                      className={`transition-colors duration-100 hover:bg-[var(--surface-alt)] ${
-                        onRowClick ? "cursor-pointer" : ""
-                      }`}
+                      className={`border-b border-[var(--border)]/50 last:border-0 transition-colors duration-150 hover:bg-[var(--surface-alt)] ${
+                        index % 2 === 1 ? "bg-[var(--surface-alt)]/30" : ""
+                      } ${onRowClick ? "cursor-pointer" : ""}`}
                       onClick={() => onRowClick?.(item)}
                     >
                       {columns.map((col) => (
-                        <td key={col.key} className={`px-6 py-5 ${col.className || ""}`}>
+                        <td key={col.key} className={`px-6 py-4 ${col.className || ""}`}>
                           {col.render(item, index)}
                         </td>
                       ))}
