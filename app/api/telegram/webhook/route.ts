@@ -26,7 +26,6 @@ import {
 } from "@/lib/notion-tasks";
 import type { NotionTask } from "@/lib/notion-tasks";
 import { generateEvaResponse } from "@/lib/eva-chat";
-import { runFullReview, runContactTest, runQuickCheck } from "@/lib/eva-monitor";
 
 // --- Helpers ---
 
@@ -158,12 +157,6 @@ async function executeIntent(intent: TaskIntent): Promise<string> {
       return handleUpdateTask(intent);
     case "delete_task":
       return handleDeleteTask(intent);
-    case "monitor_full_review":
-      return runFullReview();
-    case "monitor_contact":
-      return runContactTest();
-    case "monitor_site":
-      return runQuickCheck();
     case "conversation":
       return generateEvaResponse(intent.rawMessage);
     case "unknown":
@@ -205,7 +198,7 @@ export async function POST(request: Request): Promise<Response> {
     if (text === "/start") {
       await sendTelegramMessage({
         chatId,
-        text: "Salut Noe ! Eva est la.\n\nTu peux me parler normalement, je comprends tout. Voici ce que je sais faire :\n\n<b>Gestion de taches :</b>\n- \"Ajoute : [tache]\"\n- \"Termine [tache]\"\n- \"Passe [tache] en cours\"\n- \"Mes taches\"\n- \"Supprime [tache]\"\n\n<b>Discussion :</b>\nTu peux aussi me demander conseil, me raconter ta journee, ou me demander de t'aider a prioriser. Je connais tes taches Notion.",
+        text: "Salut Noé ! Eva est là.\n\nTu peux me parler normalement, je comprends tout. Voici ce que je sais faire :\n\n<b>Gestion de tâches :</b>\n- \"Ajoute : [tâche]\"\n- \"Termine [tâche]\"\n- \"Passe [tâche] en cours\"\n- \"Mes tâches\"\n- \"Supprime [tâche]\"\n\n<b>Discussion :</b>\nTu peux aussi me demander conseil, me raconter ta journée, ou me demander de t'aider à prioriser. Je connais tes tâches Notion.\n\nPour le monitoring du site, utilise Jade (@jade_sorell_bot).",
       });
       return NextResponse.json({ ok: true });
     }

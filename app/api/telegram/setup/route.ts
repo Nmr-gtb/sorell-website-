@@ -1,33 +1,55 @@
 /**
- * Setup endpoint - Enregistre le webhook Telegram.
- * Appeler une seule fois : GET /api/telegram/setup
- *
- * Construit l'URL du webhook a partir de NEXT_PUBLIC_APP_URL ou VERCEL_URL,
- * et ajoute le secret en query param pour la verification.
+ * Setup endpoint — Enregistre les webhooks Telegram pour tous les bots.
+ * GET /api/telegram/setup         → setup tous les bots
+ * GET /api/telegram/setup?bot=eva → setup un bot spécifique
+ * GET /api/telegram/setup?bot=jade
  */
 
 import { NextResponse } from "next/server";
-import { setTelegramWebhook } from "@/lib/telegram-bot";
+import {
+  setTelegramWebhook,
+  getBotToken,
+  getBotSecret,
+  getBotWebhookPath,
+} from "@/lib/telegram-bot";
+import type { BotName } from "@/lib/telegram-bot";
 
-export async function GET(): Promise<Response> {
+const ALL_BOTS: BotName[] = ["eva", "jade"];
+
+async function setupBot(bot: BotName, appUrl: string): Promise<{
+  bot: string;
+  success: boolean;
+  webhookUrl?: string;
+  error?: string;
+}> {
   try {
-    const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
-    if (!secret) {
-      return NextResponse.json(
-        { error: "TELEGRAM_WEBHOOK_SECRET manquant" },
-        { status: 500 }
-      );
-    }
+    const token = getBotToken(bot);
+    const secret = getBotSecret(bot);
+    const path = getBotWebhookPath(bot);
 
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    if (!botToken) {
-      return NextResponse.json(
-        { error: "TELEGRAM_BOT_TOKEN manquant" },
-        { status: 500 }
-      );
-    }
+    const webhookUrl = `${appUrl}${path}?secret=${encodeURIComponent(secret)}`;
 
-    // Determiner l'URL de base de l'app
+    await setTelegramWebhook(webhookUrl, token);
+
+    return {
+      bot,
+      success: true,
+      webhookUrl: webhookUrl.replace(secret, "***"),
+    };
+  } catch (error) {
+    return {
+      bot,
+      success: false,
+      error: error instanceof Error ? error.message : "Erreur inconnue",
+    };
+  }
+}
+
+export async function GET(request: Request): Promise<Response> {
+  try {
+    const url = new URL(request.url);
+    const botParam = url.searchParams.get("bot") as BotName | null;
+
     const appUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
@@ -39,14 +61,26 @@ export async function GET(): Promise<Response> {
       );
     }
 
-    const webhookUrl = `${appUrl}/api/telegram/webhook?secret=${encodeURIComponent(secret)}`;
+    // Setup un bot spécifique ou tous
+    const botsToSetup = botParam ? [botParam] : ALL_BOTS;
 
-    const result = await setTelegramWebhook(webhookUrl);
+    // Vérifier que le bot demandé est valide
+    for (const bot of botsToSetup) {
+      if (!ALL_BOTS.includes(bot)) {
+        return NextResponse.json(
+          { error: `Bot inconnu: ${bot}. Bots disponibles: ${ALL_BOTS.join(", ")}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    const results = await Promise.all(
+      botsToSetup.map((bot) => setupBot(bot, appUrl))
+    );
 
     return NextResponse.json({
-      success: true,
-      webhookUrl: webhookUrl.replace(secret, "***"),
-      telegramResponse: result,
+      results,
+      allSuccess: results.every((r) => r.success),
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erreur inconnue";
