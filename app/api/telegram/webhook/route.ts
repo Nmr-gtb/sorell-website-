@@ -180,7 +180,7 @@ export async function POST(request: Request): Promise<Response> {
     const { message } = update;
     const chatId = message.chat.id;
     const userId = message.from?.id;
-    const text = message.text;
+    const text = message.text as string; // Garanti non-undefined par le check ci-dessus
 
     // Verification que l'expediteur est Noe
     if (!userId || !isAuthorizedUser(userId)) {
