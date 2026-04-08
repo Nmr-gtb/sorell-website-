@@ -94,7 +94,7 @@ export default function RootLayout({
                   "@type": "Organization",
                   "name": "Sorell",
                   "url": "https://sorell.fr",
-                  "logo": "https://sorell.fr/icon.svg",
+                  "logo": "https://sorell.fr/icone.png",
                   "description": "Sorell génère et envoie automatiquement des newsletters sectorielles personnalisées par IA aux entreprises B2B.",
                   "email": "noe@sorell.fr",
                   "address": {
