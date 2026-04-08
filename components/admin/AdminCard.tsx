@@ -15,9 +15,9 @@ const variantStyles = {
 };
 
 const paddingStyles = {
-  sm: "p-5",
-  md: "p-6",
-  lg: "p-8",
+  sm: "px-7 py-5",
+  md: "px-8 py-6",
+  lg: "px-10 py-8",
 };
 
 export default function AdminCard({

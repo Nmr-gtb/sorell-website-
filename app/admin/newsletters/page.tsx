@@ -122,10 +122,10 @@ export default function AdminNewslettersPage() {
                 className="group flex items-center gap-2.5"
               >
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--accent)]">
-                  {(nl.user_name || nl.user_email)[0].toUpperCase()}
+                  {(nl.user_name || nl.user_email || "?")[0].toUpperCase()}
                 </div>
                 <span className="text-sm font-medium text-[var(--accent)] transition-colors group-hover:underline">
-                  {nl.user_name || nl.user_email}
+                  {nl.user_name || nl.user_email || "Inconnu"}
                 </span>
               </Link>
             ),

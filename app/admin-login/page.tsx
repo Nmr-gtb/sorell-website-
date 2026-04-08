@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
 
       <div className="relative w-full max-w-[420px] animate-[fadeInUp_0.5s_ease-out]">
         {/* Card */}
-        <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+        <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] px-12 py-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
           {/* Logo */}
           <div className="mb-10 text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent)] shadow-[0_4px_20px_rgba(0,80,88,0.5)]">

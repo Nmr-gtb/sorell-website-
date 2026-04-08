@@ -35,7 +35,7 @@ export default function AdminTable<T>({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] ${col.className || ""}`}
+                  className={`px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] first:pl-8 last:pr-8 ${col.className || ""}`}
                 >
                   <div className="flex items-center gap-1.5">
                     {col.header}
@@ -53,7 +53,7 @@ export default function AdminTable<T>({
               ? Array.from({ length: loadingRows }).map((_, i) => (
                   <tr key={`skeleton-${i}`} className={i % 2 === 1 ? "bg-[var(--surface-alt)]/30" : ""}>
                     {columns.map((col) => (
-                      <td key={col.key} className="px-6 py-5">
+                      <td key={col.key} className="px-6 py-5 first:pl-8 last:pr-8">
                         <div className="h-4 w-3/4 animate-pulse rounded-md bg-[var(--border)]" />
                       </td>
                     ))}
@@ -78,7 +78,7 @@ export default function AdminTable<T>({
                       onClick={() => onRowClick?.(item)}
                     >
                       {columns.map((col) => (
-                        <td key={col.key} className={`px-6 py-4 ${col.className || ""}`}>
+                        <td key={col.key} className={`px-6 py-4 first:pl-8 last:pr-8 ${col.className || ""}`}>
                           {col.render(item, index)}
                         </td>
                       ))}
