@@ -41,6 +41,15 @@ export type TaskIntent =
       searchQuery: string;
     }
   | {
+      intent: "monitor_full_review";
+    }
+  | {
+      intent: "monitor_contact";
+    }
+  | {
+      intent: "monitor_site";
+    }
+  | {
       intent: "conversation";
       rawMessage: string;
     }
@@ -61,7 +70,10 @@ Intents possibles :
 - "list_tasks" : lister les taches. Si un filtre de priorite est mentionne, l'extraire.
 - "update_task" : modifier une tache existante (priorite, notes, echeance). Extrais le nom et les champs a modifier.
 - "delete_task" : supprimer/archiver une tache. Extrais le nom.
-- "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches. Extrais le message brut.
+- "monitor_full_review" : quand Noe demande un check complet, une review, un audit, un status du site. Mots-cles : "fullreview", "full review", "review", "audit", "check tout", "status", "ca marche ?", "tout va bien ?".
+- "monitor_contact" : quand Noe demande de tester le formulaire de contact. Mots-cles : "teste le contact", "formulaire de contact", "test contact", "le contact marche ?".
+- "monitor_site" : quand Noe demande si le site est en ligne. Mots-cles : "le site est up ?", "sorell est en ligne ?", "le site marche ?", "check le site".
+- "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches ni le monitoring. Extrais le message brut.
 - "unknown" : UNIQUEMENT si le message est totalement incomprehensible (caracteres aleatoires, etc.).
 
 Regles :
@@ -87,6 +99,12 @@ Exemples :
 "Tu me conseilles quoi aujourd'hui ?" -> {"intent":"conversation","rawMessage":"Tu me conseilles quoi aujourd'hui ?"}
 "C'est quoi la priorite du moment ?" -> {"intent":"conversation","rawMessage":"C'est quoi la priorite du moment ?"}
 "Je suis un peu perdu, aide-moi" -> {"intent":"conversation","rawMessage":"Je suis un peu perdu, aide-moi"}
+"fullreview" -> {"intent":"monitor_full_review"}
+"Fais un check complet" -> {"intent":"monitor_full_review"}
+"Tout va bien sur le site ?" -> {"intent":"monitor_full_review"}
+"Teste le formulaire de contact" -> {"intent":"monitor_contact"}
+"Le site est up ?" -> {"intent":"monitor_site"}
+"Le site marche ?" -> {"intent":"monitor_site"}
 
 Reponds UNIQUEMENT avec le JSON, sans markdown, sans explication.`;
 
@@ -124,6 +142,9 @@ export async function parseTaskIntent(message: string): Promise<TaskIntent> {
       "list_tasks",
       "update_task",
       "delete_task",
+      "monitor_full_review",
+      "monitor_contact",
+      "monitor_site",
       "conversation",
       "unknown",
     ];

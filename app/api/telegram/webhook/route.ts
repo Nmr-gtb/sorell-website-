@@ -26,6 +26,7 @@ import {
 } from "@/lib/notion-tasks";
 import type { NotionTask } from "@/lib/notion-tasks";
 import { generateEvaResponse } from "@/lib/eva-chat";
+import { runFullReview, runContactTest, runQuickCheck } from "@/lib/eva-monitor";
 
 // --- Helpers ---
 
@@ -157,6 +158,12 @@ async function executeIntent(intent: TaskIntent): Promise<string> {
       return handleUpdateTask(intent);
     case "delete_task":
       return handleDeleteTask(intent);
+    case "monitor_full_review":
+      return runFullReview();
+    case "monitor_contact":
+      return runContactTest();
+    case "monitor_site":
+      return runQuickCheck();
     case "conversation":
       return generateEvaResponse(intent.rawMessage);
     case "unknown":
