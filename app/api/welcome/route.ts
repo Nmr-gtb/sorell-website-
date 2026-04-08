@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { emailRateLimit } from "@/lib/ratelimit";
 import { getAuthenticatedUser } from "@/lib/auth";
-import { isValidEmail, truncateInput } from "@/lib/utils";
+import { isValidEmail, truncateInput, escapeHtml } from "@/lib/utils";
 import { WelcomeEmail } from "@/emails/WelcomeEmail";
 import { buildVerifyEmailUrl } from "@/lib/verify-email-token";
 
@@ -61,8 +61,8 @@ export async function POST(request: Request) {
   <div style="max-width:480px;margin:40px auto;background:white;border-radius:10px;padding:28px;border:1px solid #E5E7EB;">
     <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 16px;">Nouvel inscrit sur Sorell</h2>
     <table style="width:100%;border-collapse:collapse;font-size:14px;color:#374151;">
-      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${name || "Non renseigné"}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${email}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${escapeHtml(name || "Non renseigné")}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${escapeHtml(email)}</td></tr>
       <tr><td style="padding:8px 0;font-weight:600;">Date</td><td style="padding:8px 0;">${now}</td></tr>
     </table>
   </div>
@@ -76,6 +76,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json({ error: "Failed to send welcome email" }, { status: 500 });
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

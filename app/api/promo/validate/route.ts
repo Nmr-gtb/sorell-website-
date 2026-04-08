@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { promoRateLimit } from "@/lib/ratelimit";
 
 interface PromoCode {
   id: string;
@@ -19,6 +20,18 @@ export async function POST(request: Request) {
 
     if (!code || typeof code !== "string" || code.length > 50) {
       return NextResponse.json({ valid: false, error: "Code invalide" }, { status: 400 });
+    }
+
+    // Rate limiting par IP (anti-bruteforce)
+    const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for") || "unknown";
+    try {
+      const { success: rateLimitOk } = await promoRateLimit.limit(ip);
+      if (!rateLimitOk) {
+        return NextResponse.json({ valid: false, error: "Trop de tentatives" }, { status: 429 });
+      }
+    } catch {
+      // Redis unavailable — fail-close for security
+      return NextResponse.json({ valid: false, error: "Service temporairement indisponible" }, { status: 503 });
     }
 
     const { data, error } = await supabaseAdmin

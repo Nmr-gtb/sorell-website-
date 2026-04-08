@@ -49,6 +49,40 @@ export async function GET(request: Request) {
   const { data: allProfiles } = await supabaseAdmin.from("profiles").select("id, plan, email_verified").in("id", userIds);
   const profileMap = new Map((allProfiles || []).map((p: { id: string; plan: string; email_verified: boolean }) => [p.id, { plan: p.plan, email_verified: p.email_verified }]));
 
+  // Batch fetch: monthly sent counts for free users (avoids N+1)
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const { data: monthlySentData } = await supabaseAdmin
+    .from("newsletters")
+    .select("user_id")
+    .in("user_id", userIds)
+    .eq("status", "sent")
+    .gte("generated_at", startOfMonth.toISOString());
+
+  const monthlySentCounts = new Map<string, number>();
+  for (const row of monthlySentData || []) {
+    monthlySentCounts.set(row.user_id, (monthlySentCounts.get(row.user_id) || 0) + 1);
+  }
+
+  // Batch fetch: recent newsletters for anti-doublon (last 3 per user)
+  const { data: recentNlData } = await supabaseAdmin
+    .from("newsletters")
+    .select("user_id, content")
+    .in("user_id", userIds)
+    .order("created_at", { ascending: false })
+    .limit(userIds.length * 3);
+
+  const recentNlMap = new Map<string, Array<{ content: unknown }>>();
+  for (const row of recentNlData || []) {
+    const arr = recentNlMap.get(row.user_id) || [];
+    if (arr.length < 3) {
+      arr.push({ content: row.content });
+      recentNlMap.set(row.user_id, arr);
+    }
+  }
+
   const results = [];
 
   for (const config of configs) {
@@ -97,33 +131,16 @@ export async function GET(request: Request) {
       const maxAuto = autoLimits[userPlan] ?? 1;
 
       if (maxAuto !== -1) {
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
-
-        const { count } = await supabaseAdmin
-          .from("newsletters")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", config.user_id)
-          .eq("status", "sent")
-          .gte("generated_at", startOfMonth.toISOString());
-
-        if ((count || 0) >= maxAuto) continue;
+        const sentThisMonth = monthlySentCounts.get(config.user_id) || 0;
+        if (sentThisMonth >= maxAuto) continue;
       }
 
       const topics = (config.topics ?? []).filter((t: { enabled: boolean }) => t.enabled).map((t: { label: string }) => t.label).join(", ");
       const sources = (config.sources ?? []).join(", ");
       const customBrief = config.custom_brief ?? "";
 
-      // --- ANTI-DOUBLON : récupérer les titres des 3 dernières newsletters ---
-      const { data: recentNewsletters } = await supabaseAdmin
-        .from("newsletters")
-        .select("content")
-        .eq("user_id", config.user_id)
-        .order("created_at", { ascending: false })
-        .limit(3);
-
-      const previousTitles = extractPreviousTitles(recentNewsletters || []);
+      // --- ANTI-DOUBLON : titres des 3 dernières newsletters (batch pre-fetched) ---
+      const previousTitles = extractPreviousTitles(recentNlMap.get(config.user_id) || []);
 
       const prompt = buildNewsletterPrompt({
         topics,

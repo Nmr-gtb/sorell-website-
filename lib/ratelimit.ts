@@ -48,6 +48,13 @@ export const chatAnonDailyLimit = new Ratelimit({
   prefix: "ratelimit:chat:anon:daily",
 });
 
+// Promo code validation — 10 tentatives par 15 minutes par IP (anti-bruteforce)
+export const promoRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "15 m"),
+  prefix: "ratelimit:promo",
+});
+
 // Admin login rate limiting — 5 tentatives par 15 minutes par IP
 export const adminLoginRateLimit = new Ratelimit({
   redis,
