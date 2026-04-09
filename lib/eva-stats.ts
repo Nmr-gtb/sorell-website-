@@ -40,17 +40,13 @@ export async function getBusinessOverview(): Promise<string> {
       getRecentActivity(),
     ]);
 
-    let msg = `<b>Dashboard Sorell</b>\n\n`;
-    msg += `<b>Revenu</b>\n`;
-    msg += `MRR : <b>${mrr}€</b>\n\n`;
-    msg += `<b>Utilisateurs</b>\n`;
-    msg += `Total : ${userStats.total}\n`;
-    msg += `Payants : ${userStats.paid}\n`;
-    msg += `En trial : ${userStats.trial}\n`;
-    msg += `Free : ${userStats.free}\n\n`;
-    msg += `<b>7 derniers jours</b>\n`;
-    msg += `Inscriptions : ${recentActivity.signups}\n`;
-    msg += `Newsletters envoyées : ${recentActivity.newslettersSent}`;
+    let msg = `Hey Noé, voici où on en est 📊\n\n`;
+    msg += `💰 <b>MRR : ${mrr}€</b>\n\n`;
+    msg += `👥 <b>${userStats.total} utilisateurs</b>\n`;
+    msg += `${userStats.paid} payants · ${userStats.trial} en trial · ${userStats.free} free\n\n`;
+    msg += `📬 <b>Cette semaine</b>\n`;
+    msg += `${recentActivity.signups} nouvelle(s) inscription(s)\n`;
+    msg += `${recentActivity.newslettersSent} newsletter(s) envoyée(s)`;
 
     return msg;
   } catch {
@@ -155,10 +151,10 @@ export async function getSignupStats(days: number = 7): Promise<string> {
       .order("created_at", { ascending: false });
 
     if (!count || count === 0) {
-      return `Aucune inscription ces ${days} derniers jours.`;
+      return `Pas de nouvelle inscription ces ${days} derniers jours. On va changer ça 💪`;
     }
 
-    let msg = `<b>${count} inscription(s) ces ${days} derniers jours</b>\n\n`;
+    let msg = `<b>${count} inscription(s) ces ${days} derniers jours</b> 🎉\n\n`;
     for (const user of data ?? []) {
       const name = user.full_name || "Sans nom";
       const plan = user.plan === "free" ? "Free" : user.plan.charAt(0).toUpperCase() + user.plan.slice(1);
@@ -187,13 +183,13 @@ export async function getMRRStats(): Promise<string> {
       limit: 100,
     });
 
-    let msg = `<b>MRR : ${mrr}€</b>\n\n`;
-    msg += `Abonnements actifs : ${subscriptions.data.length}\n`;
-    msg += `Trials en cours : ${trialSubs.data.length}\n`;
+    let msg = `💰 <b>MRR : ${mrr}€</b>\n\n`;
+    msg += `${subscriptions.data.length} abo(s) actif(s)\n`;
+    msg += `${trialSubs.data.length} trial(s) en cours\n`;
 
     if (mrr > 0) {
       const arr = mrr * 12;
-      msg += `ARR estimé : ${Math.round(arr)}€`;
+      msg += `\nSi ça tient, ça fait ~${Math.round(arr)}€/an 🚀`;
     }
 
     return msg;
@@ -264,10 +260,10 @@ export async function getChurnStats(): Promise<string> {
       .order("created_at", { ascending: false });
 
     if (!churned || churned.length === 0) {
-      return "Aucun churn détecté. Tous les ex-utilisateurs Stripe sont encore payants.";
+      return "Zéro churn ! Tout le monde est resté 🙌";
     }
 
-    let msg = `<b>${churned.length} utilisateur(s) ayant quitté un plan payant</b>\n\n`;
+    let msg = `<b>${churned.length} personne(s) partie(s) d'un plan payant</b>\n\n`;
     for (const u of churned) {
       const name = u.full_name || "Sans nom";
       msg += `${name} — ${u.email}\n`;
@@ -310,11 +306,11 @@ export async function getInactiveUsers(days: number = 5): Promise<string> {
     }
 
     if (inactiveUsers.length === 0) {
-      return "Tous les utilisateurs ont généré au moins une newsletter.";
+      return "Tout le monde a généré au moins une newsletter, pas d'inactifs 👏";
     }
 
-    let msg = `<b>${inactiveUsers.length} utilisateur(s) inactif(s)</b>\n`;
-    msg += `(inscrits depuis +${days}j, jamais généré de newsletter)\n\n`;
+    let msg = `<b>${inactiveUsers.length} utilisateur(s) qui dorment</b> 😴\n`;
+    msg += `Inscrits depuis +${days}j sans newsletter\n\n`;
 
     for (const u of inactiveUsers) {
       const name = u.full_name || "Sans nom";

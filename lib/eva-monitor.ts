@@ -358,8 +358,6 @@ export async function checkLifecycleCron(): Promise<CheckResult> {
  * Full Review — Execute tous les checks et retourne un rapport formate.
  */
 export async function runFullReview(): Promise<string> {
-  const startTime = Date.now();
-
   const [siteUp, contact, chat, pages, cron, stripe, auth, newsletter, lifecycle] =
     await Promise.all([
       checkSiteUp(),
@@ -376,17 +374,19 @@ export async function runFullReview(): Promise<string> {
   const allChecks: CheckResult[] = [
     siteUp, contact, chat, ...pages, cron, stripe, auth, newsletter, lifecycle,
   ];
-  const totalTime = Date.now() - startTime;
   const passed = allChecks.filter((c) => c.ok).length;
   const failed = allChecks.filter((c) => !c.ok).length;
 
-  let report = `<b>Full Review Sorell</b>\n`;
-  report += `${passed}/${allChecks.length} checks OK`;
-  if (failed > 0) report += ` — ${failed} problème(s)`;
-  report += `\n\n`;
+  let report = "";
+
+  if (failed === 0) {
+    report += `Tout roule Noé ! ${passed}/${allChecks.length} vérifications OK 💪\n\n`;
+  } else {
+    report += `⚠️ <b>${failed} souci(s) détecté(s)</b> sur ${allChecks.length} vérifications.\n\n`;
+  }
 
   // Groupe : Infrastructure
-  report += `<b>Infrastructure</b>\n`;
+  report += `<b>Infra</b>\n`;
   report += formatCheck(siteUp);
   report += formatCheck(cron);
   report += formatCheck(lifecycle);
@@ -407,10 +407,9 @@ export async function runFullReview(): Promise<string> {
     report += formatCheck(page);
   }
 
-  report += `\nTemps total : ${totalTime}ms`;
-
-  if (failed === 0) {
-    report += `\n\nTout est opérationnel.`;
+  if (failed > 0) {
+    const broken = allChecks.filter((c) => !c.ok);
+    report += `\nJe garde un œil sur : ${broken.map((c) => c.name).join(", ")}`;
   }
 
   return report;
@@ -423,9 +422,9 @@ export async function runContactTest(): Promise<string> {
   const result = await checkContactForm();
 
   if (result.ok) {
-    return `Le formulaire de contact fonctionne. Reponse en ${result.responseTime}ms. Un email de test a ete envoye a noe@sorell.fr.`;
+    return `Le formulaire de contact marche nickel 👌 Un email de test est parti vers ta boîte.`;
   } else {
-    return `Le formulaire de contact a un probleme.\nStatus: ${result.status}\nDetail: ${result.detail}`;
+    return `Hmm, le formulaire de contact a un souci. ${result.detail ?? "Je vais surveiller ça."}`;
   }
 }
 
@@ -436,9 +435,9 @@ export async function runQuickCheck(): Promise<string> {
   const result = await checkSiteUp();
 
   if (result.ok) {
-    return `sorell.fr est en ligne. Temps de reponse : ${result.responseTime}ms.`;
+    return `sorell.fr est bien en ligne, tout va bien 👍`;
   } else {
-    return `sorell.fr semble DOWN !\nDetail: ${result.detail}`;
+    return `⚠️ sorell.fr a l'air down ! ${result.detail ?? "Je revérifie dans 15 min."}`;
   }
 }
 
@@ -448,7 +447,7 @@ export async function runQuickCheck(): Promise<string> {
 export async function runWeeklyReport(): Promise<string> {
   const review = await runFullReview();
 
-  let report = `<b>📋 Rapport hebdo Jade</b>\n\n`;
+  let report = `<b>Rapport de la semaine</b>\n\n`;
   report += review;
 
   return report;
@@ -456,5 +455,8 @@ export async function runWeeklyReport(): Promise<string> {
 
 function formatCheck(check: CheckResult): string {
   const icon = check.ok ? "✅" : "❌";
+  if (check.ok) {
+    return `${icon} ${check.name}\n`;
+  }
   return `${icon} ${check.name} — ${check.detail}\n`;
 }

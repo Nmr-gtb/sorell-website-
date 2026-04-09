@@ -81,10 +81,10 @@ async function handleAddTask(intent: Extract<TaskIntent, { intent: "add_task" }>
     dueDate: intent.dueDate,
   });
 
-  let reply = `Tache creee : <b>${task.title}</b>`;
-  reply += `\nPriorite : ${task.priority}`;
-  if (task.dueDate) reply += `\nEcheance : ${task.dueDate}`;
-  if (task.notes) reply += `\nNotes : ${task.notes}`;
+  let reply = `C'est noté ✅ <b>${task.title}</b>`;
+  if (task.priority === "Haute") reply += ` — priorité haute 🔴`;
+  if (task.dueDate) reply += `\nÉchéance : ${task.dueDate}`;
+  if (task.notes) reply += `\n${task.notes}`;
   return reply;
 }
 
@@ -92,20 +92,20 @@ async function handleMarkDone(
   intent: Extract<TaskIntent, { intent: "mark_done" }>
 ): Promise<string> {
   const task = await findTaskByQuery(intent.searchQuery);
-  if (!task) return `Aucune tache trouvee pour "${intent.searchQuery}".`;
+  if (!task) return `J'ai pas trouvé de tâche pour "${intent.searchQuery}" 🤔`;
 
   await updateTaskStatus(task.id, "Terminé");
-  return `<b>${task.title}</b> marquee comme terminee.`;
+  return `<b>${task.title}</b> terminée, bien joué 🎉`;
 }
 
 async function handleMarkInProgress(
   intent: Extract<TaskIntent, { intent: "mark_in_progress" }>
 ): Promise<string> {
   const task = await findTaskByQuery(intent.searchQuery);
-  if (!task) return `Aucune tache trouvee pour "${intent.searchQuery}".`;
+  if (!task) return `J'ai pas trouvé de tâche pour "${intent.searchQuery}" 🤔`;
 
   await updateTaskStatus(task.id, "En cours");
-  return `<b>${task.title}</b> passee en cours.`;
+  return `<b>${task.title}</b> passée en cours 🔄`;
 }
 
 async function handleListTasks(
@@ -125,7 +125,7 @@ async function handleUpdateTask(
   intent: Extract<TaskIntent, { intent: "update_task" }>
 ): Promise<string> {
   const task = await findTaskByQuery(intent.searchQuery);
-  if (!task) return `Aucune tache trouvee pour "${intent.searchQuery}".`;
+  if (!task) return `J'ai pas trouvé de tâche pour "${intent.searchQuery}" 🤔`;
 
   const updated = await updateTaskFields(task.id, {
     priority: intent.priority,
@@ -133,10 +133,10 @@ async function handleUpdateTask(
     dueDate: intent.dueDate,
   });
 
-  let reply = `<b>${updated.title}</b> mise a jour.`;
-  if (intent.priority) reply += `\nPriorite : ${updated.priority}`;
-  if (intent.notes) reply += `\nNotes : ${updated.notes}`;
-  if (intent.dueDate) reply += `\nEcheance : ${updated.dueDate}`;
+  let reply = `<b>${updated.title}</b> mise à jour 👌`;
+  if (intent.priority) reply += `\nPriorité : ${updated.priority}`;
+  if (intent.notes) reply += `\n${updated.notes}`;
+  if (intent.dueDate) reply += `\nÉchéance : ${updated.dueDate}`;
   return reply;
 }
 
@@ -144,10 +144,10 @@ async function handleDeleteTask(
   intent: Extract<TaskIntent, { intent: "delete_task" }>
 ): Promise<string> {
   const task = await findTaskByQuery(intent.searchQuery);
-  if (!task) return `Aucune tache trouvee pour "${intent.searchQuery}".`;
+  if (!task) return `J'ai pas trouvé de tâche pour "${intent.searchQuery}" 🤔`;
 
   await archiveTask(task.id);
-  return `<b>${task.title}</b> archivee.`;
+  return `<b>${task.title}</b> archivée 🗑️`;
 }
 
 /**
@@ -261,7 +261,7 @@ export async function POST(request: Request): Promise<Response> {
       if (chatId) {
         await sendTelegramMessage({
           chatId,
-          text: "Une erreur est survenue. Reessaie dans un instant.",
+          text: "Oups, petit bug de mon côté 😅 Réessaie dans un instant.",
         });
       }
     } catch {

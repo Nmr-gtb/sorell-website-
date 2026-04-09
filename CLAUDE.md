@@ -83,6 +83,16 @@ UNSUBSCRIBE_SECRET
 ADMIN_EMAIL
 ADMIN_PASSWORD_HASH
 ADMIN_JWT_SECRET
+NOTION_API_KEY
+NOTION_DATABASE_ID
+NOTION_USERS_DB_ID
+NOTION_ACTIVITY_DB_ID
+TELEGRAM_BOT_TOKEN
+TELEGRAM_WEBHOOK_SECRET
+TELEGRAM_USER_ID
+TELEGRAM_JADE_BOT_TOKEN
+TELEGRAM_JADE_WEBHOOK_SECRET
+NEXT_PUBLIC_APP_URL
 ```
 
 ## Base de données (Supabase)
@@ -94,6 +104,8 @@ ADMIN_JWT_SECRET
 - **newsletter_config** : user_id, topics (array), custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics (array)
 - **newsletters** (historique) : id, user_id, content, subject, created_at, sent_at
 - **referrals** : id (UUID), referrer_id (UUID FK profiles), referee_id (UUID FK profiles), code (VARCHAR UNIQUE), status ("pending"/"converted"), created_at, converted_at, expires_at (default NOW + 30 jours). RLS activée.
+- **activity_log** : id (UUID), user_id (UUID FK auth.users ON DELETE SET NULL), user_email (TEXT), action_type (TEXT), action_label (TEXT), details (TEXT), metadata (JSONB), synced_to_notion (BOOLEAN DEFAULT false), created_at (TIMESTAMPTZ). RLS service_role only. 15 types d'actions : inscription, verification_email, changement_plan, paiement_echoue, generation_newsletter, envoi_newsletter, ouverture_email, clic_email, bounce, ajout_destinataire, suppression_destinataire, changement_config, email_lifecycle, conversion_parrainage, suppression_compte.
+- **telegram_messages** : id, bot_name, chat_id, role, content, intent, created_at (historique conversations Telegram Eva/Jade)
 
 ### Storage
 - Bucket "logos" (public) pour les logos custom des utilisateurs Business+
@@ -142,6 +154,9 @@ sorell-website/
 │   │   ├── export-data/route.ts      # Export données RGPD
 │   │   ├── chat/route.ts             # Chatbot Soly (Claude Haiku 4.5, rate limiting double)
 │   │   ├── cron/lifecycle/route.ts    # CRON lifecycle emails (onboarding, trial, limites)
+│   │   ├── cron/telegram/route.ts    # CRON Telegram (site check, résumé quotidien, rappels, sync Notion)
+│   │   ├── activity/route.ts         # Logging actions client (config, destinataires)
+│   │   ├── telegram/webhook/route.ts # Webhook bot Eva (tâches Notion + stats + conversation)
 │   │   └── track/                    # Tracking opens et clicks
 │   ├── auth/                         # Pages d'authentification
 │   ├── blog/                         # Blog (listing + [slug])
@@ -195,7 +210,16 @@ sorell-website/
 │   ├── ratelimit.ts                  # Rate limiting Upstash Redis
 │   ├── auth.ts                       # getAuthenticatedUser() helper
 │   ├── verify-email-token.ts         # Génération/vérification tokens HMAC-SHA256 double opt-in
-│   └── database.ts                   # Helpers base de données
+│   ├── database.ts                   # Helpers base de données
+│   ├── activity-log.ts               # Logging centralisé actions utilisateur (15 types, fire-and-forget)
+│   ├── notion-sync.ts                # Sync Supabase → Notion (users + activités)
+│   ├── notion-tasks.ts               # CRUD tâches Notion (bot Telegram Eva)
+│   ├── telegram-bot.ts               # Helpers Telegram (send message, types)
+│   ├── telegram-history.ts           # Historique conversations Telegram
+│   ├── task-parser.ts                # Parser d'intents Telegram via Claude Haiku
+│   ├── eva-chat.ts                   # Chat Eva (résumé quotidien, alertes deadline)
+│   ├── eva-monitor.ts                # Monitoring site (uptime check, rapport hebdo)
+│   └── eva-stats.ts                  # Stats business (MRR, signups, conversion, churn)
 ├── public/
 │   ├── hero-visual.png               # Image hero
 │   ├── icone.png                     # Pictogramme S. du logo
@@ -466,6 +490,9 @@ Double couche Upstash Redis :
 | 04/04/2026 | Dashboard Admin CEO | Auth JWT séparée, cookie httpOnly, Recharts, pipeline lifecycle | /architect + /security |
 | 04/04/2026 | jsonwebtoken + bcryptjs | Auth admin indépendante de Supabase Auth, plus sûr pour un single admin | /security |
 | 04/04/2026 | Recharts | Graphiques légers pour dashboard admin (pie chart, line chart) | /architect |
+| 09/04/2026 | Notion CRM | Sync users + activités Supabase → Notion, fire-and-forget, CRON 11h | /architect |
+| 09/04/2026 | Activity logging | 15 types d'actions trackées dans activity_log + sync Notion | /architect |
+| 09/04/2026 | Telegram bots Eva + Jade | Gestion tâches, stats business, monitoring, messages proactifs | /architect |
 
 ## Tests
 
@@ -502,6 +529,43 @@ Double couche Upstash Redis :
 - `app/connexion/page.tsx` : capture ref code (email signup)
 - `components/HomeContent.tsx` : capture ref code depuis URL -> localStorage
 - `components/ReferralBlock.tsx` : UI dashboard (lien, stats)
+
+## Notion CRM & Activity Tracking
+
+### Databases Notion
+- **Utilisateurs Sorell** (NOTION_USERS_DB_ID) : fiche complète de chaque utilisateur (email, plan, dates, stats newsletters, config, lifecycle)
+- **Activité Sorell** (NOTION_ACTIVITY_DB_ID) : journal de toutes les actions (inscription, envoi, config, paiement, etc.)
+- **Tâches Sorell** (NOTION_DATABASE_ID) : gestion de tâches via bot Telegram Eva
+
+### Architecture
+- Source de vérité : Supabase (table `activity_log`)
+- Dashboard lisible : Notion (sync fire-and-forget)
+- `lib/activity-log.ts` : 15 fonctions de logging (logSignup, logNewsletterSent, logConfigChange, etc.)
+- `lib/notion-sync.ts` : sync bidirectionnelle Supabase → Notion
+- CRON quotidien à 11h Paris : `syncPendingActivities()` + `syncAllUsersToNotion()`
+- POST `/api/activity` : endpoint pour tracking côté client (changements config, destinataires)
+- Toutes les fonctions sont fire-and-forget (try/catch, ne throw jamais)
+- Si NOTION_API_KEY absent, les fonctions retournent silencieusement
+
+### 15 types d'actions trackées
+inscription, verification_email, changement_plan, paiement_echoue, generation_newsletter, envoi_newsletter, ouverture_email, clic_email, bounce, ajout_destinataire, suppression_destinataire, changement_config, email_lifecycle, conversion_parrainage, suppression_compte
+
+## Bots Telegram
+
+### Eva (bot principal)
+- Gestion de tâches Notion (ajouter, terminer, lister, mettre à jour, supprimer)
+- Stats business (MRR, signups, conversion, churn, inactifs, fiche utilisateur)
+- Conversation libre (conseils, priorisation, stratégie)
+- Messages proactifs : résumé quotidien 8h, alertes deadline 9h, alertes business 10h
+
+### Jade (bot monitoring)
+- Alerte immédiate si sorell.fr est DOWN (check toutes les 15 min)
+- Rapport hebdomadaire dimanche 9h
+
+### CRON Telegram
+- Route : GET /api/cron/telegram?secret=CRON_SECRET
+- Appelé par cron-job.org toutes les 15 minutes
+- 6 actions : site check, résumé quotidien, rappels deadline, rapport hebdo, alertes business, sync Notion
 
 ## Notes d'optimisation
 

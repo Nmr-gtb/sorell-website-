@@ -145,7 +145,7 @@ export async function GET(request: Request): Promise<Response> {
           const jadeToken = getBotToken("jade");
           await sendTelegramMessage({
             chatId,
-            text: `🚨 <b>ALERTE — sorell.fr est DOWN !</b>\n\nStatus: ${siteCheck.status ?? "Timeout"}\nDétail: ${siteCheck.detail}\n\nJe revérifie dans 15 minutes.`,
+            text: `🚨 <b>Noé, sorell.fr est down !</b>\n\n${siteCheck.detail ?? "Le site ne répond pas."}\n\nJe revérifie dans 15 min, je te tiens au courant.`,
             botToken: jadeToken,
           });
 

@@ -136,7 +136,7 @@ export async function generateDailySummary(): Promise<string | null> {
       return new Date(t.dueDate) < new Date(today);
     });
 
-    let summary = `<b>Bonjour Noé !</b> Voici ton point du matin.\n`;
+    let summary = `Salut Noé ☀️ Ton point du matin :\n`;
 
     // Business metrics
     if (businessCtx) {
@@ -177,7 +177,7 @@ export async function generateDailySummary(): Promise<string | null> {
       }
     }
 
-    summary += `\nBonne journée !`;
+    summary += `\nAllez, bonne journée ! 💪`;
 
     return summary;
   } catch {
