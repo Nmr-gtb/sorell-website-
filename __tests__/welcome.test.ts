@@ -159,6 +159,6 @@ describe("POST /api/welcome", () => {
     const response = await POST(request);
     expect(response.status).toBe(500);
     const data = await response.json();
-    expect(data.error).toContain("Failed to send welcome email");
+    expect(data.error).toBe("Une erreur est survenue");
   });
 });

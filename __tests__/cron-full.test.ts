@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockConfigsSelect = vi.fn();
 const mockProfilesSelect = vi.fn();
 const mockNewslettersCountSelect = vi.fn();
+const mockNewslettersMonthlySentSelect = vi.fn();
 const mockNewslettersRecentSelect = vi.fn();
 const mockNewslettersInsert = vi.fn();
 const mockNewslettersUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
@@ -42,7 +43,20 @@ vi.mock("@/lib/supabase-admin", () => ({
                 }),
               };
             }
-            // recent newsletters query
+            // queries with .in() (select("user_id") or select("user_id, content"))
+            if (typeof args[0] === "string" && (args[0] as string).startsWith("user_id")) {
+              return {
+                in: () => ({
+                  eq: () => ({
+                    gte: () => mockNewslettersMonthlySentSelect(),
+                  }),
+                  order: () => ({
+                    limit: () => mockNewslettersRecentSelect(),
+                  }),
+                }),
+              };
+            }
+            // recent newsletters query (legacy, without .in())
             return {
               eq: () => ({
                 order: () => ({
@@ -168,6 +182,9 @@ describe("GET /api/cron", () => {
       data: [{ id: "user-123", plan: "pro", email_verified: true }],
     });
 
+    // Monthly sent data (batch query for free limit)
+    mockNewslettersMonthlySentSelect.mockResolvedValue({ data: [] });
+
     // Newsletter count this month: 0 (under limit)
     mockNewslettersCountSelect.mockResolvedValue({ count: 0 });
 
@@ -225,6 +242,9 @@ describe("GET /api/cron", () => {
       data: [{ id: "user-free", plan: "free", email_verified: true }],
     });
 
+    // Monthly sent data (batch query for free limit)
+    mockNewslettersMonthlySentSelect.mockResolvedValue({ data: [{ user_id: "user-free" }, { user_id: "user-free" }] });
+
     // Free plan limit = 2, already sent 2 this month
     mockNewslettersCountSelect.mockResolvedValue({ count: 2 });
 
@@ -253,6 +273,7 @@ describe("GET /api/cron", () => {
       data: [{ id: "user-123", plan: "pro", email_verified: true }],
     });
 
+    mockNewslettersMonthlySentSelect.mockResolvedValue({ data: [] });
     mockNewslettersCountSelect.mockResolvedValue({ count: 0 });
     mockNewslettersRecentSelect.mockResolvedValue({ data: [] });
 
