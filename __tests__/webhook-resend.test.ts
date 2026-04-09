@@ -17,14 +17,44 @@ vi.mock("crypto", () => ({
 
 // Mock Supabase admin
 const mockDeleteEq = vi.fn().mockResolvedValue({ error: null });
-const mockDelete = vi.fn().mockReturnValue({ eq: mockDeleteEq });
+const mockRecipientsSelect = vi.fn().mockResolvedValue({
+  data: [{ user_id: "user-123", name: "Jean Dupont", email: "bounced@test.com" }],
+});
+const mockProfileSelect = vi.fn().mockResolvedValue({
+  data: { email: "owner@test.com", full_name: "Pierre Martin" },
+});
 
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
-    from: () => ({
-      delete: () => ({ eq: mockDeleteEq }),
-    }),
+    from: (table: string) => {
+      if (table === "recipients") {
+        return {
+          select: () => ({
+            eq: () => mockRecipientsSelect(),
+          }),
+          delete: () => ({ eq: mockDeleteEq }),
+        };
+      }
+      if (table === "profiles") {
+        return {
+          select: () => ({
+            eq: () => ({
+              single: () => mockProfileSelect(),
+            }),
+          }),
+        };
+      }
+      return {
+        select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null }) }) }),
+        delete: () => ({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+      };
+    },
   },
+}));
+
+// Mock eva-notifications
+vi.mock("@/lib/eva-notifications", () => ({
+  notifyBounce: vi.fn(),
 }));
 
 import { POST } from "@/app/api/webhooks/resend/route";

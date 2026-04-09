@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createHmac, timingSafeEqual } from "crypto";
 import { logBounce } from "@/lib/activity-log";
+import { notifyBounce } from "@/lib/eva-notifications";
 
 function verifyWebhookSignature(
   body: string,
@@ -86,14 +87,39 @@ export async function POST(request: Request) {
     if (type === "email.bounced" || type === "email.complained") {
       const bouncedEmail = data?.to?.[0];
       if (bouncedEmail) {
-        // Remove bounced email from recipients table
+        // Chercher le destinataire et son propriétaire avant suppression
+        const { data: recipients } = await supabaseAdmin
+          .from("recipients")
+          .select("user_id, name, email")
+          .eq("email", bouncedEmail);
+
+        // Supprimer le destinataire de toutes les listes
         await supabaseAdmin
           .from("recipients")
           .delete()
           .eq("email", bouncedEmail);
 
-        // Activity log - userId not available in webhook context
-        void logBounce("", "", bouncedEmail);
+        // Notifier Eva + activity log pour chaque propriétaire concerné
+        if (recipients && recipients.length > 0) {
+          for (const recipient of recipients) {
+            // Récupérer le profil du propriétaire
+            const { data: profile } = await supabaseAdmin
+              .from("profiles")
+              .select("email, full_name")
+              .eq("id", recipient.user_id)
+              .single();
+
+            const ownerEmail = profile?.email || "";
+            const ownerName = profile?.full_name || "";
+
+            void logBounce(recipient.user_id, ownerEmail, bouncedEmail);
+            void notifyBounce(bouncedEmail, recipient.name || "", ownerName, ownerEmail);
+          }
+        } else {
+          // Pas de destinataire trouvé (déjà supprimé ou email direct)
+          void logBounce("", "", bouncedEmail);
+          void notifyBounce(bouncedEmail, "", "", "");
+        }
       }
     }
   } catch {

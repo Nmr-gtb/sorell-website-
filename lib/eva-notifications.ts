@@ -43,3 +43,29 @@ export async function notifyNewSubscription(
     // Ne pas faire échouer le flow principal
   }
 }
+
+/**
+ * Notifie Noé qu'un email a bouncé et a été retiré automatiquement.
+ */
+export async function notifyBounce(
+  bouncedEmail: string,
+  recipientName: string,
+  ownerName: string,
+  ownerEmail: string
+): Promise<void> {
+  try {
+    const chatId = getChatId();
+    const recipientDisplay = recipientName || bouncedEmail;
+    const ownerDisplay = ownerName || ownerEmail;
+    const text =
+      `⚠️ Bounce détecté\n\n` +
+      `<b>Destinataire retiré :</b>\n` +
+      `Nom : ${recipientDisplay}\n` +
+      `Email : ${bouncedEmail}\n\n` +
+      `<b>Propriétaire :</b> ${ownerDisplay} (${ownerEmail})\n\n` +
+      `L'adresse a été supprimée automatiquement pour protéger la réputation d'envoi.`;
+    await sendTelegramMessage({ chatId, text });
+  } catch {
+    // Ne pas faire échouer le flow principal
+  }
+}
