@@ -2,6 +2,7 @@ import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+import { logAccountDeleted } from "@/lib/activity-log";
 
 export async function POST(request: Request) {
   try {
@@ -31,6 +32,9 @@ export async function POST(request: Request) {
         // L'abonnement peut déjà être annulé
       }
     }
+
+    // Activity log - before deletion since user won't exist after
+    void logAccountDeleted(userId, authUser.email || "");
 
     // Supprimer dans l'ordre (à cause des foreign keys)
     const { data: newsletters } = await supabase

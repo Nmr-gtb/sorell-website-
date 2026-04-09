@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
+import { logEmailClick } from "@/lib/activity-log";
 
 // Whitelist de domaines autorisés pour la redirection
 const ALLOWED_DOMAINS = new Set([
@@ -40,6 +41,9 @@ export async function GET(request: Request) {
       });
 
       await supabase.rpc("increment_click_count", { nid });
+
+      // Activity log - userId not available in tracking context
+      void logEmailClick("", email, nid, safeUrl);
     }
   } catch {
     // silently ignore tracking errors

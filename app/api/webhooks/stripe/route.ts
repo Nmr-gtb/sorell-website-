@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
 import { notifyNewSubscription } from "@/lib/eva-notifications";
+import { logPlanChange, logPaymentFailed, logReferralConverted } from "@/lib/activity-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -97,6 +98,9 @@ export async function POST(request: Request) {
             subscriberProfile.email || "",
             plan
           );
+
+          // Activity log
+          void logPlanChange(userId, subscriberProfile.email || "", "free", plan);
         }
 
         // Traiter le parrainage si présent
@@ -121,6 +125,11 @@ export async function POST(request: Request) {
 
             // Récompenser le parrain (+15 jours gratuits)
             await rewardReferrer(referral.referrer_id);
+
+            // Activity log - referral converted
+            if (subscriberProfile) {
+              void logReferralConverted(referral.referrer_id, "", subscriberProfile.email || "");
+            }
           }
         }
       }
@@ -174,6 +183,9 @@ export async function POST(request: Request) {
         } catch {
           // Ne pas faire échouer le webhook si l'envoi d'email échoue
         }
+
+        // Activity log
+        void logPaymentFailed(profile.id, profile.email, `invoice ${invoice.id}`);
       }
     }
 

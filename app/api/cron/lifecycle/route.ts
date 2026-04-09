@@ -8,6 +8,7 @@ import { LimitReachedEmail } from "@/emails/LimitReachedEmail";
 import { FeedbackEmail } from "@/emails/FeedbackEmail";
 import { UpsellEmail } from "@/emails/UpsellEmail";
 import { AdminAlertEmail } from "@/emails/AdminAlertEmail";
+import { logLifecycleEmail } from "@/lib/activity-log";
 
 export const maxDuration = 60;
 
@@ -80,6 +81,10 @@ async function sendLifecycleEmail(
     });
 
     await markAsSent(userId, emailType);
+
+    // Activity log
+    void logLifecycleEmail(userId, to, emailType);
+
     return true;
   } catch {
     return false;

@@ -396,6 +396,12 @@ export default function ConfigPage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
 
+      // Fire-and-forget activity tracking
+      authFetch("/api/activity", {
+        method: "POST",
+        body: JSON.stringify({ type: "changement_config", field: activeTab, details: `Onglet ${activeTab} sauvegarde` }),
+      }).catch(() => {});
+
       // Instant newsletter on first configuration
       const { count } = await supabase
         .from("newsletters")
@@ -458,14 +464,27 @@ export default function ConfigPage() {
       setNewEmail("");
       setNewRole("");
       setRecipientLimitMsg("");
+
+      // Fire-and-forget activity tracking
+      authFetch("/api/activity", {
+        method: "POST",
+        body: JSON.stringify({ type: "ajout_destinataire", field: "recipients", recipientEmail: data.email }),
+      }).catch(() => {});
     }
   };
 
   const handleDeleteRecipient = async (id: string) => {
+    const deletedRecipient = recipients.find((r) => r.id === id);
     const { error } = await deleteRecipient(id);
     if (!error) {
       setRecipients((prev) => prev.filter((r) => r.id !== id));
       setRecipientLimitMsg("");
+
+      // Fire-and-forget activity tracking
+      authFetch("/api/activity", {
+        method: "POST",
+        body: JSON.stringify({ type: "suppression_destinataire", field: "recipients", recipientEmail: deletedRecipient?.email ?? id }),
+      }).catch(() => {});
     }
   };
 

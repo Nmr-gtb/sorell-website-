@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { verifyEmailToken } from "@/lib/verify-email-token";
+import { logEmailVerified } from "@/lib/activity-log";
 
 export async function GET(request: Request) {
   try {
@@ -25,6 +26,9 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.redirect("https://www.sorell.fr/dashboard?email_verified=error");
     }
+
+    // Activity log - userId not readily available, use empty string
+    void logEmailVerified("", email);
 
     return NextResponse.redirect("https://www.sorell.fr/dashboard?email_verified=success");
   } catch {

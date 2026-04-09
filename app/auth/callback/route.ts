@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { notifyNewSignup } from '@/lib/eva-notifications'
+import { logSignup } from '@/lib/activity-log'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -46,6 +47,9 @@ export async function GET(request: NextRequest) {
             session.user.user_metadata?.full_name || "",
             session.user.email || ""
           );
+
+          // Activity log
+          void logSignup(session.user.id, session.user.email || "", session.user.user_metadata?.full_name || "");
 
           // Enregistrer le parrainage si un code ref est présent
           if (refCode) {

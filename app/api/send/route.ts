@@ -5,6 +5,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
 import { buildNewsletterHtml, Article, KeyFigure } from "@/lib/email-template";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import { logNewsletterSent } from "@/lib/activity-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -139,6 +140,9 @@ export async function POST(request: Request) {
       .from("newsletters")
       .update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length })
       .eq("id", newsletterId);
+
+    // Activity log
+    void logNewsletterSent(verifiedUserId, authUser.email || "", recipients.length, newsletter.subject);
 
     return NextResponse.json({ success: true, results });
   } catch {

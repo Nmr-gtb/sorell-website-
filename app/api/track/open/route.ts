@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
+import { logEmailOpen } from "@/lib/activity-log";
 
 // 1x1 transparent GIF
 const PIXEL = Buffer.from(
@@ -31,6 +32,9 @@ export async function GET(request: Request) {
         });
 
         await supabase.rpc("increment_open_count", { nid });
+
+        // Activity log - userId not available in tracking pixel context
+        void logEmailOpen("", email, nid);
       }
     }
   } catch (err) {

@@ -8,6 +8,9 @@
  * 1. Site down → Jade alerte immédiatement
  * 2. Résumé quotidien → Eva envoie à 8h (heure Paris)
  * 3. Rappels deadline → Eva alerte à 9h si tâches en retard ou deadline aujourd'hui
+ * 4. Rapport hebdo Jade → dimanche 9h
+ * 5. Alertes business → 10h
+ * 6. Sync Notion → 11h (utilisateurs + activités pendantes)
  */
 
 import { NextResponse } from "next/server";
@@ -16,6 +19,7 @@ import { checkSiteUp, runWeeklyReport } from "@/lib/eva-monitor";
 import { generateDailySummary, checkDeadlineAlerts } from "@/lib/eva-chat";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkBusinessAlerts } from "@/lib/eva-stats";
+import { syncAllUsersToNotion, syncPendingActivities } from "@/lib/notion-sync";
 
 // --- Auth ---
 
@@ -39,13 +43,14 @@ interface CronState {
   lastDeadlineAlert: string | null; // YYYY-MM-DD
   lastBusinessAlert: string | null; // YYYY-MM-DD
   lastWeeklyReport: string | null; // YYYY-MM-DD
+  lastNotionSync: string | null; // YYYY-MM-DD
 }
 
 async function getCronState(): Promise<CronState> {
   const { data } = await supabaseAdmin
     .from("telegram_messages")
     .select("intent, created_at")
-    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report"])
+    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report", "cron_notion_sync"])
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -55,6 +60,7 @@ async function getCronState(): Promise<CronState> {
     lastDeadlineAlert: null,
     lastBusinessAlert: null,
     lastWeeklyReport: null,
+    lastNotionSync: null,
   };
 
   if (!data) return state;
@@ -75,6 +81,9 @@ async function getCronState(): Promise<CronState> {
     }
     if (msg.intent === "cron_weekly_report" && !state.lastWeeklyReport) {
       state.lastWeeklyReport = date;
+    }
+    if (msg.intent === "cron_notion_sync" && !state.lastNotionSync) {
+      state.lastNotionSync = date;
     }
   }
 
@@ -251,6 +260,26 @@ export async function GET(request: Request): Promise<Response> {
         }
       } catch {
         results.push("business_alert_error");
+      }
+    }
+
+    // --- 6. Sync Notion (11h heure Paris) ---
+    if (parisHour === 11 && state.lastNotionSync !== parisDate) {
+      try {
+        const activitiesSynced = await syncPendingActivities();
+        const usersSynced = await syncAllUsersToNotion();
+
+        await supabaseAdmin.from("telegram_messages").insert({
+          bot_name: "eva",
+          chat_id: chatId,
+          role: "assistant",
+          content: `Sync Notion : ${usersSynced} utilisateurs, ${activitiesSynced} activités`,
+          intent: "cron_notion_sync",
+        });
+
+        results.push("notion_sync_done");
+      } catch {
+        results.push("notion_sync_error");
       }
     }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createHmac, timingSafeEqual } from "crypto";
+import { logBounce } from "@/lib/activity-log";
 
 function verifyWebhookSignature(
   body: string,
@@ -90,6 +91,9 @@ export async function POST(request: Request) {
           .from("recipients")
           .delete()
           .eq("email", bouncedEmail);
+
+        // Activity log - userId not available in webhook context
+        void logBounce("", "", bouncedEmail);
       }
     }
   } catch {

@@ -2,6 +2,7 @@ import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
+import { logNewsletterGenerated } from "@/lib/activity-log";
 
 export const maxDuration = 60;
 import {
@@ -147,6 +148,9 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
     }
+
+    // Activity log
+    void logNewsletterGenerated(verifiedUserId, authUser.email || "", subject);
 
     return NextResponse.json({ newsletter, articles: newsletterContent.articles, editorial: newsletterContent.editorial, keyFigures: newsletterContent.key_figures });
   } catch {
