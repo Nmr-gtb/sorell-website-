@@ -11,6 +11,7 @@
  * 4. Rapport hebdo Jade → dimanche 9h
  * 5. Alertes business → 10h
  * 6. Sync Notion → 11h (utilisateurs + activités pendantes)
+ * 7. Rappels planning communication → toutes les 15 min (24h, 1h, à l'heure)
  */
 
 import { NextResponse } from "next/server";
@@ -20,6 +21,7 @@ import { generateDailySummary, checkDeadlineAlerts } from "@/lib/eva-chat";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkBusinessAlerts } from "@/lib/eva-stats";
 import { syncAllUsersToNotion, syncPendingActivities } from "@/lib/notion-sync";
+import { checkPlanningReminders } from "@/lib/eva-planning";
 
 // --- Auth ---
 
@@ -50,7 +52,7 @@ async function getCronState(): Promise<CronState> {
   const { data } = await supabaseAdmin
     .from("telegram_messages")
     .select("intent, created_at")
-    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report", "cron_notion_sync"])
+    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report", "cron_notion_sync", "cron_planning_reminder"])
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -281,6 +283,56 @@ export async function GET(request: Request): Promise<Response> {
       } catch {
         results.push("notion_sync_error");
       }
+    }
+
+    // --- 7. Rappels Planning Communication (toutes les 15 min) ---
+    try {
+      // Récupérer les rappels déjà envoyés (dernières 48h) pour éviter les doublons
+      const { data: recentReminders } = await supabaseAdmin
+        .from("telegram_messages")
+        .select("content")
+        .eq("intent", "cron_planning_reminder")
+        .gte("created_at", new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
+        .limit(50);
+
+      const alreadySentKeys = new Set<string>();
+      if (recentReminders) {
+        for (const r of recentReminders) {
+          // Extraire les clés des rappels précédents (stockées dans le content)
+          const match = r.content?.match(/\[keys:(.*?)\]/);
+          if (match) {
+            for (const key of match[1].split(",")) {
+              alreadySentKeys.add(key);
+            }
+          }
+        }
+      }
+
+      // Construire la date Paris actuelle
+      const parisNow = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" })
+      );
+
+      const planningAlert = await checkPlanningReminders(parisNow, alreadySentKeys);
+      if (planningAlert) {
+        await sendTelegramMessage({ chatId, text: planningAlert });
+
+        // Stocker les clés envoyées pour éviter les doublons
+        const keysStr = [...alreadySentKeys].join(",");
+        await supabaseAdmin.from("telegram_messages").insert({
+          bot_name: "eva",
+          chat_id: chatId,
+          role: "assistant",
+          content: `${planningAlert}\n[keys:${keysStr}]`,
+          intent: "cron_planning_reminder",
+        });
+
+        results.push("planning_reminder_sent");
+      } else {
+        results.push("no_planning_reminders");
+      }
+    } catch {
+      results.push("planning_reminder_error");
     }
 
     return NextResponse.json({ ok: true, results, hour: parisHour, date: parisDate });
