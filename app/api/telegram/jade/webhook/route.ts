@@ -14,6 +14,7 @@ import { sendTelegramMessage, getBotToken } from "@/lib/telegram-bot";
 import { parseJadeIntent } from "@/lib/jade-parser";
 import type { JadeIntent } from "@/lib/jade-parser";
 import { generateJadeResponse } from "@/lib/jade-chat";
+import { saveMessage, loadHistory } from "@/lib/telegram-history";
 import {
   runFullReview,
   runContactTest,
@@ -22,6 +23,9 @@ import {
   checkMainPages,
   checkCronEndpoint,
   checkStripeWebhook,
+  checkAuth,
+  checkNewsletter,
+  checkLifecycleCron,
 } from "@/lib/eva-monitor";
 
 // --- Helpers ---
@@ -40,7 +44,7 @@ function verifyWebhookSecret(request: Request): boolean {
   return secret === expectedSecret;
 }
 
-// --- Formatters pour les checks individuels ---
+// --- Formatters ---
 
 function formatCheckResult(check: { name: string; ok: boolean; detail?: string }): string {
   const icon = check.ok ? "✅" : "❌";
@@ -83,10 +87,34 @@ async function handleCheckStripe(): Promise<string> {
   return `⚠️ Le webhook Stripe a un problème.\nStatus: ${result.status}\nDétail: ${result.detail}`;
 }
 
+async function handleCheckAuth(): Promise<string> {
+  const result = await checkAuth();
+  if (result.ok) {
+    return `L'authentification Supabase fonctionne. ${result.detail}`;
+  }
+  return `⚠️ L'authentification a un problème.\nStatus: ${result.status}\nDétail: ${result.detail}`;
+}
+
+async function handleCheckNewsletter(): Promise<string> {
+  const result = await checkNewsletter();
+  if (result.ok) {
+    return `L'API Newsletter fonctionne et est protégée. Réponse en ${result.responseTime}ms.`;
+  }
+  return `⚠️ L'API Newsletter a un problème.\nStatus: ${result.status}\nDétail: ${result.detail}`;
+}
+
+async function handleCheckLifecycle(): Promise<string> {
+  const result = await checkLifecycleCron();
+  if (result.ok) {
+    return `Le CRON Lifecycle est opérationnel. Réponse en ${result.responseTime}ms.`;
+  }
+  return `⚠️ Le CRON Lifecycle a un problème.\nStatus: ${result.status}\nDétail: ${result.detail}`;
+}
+
 /**
  * Exécute l'intent de Jade et retourne le message de réponse.
  */
-async function executeIntent(intent: JadeIntent): Promise<string> {
+async function executeIntent(intent: JadeIntent, chatId: number): Promise<string> {
   switch (intent.intent) {
     case "full_review":
       return runFullReview();
@@ -102,10 +130,20 @@ async function executeIntent(intent: JadeIntent): Promise<string> {
       return handleCheckCron();
     case "check_stripe":
       return handleCheckStripe();
-    case "conversation":
-      return generateJadeResponse(intent.rawMessage);
-    case "unknown":
-      return generateJadeResponse(intent.rawMessage);
+    case "check_auth":
+      return handleCheckAuth();
+    case "check_newsletter":
+      return handleCheckNewsletter();
+    case "check_lifecycle":
+      return handleCheckLifecycle();
+    case "conversation": {
+      const history = await loadHistory("jade", chatId);
+      return generateJadeResponse(intent.rawMessage, history);
+    }
+    case "unknown": {
+      const history = await loadHistory("jade", chatId);
+      return generateJadeResponse(intent.rawMessage, history);
+    }
   }
 }
 
@@ -143,17 +181,29 @@ export async function POST(request: Request): Promise<Response> {
     if (text === "/start") {
       await sendTelegramMessage({
         chatId,
-        text: "Salut Noé ! Jade est là, prête à tester.\n\nVoici ce que je peux faire :\n\n<b>Monitoring :</b>\n- \"fullreview\" — Check complet du site\n- \"le site est up ?\" — Vérification rapide\n- \"teste le contact\" — Test formulaire\n- \"check soly\" — Test API chat\n- \"check les pages\" — Test toutes les pages\n- \"check le cron\" — Test CRON endpoint\n- \"check stripe\" — Test webhook Stripe\n\nTu peux aussi me poser des questions sur l'état du site.",
+        text: "Salut Noé ! Jade est là, prête à tester.\n\nVoici ce que je peux faire :\n\n<b>Monitoring :</b>\n- \"fullreview\" — Check complet (9 checks)\n- \"le site est up ?\" — Vérification rapide\n- \"teste le contact\" — Test formulaire\n- \"check soly\" — Test API chat\n- \"check les pages\" — Test toutes les pages\n- \"check le cron\" — Test CRON endpoint\n- \"check stripe\" — Test webhook Stripe\n- \"check auth\" — Test authentification\n- \"check newsletter\" — Test API génération\n- \"check lifecycle\" — Test CRON lifecycle\n\nJe te préviens aussi automatiquement si le site tombe.",
         botToken: jadeToken,
       });
       return NextResponse.json({ ok: true });
     }
 
+    // Sauvegarder le message utilisateur
+    await saveMessage({ botName: "jade", chatId, role: "user", content: text });
+
     // Parser l'intent via Claude Haiku
     const intent = await parseJadeIntent(text);
 
     // Exécuter le check correspondant
-    const reply = await executeIntent(intent);
+    const reply = await executeIntent(intent, chatId);
+
+    // Sauvegarder la réponse
+    await saveMessage({
+      botName: "jade",
+      chatId,
+      role: "assistant",
+      content: reply,
+      intent: intent.intent,
+    });
 
     // Répondre sur Telegram
     await sendTelegramMessage({ chatId, text: reply, botToken: jadeToken });

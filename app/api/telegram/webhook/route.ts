@@ -26,6 +26,7 @@ import {
 } from "@/lib/notion-tasks";
 import type { NotionTask } from "@/lib/notion-tasks";
 import { generateEvaResponse } from "@/lib/eva-chat";
+import { saveMessage, loadHistory } from "@/lib/telegram-history";
 
 // --- Helpers ---
 
@@ -143,7 +144,7 @@ async function handleDeleteTask(
 /**
  * Execute l'intent et retourne le message de reponse.
  */
-async function executeIntent(intent: TaskIntent): Promise<string> {
+async function executeIntent(intent: TaskIntent, chatId: number): Promise<string> {
   switch (intent.intent) {
     case "add_task":
       return handleAddTask(intent);
@@ -157,10 +158,14 @@ async function executeIntent(intent: TaskIntent): Promise<string> {
       return handleUpdateTask(intent);
     case "delete_task":
       return handleDeleteTask(intent);
-    case "conversation":
-      return generateEvaResponse(intent.rawMessage);
-    case "unknown":
-      return generateEvaResponse(intent.rawMessage);
+    case "conversation": {
+      const history = await loadHistory("eva", chatId);
+      return generateEvaResponse(intent.rawMessage, history);
+    }
+    case "unknown": {
+      const history = await loadHistory("eva", chatId);
+      return generateEvaResponse(intent.rawMessage, history);
+    }
   }
 }
 
@@ -203,13 +208,25 @@ export async function POST(request: Request): Promise<Response> {
       return NextResponse.json({ ok: true });
     }
 
+    // Sauvegarder le message utilisateur
+    await saveMessage({ botName: "eva", chatId, role: "user", content: text });
+
     // Parser l'intent via Claude Haiku
     const intent = await parseTaskIntent(text);
 
-    // Executer l'action Notion correspondante
-    const reply = await executeIntent(intent);
+    // Exécuter l'action Notion correspondante
+    const reply = await executeIntent(intent, chatId);
 
-    // Repondre sur Telegram
+    // Sauvegarder la réponse
+    await saveMessage({
+      botName: "eva",
+      chatId,
+      role: "assistant",
+      content: reply,
+      intent: intent.intent,
+    });
+
+    // Répondre sur Telegram
     await sendTelegramMessage({ chatId, text: reply });
 
     return NextResponse.json({ ok: true });

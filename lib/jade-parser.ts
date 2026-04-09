@@ -17,6 +17,9 @@ export type JadeIntent =
   | { intent: "check_pages" }
   | { intent: "check_cron" }
   | { intent: "check_stripe" }
+  | { intent: "check_auth" }
+  | { intent: "check_newsletter" }
+  | { intent: "check_lifecycle" }
   | {
       intent: "conversation";
       rawMessage: string;
@@ -39,6 +42,9 @@ Intents possibles :
 - "check_pages" : verifier les pages principales. Mots-cles : "check les pages", "toutes les pages", "les pages marchent ?", "test pages".
 - "check_cron" : verifier le CRON endpoint. Mots-cles : "check le cron", "le cron marche ?", "test cron".
 - "check_stripe" : verifier le webhook Stripe. Mots-cles : "check stripe", "stripe marche ?", "test stripe", "paiement".
+- "check_auth" : verifier l'authentification Supabase. Mots-cles : "check auth", "la connexion marche ?", "test login", "inscription", "check supabase".
+- "check_newsletter" : verifier l'API de generation de newsletters. Mots-cles : "check newsletter", "la newsletter marche ?", "test generation", "check generate".
+- "check_lifecycle" : verifier le CRON lifecycle. Mots-cles : "check lifecycle", "les emails lifecycle marchent ?", "check onboarding emails".
 - "conversation" : si le message est une discussion, une question sur le QA, un salut, ou autre chose qui ne correspond pas a un check precis.
 - "unknown" : UNIQUEMENT si le message est totalement incomprehensible.
 
@@ -57,6 +63,10 @@ Exemples :
 "Check les pages" -> {"intent":"check_pages"}
 "Le cron tourne ?" -> {"intent":"check_cron"}
 "Stripe ok ?" -> {"intent":"check_stripe"}
+"La connexion marche ?" -> {"intent":"check_auth"}
+"Check auth" -> {"intent":"check_auth"}
+"La newsletter marche ?" -> {"intent":"check_newsletter"}
+"Check lifecycle" -> {"intent":"check_lifecycle"}
 "Salut Jade" -> {"intent":"conversation","rawMessage":"Salut Jade"}
 "C'est quoi ton role ?" -> {"intent":"conversation","rawMessage":"C'est quoi ton role ?"}
 
@@ -93,6 +103,9 @@ export async function parseJadeIntent(message: string): Promise<JadeIntent> {
       "check_pages",
       "check_cron",
       "check_stripe",
+      "check_auth",
+      "check_newsletter",
+      "check_lifecycle",
       "conversation",
       "unknown",
     ];

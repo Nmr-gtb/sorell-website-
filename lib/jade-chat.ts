@@ -8,6 +8,11 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 const JADE_SYSTEM_PROMPT = `Tu es Jade, la testeuse QA et responsable monitoring de Sorell.
 
 Qui est Noé :
@@ -46,18 +51,25 @@ Ton style :
 
 /**
  * Génère une réponse conversationnelle de Jade.
+ * Supporte le multi-turn avec historique.
  */
-export async function generateJadeResponse(message: string): Promise<string> {
+export async function generateJadeResponse(
+  message: string,
+  history: ChatMessage[] = []
+): Promise<string> {
+  const messages = [
+    ...history.map((msg) => ({
+      role: msg.role as "user" | "assistant",
+      content: msg.content,
+    })),
+    { role: "user" as const, content: message },
+  ];
+
   const response = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 400,
     system: JADE_SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: message,
-      },
-    ],
+    messages,
   });
 
   const text = response.content[0]?.type === "text" ? response.content[0].text : "";

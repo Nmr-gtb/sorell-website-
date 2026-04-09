@@ -224,34 +224,172 @@ export async function checkStripeWebhook(): Promise<CheckResult> {
 }
 
 /**
+ * Check 7 : Auth Supabase fonctionne ?
+ * Vérifie que la page de connexion est accessible et que Supabase Auth répond.
+ */
+export async function checkAuth(): Promise<CheckResult> {
+  try {
+    // Vérifier que la page connexion est accessible
+    const { response: pageRes, time: pageTime } = await timedFetch(`${BASE_URL}/connexion`);
+    if (!pageRes.ok) {
+      return {
+        name: "Auth (page connexion)",
+        ok: false,
+        status: pageRes.status,
+        responseTime: pageTime,
+        detail: `Page connexion down (${pageRes.status})`,
+      };
+    }
+
+    // Tester l'API auth Supabase (sign in with invalid creds → devrait retourner 400, pas 500)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) {
+      return {
+        name: "Auth (Supabase)",
+        ok: false,
+        responseTime: 0,
+        detail: "NEXT_PUBLIC_SUPABASE_URL manquant",
+      };
+    }
+
+    const { response: authRes, time: authTime } = await timedFetch(
+      `${supabaseUrl}/auth/v1/token?grant_type=password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+        },
+        body: JSON.stringify({
+          email: "test@jade-bot.internal",
+          password: "invalid-test-password",
+        }),
+      }
+    );
+
+    // 400 = auth fonctionne mais creds invalides (normal)
+    // 422 = validation error (normal aussi)
+    const authOk = authRes.status === 400 || authRes.status === 422;
+
+    return {
+      name: "Auth (Supabase)",
+      ok: authOk,
+      status: authRes.status,
+      responseTime: pageTime + authTime,
+      detail: authOk
+        ? `OK — Page: ${pageTime}ms, Auth API: ${authTime}ms`
+        : `Erreur inattendue ${authRes.status}`,
+    };
+  } catch (error) {
+    return {
+      name: "Auth (Supabase)",
+      ok: false,
+      responseTime: 0,
+      detail: error instanceof Error ? error.message : "Erreur inconnue",
+    };
+  }
+}
+
+/**
+ * Check 8 : API Newsletter (génération) fonctionne ?
+ * Teste que l'endpoint /api/generate répond (401 = protégé = OK).
+ */
+export async function checkNewsletter(): Promise<CheckResult> {
+  try {
+    const { response, time } = await timedFetch(`${BASE_URL}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+
+    // 401 = protégé par auth = OK
+    // 429 = rate limited = OK (API active)
+    const isOk = response.status === 401 || response.status === 429;
+
+    return {
+      name: "API Newsletter",
+      ok: isOk,
+      status: response.status,
+      responseTime: time,
+      detail: isOk
+        ? `Protégé (${response.status}, ${time}ms)`
+        : `Erreur inattendue ${response.status}`,
+    };
+  } catch (error) {
+    return {
+      name: "API Newsletter",
+      ok: false,
+      responseTime: 0,
+      detail: error instanceof Error ? error.message : "Erreur inconnue",
+    };
+  }
+}
+
+/**
+ * Check 9 : Lifecycle CRON fonctionne ?
+ */
+export async function checkLifecycleCron(): Promise<CheckResult> {
+  try {
+    const { response, time } = await timedFetch(`${BASE_URL}/api/cron/lifecycle`);
+
+    return {
+      name: "CRON Lifecycle",
+      ok: response.status === 401 || response.ok,
+      status: response.status,
+      responseTime: time,
+      detail:
+        response.status === 401
+          ? `Protégé (OK, ${time}ms)`
+          : response.ok
+            ? `OK (${time}ms)`
+            : `Erreur ${response.status}`,
+    };
+  } catch (error) {
+    return {
+      name: "CRON Lifecycle",
+      ok: false,
+      responseTime: 0,
+      detail: error instanceof Error ? error.message : "Erreur inconnue",
+    };
+  }
+}
+
+/**
  * Full Review — Execute tous les checks et retourne un rapport formate.
  */
 export async function runFullReview(): Promise<string> {
   const startTime = Date.now();
 
-  const [siteUp, contact, chat, pages, cron, stripe] = await Promise.all([
-    checkSiteUp(),
-    checkContactForm(),
-    checkChatApi(),
-    checkMainPages(),
-    checkCronEndpoint(),
-    checkStripeWebhook(),
-  ]);
+  const [siteUp, contact, chat, pages, cron, stripe, auth, newsletter, lifecycle] =
+    await Promise.all([
+      checkSiteUp(),
+      checkContactForm(),
+      checkChatApi(),
+      checkMainPages(),
+      checkCronEndpoint(),
+      checkStripeWebhook(),
+      checkAuth(),
+      checkNewsletter(),
+      checkLifecycleCron(),
+    ]);
 
-  const allChecks: CheckResult[] = [siteUp, contact, chat, ...pages, cron, stripe];
+  const allChecks: CheckResult[] = [
+    siteUp, contact, chat, ...pages, cron, stripe, auth, newsletter, lifecycle,
+  ];
   const totalTime = Date.now() - startTime;
   const passed = allChecks.filter((c) => c.ok).length;
   const failed = allChecks.filter((c) => !c.ok).length;
 
   let report = `<b>Full Review Sorell</b>\n`;
   report += `${passed}/${allChecks.length} checks OK`;
-  if (failed > 0) report += ` — ${failed} probleme(s)`;
+  if (failed > 0) report += ` — ${failed} problème(s)`;
   report += `\n\n`;
 
   // Groupe : Infrastructure
   report += `<b>Infrastructure</b>\n`;
   report += formatCheck(siteUp);
   report += formatCheck(cron);
+  report += formatCheck(lifecycle);
   report += formatCheck(stripe);
   report += `\n`;
 
@@ -259,6 +397,8 @@ export async function runFullReview(): Promise<string> {
   report += `<b>APIs</b>\n`;
   report += formatCheck(contact);
   report += formatCheck(chat);
+  report += formatCheck(auth);
+  report += formatCheck(newsletter);
   report += `\n`;
 
   // Groupe : Pages
@@ -270,7 +410,7 @@ export async function runFullReview(): Promise<string> {
   report += `\nTemps total : ${totalTime}ms`;
 
   if (failed === 0) {
-    report += `\n\nTout est operationnel.`;
+    report += `\n\nTout est opérationnel.`;
   }
 
   return report;
