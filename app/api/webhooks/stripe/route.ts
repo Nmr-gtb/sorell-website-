@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
+import { notifyNewSubscription } from "@/lib/eva-notifications";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -82,6 +83,21 @@ export async function POST(request: Request) {
           .from("profiles")
           .update(updateData)
           .eq("id", userId);
+
+        // Notifier Noé sur Telegram via Eva
+        const { data: subscriberProfile } = await supabaseAdmin
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (subscriberProfile) {
+          await notifyNewSubscription(
+            subscriberProfile.full_name || "",
+            subscriberProfile.email || "",
+            plan
+          );
+        }
 
         // Traiter le parrainage si présent
         const referralId = session.metadata?.referralId;

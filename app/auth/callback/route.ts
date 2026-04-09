@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { notifyNewSignup } from '@/lib/eva-notifications'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -39,6 +40,12 @@ export async function GET(request: NextRequest) {
               name: session.user.user_metadata?.full_name || "",
             }),
           }).catch(() => {});
+
+          // Notifier Noé sur Telegram via Eva
+          await notifyNewSignup(
+            session.user.user_metadata?.full_name || "",
+            session.user.email || ""
+          );
 
           // Enregistrer le parrainage si un code ref est présent
           if (refCode) {
