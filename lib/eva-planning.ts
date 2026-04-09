@@ -24,6 +24,7 @@ export interface PlanningEvent {
   action: string;
   canal: string;
   date: string; // YYYY-MM-DD
+  hour: number; // 0-23, heure de Paris (défaut 9)
   statut: string;
 }
 
@@ -62,10 +63,11 @@ async function fetchPlanningEvents(): Promise<PlanningEvent[]> {
     const action = titleArr?.[0]?.plain_text || "";
     const canal = props?.Canal?.select?.name || "";
     const date = props?.Date?.date?.start || "";
+    const hour = typeof props?.Heure?.number === "number" ? props.Heure.number : 9;
     const statut = props?.Statut?.status?.name || "";
 
     if (action && date) {
-      events.push({ id: page.id, action, canal, date, statut });
+      events.push({ id: page.id, action, canal, date, hour, statut });
     }
   }
 
@@ -91,9 +93,9 @@ export async function checkPlanningReminders(
     const nowMs = parisNow.getTime();
 
     for (const event of events) {
-      // La date Notion est au format YYYY-MM-DD (pas d'heure)
-      // On suppose 9h du matin comme heure par défaut pour les événements
-      const eventDate = new Date(`${event.date}T09:00:00+02:00`);
+      // Utilise le champ "Heure" de Notion (0-23), défaut 9h si non renseigné
+      const h = String(event.hour).padStart(2, "0");
+      const eventDate = new Date(`${event.date}T${h}:00:00+02:00`);
       const eventMs = eventDate.getTime();
       const diffMs = eventMs - nowMs;
       const diffHours = diffMs / (1000 * 60 * 60);
