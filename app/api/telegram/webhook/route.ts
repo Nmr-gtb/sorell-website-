@@ -27,6 +27,15 @@ import {
 import type { NotionTask } from "@/lib/notion-tasks";
 import { generateEvaResponse } from "@/lib/eva-chat";
 import { saveMessage, loadHistory } from "@/lib/telegram-history";
+import {
+  getBusinessOverview,
+  getSignupStats,
+  getMRRStats,
+  getConversionStats,
+  getChurnStats,
+  getInactiveUsers,
+  getUserInfo,
+} from "@/lib/eva-stats";
 
 // --- Helpers ---
 
@@ -158,6 +167,20 @@ async function executeIntent(intent: TaskIntent, chatId: number): Promise<string
       return handleUpdateTask(intent);
     case "delete_task":
       return handleDeleteTask(intent);
+    case "business_overview":
+      return getBusinessOverview();
+    case "stats_signups":
+      return getSignupStats();
+    case "stats_mrr":
+      return getMRRStats();
+    case "stats_conversion":
+      return getConversionStats();
+    case "stats_churn":
+      return getChurnStats();
+    case "stats_inactive":
+      return getInactiveUsers();
+    case "user_lookup":
+      return getUserInfo(intent.searchQuery);
     case "conversation": {
       const history = await loadHistory("eva", chatId);
       return generateEvaResponse(intent.rawMessage, history);
@@ -203,7 +226,7 @@ export async function POST(request: Request): Promise<Response> {
     if (text === "/start") {
       await sendTelegramMessage({
         chatId,
-        text: "Salut Noé ! Eva est là.\n\nTu peux me parler normalement, je comprends tout. Voici ce que je sais faire :\n\n<b>Gestion de tâches :</b>\n- \"Ajoute : [tâche]\"\n- \"Termine [tâche]\"\n- \"Passe [tâche] en cours\"\n- \"Mes tâches\"\n- \"Supprime [tâche]\"\n\n<b>Discussion :</b>\nTu peux aussi me demander conseil, me raconter ta journée, ou me demander de t'aider à prioriser. Je connais tes tâches Notion.\n\nPour le monitoring du site, utilise Jade (@jade_sorell_bot).",
+        text: "Salut Noé ! Eva est là.\n\nTu peux me parler normalement, je comprends tout.\n\n<b>Business :</b>\n- \"Stats\" ou \"Dashboard\" — vue d'ensemble\n- \"MRR\" — revenus\n- \"Inscrits\" — dernières inscriptions\n- \"Conversion\" — taux trial → payant\n- \"Churn\" — désabonnements\n- \"Inactifs\" — users qui n'utilisent pas\n- \"Info sur [email]\" — fiche utilisateur\n\n<b>Tâches :</b>\n- \"Ajoute : [tâche]\"\n- \"Termine [tâche]\"\n- \"Mes tâches\"\n\n<b>Discussion :</b>\nConseils, priorisation, stratégie — je connais tes tâches et tes metrics.\n\nPour le monitoring, utilise Jade.",
       });
       return NextResponse.json({ ok: true });
     }

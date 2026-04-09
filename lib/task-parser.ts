@@ -40,6 +40,16 @@ export type TaskIntent =
       intent: "delete_task";
       searchQuery: string;
     }
+  | { intent: "business_overview" }
+  | { intent: "stats_signups" }
+  | { intent: "stats_mrr" }
+  | { intent: "stats_conversion" }
+  | { intent: "stats_churn" }
+  | { intent: "stats_inactive" }
+  | {
+      intent: "user_lookup";
+      searchQuery: string;
+    }
   | {
       intent: "conversation";
       rawMessage: string;
@@ -61,7 +71,14 @@ Intents possibles :
 - "list_tasks" : lister les taches. Si un filtre de priorite est mentionne, l'extraire.
 - "update_task" : modifier une tache existante (priorite, notes, echeance). Extrais le nom et les champs a modifier.
 - "delete_task" : supprimer/archiver une tache. Extrais le nom.
-- "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches. Extrais le message brut.
+- "business_overview" : vue d'ensemble du business. Mots-cles : "stats", "dashboard", "comment va le business", "overview", "resume business", "KPIs", "comment ca se passe", "ou on en est".
+- "stats_signups" : inscriptions recentes. Mots-cles : "inscrits", "inscriptions", "nouveaux users", "combien d'inscrits", "qui s'est inscrit".
+- "stats_mrr" : revenus. Mots-cles : "MRR", "revenu", "chiffre d'affaires", "combien on gagne", "argent", "revenus".
+- "stats_conversion" : taux de conversion trial vers payant. Mots-cles : "conversion", "taux de conversion", "trial", "combien convertissent", "essais".
+- "stats_churn" : desabonnements. Mots-cles : "churn", "desabonnements", "qui a quitte", "resiliations", "perdus".
+- "stats_inactive" : utilisateurs inactifs. Mots-cles : "inactifs", "dormants", "qui n'utilise pas", "jamais genere", "pas de newsletter".
+- "user_lookup" : chercher un utilisateur precis. Mots-cles : "info sur [email/nom]", "montre-moi [user]", "qui est [user]", "cherche [user]". Extrais l'email ou le nom dans searchQuery.
+- "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches ni les stats business. Extrais le message brut.
 - "unknown" : UNIQUEMENT si le message est totalement incomprehensible (caracteres aleatoires, etc.).
 
 Regles :
@@ -82,10 +99,23 @@ Exemples :
 "Mets la priorite haute sur landing page" -> {"intent":"update_task","searchQuery":"landing page","priority":"Haute"}
 "Ajoute une note sur SEO : checker les backlinks" -> {"intent":"update_task","searchQuery":"SEO","notes":"Checker les backlinks"}
 "Ajoute : preparer demo pour vendredi" -> {"intent":"add_task","title":"Preparer demo","dueDate":"(le vendredi suivant en ISO)"}
+"Comment va le business ?" -> {"intent":"business_overview"}
+"Stats" -> {"intent":"business_overview"}
+"Dashboard" -> {"intent":"business_overview"}
+"Combien de MRR ?" -> {"intent":"stats_mrr"}
+"On gagne combien ?" -> {"intent":"stats_mrr"}
+"Combien d'inscrits cette semaine ?" -> {"intent":"stats_signups"}
+"Qui s'est inscrit ?" -> {"intent":"stats_signups"}
+"Taux de conversion ?" -> {"intent":"stats_conversion"}
+"Combien convertissent ?" -> {"intent":"stats_conversion"}
+"Y a du churn ?" -> {"intent":"stats_churn"}
+"Qui a quitte ?" -> {"intent":"stats_churn"}
+"Des users inactifs ?" -> {"intent":"stats_inactive"}
+"Qui n'utilise pas Sorell ?" -> {"intent":"stats_inactive"}
+"Info sur jean@example.com" -> {"intent":"user_lookup","searchQuery":"jean@example.com"}
+"Montre-moi le profil de Jean Dupont" -> {"intent":"user_lookup","searchQuery":"Jean Dupont"}
 "Salut Eva" -> {"intent":"conversation","rawMessage":"Salut Eva"}
-"Comment tu vas ?" -> {"intent":"conversation","rawMessage":"Comment tu vas ?"}
 "Tu me conseilles quoi aujourd'hui ?" -> {"intent":"conversation","rawMessage":"Tu me conseilles quoi aujourd'hui ?"}
-"C'est quoi la priorite du moment ?" -> {"intent":"conversation","rawMessage":"C'est quoi la priorite du moment ?"}
 "Je suis un peu perdu, aide-moi" -> {"intent":"conversation","rawMessage":"Je suis un peu perdu, aide-moi"}
 Reponds UNIQUEMENT avec le JSON, sans markdown, sans explication.`;
 
@@ -123,6 +153,13 @@ export async function parseTaskIntent(message: string): Promise<TaskIntent> {
       "list_tasks",
       "update_task",
       "delete_task",
+      "business_overview",
+      "stats_signups",
+      "stats_mrr",
+      "stats_conversion",
+      "stats_churn",
+      "stats_inactive",
+      "user_lookup",
       "conversation",
       "unknown",
     ];

@@ -12,9 +12,10 @@
 
 import { NextResponse } from "next/server";
 import { sendTelegramMessage, getBotToken } from "@/lib/telegram-bot";
-import { checkSiteUp } from "@/lib/eva-monitor";
+import { checkSiteUp, runWeeklyReport } from "@/lib/eva-monitor";
 import { generateDailySummary, checkDeadlineAlerts } from "@/lib/eva-chat";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { checkBusinessAlerts } from "@/lib/eva-stats";
 
 // --- Auth ---
 
@@ -36,13 +37,15 @@ interface CronState {
   lastSiteDownAlert: string | null; // ISO timestamp
   lastDailySummary: string | null; // YYYY-MM-DD
   lastDeadlineAlert: string | null; // YYYY-MM-DD
+  lastBusinessAlert: string | null; // YYYY-MM-DD
+  lastWeeklyReport: string | null; // YYYY-MM-DD
 }
 
 async function getCronState(): Promise<CronState> {
   const { data } = await supabaseAdmin
     .from("telegram_messages")
     .select("intent, created_at")
-    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert"])
+    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report"])
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -50,6 +53,8 @@ async function getCronState(): Promise<CronState> {
     lastSiteDownAlert: null,
     lastDailySummary: null,
     lastDeadlineAlert: null,
+    lastBusinessAlert: null,
+    lastWeeklyReport: null,
   };
 
   if (!data) return state;
@@ -64,6 +69,12 @@ async function getCronState(): Promise<CronState> {
     }
     if (msg.intent === "cron_deadline_alert" && !state.lastDeadlineAlert) {
       state.lastDeadlineAlert = date;
+    }
+    if (msg.intent === "cron_business_alert" && !state.lastBusinessAlert) {
+      state.lastBusinessAlert = date;
+    }
+    if (msg.intent === "cron_weekly_report" && !state.lastWeeklyReport) {
+      state.lastWeeklyReport = date;
     }
   }
 
@@ -86,6 +97,14 @@ function getParisDate(): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Paris",
   }).format(new Date()); // Format YYYY-MM-DD
+}
+
+function getParisDay(): number {
+  const day = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Paris",
+    weekday: "short",
+  }).format(new Date());
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(day);
 }
 
 // --- Route handler ---
@@ -185,6 +204,53 @@ export async function GET(request: Request): Promise<Response> {
         }
       } catch {
         results.push("deadline_alert_error");
+      }
+    }
+
+    // --- 4. Rapport hebdo Jade (dimanche 9h) ---
+    const parisDay = getParisDay();
+    if (parisDay === 0 && parisHour === 9 && state.lastWeeklyReport !== parisDate) {
+      try {
+        const jadeToken = getBotToken("jade");
+        const report = await runWeeklyReport();
+
+        await sendTelegramMessage({ chatId, text: report, botToken: jadeToken });
+
+        await supabaseAdmin.from("telegram_messages").insert({
+          bot_name: "jade",
+          chat_id: chatId,
+          role: "assistant",
+          content: report,
+          intent: "cron_weekly_report",
+        });
+
+        results.push("weekly_report_sent");
+      } catch {
+        results.push("weekly_report_error");
+      }
+    }
+
+    // --- 5. Alertes business (10h heure Paris) ---
+    if (parisHour === 10 && state.lastBusinessAlert !== parisDate) {
+      try {
+        const bizAlerts = await checkBusinessAlerts();
+        if (bizAlerts) {
+          await sendTelegramMessage({ chatId, text: bizAlerts });
+
+          await supabaseAdmin.from("telegram_messages").insert({
+            bot_name: "eva",
+            chat_id: chatId,
+            role: "assistant",
+            content: bizAlerts,
+            intent: "cron_business_alert",
+          });
+
+          results.push("business_alert_sent");
+        } else {
+          results.push("no_business_alerts");
+        }
+      } catch {
+        results.push("business_alert_error");
       }
     }
 

@@ -442,6 +442,18 @@ export async function runQuickCheck(): Promise<string> {
   }
 }
 
+/**
+ * Rapport hebdo Jade — fullreview + résumé de la semaine.
+ */
+export async function runWeeklyReport(): Promise<string> {
+  const review = await runFullReview();
+
+  let report = `<b>📋 Rapport hebdo Jade</b>\n\n`;
+  report += review;
+
+  return report;
+}
+
 function formatCheck(check: CheckResult): string {
   const icon = check.ok ? "✅" : "❌";
   return `${icon} ${check.name} — ${check.detail}\n`;

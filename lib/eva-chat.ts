@@ -7,6 +7,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { listActiveTasks } from "@/lib/notion-tasks";
 import type { NotionTask } from "@/lib/notion-tasks";
+import { getBusinessContext } from "@/lib/eva-stats";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -81,8 +82,11 @@ export async function generateEvaResponse(
   message: string,
   history: ChatMessage[] = []
 ): Promise<string> {
-  const tasksContext = await buildTasksContext();
-  const systemPrompt = EVA_SYSTEM_PROMPT + tasksContext;
+  const [tasksContext, businessContext] = await Promise.all([
+    buildTasksContext(),
+    getBusinessContext(),
+  ]);
+  const systemPrompt = EVA_SYSTEM_PROMPT + tasksContext + businessContext;
 
   // Construire les messages avec historique
   const messages = [
@@ -109,8 +113,10 @@ export async function generateEvaResponse(
  */
 export async function generateDailySummary(): Promise<string | null> {
   try {
-    const tasks: NotionTask[] = await listActiveTasks();
-    if (tasks.length === 0) return null;
+    const [tasks, businessCtx] = await Promise.all([
+      listActiveTasks(),
+      getBusinessContext(),
+    ]);
 
     const today = new Date().toISOString().split("T")[0];
     const priorityOrder: Record<string, number> = { Haute: 1, Moyenne: 2, Basse: 3 };
@@ -123,27 +129,36 @@ export async function generateDailySummary(): Promise<string | null> {
     const dueSoon = sorted.filter((t) => {
       if (!t.dueDate) return false;
       const diff = new Date(t.dueDate).getTime() - new Date(today).getTime();
-      return diff >= 0 && diff <= 3 * 24 * 60 * 60 * 1000; // 3 jours
+      return diff >= 0 && diff <= 3 * 24 * 60 * 60 * 1000;
     });
     const overdue = sorted.filter((t) => {
       if (!t.dueDate) return false;
       return new Date(t.dueDate) < new Date(today);
     });
 
-    let summary = `<b>Bonjour Noé !</b> Voici ton point du matin.\n\n`;
-    summary += `<b>${tasks.length} tâches actives</b>\n`;
+    let summary = `<b>Bonjour Noé !</b> Voici ton point du matin.\n`;
+
+    // Business metrics
+    if (businessCtx) {
+      summary += `\n📊 ${businessCtx.trim()}\n`;
+    }
+
+    // Tasks
+    if (tasks.length > 0) {
+      summary += `\n<b>${tasks.length} tâches actives</b>\n`;
+    }
 
     if (overdue.length > 0) {
       summary += `\n⚠️ <b>En retard (${overdue.length})</b>\n`;
       for (const t of overdue) {
-        summary += `  🔴 ${t.title} (échéance: ${t.dueDate})\n`;
+        summary += `  ${t.title} (${t.dueDate})\n`;
       }
     }
 
     if (dueSoon.length > 0) {
-      summary += `\n⏰ <b>Deadline dans les 3 jours (${dueSoon.length})</b>\n`;
+      summary += `\n⏰ <b>Deadline proche (${dueSoon.length})</b>\n`;
       for (const t of dueSoon) {
-        summary += `  🟡 ${t.title} (${t.dueDate})\n`;
+        summary += `  ${t.title} (${t.dueDate})\n`;
       }
     }
 
