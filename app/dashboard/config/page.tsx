@@ -430,7 +430,7 @@ export default function ConfigPage() {
             }
           }
         } catch {
-          // silently ignore
+          setInstantError(t("config.instant_error"));
         }
         setInstantSending(false);
       }

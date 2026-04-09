@@ -47,6 +47,7 @@ export default function CustomizationPage() {
   const [realPlan, setRealPlan] = useState("free");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const plan = getEffectivePlan(realPlan);
   const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
@@ -111,6 +112,7 @@ export default function CustomizationPage() {
     setUploading(false);
 
     if (error) {
+      setSaveError(t("custom.upload_error"));
       return null;
     }
 
@@ -121,6 +123,7 @@ export default function CustomizationPage() {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+    setSaveError("");
 
     let finalLogoUrl = logoUrl;
 
@@ -148,6 +151,8 @@ export default function CustomizationPage() {
     if (!error) {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
+    } else {
+      setSaveError(t("custom.save_error"));
     }
   };
 
@@ -469,6 +474,11 @@ export default function CustomizationPage() {
             {saveSuccess && (
               <span style={{ fontSize: 13, color: "#059669", fontWeight: 500 }}>
                 ✓ {t("custom.saved")}
+              </span>
+            )}
+            {saveError && (
+              <span style={{ fontSize: 13, color: "var(--error)", fontWeight: 500 }}>
+                {saveError}
               </span>
             )}
           </div>

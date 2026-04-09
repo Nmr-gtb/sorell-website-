@@ -41,6 +41,9 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [portalError, setPortalError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [exportError, setExportError] = useState("");
 
   // Delete account states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -64,6 +67,7 @@ export default function ProfilePage() {
   const handlePortal = async () => {
     if (!user) return;
     setPortalLoading(true);
+    setPortalError("");
     try {
       const res = await authFetch("/api/portal", {
         method: "POST",
@@ -73,9 +77,11 @@ export default function ProfilePage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
+        setPortalError(t("profile.portal_error"));
         setPortalLoading(false);
       }
     } catch {
+      setPortalError(t("profile.portal_error"));
       setPortalLoading(false);
     }
   };
@@ -83,6 +89,7 @@ export default function ProfilePage() {
   const handleSaveName = async () => {
     if (!user || !editName.trim()) return;
     setSaving(true);
+    setSaveError("");
     try {
       const { error } = await updateProfile(user.id, { full_name: editName.trim() });
       await supabase.auth.updateUser({ data: { full_name: editName.trim() } });
@@ -91,9 +98,11 @@ export default function ProfilePage() {
         setSaveSuccess(true);
         setEditing(false);
         setTimeout(() => setSaveSuccess(false), 3000);
+      } else {
+        setSaveError(t("profile.save_error"));
       }
     } catch {
-      // Erreur silencieuse
+      setSaveError(t("profile.save_error"));
     }
     setSaving(false);
   };
@@ -101,6 +110,7 @@ export default function ProfilePage() {
   const handleExportData = async () => {
     if (!user) return;
     setExporting(true);
+    setExportError("");
     try {
       const res = await authFetch("/api/export-data");
       if (res.ok) {
@@ -113,9 +123,11 @@ export default function ProfilePage() {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+      } else {
+        setExportError(t("profile.export_error"));
       }
     } catch {
-      // Silently fail
+      setExportError(t("profile.export_error"));
     }
     setExporting(false);
   };
@@ -319,22 +331,45 @@ export default function ProfilePage() {
             </p>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           {plan && plan !== "free" ? (
-            <button
-              onClick={handlePortal}
-              disabled={portalLoading}
-              className="btn-ghost"
-              style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
-            >
-              {portalLoading ? t("common.loading") : t("profile.manage_subscription")}
-            </button>
+            <>
+              <button
+                onClick={handlePortal}
+                disabled={portalLoading}
+                className="btn-ghost"
+                style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
+              >
+                {portalLoading ? t("common.loading") : t("profile.manage_subscription")}
+              </button>
+              <button
+                onClick={handlePortal}
+                disabled={portalLoading}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: 12,
+                  color: "var(--text-muted)",
+                  cursor: portalLoading ? "not-allowed" : "pointer",
+                  padding: "4px 8px",
+                  textDecoration: "underline",
+                  opacity: 0.6,
+                }}
+              >
+                {t("profile.cancel_subscription")}
+              </button>
+            </>
           ) : (
             <Link href="/tarifs" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
               {t("profile.change_plan")}
             </Link>
           )}
         </div>
+        {portalError && (
+          <p style={{ fontSize: 13, color: "var(--error)", marginTop: 8 }}>
+            {portalError}
+          </p>
+        )}
       </div>
 
       {/* Bloc parrainage (Pro/Business uniquement) */}
@@ -377,31 +412,36 @@ export default function ProfilePage() {
               {t("profile.full_name")}
             </label>
             {editing ? (
-              <div className="profile-edit-name-row" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <input
-                  className="input-field"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  style={{ flex: 1, minWidth: 0 }}
-                  autoFocus
-                />
-                <button
-                  className="btn-primary"
-                  onClick={handleSaveName}
-                  disabled={saving || !editName.trim()}
-                  style={{ fontSize: 13, padding: "6px 14px", opacity: saving ? 0.7 : 1, cursor: saving ? "wait" : "pointer", whiteSpace: "nowrap" }}
-                >
-                  {saving ? "..." : t("profile.save")}
-                </button>
-                <button
-                  className="btn-ghost"
-                  onClick={() => setEditing(false)}
-                  disabled={saving}
-                  style={{ fontSize: 13, padding: "6px 14px", whiteSpace: "nowrap" }}
-                >
-                  {t("profile.cancel")}
-                </button>
-              </div>
+              <>
+                <div className="profile-edit-name-row" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                  <input
+                    className="input-field"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    style={{ flex: 1, minWidth: 0 }}
+                    autoFocus
+                  />
+                  <button
+                    className="btn-primary"
+                    onClick={handleSaveName}
+                    disabled={saving || !editName.trim()}
+                    style={{ fontSize: 13, padding: "6px 14px", opacity: saving ? 0.7 : 1, cursor: saving ? "wait" : "pointer", whiteSpace: "nowrap" }}
+                  >
+                    {saving ? "..." : t("profile.save")}
+                  </button>
+                  <button
+                    className="btn-ghost"
+                    onClick={() => { setEditing(false); setSaveError(""); }}
+                    disabled={saving}
+                    style={{ fontSize: 13, padding: "6px 14px", whiteSpace: "nowrap" }}
+                  >
+                    {t("profile.cancel")}
+                  </button>
+                </div>
+                {saveError && (
+                  <p style={{ fontSize: 13, color: "var(--error)", marginTop: 6 }}>{saveError}</p>
+                )}
+              </>
             ) : (
               <input
                 className="input-field"
@@ -516,6 +556,9 @@ export default function ProfilePage() {
           >
             {exporting ? t("profile.exporting") : t("profile.export_data")}
           </button>
+          {exportError && (
+            <p style={{ fontSize: 13, color: "var(--error)", marginTop: 4 }}>{exportError}</p>
+          )}
         </div>
       </div>
 

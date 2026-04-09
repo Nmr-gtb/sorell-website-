@@ -177,6 +177,8 @@ export default function DashboardPage() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [resendingEmail, setResendingEmail] = useState(false);
+  const [resendEmailSuccess, setResendEmailSuccess] = useState(false);
+  const [resendEmailError, setResendEmailError] = useState("");
 
   const searchParams = useSearchParams();
   const emailVerifiedParam = searchParams.get("email_verified");
@@ -303,6 +305,7 @@ export default function DashboardPage() {
         setCheckoutLoading(false);
       }
     } catch {
+      setOnboardingError(t("dashboard.checkout_error"));
       setCheckoutLoading(false);
     }
   }
@@ -366,7 +369,7 @@ export default function DashboardPage() {
         }
       }
     } catch {
-      // silently ignore
+      setOnboardingError(t("dashboard.first_newsletter_error"));
     }
 
     // Welcome email deja envoye au moment de la creation du compte (auth/callback)
@@ -404,13 +407,20 @@ export default function DashboardPage() {
     async function handleResendEmail() {
       if (!user?.email) return;
       setResendingEmail(true);
+      setResendEmailSuccess(false);
+      setResendEmailError("");
       try {
-        await authFetch("/api/welcome", {
+        const res = await authFetch("/api/welcome", {
           method: "POST",
           body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
         });
+        if (res.ok) {
+          setResendEmailSuccess(true);
+        } else {
+          setResendEmailError(t("dashboard.resend_error"));
+        }
       } catch {
-        // silently fail
+        setResendEmailError(t("dashboard.resend_error"));
       }
       setResendingEmail(false);
     }
@@ -460,8 +470,18 @@ export default function DashboardPage() {
         >
           {resendingEmail
             ? (lang === "fr" ? "Envoi en cours..." : "Sending...")
-            : (lang === "fr" ? "Renvoyer l'email" : "Resend email")}
+            : resendEmailSuccess
+              ? (lang === "fr" ? "Email envoyé !" : "Email sent!")
+              : (lang === "fr" ? "Renvoyer l'email" : "Resend email")}
         </button>
+        {resendEmailError && (
+          <p style={{ fontSize: 13, color: "var(--error)", marginTop: 12 }}>{resendEmailError}</p>
+        )}
+        {resendEmailSuccess && (
+          <p style={{ fontSize: 13, color: "#059669", marginTop: 12 }}>
+            {lang === "fr" ? "Email de verification renvoyé avec succes." : "Verification email resent successfully."}
+          </p>
+        )}
         <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 16 }}>
           {lang === "fr"
             ? "Vous ne trouvez pas l'email ? Vérifiez vos spams ou cliquez sur le bouton ci-dessus."
