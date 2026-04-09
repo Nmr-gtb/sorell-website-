@@ -744,6 +744,9 @@ const fr: Record<string, string> = {
   "trial.daysLeft": "Il vous reste {days} jours d'essai",
   "trial.lastDay": "Dernier jour d'essai",
   "trial.expired": "Votre essai est termin\u00e9",
+  "trial.expired_title": "P\u00e9riode d\u2019essai termin\u00e9e",
+  "trial.expired_message": "Passez \u00e0 un abonnement pour continuer \u00e0 profiter de toutes les fonctionnalit\u00e9s.",
+  "trial.expired_cta": "Voir les offres",
   "trial.cta": "D\u00e9couvrir les offres \u2192",
 
   // DashboardSidebar
@@ -774,6 +777,12 @@ const fr: Record<string, string> = {
   "aria.toggle_theme": "Basculer le thème",
   "aria.open_menu": "Ouvrir le menu",
   "aria.close_menu": "Fermer le menu",
+
+  // Cookies
+  "cookies.text": "Ce site utilise des cookies et le stockage local pour améliorer votre expérience.",
+  "cookies.link": "Politique de confidentialité",
+  "cookies.accept": "Accepter",
+  "cookies.refuse": "Refuser",
 };
 
 export default fr;

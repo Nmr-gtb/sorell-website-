@@ -5,6 +5,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
+import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -192,6 +193,7 @@ export default function RootLayout({
                 {children}
               </div>
               <ChatWidgetWrapper />
+              <CookieBanner />
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>

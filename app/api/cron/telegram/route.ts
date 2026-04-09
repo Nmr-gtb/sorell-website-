@@ -28,7 +28,10 @@ import { checkPlanningReminders } from "@/lib/eva-planning";
 function verifyCronSecret(request: Request): boolean {
   const url = new URL(request.url);
   const secret = url.searchParams.get("secret");
-  return secret === process.env.CRON_SECRET;
+  // Support Bearer header too (consistent with /api/cron)
+  const authHeader = request.headers.get("authorization");
+  const bearerSecret = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  return (secret === process.env.CRON_SECRET) || (bearerSecret === process.env.CRON_SECRET);
 }
 
 function getChatId(): number {
@@ -286,13 +289,14 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     // --- 7. Rappels Planning Communication (toutes les 15 min) ---
+    const REMINDER_LOOKBACK_MS = 48 * 60 * 60 * 1000; // 48h en millisecondes
     try {
       // Récupérer les rappels déjà envoyés (dernières 48h) pour éviter les doublons
       const { data: recentReminders } = await supabaseAdmin
         .from("telegram_messages")
         .select("content")
         .eq("intent", "cron_planning_reminder")
-        .gte("created_at", new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
+        .gte("created_at", new Date(Date.now() - REMINDER_LOOKBACK_MS).toISOString())
         .limit(50);
 
       const alreadySentKeys = new Set<string>();

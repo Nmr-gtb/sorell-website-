@@ -744,6 +744,9 @@ const en: Record<string, string> = {
   "trial.daysLeft": "You have {days} days left in your trial",
   "trial.lastDay": "Last day of trial",
   "trial.expired": "Your trial has ended",
+  "trial.expired_title": "Trial period ended",
+  "trial.expired_message": "Upgrade to a paid plan to keep all features.",
+  "trial.expired_cta": "View plans",
   "trial.cta": "See plans \u2192",
 
   // DashboardSidebar
@@ -774,6 +777,12 @@ const en: Record<string, string> = {
   "aria.toggle_theme": "Toggle theme",
   "aria.open_menu": "Open menu",
   "aria.close_menu": "Close menu",
+
+  // Cookies
+  "cookies.text": "This site uses cookies and local storage to improve your experience.",
+  "cookies.link": "Privacy policy",
+  "cookies.accept": "Accept",
+  "cookies.refuse": "Decline",
 };
 
 export default en;
