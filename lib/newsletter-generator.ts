@@ -46,6 +46,47 @@ export interface BuildPromptParams {
   dateString: string;
   searchDateHint: string;
   previousTitles: string[];
+  feedbackHistory?: Array<{ feedback: string; date: string }>;
+  currentFeedback?: string;
+}
+
+/** Build the feedback injection block for the prompt (empty string if no feedback). */
+function buildFeedbackBlock(
+  feedbackHistory?: Array<{ feedback: string; date: string }>,
+  currentFeedback?: string
+): string {
+  const hasFeedbackHistory = feedbackHistory && feedbackHistory.length > 0;
+  const hasCurrentFeedback = currentFeedback && currentFeedback.trim().length > 0;
+
+  if (!hasFeedbackHistory && !hasCurrentFeedback) {
+    return "";
+  }
+
+  let block = `
+=== RETOURS DE L'UTILISATEUR ===
+L'utilisateur a donné ces retours sur les newsletters précédentes. Tu DOIS en tenir compte :`;
+
+  if (hasFeedbackHistory) {
+    const recentFeedbacks = [...feedbackHistory]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+    for (const entry of recentFeedbacks) {
+      block += `\n- [${entry.date}] ${entry.feedback}`;
+    }
+  }
+
+  if (hasCurrentFeedback) {
+    block += `
+
+FEEDBACK ACTUEL (priorité maximale) :
+${currentFeedback}`;
+  }
+
+  block += `
+=== FIN DES RETOURS ===
+`;
+
+  return block;
 }
 
 export function buildNewsletterPrompt(params: BuildPromptParams): string {
@@ -56,6 +97,8 @@ export function buildNewsletterPrompt(params: BuildPromptParams): string {
     dateString,
     searchDateHint,
     previousTitles,
+    feedbackHistory,
+    currentFeedback,
   } = params;
 
   const sourcesLine = sources
@@ -151,7 +194,7 @@ STRATÉGIE DE RECHERCHE WEB :
 - NE PAS chercher les mêmes termes que la semaine précédente
 - Varier les mots-clés : ne pas toujours chercher "réglementation [secteur]" mais aussi "innovation [secteur]", "marché [secteur]", "tendance [secteur] 2026", "entreprise [secteur] actualité"
 ${previousTopicsBlock}
-
+${buildFeedbackBlock(feedbackHistory, currentFeedback)}
 CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks, pas d'explication. UNIQUEMENT le JSON brut.`;
 }
 

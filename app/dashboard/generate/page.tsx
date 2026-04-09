@@ -111,6 +111,10 @@ export default function GeneratePage() {
   const [sendResults, setSendResults] = useState<SendResult[] | null>(null);
   const [sendError, setSendError] = useState("");
 
+  const [feedbackSelected, setFeedbackSelected] = useState<string[]>([]);
+  const [feedbackCustom, setFeedbackCustom] = useState("");
+  const [showFeedback, setShowFeedback] = useState(false);
+
   useEffect(() => {
     if (!user) return;
     async function loadConfig() {
@@ -158,7 +162,7 @@ export default function GeneratePage() {
   const frequencyLabel =
     frequency === "daily" ? t("generate.freq_daily") : frequency === "weekly-2" ? t("generate.freq_twice_weekly") : t("generate.freq_weekly");
 
-  async function handleGenerate() {
+  async function handleGenerate(feedback?: string) {
     if (!user) return;
     setGenerating(true);
     setGenerateError("");
@@ -172,7 +176,10 @@ export default function GeneratePage() {
     try {
       const response = await authFetch("/api/generate", {
         method: "POST",
-        body: JSON.stringify({ userId: user.id, topics, sources, customBrief }),
+        body: JSON.stringify({
+          userId: user.id, topics, sources, customBrief,
+          ...(feedback ? { feedback, newsletterId: newsletter?.id } : {}),
+        }),
       });
       const data = await response.json();
       if (response.status === 429) {
@@ -186,12 +193,25 @@ export default function GeneratePage() {
         setKeyFigures(data.keyFigures || []);
         setSubject(data.newsletter.subject);
         setGeneratedThisMonth((prev) => prev + 1);
+        if (feedback) {
+          setFeedbackSelected([]);
+          setFeedbackCustom("");
+          setShowFeedback(false);
+        }
       }
     } catch {
       setGenerateError(t("generate.error_network"));
     } finally {
       setGenerating(false);
     }
+  }
+
+  function handleFeedbackRegenerate() {
+    const parts: string[] = [...feedbackSelected];
+    if (feedbackCustom.trim()) parts.push(feedbackCustom.trim());
+    if (parts.length === 0) return;
+    const feedbackText = parts.join(". ");
+    handleGenerate(feedbackText);
   }
 
   async function handleSend() {
@@ -390,7 +410,7 @@ export default function GeneratePage() {
             <>
               <button
                 className="btn-primary"
-                onClick={handleGenerate}
+                onClick={() => handleGenerate()}
                 disabled={generating || activeTopics.length === 0}
                 style={{
                   display: "flex",
@@ -467,7 +487,7 @@ export default function GeneratePage() {
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <button
                   className="btn-ghost"
-                  onClick={handleGenerate}
+                  onClick={() => handleGenerate()}
                   disabled={generating}
                   style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, padding: "7px 14px" }}
                 >
@@ -495,6 +515,98 @@ export default function GeneratePage() {
               </p>
             </div>
           </div>
+
+          {/* Feedback section */}
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <span
+              onClick={() => setShowFeedback(!showFeedback)}
+              style={{ fontSize: 13, color: "var(--text-muted)", cursor: "pointer" }}
+            >
+              {t("generate.feedback_prompt")}
+            </span>
+          </div>
+
+          {showFeedback && (
+            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 16, marginBottom: 16 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {([
+                  { key: "generate.feedback_too_long" as const, value: t("generate.feedback_too_long") },
+                  { key: "generate.feedback_too_short" as const, value: t("generate.feedback_too_short") },
+                  { key: "generate.feedback_not_technical" as const, value: t("generate.feedback_not_technical") },
+                  { key: "generate.feedback_too_generic" as const, value: t("generate.feedback_too_generic") },
+                  { key: "generate.feedback_irrelevant" as const, value: t("generate.feedback_irrelevant") },
+                  { key: "generate.feedback_wrong_tone" as const, value: t("generate.feedback_wrong_tone") },
+                ]).map((chip) => {
+                  const isSelected = feedbackSelected.includes(chip.value);
+                  return (
+                    <button
+                      key={chip.key}
+                      type="button"
+                      onClick={() => {
+                        setFeedbackSelected((prev) =>
+                          isSelected ? prev.filter((v) => v !== chip.value) : [...prev, chip.value]
+                        );
+                      }}
+                      style={{
+                        border: isSelected ? "1px solid var(--accent)" : "1px solid var(--border)",
+                        borderRadius: 20,
+                        padding: "6px 14px",
+                        fontSize: 13,
+                        cursor: "pointer",
+                        background: isSelected ? "var(--accent)" : "transparent",
+                        color: isSelected ? "white" : "var(--text-secondary)",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      {chip.value}
+                    </button>
+                  );
+                })}
+              </div>
+              <textarea
+                value={feedbackCustom}
+                onChange={(e) => setFeedbackCustom(e.target.value)}
+                placeholder={t("generate.feedback_other")}
+                rows={2}
+                style={{
+                  width: "100%",
+                  fontSize: 14,
+                  color: "var(--text)",
+                  background: "transparent",
+                  border: "1px solid var(--border)",
+                  borderRadius: 6,
+                  padding: "6px 10px",
+                  outline: "none",
+                  boxSizing: "border-box",
+                  resize: "vertical",
+                  marginBottom: 12,
+                  fontFamily: "inherit",
+                }}
+              />
+              <button
+                className="btn-primary"
+                onClick={handleFeedbackRegenerate}
+                disabled={generating || (feedbackSelected.length === 0 && !feedbackCustom.trim())}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: 14,
+                  padding: "8px 16px",
+                  opacity: (feedbackSelected.length === 0 && !feedbackCustom.trim()) ? 0.5 : 1,
+                }}
+              >
+                {generating ? (
+                  <>
+                    <Spinner />
+                    {t("generate.feedback_regenerating")}
+                  </>
+                ) : (
+                  t("generate.feedback_regenerate")
+                )}
+              </button>
+            </div>
+          )}
 
           {sendError && (
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{sendError}</p>

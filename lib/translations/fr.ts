@@ -495,6 +495,16 @@ const fr: Record<string, string> = {
   "generate.status_sent": "Envoyé ✓",
   "generate.status_failed": "Échec ✗",
   "generate.generate_new": "Générer une nouvelle newsletter",
+  "generate.feedback_prompt": "Pas satisfait du résultat ?",
+  "generate.feedback_too_long": "Trop long",
+  "generate.feedback_too_short": "Trop court",
+  "generate.feedback_not_technical": "Pas assez technique",
+  "generate.feedback_too_generic": "Trop générique",
+  "generate.feedback_irrelevant": "Sujets pas pertinents",
+  "generate.feedback_wrong_tone": "Ton pas adapté",
+  "generate.feedback_other": "Autre chose ? (optionnel)",
+  "generate.feedback_regenerate": "Régénérer avec ces retours",
+  "generate.feedback_regenerating": "Régénération en cours...",
 
   // History page
   "history.title": "Historique",

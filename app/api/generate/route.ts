@@ -19,7 +19,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Non autorise" }, { status: 401 });
     }
 
-    const { userId, topics, sources, customBrief } = await request.json();
+    const { userId, topics, sources, customBrief, feedback, newsletterId } = await request.json() as {
+      userId?: string;
+      topics?: Array<{ enabled: boolean; label: string }>;
+      sources?: string[];
+      customBrief?: string;
+      feedback?: string;
+      newsletterId?: string;
+    };
 
     if (userId && userId !== authUser.id) {
       return NextResponse.json({ error: "Non autorise" }, { status: 403 });
@@ -46,10 +53,12 @@ export async function POST(request: Request) {
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", verifiedUserId).single();
     const plan = profile?.plan || "free";
 
+    const isRegeneration = Boolean(feedback && newsletterId);
+
     const previewLimits: Record<string, number> = { free: 0, pro: -1, business: -1, enterprise: -1 };
     const maxPreviews = previewLimits[plan] ?? 0;
 
-    if (maxPreviews !== -1) {
+    if (maxPreviews !== -1 && !isRegeneration) {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);
@@ -88,21 +97,29 @@ export async function POST(request: Request) {
     let resolvedTopics = topics;
     let resolvedSources = sources;
     let resolvedBrief = customBrief;
-    if (!resolvedTopics?.length) {
-      const { data: config } = await supabase
-        .from("newsletter_config")
-        .select("topics, sources, custom_brief")
-        .eq("user_id", verifiedUserId)
-        .single();
-      if (!config?.topics?.length) {
-        return NextResponse.json({ error: "Aucune thematique configuree" }, { status: 400 });
+    let feedbackHistory: Array<{ feedback: string; date: string }> = [];
+
+    const { data: config } = await supabase
+      .from("newsletter_config")
+      .select("topics, sources, custom_brief, feedback_history")
+      .eq("user_id", verifiedUserId)
+      .single();
+
+    if (config) {
+      feedbackHistory = (config.feedback_history as Array<{ feedback: string; date: string }>) || [];
+      if (!resolvedTopics?.length) {
+        if (!config.topics?.length) {
+          return NextResponse.json({ error: "Aucune thematique configuree" }, { status: 400 });
+        }
+        resolvedTopics = config.topics;
+        resolvedSources = resolvedSources || config.sources;
+        resolvedBrief = resolvedBrief || config.custom_brief;
       }
-      resolvedTopics = config.topics;
-      resolvedSources = resolvedSources || config.sources;
-      resolvedBrief = resolvedBrief || config.custom_brief;
+    } else if (!resolvedTopics?.length) {
+      return NextResponse.json({ error: "Aucune thematique configuree" }, { status: 400 });
     }
 
-    const topicsList = resolvedTopics
+    const topicsList = (resolvedTopics || [])
       .filter((t: { enabled: boolean }) => t.enabled)
       .map((t: { label: string }) => t.label)
       .join(", ");
@@ -127,6 +144,8 @@ export async function POST(request: Request) {
       dateString: now.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
       searchDateHint: now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
       previousTitles,
+      feedbackHistory,
+      currentFeedback: feedback,
     });
 
     const newsletterContent = await generateNewsletterContent(prompt);
@@ -134,19 +153,56 @@ export async function POST(request: Request) {
     const dateLabel = now.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
     const subject = buildSubjectLine(newsletterContent, dateLabel);
 
-    const { data: newsletter, error } = await supabase
-      .from("newsletters")
-      .insert({
-        user_id: verifiedUserId,
-        subject,
-        content: newsletterContent,
-        status: "draft",
-      })
-      .select()
-      .single();
+    let newsletter: Record<string, unknown> | null = null;
 
-    if (error) {
-      return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
+    if (isRegeneration) {
+      // Update existing newsletter instead of inserting a new row
+      const { data: updated, error: updateError } = await supabase
+        .from("newsletters")
+        .update({
+          subject,
+          content: newsletterContent,
+        })
+        .eq("id", newsletterId)
+        .eq("user_id", verifiedUserId)
+        .select()
+        .single();
+
+      if (updateError) {
+        return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
+      }
+      newsletter = updated;
+
+      // Save feedback to feedback_history (fire-and-forget, non-blocking)
+      void (async () => {
+        try {
+          const newEntry = { feedback: feedback as string, date: new Date().toISOString() };
+          const updatedHistory = [...feedbackHistory, newEntry].slice(-10);
+          await supabase
+            .from("newsletter_config")
+            .update({ feedback_history: updatedHistory })
+            .eq("user_id", verifiedUserId);
+        } catch {
+          // Non-critical — do not block the response
+        }
+      })();
+    } else {
+      // Insert new newsletter
+      const { data: inserted, error: insertError } = await supabase
+        .from("newsletters")
+        .insert({
+          user_id: verifiedUserId,
+          subject,
+          content: newsletterContent,
+          status: "draft",
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
+      }
+      newsletter = inserted;
     }
 
     // Activity log
