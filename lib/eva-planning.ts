@@ -94,8 +94,10 @@ export async function checkPlanningReminders(
 
     for (const event of events) {
       // Utilise le champ "Heure" de Notion (0-23), défaut 9h si non renseigné
+      // Pas d'offset timezone : parisNow est aussi en "Paris time as UTC" (via toLocaleString trick)
+      // Les deux dates doivent être dans le même référentiel pour que le diff soit correct
       const h = String(event.hour).padStart(2, "0");
-      const eventDate = new Date(`${event.date}T${h}:00:00+02:00`);
+      const eventDate = new Date(`${event.date}T${h}:00:00`);
       const eventMs = eventDate.getTime();
       const diffMs = eventMs - nowMs;
       const diffHours = diffMs / (1000 * 60 * 60);
