@@ -28,6 +28,8 @@ import {
   checkLifecycleCron,
 } from "@/lib/eva-monitor";
 
+export const maxDuration = 60;
+
 // --- Helpers ---
 
 function isAuthorizedUser(userId: number): boolean {

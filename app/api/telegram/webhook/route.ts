@@ -37,6 +37,8 @@ import {
   getUserInfo,
 } from "@/lib/eva-stats";
 
+export const maxDuration = 60;
+
 // --- Helpers ---
 
 function isAuthorizedUser(userId: number): boolean {

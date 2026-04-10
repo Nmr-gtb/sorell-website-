@@ -23,6 +23,8 @@ import { checkBusinessAlerts } from "@/lib/eva-stats";
 import { syncAllUsersToNotion, syncPendingActivities } from "@/lib/notion-sync";
 import { checkPlanningReminders } from "@/lib/eva-planning";
 
+export const maxDuration = 60;
+
 // --- Auth ---
 
 function verifyCronSecret(request: Request): boolean {
