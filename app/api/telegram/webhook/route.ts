@@ -36,6 +36,7 @@ import {
   getInactiveUsers,
   getUserInfo,
 } from "@/lib/eva-stats";
+import { pushNotionToDefaultCampaign } from "@/lib/notion-to-emelia";
 
 export const maxDuration = 60;
 
@@ -183,6 +184,16 @@ async function executeIntent(intent: TaskIntent, chatId: number): Promise<string
       return getInactiveUsers();
     case "user_lookup":
       return getUserInfo(intent.searchQuery);
+    case "emelia_push": {
+      const result = await pushNotionToDefaultCampaign();
+      if (result.pushed === 0 && result.errors === 0) {
+        return "Aucun contact \"À envoyer\" trouvé dans Notion. Ajoute des contacts avec le statut <b>À envoyer</b> et je les pousserai dans Emelia.";
+      }
+      let reply = `<b>Push Emelia terminé</b>\n\n✅ ${result.pushed} contact(s) poussé(s)`;
+      if (result.errors > 0) reply += `\n⚠️ ${result.errors} erreur(s)`;
+      reply += "\n\nLes contacts sont passés en statut \"Envoyé\" dans Notion.";
+      return reply;
+    }
     case "conversation": {
       const history = await loadHistory("eva", chatId);
       return generateEvaResponse(intent.rawMessage, history);
@@ -228,7 +239,7 @@ export async function POST(request: Request): Promise<Response> {
     if (text === "/start") {
       await sendTelegramMessage({
         chatId,
-        text: "Salut Noé ! Eva est là.\n\nTu peux me parler normalement, je comprends tout.\n\n<b>Business :</b>\n- \"Stats\" ou \"Dashboard\" — vue d'ensemble\n- \"MRR\" — revenus\n- \"Inscrits\" — dernières inscriptions\n- \"Conversion\" — taux trial → payant\n- \"Churn\" — désabonnements\n- \"Inactifs\" — users qui n'utilisent pas\n- \"Info sur [email]\" — fiche utilisateur\n\n<b>Tâches :</b>\n- \"Ajoute : [tâche]\"\n- \"Termine [tâche]\"\n- \"Mes tâches\"\n\n<b>Discussion :</b>\nConseils, priorisation, stratégie — je connais tes tâches et tes metrics.\n\nPour le monitoring, utilise Jade.",
+        text: "Salut Noé ! Eva est là.\n\nTu peux me parler normalement, je comprends tout.\n\n<b>Business :</b>\n- \"Stats\" ou \"Dashboard\" — vue d'ensemble\n- \"MRR\" — revenus\n- \"Inscrits\" — dernières inscriptions\n- \"Conversion\" — taux trial → payant\n- \"Churn\" — désabonnements\n- \"Inactifs\" — users qui n'utilisent pas\n- \"Info sur [email]\" — fiche utilisateur\n\n<b>Tâches :</b>\n- \"Ajoute : [tâche]\"\n- \"Termine [tâche]\"\n- \"Mes tâches\"\n\n<b>Emelia :</b>\n- \"Pousse les contacts\" — envoie les prospects Notion dans Emelia\n\n<b>Discussion :</b>\nConseils, priorisation, stratégie — je connais tes tâches et tes metrics.\n\nPour le monitoring, utilise Jade.",
       });
       return NextResponse.json({ ok: true });
     }

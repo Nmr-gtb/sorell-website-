@@ -50,6 +50,7 @@ export type TaskIntent =
       intent: "user_lookup";
       searchQuery: string;
     }
+  | { intent: "emelia_push" }
   | {
       intent: "conversation";
       rawMessage: string;
@@ -78,6 +79,7 @@ Intents possibles :
 - "stats_churn" : desabonnements. Mots-cles : "churn", "desabonnements", "qui a quitte", "resiliations", "perdus".
 - "stats_inactive" : utilisateurs inactifs. Mots-cles : "inactifs", "dormants", "qui n'utilise pas", "jamais genere", "pas de newsletter".
 - "user_lookup" : chercher un utilisateur precis. Mots-cles : "info sur [email/nom]", "montre-moi [user]", "qui est [user]", "cherche [user]". Extrais l'email ou le nom dans searchQuery.
+- "emelia_push" : pousser les contacts Notion vers Emelia. Mots-cles : "pousse les contacts", "envoie dans emelia", "push emelia", "sync emelia", "lance la campagne", "envoie les prospects", "push les prospects".
 - "conversation" : si le message est une discussion generale, une question, une demande de conseil, un salut, ou tout ce qui ne concerne pas directement la gestion de taches ni les stats business. Extrais le message brut.
 - "unknown" : UNIQUEMENT si le message est totalement incomprehensible (caracteres aleatoires, etc.).
 
@@ -114,6 +116,9 @@ Exemples :
 "Qui n'utilise pas Sorell ?" -> {"intent":"stats_inactive"}
 "Info sur jean@example.com" -> {"intent":"user_lookup","searchQuery":"jean@example.com"}
 "Montre-moi le profil de Jean Dupont" -> {"intent":"user_lookup","searchQuery":"Jean Dupont"}
+"Pousse les contacts dans Emelia" -> {"intent":"emelia_push"}
+"Envoie les prospects" -> {"intent":"emelia_push"}
+"Push Emelia" -> {"intent":"emelia_push"}
 "Salut Eva" -> {"intent":"conversation","rawMessage":"Salut Eva"}
 "Tu me conseilles quoi aujourd'hui ?" -> {"intent":"conversation","rawMessage":"Tu me conseilles quoi aujourd'hui ?"}
 "Je suis un peu perdu, aide-moi" -> {"intent":"conversation","rawMessage":"Je suis un peu perdu, aide-moi"}
@@ -160,6 +165,7 @@ export async function parseTaskIntent(message: string): Promise<TaskIntent> {
       "stats_churn",
       "stats_inactive",
       "user_lookup",
+      "emelia_push",
       "conversation",
       "unknown",
     ];
