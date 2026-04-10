@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
 import {
   getNewsletterConfig,
@@ -1363,7 +1364,7 @@ export default function ConfigPage() {
                         <div style={{ background: "#FFFFFF", borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
                           {/* Header */}
                           <div style={{ padding: "14px 20px", borderBottom: "1px solid #E8E0D8", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                            <Image src="/icone.png" alt="S." width={24} height={24} />
                             <span style={{ fontSize: 10, color: "#7A7267" }}>Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
                           </div>
                           {/* Hero */}
@@ -1547,7 +1548,7 @@ export default function ConfigPage() {
                           style={{ border: "2px dashed var(--border)", borderRadius: 10, padding: "24px 20px", textAlign: "center", cursor: "pointer", background: "var(--surface-alt)", transition: "border-color 0.2s" }}>
                           {logoPreview || logoUrl ? (
                             <div>
-                              <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }} />
+                              <Image src={logoPreview || logoUrl} alt="Logo" width={200} height={50} unoptimized style={{ maxHeight: 50, maxWidth: 200, width: "auto", height: "auto", marginBottom: 12 }} />
                               <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>{t("custom.logo_replace")}</p>
                             </div>
                           ) : (
@@ -1580,9 +1581,9 @@ export default function ConfigPage() {
                           {/* Header */}
                           <div style={{ padding: "14px 20px", borderBottom: "1px solid #E8E0D8", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             {(canUseLogo && (logoPreview || logoUrl)) ? (
-                              <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 24, maxWidth: 120 }} />
+                              <Image src={logoPreview || logoUrl} alt="Logo" width={120} height={24} unoptimized style={{ maxHeight: 24, maxWidth: 120, width: "auto", height: "auto" }} />
                             ) : (
-                              <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                              <Image src="/icone.png" alt="S." width={24} height={24} />
                             )}
                             <span style={{ fontSize: 10, color: "#7A7267" }}>Semaine du {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
                           </div>
@@ -1666,9 +1667,9 @@ export default function ConfigPage() {
                           <div style={{ padding: "12px 20px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                               {(canUseLogo && (logoPreview || logoUrl)) ? (
-                                <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 16, maxWidth: 80 }} />
+                                <Image src={logoPreview || logoUrl} alt="Logo" width={80} height={16} unoptimized style={{ maxHeight: 16, maxWidth: 80, width: "auto", height: "auto" }} />
                               ) : (
-                                <img src="/icone.png" alt="S." style={{ width: 16, height: 16 }} />
+                                <Image src="/icone.png" alt="S." width={16} height={16} />
                               )}
                               <span style={{ fontSize: 9, color: brandColor }}>sorell.fr</span>
                             </div>

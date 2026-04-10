@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Contactez l'équipe Sorell. Question sur la newsletter IA, les tarifs ou une demande entreprise ? Nous répondons sous 24h.",
+  title: "Contact — Sorell",
+  description: "Une question sur Sorell ? Contactez notre équipe. Réponse sous 24h.",
   openGraph: {
-    title: "Contact | Sorell",
-    description: "Contactez l'équipe Sorell. Nous répondons sous 24h.",
+    title: "Contact — Sorell",
+    description: "Une question sur Sorell ? Contactez notre équipe. Réponse sous 24h.",
     url: "https://sorell.fr/contact",
+    images: ["/og-image.png"],
   },
   alternates: { canonical: "https://sorell.fr/contact" },
 };

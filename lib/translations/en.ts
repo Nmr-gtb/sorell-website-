@@ -244,6 +244,8 @@ const en: Record<string, string> = {
   "common.saving": "Saving...",
   "common.add": "Add",
   "common.cancel": "Cancel",
+  "common.close_menu": "Close menu",
+  "common.open_menu": "Open menu",
 
   // Dashboard page
   "dashboard.greeting": "Hello",
@@ -777,6 +779,12 @@ const en: Record<string, string> = {
   "aria.toggle_theme": "Toggle theme",
   "aria.open_menu": "Open menu",
   "aria.close_menu": "Close menu",
+
+  // Pricing extra
+  "pricing.custom_price": "Contact us",
+
+  // Chat
+  "chat.suggestion_pricing": "Free or paid?",
 
   // Cookies
   "cookies.text": "This site uses cookies and local storage to improve your experience.",

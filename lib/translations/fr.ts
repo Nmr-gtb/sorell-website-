@@ -244,6 +244,8 @@ const fr: Record<string, string> = {
   "common.saving": "Sauvegarde...",
   "common.add": "Ajouter",
   "common.cancel": "Annuler",
+  "common.close_menu": "Fermer le menu",
+  "common.open_menu": "Ouvrir le menu",
 
   // Dashboard page
   "dashboard.greeting": "Bonjour",
@@ -777,6 +779,12 @@ const fr: Record<string, string> = {
   "aria.toggle_theme": "Basculer le thème",
   "aria.open_menu": "Ouvrir le menu",
   "aria.close_menu": "Fermer le menu",
+
+  // Pricing extra
+  "pricing.custom_price": "Sur devis",
+
+  // Chat
+  "chat.suggestion_pricing": "Gratuit ou payant ?",
 
   // Cookies
   "cookies.text": "Ce site utilise des cookies et le stockage local pour améliorer votre expérience.",

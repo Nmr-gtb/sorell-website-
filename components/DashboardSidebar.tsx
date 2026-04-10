@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
@@ -202,7 +203,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
       {/* Logo + close button on mobile */}
       <div style={{ padding: "4px 16px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Link href="/" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-          <img
+          <Image
             src="/icone.png"
             alt="Sorell"
             width={32}
@@ -214,7 +215,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
         <button
           className="sidebar-close-btn"
           onClick={onClose}
-          aria-label="Fermer le menu"
+          aria-label={t("common.close_menu")}
           style={{
             display: "none",
             alignItems: "center",

@@ -13,6 +13,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -421,7 +422,7 @@ export default function CustomizationPage() {
             >
               {logoPreview || logoUrl ? (
                 <div>
-                  <img src={logoPreview || logoUrl} alt="Logo" style={{ maxHeight: 50, maxWidth: 200, marginBottom: 12 }} />
+                  <Image src={logoPreview || logoUrl} alt="Logo" width={200} height={50} unoptimized style={{ maxHeight: 50, maxWidth: 200, width: "auto", height: "auto", marginBottom: 12 }} />
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0" }}>{t("custom.logo_replace")}</p>
                 </div>
               ) : (
@@ -496,9 +497,9 @@ export default function CustomizationPage() {
               <div style={{ padding: "16px 24px", borderBottom: `1px solid ${warmBorder}` }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   {previewLogo ? (
-                    <img src={previewLogo} alt="Logo" style={{ maxHeight: 28, maxWidth: 140 }} />
+                    <Image src={previewLogo} alt="Logo" width={140} height={28} unoptimized style={{ maxHeight: 28, maxWidth: 140, width: "auto", height: "auto" }} />
                   ) : (
-                    <img src="/icone.png" alt="S." style={{ width: 28, height: 28 }} />
+                    <Image src="/icone.png" alt="S." width={28} height={28} />
                   )}
                   <span style={{ fontSize: 11, color: secondaryText, fontFamily: "Georgia, 'Times New Roman', serif" }}>
                     Semaine du {previewDate}
@@ -634,9 +635,9 @@ export default function CustomizationPage() {
               <div style={{ padding: "16px 24px", borderTop: `1px solid ${warmBorder}`, background: warmBg }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   {previewLogo ? (
-                    <img src={previewLogo} alt="Logo" style={{ maxHeight: 20, maxWidth: 100 }} />
+                    <Image src={previewLogo} alt="Logo" width={100} height={20} unoptimized style={{ maxHeight: 20, maxWidth: 100, width: "auto", height: "auto" }} />
                   ) : (
-                    <img src="/icone.png" alt="S." style={{ width: 20, height: 20 }} />
+                    <Image src="/icone.png" alt="S." width={20} height={20} />
                   )}
                   <span style={{ fontSize: 10, color: brandColor }}>sorell.fr</span>
                 </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount, addRecipient } from "@/lib/database";
@@ -619,9 +620,9 @@ export default function GeneratePage() {
             <div className="generate-email-header" style={{ padding: "20px 32px", borderBottom: "1px solid #E8E0D8" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 {customLogo ? (
-                  <img src={customLogo} alt="Logo" style={{ maxHeight: 32, maxWidth: 160 }} />
+                  <Image src={customLogo} alt="Logo" width={160} height={32} unoptimized style={{ maxHeight: 32, maxWidth: 160, width: "auto", height: "auto" }} />
                 ) : (
-                  <img src="/icone.png" alt="S." style={{ width: 32, height: 32 }} />
+                  <Image src="/icone.png" alt="S." width={32} height={32} />
                 )}
                 <span style={{ fontSize: 12, color: "#7A7267", fontFamily: "Georgia, 'Times New Roman', serif" }}>
                   {t("generate.week_of")} {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
@@ -824,9 +825,9 @@ export default function GeneratePage() {
             <div style={{ padding: "22px 32px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                 {customLogo ? (
-                  <img src={customLogo} alt="Logo" style={{ maxHeight: 24, maxWidth: 120 }} />
+                  <Image src={customLogo} alt="Logo" width={120} height={24} unoptimized style={{ maxHeight: 24, maxWidth: 120, width: "auto", height: "auto" }} />
                 ) : (
-                  <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+                  <Image src="/icone.png" alt="S." width={24} height={24} />
                 )}
                 <a href="https://sorell.fr" style={{ fontSize: 12, color: brandColor, textDecoration: "none", fontFamily: "'Segoe UI', Roboto, Arial, sans-serif" }}>sorell.fr</a>
               </div>

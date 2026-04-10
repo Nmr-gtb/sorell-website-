@@ -51,7 +51,7 @@ export default function DashboardHeader({ onMenuClick, menuOpen }: Props) {
         <button
           className="dashboard-header-hamburger"
           onClick={onMenuClick}
-          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={menuOpen ? t("common.close_menu") : t("common.open_menu")}
           style={{
             background: "transparent",
             border: "1px solid var(--border)",

@@ -73,7 +73,11 @@ export default function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
   const modeRef = useRef<ChatMode>("general");
 
-  const starters = lang === "en" ? STARTERS_EN : STARTERS_FR;
+  const starters = (lang === "en" ? STARTERS_EN : STARTERS_FR).map((s) =>
+    s.label === "Gratuit ou payant ?" || s.label === "Free or paid?"
+      ? { ...s, label: t("chat.suggestion_pricing") }
+      : s
+  );
 
   const getWelcome = useCallback((m: ChatMode) => {
     return lang === "en" ? WELCOME_EN[m] : WELCOME_FR[m];

@@ -117,7 +117,7 @@ export default function PricingCard({
               letterSpacing: "-0.02em",
             }}
           >
-            Sur devis
+            {t("pricing.custom_price")}
           </span>
         ) : free || price === 0 ? (
           <span
@@ -130,7 +130,7 @@ export default function PricingCard({
               letterSpacing: "-0.03em",
             }}
           >
-            Gratuit
+            {t("pricing.free_price")}
           </span>
         ) : (
           <>

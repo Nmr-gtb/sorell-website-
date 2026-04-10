@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -200,7 +201,7 @@ function DemoNewsletterResult({
         {/* Header — logo + date */}
         <div style={{ padding: "20px 32px", borderBottom: `1px solid ${p.warmBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <img src="/icone.png" alt="S." style={{ width: 32, height: 32 }} />
+            <Image src="/icone.png" alt="S." width={32} height={32} />
             <span style={{ fontSize: "12px", color: p.secondaryText, fontFamily: "Georgia, 'Times New Roman', serif" }}>
               {dateLabel}
             </span>
@@ -444,7 +445,7 @@ function DemoNewsletterResult({
         {/* Footer crème */}
         <div style={{ padding: "22px 32px", borderTop: `1px solid ${p.warmBorder}`, background: p.warmBg, borderRadius: "0 0 12px 12px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <img src="/icone.png" alt="S." style={{ width: 24, height: 24 }} />
+            <Image src="/icone.png" alt="S." width={24} height={24} />
             <span style={{ fontSize: "12px", color: p.brandColor, fontWeight: 500 }}>sorell.fr</span>
           </div>
           <p style={{ fontSize: "11px", color: p.secondaryText, margin: 0, lineHeight: 1.5 }}>
