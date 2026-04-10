@@ -12,6 +12,7 @@
  * 5. Alertes business → 10h
  * 6. Sync Notion → 11h (utilisateurs + activités pendantes)
  * 7. Rappels planning communication → toutes les 15 min (24h, 1h, à l'heure)
+ * 8. Sync Emelia → Notion (toutes les heures) : contacts ayant répondu
  */
 
 import { NextResponse } from "next/server";
@@ -22,6 +23,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { checkBusinessAlerts } from "@/lib/eva-stats";
 import { syncAllUsersToNotion, syncPendingActivities } from "@/lib/notion-sync";
 import { checkPlanningReminders } from "@/lib/eva-planning";
+import { syncEmeliaToNotion } from "@/lib/emelia-sync";
 
 export const maxDuration = 60;
 
@@ -51,13 +53,14 @@ interface CronState {
   lastBusinessAlert: string | null; // YYYY-MM-DD
   lastWeeklyReport: string | null; // YYYY-MM-DD
   lastNotionSync: string | null; // YYYY-MM-DD
+  lastEmeliaSync: string | null; // ISO timestamp (pour tracker l'heure, pas juste la date)
 }
 
 async function getCronState(): Promise<CronState> {
   const { data } = await supabaseAdmin
     .from("telegram_messages")
     .select("intent, created_at")
-    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report", "cron_notion_sync", "cron_planning_reminder"])
+    .in("intent", ["cron_site_down", "cron_daily_summary", "cron_deadline_alert", "cron_business_alert", "cron_weekly_report", "cron_notion_sync", "cron_planning_reminder", "cron_emelia_sync"])
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -68,6 +71,7 @@ async function getCronState(): Promise<CronState> {
     lastBusinessAlert: null,
     lastWeeklyReport: null,
     lastNotionSync: null,
+    lastEmeliaSync: null,
   };
 
   if (!data) return state;
@@ -91,6 +95,9 @@ async function getCronState(): Promise<CronState> {
     }
     if (msg.intent === "cron_notion_sync" && !state.lastNotionSync) {
       state.lastNotionSync = date;
+    }
+    if (msg.intent === "cron_emelia_sync" && !state.lastEmeliaSync) {
+      state.lastEmeliaSync = msg.created_at;
     }
   }
 
@@ -339,6 +346,44 @@ export async function GET(request: Request): Promise<Response> {
       }
     } catch {
       results.push("planning_reminder_error");
+    }
+
+    // --- 8. Sync Emelia -> Notion (toutes les heures, à la minute 0-14) ---
+    const shouldSyncEmelia = (() => {
+      if (new Date().getMinutes() >= 15) return false;
+      if (!state.lastEmeliaSync) return true;
+      // Vérifier qu'au moins 1h s'est écoulée depuis la dernière sync
+      const lastSyncTime = new Date(state.lastEmeliaSync).getTime();
+      return Date.now() - lastSyncTime > 60 * 60 * 1000;
+    })();
+
+    if (shouldSyncEmelia) {
+      try {
+        const { newReplies, updated } = await syncEmeliaToNotion();
+
+        if (newReplies > 0) {
+          await sendTelegramMessage({
+            chatId,
+            text: `<b>Emelia - ${newReplies} nouvelle(s) réponse(s)</b>\n\n${updated > 0 ? `${updated} contact(s) mis à jour.` : ""}Les contacts ont été ajoutés dans Notion.`,
+          });
+        }
+
+        await supabaseAdmin.from("telegram_messages").insert({
+          bot_name: "eva",
+          chat_id: chatId,
+          role: "assistant",
+          content: `Sync Emelia : ${newReplies} nouvelles réponses, ${updated} mises à jour`,
+          intent: "cron_emelia_sync",
+        });
+
+        results.push(
+          newReplies > 0 || updated > 0
+            ? `emelia_sync_${newReplies}_new_${updated}_updated`
+            : "emelia_no_new_replies"
+        );
+      } catch {
+        results.push("emelia_sync_error");
+      }
     }
 
     return NextResponse.json({ ok: true, results, hour: parisHour, date: parisDate });
