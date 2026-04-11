@@ -55,3 +55,16 @@ main,
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   BORDER BEAM — Animation for admin UI components
+   ============================================================ */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@utility animate-border-beam {
+  animation: border-beam calc(var(--duration) * 1s) infinite linear;
+}
