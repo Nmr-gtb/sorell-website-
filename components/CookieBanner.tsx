@@ -41,8 +41,9 @@ export default function CookieBanner() {
         left: 0,
         right: 0,
         zIndex: 9999,
-        backgroundColor: "#0f2b31",
-        borderTop: "1px solid rgba(94, 234, 212, 0.15)",
+        backgroundColor: "#ffffff",
+        borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.08)",
         padding: "16px 20px",
         display: "flex",
         flexWrap: "wrap",
@@ -54,7 +55,7 @@ export default function CookieBanner() {
     >
       <p
         style={{
-          color: "rgba(255, 255, 255, 0.85)",
+          color: "#1f2937",
           fontSize: "14px",
           lineHeight: "1.5",
           margin: 0,
@@ -66,7 +67,7 @@ export default function CookieBanner() {
         <a
           href="/confidentialite"
           style={{
-            color: "#5EEAD4",
+            color: "#005058",
             textDecoration: "underline",
             textUnderlineOffset: "2px",
           }}
@@ -86,21 +87,21 @@ export default function CookieBanner() {
           style={{
             padding: "8px 20px",
             borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
+            border: "1px solid rgba(0, 0, 0, 0.15)",
             backgroundColor: "transparent",
-            color: "rgba(255, 255, 255, 0.7)",
+            color: "#6b7280",
             fontSize: "14px",
             fontWeight: 500,
             cursor: "pointer",
             transition: "background-color 0.2s, color 0.2s",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-            e.currentTarget.style.color = "rgba(255, 255, 255, 0.9)";
+            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)";
+            e.currentTarget.style.color = "#1f2937";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)";
+            e.currentTarget.style.color = "#6b7280";
           }}
           aria-label={t("cookies.refuse")}
         >
