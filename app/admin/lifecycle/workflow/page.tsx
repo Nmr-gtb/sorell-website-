@@ -226,7 +226,8 @@ export default function WorkflowPage() {
                     height: h,
                     backgroundColor: style.bg,
                     borderColor: isSelected ? style.accent : style.border,
-                    ringColor: style.accent,
+                    // @ts-expect-error -- Tailwind ring-color via CSS variable
+                    "--tw-ring-color": style.accent,
                   }}
                 >
                   {/* Header */}
