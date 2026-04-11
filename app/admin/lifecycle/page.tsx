@@ -71,6 +71,13 @@ export default function AdminLifecyclePage() {
           <p className="mt-1 text-sm text-[var(--text-muted)]">Suivez la progression de chaque utilisateur dans le funnel</p>
         </div>
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/lifecycle/workflow"
+            className="flex items-center gap-2 rounded-xl border border-[var(--accent)] bg-[var(--accent-subtle)] px-4 py-2 text-sm font-semibold text-[var(--accent)] transition-all hover:bg-[var(--accent)] hover:text-white"
+          >
+            <span>⚡</span>
+            Workflow visuel
+          </Link>
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle)]">
             <LifecycleIcon size={18} className="text-[var(--accent)]" />
           </div>

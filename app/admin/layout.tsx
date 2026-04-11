@@ -29,6 +29,7 @@ const breadcrumbLabels: Record<string, string> = {
   "/admin/users": "Utilisateurs",
   "/admin/newsletters": "Newsletters",
   "/admin/lifecycle": "Lifecycle Emails",
+  "/admin/lifecycle/workflow": "Workflow Visuel",
   "/admin/prompts": "Prompts",
 };
 
