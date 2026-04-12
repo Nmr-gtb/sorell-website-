@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { getProfile } from "@/lib/database";
-import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
 function IconGrid() {
@@ -132,8 +131,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
   const router = useRouter();
   const { t } = useLanguage();
   const [realPlan, setRealPlan] = useState<string>("free");
-  const { getEffectivePlan } = useDevMode();
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const [animating, setAnimating] = useState(false);
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

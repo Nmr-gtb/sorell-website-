@@ -13,7 +13,6 @@ import {
 } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
 import { getPlanLimits } from "@/lib/plans";
-import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
@@ -182,7 +181,6 @@ type TabId = "contenu" | "sources" | "envoi" | "apparence";
 export default function ConfigPage() {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { getEffectivePlan } = useDevMode();
 
   const [activeTab, setActiveTab] = useState<TabId>("contenu");
 
@@ -284,7 +282,7 @@ export default function ConfigPage() {
     loadData();
   }, [user]);
 
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const limits = getPlanLimits(plan);
   const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
   const canUseLogo = plan === "business" || plan === "enterprise";

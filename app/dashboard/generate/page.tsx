@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount, addRecipient } from "@/lib/database";
 import CrownBadge from "@/components/CrownBadge";
-import { useDevMode } from "@/lib/DevModeContext";
 import { getPlanLimits } from "@/lib/plans";
 import { authFetch } from "@/lib/api";
 
@@ -91,7 +90,6 @@ export default function GeneratePage() {
   const [recipientCount, setRecipientCount] = useState(0);
   const [loadingConfig, setLoadingConfig] = useState(true);
   const [realPlan, setRealPlan] = useState<string>("free");
-  const { getEffectivePlan } = useDevMode();
   const [generatedThisMonth, setGeneratedThisMonth] = useState(0);
 
   const [generating, setGenerating] = useState(false);
@@ -153,7 +151,7 @@ export default function GeneratePage() {
     loadConfig();
   }, [user]);
 
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const planLimits = getPlanLimits(plan);
   const previewLimit = planLimits.previewsPerMonth; // -1 = illimite
   const isAtGenerationLimit = previewLimit !== -1 && generatedThisMonth >= previewLimit;

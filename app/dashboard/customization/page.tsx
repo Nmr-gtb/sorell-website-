@@ -17,7 +17,6 @@ import Image from "next/image";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const PRESET_COLORS = [
@@ -35,7 +34,6 @@ export default function CustomizationPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { t } = useLanguage();
-  const { getEffectivePlan } = useDevMode();
 
   const [brandColor, setBrandColor] = useState("#005058");
   const [textColor, setTextColor] = useState("#111827");
@@ -50,7 +48,7 @@ export default function CustomizationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
 
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
   const canUseLogo = plan === "business" || plan === "enterprise";
 

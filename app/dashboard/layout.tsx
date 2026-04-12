@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
-import { DevModeProvider } from "@/lib/DevModeContext";
-import DevModeToggle from "@/components/DevModeToggle";
 
 function Spinner() {
   return (
@@ -51,7 +49,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (loading || !user) return <Spinner />;
 
   return (
-    <DevModeProvider>
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <DashboardSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -61,9 +58,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
-
-      <DevModeToggle />
     </div>
-    </DevModeProvider>
   );
 }

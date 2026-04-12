@@ -7,7 +7,6 @@ import { useAuth } from "@/lib/AuthContext";
 import { getProfile } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
-import { useDevMode } from "@/lib/DevModeContext";
 import { authFetch } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -54,8 +53,6 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [planLoaded, setPlanLoaded] = useState(false);
   const [realPlan, setRealPlan] = useState<string>("free");
-  const { getEffectivePlan } = useDevMode();
-
   useEffect(() => {
     if (!user) return;
 
@@ -77,7 +74,7 @@ export default function AnalyticsPage() {
     loadAll();
   }, [user]);
 
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const limits = getPlanLimits(plan);
 
   if (!planLoaded) {

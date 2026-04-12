@@ -4,7 +4,6 @@ import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { getProfile } from "@/lib/database";
 import { getPlanLimits } from "@/lib/plans";
-import { useDevMode } from "@/lib/DevModeContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useRouter } from "next/navigation";
 
@@ -20,14 +19,13 @@ export default function HistoriquePage() {
   const { user } = useAuth();
   const router = useRouter();
   const { t } = useLanguage();
-  const { getEffectivePlan } = useDevMode();
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [loading, setLoading] = useState(true);
   const [planLoaded, setPlanLoaded] = useState(false);
   const [realPlan, setRealPlan] = useState<string>("free");
   const [selectedNewsletter, setSelectedNewsletter] = useState<Newsletter | null>(null);
 
-  const plan = getEffectivePlan(realPlan);
+  const plan = realPlan;
   const limits = getPlanLimits(plan);
 
   useEffect(() => {
