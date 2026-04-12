@@ -58,7 +58,15 @@ export async function POST(request: Request) {
     const previewLimits: Record<string, number> = { free: 0, pro: -1, business: -1, enterprise: -1 };
     const maxPreviews = previewLimits[plan] ?? 0;
 
-    if (maxPreviews !== -1 && !isRegeneration) {
+    // Autoriser la toute première newsletter (onboarding) même pour les free
+    const { count: totalNewsletters } = await supabase
+      .from("newsletters")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", verifiedUserId);
+
+    const isFirstNewsletter = (totalNewsletters || 0) === 0;
+
+    if (maxPreviews !== -1 && !isRegeneration && !isFirstNewsletter) {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);

@@ -359,13 +359,21 @@ export default function DashboardPage() {
       });
       if (genRes.status === 429) {
         setOnboardingError(t("dashboard.rate_limit_error"));
+      } else if (!genRes.ok) {
+        const errData = await genRes.json().catch(() => null);
+        setOnboardingError(errData?.error || t("dashboard.first_newsletter_error"));
       } else {
         const genData = await genRes.json();
         if (genData.newsletter) {
-          await authFetch("/api/send", {
+          const sendRes = await authFetch("/api/send", {
             method: "POST",
             body: JSON.stringify({ newsletterId: genData.newsletter.id, userId: user.id }),
           });
+          if (!sendRes.ok) {
+            setOnboardingError(t("dashboard.first_newsletter_error"));
+          }
+        } else {
+          setOnboardingError(t("dashboard.first_newsletter_error"));
         }
       }
     } catch {
