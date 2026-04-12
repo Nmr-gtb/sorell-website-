@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
@@ -179,9 +179,39 @@ export default function DashboardPage() {
   const [resendingEmail, setResendingEmail] = useState(false);
   const [resendEmailSuccess, setResendEmailSuccess] = useState(false);
   const [resendEmailError, setResendEmailError] = useState("");
+  const autoSentRef = useRef(false);
 
   const searchParams = useSearchParams();
   const emailVerifiedParam = searchParams.get("email_verified");
+
+  // Envoi automatique de l'email de vérification dès que l'écran bloquant s'affiche
+  const sendVerificationEmail = useCallback(async () => {
+    if (!user?.email) return;
+    setResendingEmail(true);
+    setResendEmailSuccess(false);
+    setResendEmailError("");
+    try {
+      const res = await authFetch("/api/welcome", {
+        method: "POST",
+        body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
+      });
+      if (res.ok) {
+        setResendEmailSuccess(true);
+      } else {
+        setResendEmailError(lang === "fr" ? "Erreur lors de l'envoi. Réessayez." : "Error sending email. Try again.");
+      }
+    } catch {
+      setResendEmailError(lang === "fr" ? "Erreur lors de l'envoi. Réessayez." : "Error sending email. Try again.");
+    }
+    setResendingEmail(false);
+  }, [user, lang]);
+
+  useEffect(() => {
+    if (emailVerified === false && emailVerifiedParam !== "success" && !autoSentRef.current) {
+      autoSentRef.current = true;
+      sendVerificationEmail();
+    }
+  }, [emailVerified, emailVerifiedParam, sendVerificationEmail]);
 
   // Mettre a jour emailVerified si l'utilisateur vient de confirmer via le lien
   useEffect(() => {
@@ -412,47 +442,41 @@ export default function DashboardPage() {
 
   // ── ECRAN BLOCANT : VERIFICATION EMAIL ───────────────────────────
   if (emailVerified === false && emailVerifiedParam !== "success") {
-    async function handleResendEmail() {
-      if (!user?.email) return;
-      setResendingEmail(true);
-      setResendEmailSuccess(false);
-      setResendEmailError("");
-      try {
-        const res = await authFetch("/api/welcome", {
-          method: "POST",
-          body: JSON.stringify({ email: user.email, name: user.user_metadata?.full_name || "" }),
-        });
-        if (res.ok) {
-          setResendEmailSuccess(true);
-        } else {
-          setResendEmailError(t("dashboard.resend_error"));
-        }
-      } catch {
-        setResendEmailError(t("dashboard.resend_error"));
-      }
-      setResendingEmail(false);
-    }
-
     return (
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "80px 20px", textAlign: "center" }}>
         <div style={{
           width: 80, height: 80, borderRadius: "50%",
-          background: "rgba(245, 158, 11, 0.1)",
+          background: resendEmailSuccess ? "rgba(5, 150, 105, 0.1)" : "rgba(245, 158, 11, 0.1)",
           display: "flex", alignItems: "center", justifyContent: "center",
           margin: "0 auto 24px",
+          transition: "background 0.3s ease",
         }}>
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="4" width="20" height="16" rx="2" />
-            <path d="M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-          </svg>
+          {resendEmailSuccess ? (
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+          )}
         </div>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>
-          {lang === "fr" ? "Vérifiez votre boîte mail" : "Check your inbox"}
+          {resendEmailSuccess
+            ? (lang === "fr" ? "Email envoyé" : "Email sent")
+            : resendingEmail
+              ? (lang === "fr" ? "Envoi en cours..." : "Sending...")
+              : (lang === "fr" ? "Vérifiez votre boîte mail" : "Check your inbox")}
         </h1>
         <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 8 }}>
-          {lang === "fr"
-            ? "Un email de confirmation a été envoyé à :"
-            : "A confirmation email has been sent to:"}
+          {resendEmailSuccess
+            ? (lang === "fr"
+              ? "Un email de confirmation vient d'être envoyé à :"
+              : "A confirmation email was just sent to:")
+            : (lang === "fr"
+              ? "Envoi de l'email de confirmation à :"
+              : "Sending confirmation email to:")}
         </p>
         <p style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 24 }}>
           {user?.email}
@@ -462,39 +486,35 @@ export default function DashboardPage() {
             ? "Cliquez sur le lien dans l'email pour confirmer votre adresse et accéder à votre espace. Pensez à vérifier vos spams."
             : "Click the link in the email to confirm your address and access your dashboard. Check your spam folder."}
         </p>
+        {resendEmailError && (
+          <p style={{ fontSize: 13, color: "var(--error)", marginBottom: 12 }}>{resendEmailError}</p>
+        )}
         <button
-          onClick={handleResendEmail}
+          onClick={sendVerificationEmail}
           disabled={resendingEmail}
           style={{
             padding: "12px 28px",
-            background: resendingEmail ? "var(--border)" : "var(--accent)",
+            background: resendingEmail ? "var(--border)" : resendEmailSuccess ? "#059669" : "var(--accent)",
             color: "white",
             border: "none",
             borderRadius: 8,
             fontSize: 15,
             fontWeight: 600,
             cursor: resendingEmail ? "not-allowed" : "pointer",
+            transition: "background 0.2s ease",
           }}
         >
           {resendingEmail
             ? (lang === "fr" ? "Envoi en cours..." : "Sending...")
             : resendEmailSuccess
-              ? (lang === "fr" ? "Email envoyé !" : "Email sent!")
+              ? (lang === "fr" ? "Renvoyer l'email" : "Resend email")
               : (lang === "fr" ? "Renvoyer l'email" : "Resend email")}
         </button>
-        {resendEmailError && (
-          <p style={{ fontSize: 13, color: "var(--error)", marginTop: 12 }}>{resendEmailError}</p>
-        )}
         {resendEmailSuccess && (
           <p style={{ fontSize: 13, color: "#059669", marginTop: 12 }}>
-            {lang === "fr" ? "Email de verification renvoyé avec succes." : "Verification email resent successfully."}
+            {lang === "fr" ? "Vérifiez votre boîte mail, pensez aux spams." : "Check your inbox, including spam."}
           </p>
         )}
-        <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 16 }}>
-          {lang === "fr"
-            ? "Vous ne trouvez pas l'email ? Vérifiez vos spams ou cliquez sur le bouton ci-dessus."
-            : "Can't find the email? Check your spam or click the button above."}
-        </p>
       </div>
     );
   }
