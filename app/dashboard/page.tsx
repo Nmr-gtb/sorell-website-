@@ -548,6 +548,26 @@ export default function DashboardPage() {
           >
             {t("dashboard.onboarding_view_dashboard")}
           </button>
+          <div style={{
+            marginTop: 32,
+            padding: "16px 20px",
+            background: "rgba(245, 158, 11, 0.06)",
+            border: "1px solid rgba(245, 158, 11, 0.15)",
+            borderRadius: 10,
+            textAlign: "left",
+          }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+              <span style={{ fontWeight: 600, color: "var(--text)" }}>
+                {lang === "fr" ? "Vous ne trouvez pas l'email ?" : "Can't find the email?"}
+              </span>
+              {" "}
+              {lang === "fr"
+                ? "Vérifiez votre dossier indésirables (spam). Pour ne plus rien manquer, ajoutez "
+                : "Check your spam folder. To never miss an email, add "}
+              <span style={{ fontWeight: 600, color: "var(--accent)" }}>newsletters@sorell.fr</span>
+              {lang === "fr" ? " à vos contacts." : " to your contacts."}
+            </p>
+          </div>
         </div>
       );
     }
