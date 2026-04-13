@@ -61,51 +61,6 @@ export function WelcomeEmail({ name, email, verifyUrl }: WelcomeEmailProps) {
         </Text>
       </Section>
 
-      {/* What's ready */}
-      <Section style={{ padding: "0 32px 24px" }}>
-        <Text
-          style={{
-            fontSize: "11px",
-            color: "#7A7267",
-            textTransform: "uppercase" as const,
-            letterSpacing: "0.08em",
-            margin: "0 0 14px",
-          }}
-        >
-          Ce qui est en place
-        </Text>
-        <Text
-          style={{
-            fontSize: "14px",
-            color: "#111827",
-            lineHeight: "1.6",
-            margin: "0 0 10px",
-          }}
-        >
-          &middot;&nbsp;&nbsp;Votre brief et vos thématiques sont enregistrés
-        </Text>
-        <Text
-          style={{
-            fontSize: "14px",
-            color: "#111827",
-            lineHeight: "1.6",
-            margin: "0 0 10px",
-          }}
-        >
-          &middot;&nbsp;&nbsp;Vos sources et destinataires sont configurés
-        </Text>
-        <Text
-          style={{
-            fontSize: "14px",
-            color: "#111827",
-            lineHeight: "1.6",
-            margin: "0",
-          }}
-        >
-          &middot;&nbsp;&nbsp;Votre première newsletter est en route
-        </Text>
-      </Section>
-
       {/* CTA */}
       <Section
         style={{ padding: "0 32px 24px", textAlign: "center" as const }}
