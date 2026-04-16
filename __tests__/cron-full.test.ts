@@ -203,11 +203,14 @@ describe("GET /api/cron", () => {
     });
 
     // Claude response
+    const today = new Date().toISOString().substring(0, 10);
     const claudeResponse = JSON.stringify({
       editorial: "This week in tech...",
       key_figures: [{ value: "42%", label: "growth", context: "source" }],
       articles: [
-        { tag: "TECH", title: "Test Article", hook: "A hook", content: "Content.", source: "Reuters", url: "https://reuters.com", featured: true },
+        { tag: "TECH", title: "Test Article A", hook: "A hook", content: "Content.", source: "Reuters", url: "https://reuters.com/a", published_at: today, featured: true },
+        { tag: "TECH", title: "Test Article B", hook: "A hook", content: "Content.", source: "Les Echos", url: "https://lesechos.fr/b", published_at: today, featured: false },
+        { tag: "TECH", title: "Test Article C", hook: "A hook", content: "Content.", source: "TechCrunch", url: "https://techcrunch.com/c", published_at: today, featured: false },
       ],
     });
 

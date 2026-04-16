@@ -5,8 +5,7 @@ import { buildNewsletterHtml } from "@/lib/email-template";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
 import {
   extractPreviousTitles,
-  buildNewsletterPrompt,
-  generateNewsletterContent,
+  generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
 
@@ -71,7 +70,7 @@ export async function GET(request: Request) {
     .from("newsletters")
     .select("user_id, content")
     .in("user_id", userIds)
-    .order("created_at", { ascending: false })
+    .order("generated_at", { ascending: false })
     .limit(userIds.length * 3);
 
   const recentNlMap = new Map<string, Array<{ content: unknown }>>();
@@ -142,16 +141,26 @@ export async function GET(request: Request) {
       // --- ANTI-DOUBLON : titres des 3 dernières newsletters (batch pre-fetched) ---
       const previousTitles = extractPreviousTitles(recentNlMap.get(config.user_id) || []);
 
-      const prompt = buildNewsletterPrompt({
-        topics,
-        sources,
-        customBrief,
-        dateString: franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
-        searchDateHint: franceTime.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
-        previousTitles,
-      });
+      const {
+        content: newsletterContent,
+        freshArticleCount,
+      } = await generateFreshNewsletter(
+        {
+          topics,
+          sources,
+          customBrief,
+          dateString: franceTime.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+          searchDateHint: franceTime.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+          previousTitles,
+        },
+        { referenceDate: franceTime }
+      );
 
-      const newsletterContent = await generateNewsletterContent(prompt);
+      // Skip silently when no fresh content could be found even after broadening.
+      if (freshArticleCount === 0) {
+        results.push({ userId: config.user_id, status: "skipped_no_fresh_content" });
+        continue;
+      }
 
       const articles = newsletterContent.articles;
 

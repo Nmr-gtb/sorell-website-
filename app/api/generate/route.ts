@@ -7,8 +7,7 @@ import { logNewsletterGenerated } from "@/lib/activity-log";
 export const maxDuration = 60;
 import {
   extractPreviousTitles,
-  buildNewsletterPrompt,
-  generateNewsletterContent,
+  generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
 
@@ -139,24 +138,38 @@ export async function POST(request: Request) {
       .from("newsletters")
       .select("content")
       .eq("user_id", verifiedUserId)
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .limit(3);
 
     const previousTitles = extractPreviousTitles(recentNewsletters || []);
 
     const now = new Date();
-    const prompt = buildNewsletterPrompt({
-      topics: topicsList,
-      sources: sourcesList,
-      customBrief: resolvedBrief || "",
-      dateString: now.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
-      searchDateHint: now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
-      previousTitles,
-      feedbackHistory,
-      currentFeedback: feedback,
-    });
+    const {
+      content: newsletterContent,
+      freshArticleCount,
+    } = await generateFreshNewsletter(
+      {
+        topics: topicsList,
+        sources: sourcesList,
+        customBrief: resolvedBrief || "",
+        dateString: now.toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+        searchDateHint: now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+        previousTitles,
+        feedbackHistory,
+        currentFeedback: feedback,
+      },
+      { referenceDate: now }
+    );
 
-    const newsletterContent = await generateNewsletterContent(prompt);
+    if (freshArticleCount === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Aucune actualité récente (moins de 90 jours) n'a été trouvée pour votre brief. Essayez d'élargir vos thématiques ou réessayez plus tard.",
+        },
+        { status: 422 }
+      );
+    }
 
     const dateLabel = now.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
     const subject = buildSubjectLine(newsletterContent, dateLabel);

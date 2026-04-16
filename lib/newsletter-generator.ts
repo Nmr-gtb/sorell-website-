@@ -119,9 +119,10 @@ ${previousTitles.map((t) => "- " + t).join("\n")}
 
 ${
   customBrief
-    ? `BRIEF DU CLIENT (PRIORITÉ ABSOLUE) :
+    ? `BRIEF DU CLIENT :
 "${customBrief}"
-Les articles doivent correspondre EXACTEMENT à cette demande.
+
+Essaie d'abord de trouver des articles qui correspondent précisément à ce brief. Si tu ne trouves pas suffisamment d'articles récents (<90 jours) collant au brief, ÉLARGIS à la thématique générale (${topics}) et au secteur d'activité concerné. L'objectif est de livrer une newsletter UTILE et RÉCENTE.
 
 `
     : ""
@@ -130,9 +131,10 @@ ${sourcesLine}
 Date du jour : ${dateString}
 
 INSTRUCTIONS :
-1. Utilise la recherche web pour trouver 5 actualités RÉELLES et RÉCENTES (moins de 7 jours) correspondant aux thématiques demandées.
+1. Utilise la recherche web pour trouver 5 actualités RÉELLES et RÉCENTES (moins de 30 jours idéalement, maximum 90 jours) correspondant aux thématiques demandées.
 2. Pour chaque actualité trouvée, rédige un article de newsletter professionnel.
 3. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
+4. Chaque article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD. Utilise la date affichée sur la page source. Ne devine pas, ne hallucine pas : si tu ne trouves pas la date précise, écarte l'article.
 
 GÉNÈRE un JSON avec cette structure exacte :
 
@@ -149,6 +151,7 @@ GÉNÈRE un JSON avec cette structure exacte :
       "content": "2-3 phrases de contenu factuel basé sur le vrai article. Chiffres, noms, faits concrets.",
       "source": "nom du média (ex: Les Echos, TechCrunch, Reuters...)",
       "url": "URL COMPLÈTE de l'article original (https://...)",
+      "published_at": "YYYY-MM-DD (date de publication lue sur la page source)",
       "featured": true
     }
   ]
@@ -158,7 +161,8 @@ CONSIGNES :
 - OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${topics} actualités ${searchDateHint}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les 5 articles.
 - Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
-- Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3).
+- FRAÎCHEUR OBLIGATOIRE : ne retiens QUE les articles publiés dans les 90 derniers jours maximum. Écarte sans exception les articles plus anciens, même s'ils semblent pertinents.
+- Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3). Mieux vaut 3 articles frais que 5 articles périmés.
 - key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].
 - Le premier article est "featured": true.
 - Sois factuel : ne déforme pas les informations des articles sources.
@@ -200,19 +204,22 @@ CRITICAL : Ta réponse doit commencer par { ou [ et se terminer par } ou ]. Aucu
 
 // --- Claude API call + JSON parsing ----------------------------------------
 
+export interface NewsletterArticle {
+  tag: string;
+  title: string;
+  hook: string;
+  content: string;
+  summary?: string;
+  source: string;
+  url: string;
+  featured: boolean;
+  published_at?: string;
+}
+
 export interface NewsletterContent {
   editorial: string;
   key_figures: Array<{ value: string; label: string; context: string }>;
-  articles: Array<{
-    tag: string;
-    title: string;
-    hook: string;
-    content: string;
-    summary?: string;
-    source: string;
-    url: string;
-    featured: boolean;
-  }>;
+  articles: NewsletterArticle[];
 }
 
 /** Call Claude Haiku with web search, parse & clean the JSON response. */
@@ -296,6 +303,10 @@ export function parseAndCleanResponse(responseText: string): NewsletterContent {
         hook: cleanCiteTags((a.hook as string) || ""),
         content: cleanCiteTags((a.content as string) || ""),
         summary: cleanCiteTags((a.summary as string) || ""),
+        published_at:
+          typeof a.published_at === "string" && a.published_at.trim()
+            ? a.published_at.trim()
+            : undefined,
       })
     ) as NewsletterContent["articles"];
   }
@@ -332,4 +343,165 @@ export function buildSubjectLine(
   }
 
   return subject;
+}
+
+// --- Freshness filter ------------------------------------------------------
+
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+/** Parse an article's published_at string (YYYY-MM-DD or ISO) into a Date. */
+function parsePublishedAt(raw: string | undefined | null): Date | null {
+  if (!raw || typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  // Accept YYYY-MM-DD and full ISO timestamps
+  const date = new Date(trimmed);
+  if (isNaN(date.getTime())) return null;
+  return date;
+}
+
+/**
+ * Decide whether an article is recent enough to be included.
+ * Returns false if published_at is missing, unparseable, or outside the window.
+ */
+export function isArticleFresh(
+  article: NewsletterArticle,
+  referenceDate: Date = new Date(),
+  maxAgeDays: number = 90
+): boolean {
+  const published = parsePublishedAt(article.published_at);
+  if (!published) return false;
+  const ageDays =
+    (referenceDate.getTime() - published.getTime()) / MS_PER_DAY;
+  // Allow a 1-day slack for timezone differences when article is "in the future"
+  return ageDays >= -1 && ageDays <= maxAgeDays;
+}
+
+/** Split articles into fresh vs stale buckets. */
+export function filterFreshArticles(
+  articles: NewsletterArticle[],
+  referenceDate: Date = new Date(),
+  maxAgeDays: number = 90
+): { fresh: NewsletterArticle[]; stale: NewsletterArticle[] } {
+  const fresh: NewsletterArticle[] = [];
+  const stale: NewsletterArticle[] = [];
+  for (const a of articles) {
+    if (isArticleFresh(a, referenceDate, maxAgeDays)) fresh.push(a);
+    else stale.push(a);
+  }
+  return { fresh, stale };
+}
+
+/** Ensure exactly one article carries featured: true. */
+function ensureFeaturedFlag(articles: NewsletterArticle[]): NewsletterArticle[] {
+  if (!articles.length) return articles;
+  if (articles.some((a) => a.featured)) return articles;
+  return articles.map((a, i) => ({ ...a, featured: i === 0 }));
+}
+
+/** De-duplicate a list of articles by URL (lowercased). */
+function dedupeByUrl(articles: NewsletterArticle[]): NewsletterArticle[] {
+  const seen = new Set<string>();
+  const out: NewsletterArticle[] = [];
+  for (const a of articles) {
+    const key = (a.url || "").toLowerCase().trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(a);
+  }
+  return out;
+}
+
+export interface FreshNewsletterOptions {
+  /** Minimum number of fresh articles required before broadening. Default 3. */
+  minFreshArticles?: number;
+  /** Max age in days for an article to count as fresh. Default 90. */
+  maxAgeDays?: number;
+  /** Reference date for the freshness check. Default now. */
+  referenceDate?: Date;
+  /** Hard cap on articles kept in the final newsletter. Default 5. */
+  maxArticles?: number;
+}
+
+export interface FreshNewsletterResult {
+  content: NewsletterContent;
+  broadened: boolean;
+  freshArticleCount: number;
+  staleArticleCount: number;
+  attempts: number;
+}
+
+/**
+ * Generate a newsletter with freshness enforcement.
+ *
+ * - Calls Claude with the user's brief.
+ * - Filters out articles older than maxAgeDays (90 by default).
+ * - If < minFreshArticles remain AND a brief was provided, retries once
+ *   without the brief (fallback to the general topics).
+ * - Combines both passes (brief first, then broadened), dedupes by URL,
+ *   trims to maxArticles, and returns the result plus metadata.
+ */
+export async function generateFreshNewsletter(
+  params: BuildPromptParams,
+  options: FreshNewsletterOptions = {}
+): Promise<FreshNewsletterResult> {
+  const minFresh = options.minFreshArticles ?? 3;
+  const maxAge = options.maxAgeDays ?? 90;
+  const refDate = options.referenceDate ?? new Date();
+  const maxArticles = options.maxArticles ?? 5;
+
+  // --- Attempt 1 : with brief ---------------------------------------------
+  const firstPrompt = buildNewsletterPrompt(params);
+  const firstContent = await generateNewsletterContent(firstPrompt);
+  const first = filterFreshArticles(firstContent.articles, refDate, maxAge);
+
+  const hasBrief = Boolean(params.customBrief && params.customBrief.trim());
+  const firstEnough = first.fresh.length >= minFresh;
+
+  if (firstEnough || !hasBrief) {
+    const kept = ensureFeaturedFlag(
+      dedupeByUrl(first.fresh).slice(0, maxArticles)
+    );
+    return {
+      content: {
+        editorial: firstContent.editorial,
+        key_figures: kept.length ? firstContent.key_figures : [],
+        articles: kept,
+      },
+      broadened: false,
+      freshArticleCount: kept.length,
+      staleArticleCount: first.stale.length,
+      attempts: 1,
+    };
+  }
+
+  // --- Attempt 2 : broadened (drop the brief) -----------------------------
+  const broadenedParams: BuildPromptParams = {
+    ...params,
+    customBrief: "",
+  };
+  const secondPrompt = buildNewsletterPrompt(broadenedParams);
+  const secondContent = await generateNewsletterContent(secondPrompt);
+  const second = filterFreshArticles(secondContent.articles, refDate, maxAge);
+
+  // Brief-specific articles first, then sector-wide to fill up
+  const combined = ensureFeaturedFlag(
+    dedupeByUrl([...first.fresh, ...second.fresh]).slice(0, maxArticles)
+  );
+
+  return {
+    content: {
+      editorial: secondContent.editorial || firstContent.editorial,
+      key_figures: combined.length
+        ? secondContent.key_figures.length
+          ? secondContent.key_figures
+          : firstContent.key_figures
+        : [],
+      articles: combined,
+    },
+    broadened: true,
+    freshArticleCount: combined.length,
+    staleArticleCount: first.stale.length + second.stale.length,
+    attempts: 2,
+  };
 }

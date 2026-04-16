@@ -186,18 +186,40 @@ describe("POST /api/generate", () => {
     mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
     mockLimit.mockResolvedValue({ success: true });
 
+    const today = new Date().toISOString().substring(0, 10);
     const mockContent = JSON.stringify({
       editorial: "Cette semaine en tech...",
       key_figures: [{ value: "42%", label: "croissance", context: "source" }],
       articles: [
         {
           tag: "TECH",
-          title: "Test Article",
+          title: "Test Article A",
           hook: "A hook",
           content: "Content here.",
           source: "TechCrunch",
-          url: "https://techcrunch.com/article",
+          url: "https://techcrunch.com/article-a",
+          published_at: today,
           featured: true,
+        },
+        {
+          tag: "TECH",
+          title: "Test Article B",
+          hook: "Another hook",
+          content: "More content.",
+          source: "Reuters",
+          url: "https://reuters.com/article-b",
+          published_at: today,
+          featured: false,
+        },
+        {
+          tag: "TECH",
+          title: "Test Article C",
+          hook: "Third hook",
+          content: "Even more content.",
+          source: "Les Echos",
+          url: "https://lesechos.fr/article-c",
+          published_at: today,
+          featured: false,
         },
       ],
     });
