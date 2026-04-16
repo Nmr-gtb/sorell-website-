@@ -296,19 +296,22 @@ export function parseAndCleanResponse(responseText: string): NewsletterContent {
     newsletterContent.editorial = cleanCiteTags(newsletterContent.editorial);
   }
   if (newsletterContent.articles) {
-    newsletterContent.articles = newsletterContent.articles.map(
-      (a: Record<string, unknown>) => ({
+    newsletterContent.articles = (
+      newsletterContent.articles as unknown as Array<Record<string, unknown>>
+    ).map((a) => {
+      const rawPublishedAt = a.published_at;
+      return {
         ...a,
         title: cleanCiteTags((a.title as string) || ""),
         hook: cleanCiteTags((a.hook as string) || ""),
         content: cleanCiteTags((a.content as string) || ""),
         summary: cleanCiteTags((a.summary as string) || ""),
         published_at:
-          typeof a.published_at === "string" && a.published_at.trim()
-            ? a.published_at.trim()
+          typeof rawPublishedAt === "string" && rawPublishedAt.trim()
+            ? rawPublishedAt.trim()
             : undefined,
-      })
-    ) as NewsletterContent["articles"];
+      } as NewsletterArticle;
+    });
   }
   if (newsletterContent.key_figures) {
     newsletterContent.key_figures = newsletterContent.key_figures.map(
