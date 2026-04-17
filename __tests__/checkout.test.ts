@@ -25,6 +25,12 @@ vi.mock("@/lib/stripe", () => ({
   },
 }));
 
+vi.mock("@/lib/ratelimit", () => ({
+  checkoutRateLimit: {
+    limit: vi.fn().mockResolvedValue({ success: true }),
+  },
+}));
+
 // Mock supabaseAdmin for referral lookup in checkout
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
@@ -42,15 +48,29 @@ vi.mock("@/lib/supabase-admin", () => ({
 
 import { POST } from "@/app/api/checkout/route";
 import { stripe } from "@/lib/stripe";
+import { checkoutRateLimit } from "@/lib/ratelimit";
 
 const mockCreate = stripe.checkout.sessions.create as ReturnType<typeof vi.fn>;
+const mockRateLimit = checkoutRateLimit.limit as ReturnType<typeof vi.fn>;
 
 describe("POST /api/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCreate.mockResolvedValue({ url: "https://checkout.stripe.com/session-123" });
     mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+    mockRateLimit.mockResolvedValue({ success: true });
     process.env.NEXT_PUBLIC_SITE_URL = "https://sorell.fr";
+  });
+
+  it("returns 429 when rate limit is exceeded", async () => {
+    mockRateLimit.mockResolvedValue({ success: false });
+    const request = new Request("http://localhost/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: "price_pro_monthly" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(429);
   });
 
   it("returns 401 when user is not authenticated", async () => {

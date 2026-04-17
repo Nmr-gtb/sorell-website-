@@ -2,6 +2,7 @@ import { stripe, PRICE_IDS } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { checkoutRateLimit } from "@/lib/ratelimit";
 
 const VALID_PRICE_IDS = new Set(Object.values(PRICE_IDS));
 
@@ -16,6 +17,14 @@ export async function POST(request: Request) {
     const authUser = await getAuthenticatedUser(request);
     if (!authUser) {
       return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
+
+    const { success } = await checkoutRateLimit.limit(authUser.id);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Trop de tentatives. Réessayez dans une heure." },
+        { status: 429 }
+      );
     }
 
     const { priceId, fromOnboarding } = await request.json();

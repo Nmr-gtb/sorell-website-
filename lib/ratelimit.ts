@@ -61,3 +61,10 @@ export const adminLoginRateLimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(5, "15 m"),
   prefix: "ratelimit:admin:login",
 });
+
+// Checkout Stripe — 10 créations de session par heure par user (anti-abuse)
+export const checkoutRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  prefix: "ratelimit:checkout",
+});
