@@ -37,10 +37,11 @@ async function setupBot(bot: BotName, appUrl: string): Promise<{
       webhookUrl: webhookUrl.replace(secret, "***"),
     };
   } catch (error) {
+    console.error(`[telegram/setup] bot=${bot}`, error);
     return {
       bot,
       success: false,
-      error: error instanceof Error ? error.message : "Erreur inconnue",
+      error: "Une erreur est survenue lors du setup du bot",
     };
   }
 }
@@ -83,7 +84,10 @@ export async function GET(request: Request): Promise<Response> {
       allSuccess: results.every((r) => r.success),
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erreur inconnue";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[telegram/setup] handler", error);
+    return NextResponse.json(
+      { error: "Une erreur est survenue" },
+      { status: 500 }
+    );
   }
 }
