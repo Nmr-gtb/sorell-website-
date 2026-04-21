@@ -10,6 +10,7 @@ import { authFetch } from "@/lib/api";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { useLanguage } from "@/lib/LanguageContext";
 import { openSolyBrief } from "@/components/ChatWidget";
+import NewsletterLoader from "@/components/NewsletterLoader";
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
   pro: {
@@ -1160,21 +1161,24 @@ export default function DashboardPage() {
           <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
             {t("dashboard.step5_note")}
           </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-            <button
-              onClick={() => setOnboardingStep(4)}
-              style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
-            >
-              {t("dashboard.back")}
-            </button>
-            <button
-              onClick={handleOnboardingComplete}
-              disabled={onboardingSaving}
-              style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: onboardingSaving ? "not-allowed" : "pointer", opacity: onboardingSaving ? 0.7 : 1 }}
-            >
-              {onboardingSaving ? t("dashboard.generating") : t("dashboard.receive_first")}
-            </button>
-          </div>
+          {onboardingSaving ? (
+            <NewsletterLoader active={onboardingSaving} style={{ marginBottom: 12 }} />
+          ) : (
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <button
+                onClick={() => setOnboardingStep(4)}
+                style={{ padding: "12px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 14, color: "var(--text-secondary)", cursor: "pointer" }}
+              >
+                {t("dashboard.back")}
+              </button>
+              <button
+                onClick={handleOnboardingComplete}
+                style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
+              >
+                {t("dashboard.receive_first")}
+              </button>
+            </div>
+          )}
         </div>
       );
     }

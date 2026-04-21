@@ -18,6 +18,7 @@ import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
 import { openSolyBrief } from "@/components/ChatWidget";
 import CrownBadge from "@/components/CrownBadge";
+import NewsletterLoader from "@/components/NewsletterLoader";
 
 const ALL_SOURCES = [
   "Les Echos", "Le Monde", "Le Figaro", "BFM Business", "La Tribune",
@@ -1700,9 +1701,7 @@ export default function ConfigPage() {
             </div>
           )}
           {instantSending && (
-            <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(0,80,88,0.04)", border: "1px solid rgba(0,80,88,0.1)", borderRadius: 10, fontSize: 14, color: "var(--text-secondary)", textAlign: "center" }}>
-              {t("config.instant_generating")}
-            </div>
+            <NewsletterLoader active={instantSending} style={{ marginTop: 16 }} />
           )}
           {instantSent && (
             <div style={{ marginTop: 16, padding: "16px 20px", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, fontSize: 14, color: "#059669", textAlign: "center" }}>

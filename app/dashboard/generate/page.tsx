@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { getNewsletterConfig, getRecipients, getProfile, getMonthlyManualCount, addRecipient } from "@/lib/database";
 import CrownBadge from "@/components/CrownBadge";
+import NewsletterLoader from "@/components/NewsletterLoader";
 import { getPlanLimits } from "@/lib/plans";
 import { authFetch } from "@/lib/api";
 
@@ -405,12 +406,14 @@ export default function GeneratePage() {
                 </span>
               </div>
             </div>
+          ) : generating ? (
+            <NewsletterLoader active={generating} />
           ) : (
             <>
               <button
                 className="btn-primary"
                 onClick={() => handleGenerate()}
-                disabled={generating || activeTopics.length === 0}
+                disabled={activeTopics.length === 0}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -420,17 +423,8 @@ export default function GeneratePage() {
                   opacity: activeTopics.length === 0 ? 0.5 : 1,
                 }}
               >
-                {generating ? (
-                  <>
-                    <Spinner />
-                    {t("generate.analyzing")}
-                  </>
-                ) : (
-                  <>
-                    <IconSparkles />
-                    {t("generate.generate_preview")}
-                  </>
-                )}
+                <IconSparkles />
+                {t("generate.generate_preview")}
               </button>
               {activeTopics.length === 0 && !loadingConfig && (
                 <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>

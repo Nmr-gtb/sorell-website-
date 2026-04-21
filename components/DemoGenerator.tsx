@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
+import NewsletterLoader from "@/components/NewsletterLoader";
 
 type AIArticle = {
   tag: string;
@@ -75,14 +76,6 @@ const V4_PALETTE = {
   bodyTextColor: "#4B5563",
   cardBg: "#FFFFFF",
 };
-
-const LOADING_MESSAGE_KEYS = [
-  "demo.loading_1",
-  "demo.loading_2",
-  "demo.loading_3",
-  "demo.loading_4",
-  "demo.loading_5",
-];
 
 function truncate(text: string, maxLen: number): string {
   if (!text) return "";
@@ -462,7 +455,6 @@ export default function DemoGenerator() {
   const [sector, setSector] = useState("tech");
   const [articles, setArticles] = useState<AIArticle[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [msgIdx, setMsgIdx] = useState(0);
   const [error, setError] = useState("");
   const [generationTime, setGenerationTime] = useState(0);
   const [fromCache, setFromCache] = useState(false);
@@ -473,17 +465,10 @@ export default function DemoGenerator() {
     setError("");
     setArticles(null);
     const start = Date.now();
-    let idx = 0;
-    setMsgIdx(0);
-    const interval = setInterval(() => {
-      idx = (idx + 1) % LOADING_MESSAGE_KEYS.length;
-      setMsgIdx(idx);
-    }, 1200);
 
     try {
       const res = await fetch(`/api/demo?sector=${sector}&lang=${lang}`);
       const data = await res.json();
-      clearInterval(interval);
       setGenerationTime(Math.round((Date.now() - start) / 1000));
 
       if (data.articles) {
@@ -494,7 +479,6 @@ export default function DemoGenerator() {
         setError(data.error || t("demo.error_generation"));
       }
     } catch {
-      clearInterval(interval);
       setError(t("demo.error_connection"));
     }
     setLoading(false);
@@ -619,60 +603,7 @@ export default function DemoGenerator() {
       </div>
 
       {/* Loading state */}
-      {loading && (
-        <div
-          style={{
-            padding: "40px 32px",
-            textAlign: "center",
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            marginBottom: 24,
-          }}
-        >
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: "50%",
-              margin: "0 auto 20px",
-              position: "relative",
-            }}
-          >
-            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "2px solid var(--border)" }} />
-            <div
-              className="animate-spin"
-              style={{
-                position: "absolute",
-                inset: 0,
-                borderRadius: "50%",
-                border: "2px solid transparent",
-                borderTopColor: "var(--accent)",
-              }}
-            />
-          </div>
-          <p style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.9375rem", marginBottom: 6, letterSpacing: "-0.01em" }}>
-            {t(LOADING_MESSAGE_KEYS[msgIdx])}
-          </p>
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginBottom: 20 }}>
-            {t("demo.loading_subtitle")}
-          </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
-            {LOADING_MESSAGE_KEYS.map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  height: 3,
-                  borderRadius: 2,
-                  transition: "all 0.3s ease",
-                  width: i === msgIdx ? 24 : 6,
-                  background: i === msgIdx ? "var(--accent)" : "var(--border)",
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      <NewsletterLoader active={loading} style={{ marginBottom: 24 }} />
 
       {/* Error */}
       {error && !loading && (
