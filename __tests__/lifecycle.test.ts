@@ -134,7 +134,7 @@ describe("GET /api/cron/lifecycle", () => {
     expect(response.status).toBe(401);
   });
 
-  it("returns success with results object when authenticated", async () => {
+  it("returns success when authenticated", async () => {
     const request = new Request("http://localhost/api/cron/lifecycle", {
       headers: { authorization: "Bearer test-cron-secret" },
     });
@@ -142,13 +142,28 @@ describe("GET /api/cron/lifecycle", () => {
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.success).toBe(true);
-    expect(data.results).toBeDefined();
-    expect(data.results.onboarding_j1).toBe(0);
-    expect(data.results.trial_j3).toBe(0);
-    expect(data.results.trial_j1).toBe(0);
-    expect(data.results.trial_j0).toBe(0);
-    expect(data.results.limit_reached).toBe(0);
-    expect(data.results.errors).toBe(0);
     expect(data.timestamp).toBeDefined();
+
+    // Le cron renvoie deux shapes possibles selon le flag
+    // LIFECYCLE_EMAILS_PAUSED dans la route.
+    if (data.paused) {
+      // Etat de pause : aucun email n'est traite, on retourne tot.
+      expect(data.paused).toBe(true);
+      expect(data.message).toBeDefined();
+    } else {
+      // Etat actif : on a un objet results avec toutes les cles
+      // event-based.
+      expect(data.results).toBeDefined();
+      expect(data.results.activation_no_verify).toBe(0);
+      expect(data.results.activation_no_config).toBe(0);
+      expect(data.results.engagement_after_3nl).toBe(0);
+      expect(data.results.conversion_limit_reached).toBe(0);
+      expect(data.results.trial_j3).toBe(0);
+      expect(data.results.trial_j1).toBe(0);
+      expect(data.results.trial_j0).toBe(0);
+      expect(data.results.retention_no_newsletter_30d).toBe(0);
+      expect(data.results.retention_unopened_5nl).toBe(0);
+      expect(data.results.errors).toBe(0);
+    }
   });
 });

@@ -17,10 +17,14 @@ export async function GET(request: Request) {
       return NextResponse.redirect("https://www.sorell.fr/dashboard?email_verified=error");
     }
 
-    // Marquer l'email comme verifie dans profiles
+    // Marquer l'email comme verifie dans profiles + tracer la date pour
+    // les declencheurs lifecycle (activation_no_config a J+2 apres verif).
     const { error } = await supabaseAdmin
       .from("profiles")
-      .update({ email_verified: true })
+      .update({
+        email_verified: true,
+        email_verified_at: new Date().toISOString(),
+      })
       .eq("email", email.toLowerCase().trim());
 
     if (error) {

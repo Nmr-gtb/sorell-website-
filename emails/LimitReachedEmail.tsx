@@ -1,9 +1,4 @@
-import {
-  Section,
-  Text,
-  Heading,
-  Button,
-} from "@react-email/components";
+import { Section, Text, Heading, Button } from "@react-email/components";
 import * as React from "react";
 import { LifecycleLayout } from "./components/LifecycleLayout";
 
@@ -18,17 +13,16 @@ export function LimitReachedEmail({
   plan,
   limit,
 }: LimitReachedEmailProps) {
-  const nextPlan = plan === "Free" ? "Pro" : "Business";
-  const nextPrice = plan === "Free" ? "19" : "49";
-  const nextBenefits =
-    plan === "Free"
-      ? "Newsletters illimitées, 10 destinataires, thématiques et sources au choix, analytics"
-      : "Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne";
+  const isFree = plan === "Free";
+  const nextPlan = isFree ? "Pro" : "Business";
+  const nextMonthlyPrice = isFree ? "19" : "49";
+  const nextYearlyPrice = isFree ? "190" : "490";
+  const nextBenefits = isFree
+    ? "newsletters illimitées, jusqu'à 10 destinataires, thématiques et sources personnalisées, analytics d'engagement"
+    : "50 destinataires, fréquence quotidienne, logo personnalisé, support prioritaire";
 
   return (
-    <LifecycleLayout
-      preheader={`Vous avez utilisé vos ${limit} newsletters du mois`}
-    >
+    <LifecycleLayout preheader={`Prochaine newsletter le mois prochain - ou maintenant en passant au plan ${nextPlan}`}>
       <Section style={{ padding: "36px 32px 0" }}>
         <Heading
           as="h1"
@@ -39,21 +33,38 @@ export function LimitReachedEmail({
             margin: "0 0 24px",
           }}
         >
-          Limite de newsletters atteinte
+          Limite mensuelle atteinte
         </Heading>
       </Section>
 
-      <Section style={{ padding: "0 32px 24px" }}>
+      <Section style={{ padding: "0 32px 20px" }}>
         <Text
           style={{
             fontSize: "15px",
             color: "#4B5563",
             lineHeight: "1.7",
-            margin: "0 0 24px",
+            margin: "0 0 16px",
           }}
         >
-          {name}, vous avez utilisé vos {limit} newsletters du mois sur le plan{" "}
-          {plan}. Votre prochaine newsletter sera disponible le mois prochain.
+          {name}, vous avez utilisé{" "}
+          {limit === 1
+            ? "votre newsletter du mois"
+            : `vos ${limit} newsletters du mois`}{" "}
+          sur le plan {plan}. La prochaine sera disponible automatiquement au
+          début du mois prochain.
+        </Text>
+        <Text
+          style={{
+            fontSize: "15px",
+            color: "#4B5563",
+            lineHeight: "1.7",
+            margin: "0",
+          }}
+        >
+          {isFree
+            ? "Si vous voulez en recevoir plus dès maintenant, le plan Pro retire la limite : "
+            : "Si votre usage justifie de monter d'un cran, le plan Business débloque : "}
+          {nextBenefits}.
         </Text>
       </Section>
 
@@ -64,26 +75,24 @@ export function LimitReachedEmail({
             color: "#7A7267",
             textTransform: "uppercase" as const,
             letterSpacing: "0.08em",
-            margin: "0 0 14px",
+            margin: "0 0 10px",
           }}
         >
-          Besoin de plus ?
+          Plan {nextPlan}
         </Text>
         <Text
           style={{
             fontSize: "14px",
             color: "#111827",
             lineHeight: "1.7",
-            margin: "0 0 20px",
+            margin: "0",
           }}
         >
-          Le plan {nextPlan} à {nextPrice}&euro;/mois inclut : {nextBenefits}.
+          {nextMonthlyPrice}&euro;/mois &nbsp;ou&nbsp; {nextYearlyPrice}&euro;/an
         </Text>
       </Section>
 
-      <Section
-        style={{ padding: "0 32px 32px", textAlign: "center" as const }}
-      >
+      <Section style={{ padding: "0 32px 32px", textAlign: "center" as const }}>
         <Button
           href="https://sorell.fr/tarifs"
           style={{
@@ -97,7 +106,7 @@ export function LimitReachedEmail({
             borderRadius: "8px",
           }}
         >
-          Voir les plans
+          Voir le plan {nextPlan}
         </Button>
       </Section>
     </LifecycleLayout>

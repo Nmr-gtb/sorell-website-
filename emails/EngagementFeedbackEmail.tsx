@@ -1,20 +1,16 @@
-import {
-  Section,
-  Text,
-  Heading,
-} from "@react-email/components";
+import { Section, Text, Heading } from "@react-email/components";
 import * as React from "react";
 import { LifecycleLayout } from "./components/LifecycleLayout";
 
-interface FeedbackEmailProps {
+interface EngagementFeedbackEmailProps {
   name: string;
 }
 
-export function FeedbackEmail({ name }: FeedbackEmailProps) {
+export function EngagementFeedbackEmail({
+  name,
+}: EngagementFeedbackEmailProps) {
   return (
-    <LifecycleLayout
-      preheader={`${name}, ça fait 2 semaines — votre avis compte`}
-    >
+    <LifecycleLayout preheader="Une question courte sur votre expérience Sorell">
       <Section style={{ padding: "36px 32px 0" }}>
         <Heading
           as="h1"
@@ -25,11 +21,11 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0 0 24px",
           }}
         >
-          2 semaines de veille automatique
+          Vous avez reçu vos 3 premières newsletters
         </Heading>
       </Section>
 
-      <Section style={{ padding: "0 32px 24px" }}>
+      <Section style={{ padding: "0 32px 20px" }}>
         <Text
           style={{
             fontSize: "15px",
@@ -38,19 +34,31 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0 0 16px",
           }}
         >
-          Bonjour {name}, vous utilisez Sorell depuis 2 semaines. Avant de
-          continuer, une question simple : est-ce que ça vous est utile ?
+          Bonjour {name}, Sorell vous a livré 3 newsletters jusqu&apos;ici.
+          C&apos;est assez pour vous faire une idée concrète, et pas trop pour
+          que vous nous donniez un retour à chaud.
         </Text>
         <Text
           style={{
             fontSize: "15px",
             color: "#4B5563",
             lineHeight: "1.7",
-            margin: "0 0 24px",
+            margin: "0 0 16px",
           }}
         >
-          Pas de formulaire. Répondez directement à cet email, même en une
-          phrase.
+          Une question simple : est-ce que ces newsletters vous sont utiles ?
+          Pas de formulaire, pas d&apos;échelle de notation. Répondez
+          directement à cet email, même en une phrase.
+        </Text>
+        <Text
+          style={{
+            fontSize: "15px",
+            color: "#4B5563",
+            lineHeight: "1.7",
+            margin: "0 0 8px",
+          }}
+        >
+          Ce qui nous aide vraiment, ce sont les retours sur :
         </Text>
       </Section>
 
@@ -64,7 +72,7 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0 0 14px",
           }}
         >
-          Ce qui nous intéresse
+          Les sujets qui nous intéressent
         </Text>
         <Text
           style={{
@@ -74,8 +82,8 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;Les sujets couverts sont-ils pertinents pour votre
-          activité ?
+          &middot;&nbsp;&nbsp;La pertinence des sujets couverts pour votre
+          activité
         </Text>
         <Text
           style={{
@@ -85,7 +93,8 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;La fréquence vous convient-elle ?
+          &middot;&nbsp;&nbsp;La densité d&apos;information (trop, pas assez,
+          juste)
         </Text>
         <Text
           style={{
@@ -95,7 +104,7 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             margin: "0",
           }}
         >
-          &middot;&nbsp;&nbsp;Qu&apos;est-ce qu&apos;on pourrait améliorer ?
+          &middot;&nbsp;&nbsp;Ce que vous aimeriez voir en plus ou en moins
         </Text>
       </Section>
 
@@ -109,12 +118,12 @@ export function FeedbackEmail({ name }: FeedbackEmailProps) {
             fontStyle: "italic",
           }}
         >
-          Chaque retour aide à rendre Sorell meilleur. On lit et on répond à
-          chaque message.
+          On lit et on répond à chaque message, y compris les critiques. Ce
+          sont elles qui font avancer le produit.
         </Text>
       </Section>
     </LifecycleLayout>
   );
 }
 
-export default FeedbackEmail;
+export default EngagementFeedbackEmail;

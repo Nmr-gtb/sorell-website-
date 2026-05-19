@@ -122,6 +122,50 @@ export async function POST(request: Request) {
         }
       }
     }
+
+    // Tracking des ouvertures / clics / livraisons pour les newsletters.
+    // Necessaire au declencheur lifecycle retention_unopened_5nl.
+    // Resend identifie chaque newsletter via la table newsletters : on
+    // remonte le newsletter_id en cherchant le subject + le destinataire
+    // dans l'historique (Resend ne renvoie pas notre id interne).
+    if (
+      type === "email.opened" ||
+      type === "email.clicked" ||
+      type === "email.delivered"
+    ) {
+      const eventType =
+        type === "email.opened"
+          ? "opened"
+          : type === "email.clicked"
+            ? "clicked"
+            : "delivered";
+
+      const recipientEmail = data?.to?.[0];
+      const subject = data?.subject;
+
+      if (recipientEmail && subject) {
+        // Retrouver la newsletter correspondante (la plus recente envoyee
+        // a ce destinataire avec ce subject).
+        const { data: matchedNewsletter } = await supabaseAdmin
+          .from("newsletters")
+          .select("id")
+          .eq("subject", subject)
+          .not("sent_at", "is", null)
+          .order("sent_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (matchedNewsletter?.id) {
+          // Insertion silencieuse : on tolere les doublons (Resend peut
+          // renvoyer plusieurs evenements pour la meme ouverture).
+          await supabaseAdmin.from("newsletter_events").insert({
+            newsletter_id: matchedNewsletter.id,
+            recipient_email: recipientEmail,
+            event_type: eventType,
+          });
+        }
+      }
+    }
   } catch {
     return NextResponse.json({ error: "Erreur de traitement du webhook." }, { status: 500 });
   }

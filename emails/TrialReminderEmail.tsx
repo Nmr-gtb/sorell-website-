@@ -16,9 +16,9 @@ interface TrialReminderEmailProps {
 
 function getPlanBenefits(plan: string): string {
   if (plan === "Pro") {
-    return "\u00B7\u00A0\u00A0Newsletters illimitées\u00A0\u00A0\u00B7\u00A0\u00A010 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Historique + aperçu";
+    return "·  Newsletters illimitées  ·  10 destinataires  ·  Analytics  ·  Historique + aperçu";
   }
-  return "\u00B7\u00A0\u00A0Newsletters illimitées\u00A0\u00A0\u00B7\u00A0\u00A050 destinataires\u00A0\u00A0\u00B7\u00A0\u00A0Analytics\u00A0\u00A0\u00B7\u00A0\u00A0Logo personnalisé";
+  return "·  Newsletters illimitées  ·  50 destinataires  ·  Analytics  ·  Logo personnalisé";
 }
 
 export function TrialReminderEmail({
@@ -28,7 +28,7 @@ export function TrialReminderEmail({
 }: TrialReminderEmailProps) {
   if (daysLeft === 3) {
     return (
-      <LifecycleLayout preheader={`Plus que 3 jours d'essai ${plan}`}>
+      <LifecycleLayout preheader="Aucune action requise - votre abonnement démarre automatiquement">
         <Section style={{ padding: "36px 32px 0" }}>
           <Heading
             as="h1"
@@ -39,11 +39,22 @@ export function TrialReminderEmail({
               margin: "0 0 24px",
             }}
           >
-            Plus que 3 jours d&apos;essai
+            3 jours avant la conversion
           </Heading>
         </Section>
 
-        <Section style={{ padding: "0 32px 24px" }}>
+        <Section style={{ padding: "0 32px 20px" }}>
+          <Text
+            style={{
+              fontSize: "15px",
+              color: "#4B5563",
+              lineHeight: "1.7",
+              margin: "0 0 16px",
+            }}
+          >
+            Bonjour {name}, votre essai gratuit du plan {plan} se termine dans
+            3 jours.
+          </Text>
           <Text
             style={{
               fontSize: "15px",
@@ -52,9 +63,9 @@ export function TrialReminderEmail({
               margin: "0 0 24px",
             }}
           >
-            Bonjour {name}, votre essai gratuit du plan {plan} se termine dans 3
-            jours. Pour continuer, aucune action requise — votre abonnement
-            démarrera automatiquement.
+            Aucune action de votre part n&apos;est nécessaire : votre
+            abonnement {plan} démarrera automatiquement à la fin de
+            l&apos;essai.
           </Text>
         </Section>
 
@@ -92,7 +103,7 @@ export function TrialReminderEmail({
               fontStyle: "italic",
             }}
           >
-            Pour annuler avant le premier paiement, rendez-vous sur votre{" "}
+            Pour annuler avant le premier prélèvement, c&apos;est dans votre{" "}
             <Link
               href="https://sorell.fr/dashboard/profile"
               style={{ color: "#005058", textDecoration: "underline" }}
@@ -107,7 +118,7 @@ export function TrialReminderEmail({
           style={{ padding: "16px 32px 32px", textAlign: "center" as const }}
         >
           <Button
-            href="https://sorell.fr/dashboard"
+            href="https://sorell.fr/dashboard/profile"
             style={{
               display: "inline-block",
               padding: "14px 32px",
@@ -119,7 +130,7 @@ export function TrialReminderEmail({
               borderRadius: "8px",
             }}
           >
-            Mon dashboard
+            Voir mon abonnement
           </Button>
         </Section>
       </LifecycleLayout>
@@ -128,9 +139,7 @@ export function TrialReminderEmail({
 
   if (daysLeft === 1) {
     return (
-      <LifecycleLayout
-        preheader={`Dernier jour d'essai ${plan} - ${name}`}
-      >
+      <LifecycleLayout preheader="Dernière journée gratuite avant le démarrage de l'abonnement">
         <Section style={{ padding: "36px 32px 0" }}>
           <Heading
             as="h1"
@@ -141,7 +150,7 @@ export function TrialReminderEmail({
               margin: "0 0 24px",
             }}
           >
-            Dernier jour d&apos;essai demain
+            Demain, votre abonnement commence
           </Heading>
         </Section>
 
@@ -155,7 +164,7 @@ export function TrialReminderEmail({
             }}
           >
             Bonjour {name}, votre essai du plan {plan} se termine demain. Votre
-            abonnement commencera automatiquement — aucune interruption de
+            abonnement {plan} commencera automatiquement, sans interruption de
             service.
           </Text>
           <Text
@@ -167,7 +176,7 @@ export function TrialReminderEmail({
               fontStyle: "italic",
             }}
           >
-            Pour annuler avant le premier paiement, rendez-vous sur votre{" "}
+            Pour annuler avant le premier prélèvement, c&apos;est dans votre{" "}
             <Link
               href="https://sorell.fr/dashboard/profile"
               style={{ color: "#005058", textDecoration: "underline" }}
@@ -201,9 +210,23 @@ export function TrialReminderEmail({
     );
   }
 
-  // daysLeft === 0
+  // daysLeft === 0 - conversion day
+  const proActions = [
+    "Ajouter jusqu'à 10 destinataires",
+    "Affiner vos thématiques",
+    "Suivre l'engagement dans les analytics",
+    "Customiser la fréquence d'envoi",
+  ];
+  const businessActions = [
+    "Ajouter jusqu'à 50 destinataires",
+    "Activer la fréquence quotidienne",
+    "Ajouter votre logo personnalisé",
+    "Suivre l'engagement dans les analytics",
+  ];
+  const actions = plan === "Pro" ? proActions : businessActions;
+
   return (
-    <LifecycleLayout preheader={`Votre abonnement ${plan} est actif`}>
+    <LifecycleLayout preheader={`Votre abonnement ${plan} est actif - voici comment en tirer le maximum`}>
       <Section style={{ padding: "36px 32px 0" }}>
         <Heading
           as="h1"
@@ -218,24 +241,58 @@ export function TrialReminderEmail({
         </Heading>
       </Section>
 
-      <Section style={{ padding: "0 32px 24px" }}>
+      <Section style={{ padding: "0 32px 20px" }}>
         <Text
           style={{
             fontSize: "15px",
             color: "#4B5563",
             lineHeight: "1.7",
-            margin: "0 0 24px",
+            margin: "0 0 16px",
           }}
         >
-          Bonjour {name}, votre période d&apos;essai est terminée et votre
-          abonnement {plan} est désormais actif. Configurez vos sources, ajoutez
-          des destinataires et explorez vos analytics depuis votre dashboard.
+          {name}, votre période d&apos;essai est terminée et votre abonnement{" "}
+          {plan} est désormais actif. Merci de continuer avec Sorell.
+        </Text>
+        <Text
+          style={{
+            fontSize: "15px",
+            color: "#4B5563",
+            lineHeight: "1.7",
+            margin: "0 0 8px",
+          }}
+        >
+          Quelques pistes pour exploiter pleinement votre plan :
         </Text>
       </Section>
 
-      <Section
-        style={{ padding: "0 32px 32px", textAlign: "center" as const }}
-      >
+      <Section style={{ padding: "0 32px 24px" }}>
+        <Text
+          style={{
+            fontSize: "11px",
+            color: "#7A7267",
+            textTransform: "uppercase" as const,
+            letterSpacing: "0.08em",
+            margin: "0 0 14px",
+          }}
+        >
+          Pour bien démarrer
+        </Text>
+        {actions.map((action, idx) => (
+          <Text
+            key={action}
+            style={{
+              fontSize: "14px",
+              color: "#111827",
+              lineHeight: "1.6",
+              margin: idx === actions.length - 1 ? "0" : "0 0 10px",
+            }}
+          >
+            &middot;&nbsp;&nbsp;{action}
+          </Text>
+        ))}
+      </Section>
+
+      <Section style={{ padding: "0 32px 32px", textAlign: "center" as const }}>
         <Button
           href="https://sorell.fr/dashboard"
           style={{

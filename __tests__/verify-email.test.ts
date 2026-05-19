@@ -44,7 +44,12 @@ describe("GET /api/verify-email", () => {
     const location = response.headers.get("location");
     expect(location).toContain("email_verified=success");
     expect(mockVerifyEmailToken).toHaveBeenCalledWith("user@test.com", "valid-token-abc");
-    expect(mockUpdate).toHaveBeenCalledWith({ email_verified: true });
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email_verified: true,
+        email_verified_at: expect.any(String),
+      })
+    );
     expect(mockLogEmailVerified).toHaveBeenCalledWith("", "user@test.com");
   });
 
@@ -153,8 +158,14 @@ describe("GET /api/verify-email", () => {
     await GET(request);
 
     // Le code fait .eq("email", email.toLowerCase().trim())
-    // On verifie que update est appele avec email_verified: true
-    expect(mockUpdate).toHaveBeenCalledWith({ email_verified: true });
+    // On verifie que update est appele avec email_verified: true et le
+    // timestamp email_verified_at (utilise par les declencheurs lifecycle).
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email_verified: true,
+        email_verified_at: expect.any(String),
+      })
+    );
   });
 
   it("la route est publique (pas de verification auth)", async () => {

@@ -1,19 +1,14 @@
-import {
-  Section,
-  Text,
-  Heading,
-  Button,
-} from "@react-email/components";
+import { Section, Text, Heading, Button } from "@react-email/components";
 import * as React from "react";
 import { LifecycleLayout } from "./components/LifecycleLayout";
 
-interface OnboardingEmailProps {
+interface ConfigReminderEmailProps {
   name: string;
 }
 
-export function OnboardingEmail({ name }: OnboardingEmailProps) {
+export function ConfigReminderEmail({ name }: ConfigReminderEmailProps) {
   return (
-    <LifecycleLayout preheader={`${name}, configurez votre newsletter IA en 5 minutes`}>
+    <LifecycleLayout preheader="Trois étapes pour configurer votre veille sectorielle">
       <Section style={{ padding: "36px 32px 0" }}>
         <Heading
           as="h1"
@@ -24,11 +19,11 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0 0 24px",
           }}
         >
-          Votre veille sectorielle vous attend
+          On configure votre première newsletter ?
         </Heading>
       </Section>
 
-      <Section style={{ padding: "0 32px 24px" }}>
+      <Section style={{ padding: "0 32px 20px" }}>
         <Text
           style={{
             fontSize: "15px",
@@ -37,20 +32,19 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0 0 16px",
           }}
         >
-          Bonjour {name}, votre compte a été créé hier, mais votre première
-          newsletter n&apos;est pas encore configurée.
+          Bonjour {name}, votre compte Sorell est actif depuis 2 jours mais
+          votre newsletter n&apos;est pas encore configurée. Sans
+          configuration, aucune newsletter ne peut partir.
         </Text>
         <Text
           style={{
             fontSize: "15px",
             color: "#4B5563",
             lineHeight: "1.7",
-            margin: "0 0 24px",
+            margin: "0 0 8px",
           }}
         >
-          En 5 minutes, Sorell peut vous envoyer automatiquement une veille
-          sectorielle personnalisée, générée par IA à partir de vraies
-          actualités du web.
+          Pour recevoir votre première veille sectorielle, il vous suffit de :
         </Text>
       </Section>
 
@@ -64,7 +58,7 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0 0 14px",
           }}
         >
-          3 étapes rapides
+          Trois étapes rapides
         </Text>
         <Text
           style={{
@@ -74,7 +68,7 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;Décrivez votre activité (votre brief)
+          &middot;&nbsp;&nbsp;Décrire votre activité en une phrase (le brief)
         </Text>
         <Text
           style={{
@@ -84,7 +78,7 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0 0 10px",
           }}
         >
-          &middot;&nbsp;&nbsp;Choisissez vos thématiques
+          &middot;&nbsp;&nbsp;Choisir vos thématiques
         </Text>
         <Text
           style={{
@@ -94,7 +88,22 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
             margin: "0",
           }}
         >
-          &middot;&nbsp;&nbsp;Cliquez sur &quot;Générer&quot;
+          &middot;&nbsp;&nbsp;Lancer la première génération
+        </Text>
+      </Section>
+
+      <Section style={{ padding: "0 32px 24px" }}>
+        <Text
+          style={{
+            fontSize: "14px",
+            color: "#4B5563",
+            lineHeight: "1.7",
+            margin: "0",
+          }}
+        >
+          Comptez 5 minutes. La première newsletter arrive ensuite selon la
+          fréquence choisie : mensuelle pour le plan Free, hebdomadaire ou
+          quotidienne pour Pro et Business.
         </Text>
       </Section>
 
@@ -119,4 +128,4 @@ export function OnboardingEmail({ name }: OnboardingEmailProps) {
   );
 }
 
-export default OnboardingEmail;
+export default ConfigReminderEmail;
