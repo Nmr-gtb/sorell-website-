@@ -36,7 +36,7 @@ WHERE EXISTS (
         FROM newsletter_config nc
         WHERE nc.user_id = p.id
           AND nc.topics IS NOT NULL
-          AND array_length(nc.topics, 1) > 0
+          AND jsonb_array_length(nc.topics) > 0
       )
    OR (
         p.email_verified = true

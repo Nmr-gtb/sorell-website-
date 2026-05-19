@@ -14,10 +14,11 @@ import { logLifecycleEmail } from "@/lib/activity-log";
 
 export const maxDuration = 60;
 
-// Pause manuelle des relances lifecycle. Repasser a false pour reactiver.
+// Pause manuelle des relances lifecycle. Repasser a true pour stopper
+// tous les envois (sans toucher au cron-job.org).
 // L'email de bienvenue (WelcomeEmail) n'est PAS concerne, il est envoye via
 // /api/welcome-email, hors de ce cron.
-const LIFECYCLE_EMAILS_PAUSED = true;
+const LIFECYCLE_EMAILS_PAUSED = false;
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -173,7 +174,7 @@ export async function GET(request: Request) {
 
     // 1.1 activation_no_verify
     // Users inscrits il y a 24h-25h et qui n'ont toujours pas verifie.
-    {
+    try {
       const lower = new Date(now.getTime() - 25 * 60 * 60 * 1000);
       const upper = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -197,12 +198,14 @@ export async function GET(request: Request) {
         );
         if (sent) results.activation_no_verify++;
       }
+    } catch {
+      results.errors++;
     }
 
     // 1.2 activation_no_config
     // Users dont l'email a ete verifie il y a 48h-49h et qui n'ont
     // toujours pas de config newsletter avec des topics.
-    {
+    try {
       const lower = new Date(now.getTime() - 49 * 60 * 60 * 1000);
       const upper = new Date(now.getTime() - 48 * 60 * 60 * 1000);
 
@@ -245,6 +248,8 @@ export async function GET(request: Request) {
           if (sent) results.activation_no_config++;
         }
       }
+    } catch {
+      results.errors++;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -255,7 +260,7 @@ export async function GET(request: Request) {
     // Users qui ont recu leur 3eme newsletter dans les 24 dernieres heures.
     // On evite le full scan en ne regardant que les destinataires d'envois
     // recents.
-    {
+    try {
       const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
       const { data: recentSends } = await supabaseAdmin
@@ -298,6 +303,8 @@ export async function GET(request: Request) {
           }
         }
       }
+    } catch {
+      results.errors++;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -308,7 +315,7 @@ export async function GET(request: Request) {
     // Free (limit=1) et Pro (limit=4) qui ont atteint leur quota mensuel.
     // Cle mensuelle pour autoriser une relance par mois si le user reste
     // dans le meme plan.
-    {
+    try {
       const startOfMonth = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -362,6 +369,8 @@ export async function GET(request: Request) {
           void nextPlan;
         }
       }
+    } catch {
+      results.errors++;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -369,7 +378,7 @@ export async function GET(request: Request) {
     // ═══════════════════════════════════════════════════════════════
 
     // 4.1 / 4.2 / 4.3 trial_j3, trial_j1, trial_j0
-    {
+    try {
       const { data: trialUsers } = await supabaseAdmin
         .from("profiles")
         .select("id, email, full_name, plan, trial_ends_at")
@@ -434,6 +443,8 @@ export async function GET(request: Request) {
             .eq("id", user.id);
         }
       }
+    } catch {
+      results.errors++;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -445,7 +456,7 @@ export async function GET(request: Request) {
     // (fenetre d'1 jour pour eviter les envois quotidiens).
     // Cle mensuelle pour autoriser un re-envoi si l'inactivite persiste
     // sur plusieurs mois.
-    {
+    try {
       const thirtyDaysAgo = new Date(
         now.getTime() - 30 * 24 * 60 * 60 * 1000
       );
@@ -506,6 +517,8 @@ export async function GET(request: Request) {
         );
         if (sent) results.retention_no_newsletter_30d++;
       }
+    } catch {
+      results.errors++;
     }
 
     // 5.2 retention_unopened_5nl
@@ -513,7 +526,7 @@ export async function GET(request: Request) {
     // par eux-memes (recipient_email = profile.email).
     // Cle mensuelle pour autoriser un re-envoi mensuel si la situation
     // perdure (cooldown de fait).
-    {
+    try {
       // Pour limiter le scope, on ne considere que les users qui ont
       // recu une newsletter dans les 7 derniers jours (sinon ils sont
       // traites par retention_no_newsletter_30d).
@@ -580,12 +593,14 @@ export async function GET(request: Request) {
           if (sent) results.retention_unopened_5nl++;
         }
       }
+    } catch {
+      results.errors++;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // SUPERVISION - Alerte admin si trop d'echecs de generation
     // ═══════════════════════════════════════════════════════════════
-    {
+    try {
       const oneHourAgo = new Date(
         now.getTime() - 60 * 60 * 1000
       ).toISOString();
@@ -605,6 +620,8 @@ export async function GET(request: Request) {
           alertHtml
         );
       }
+    } catch {
+      results.errors++;
     }
 
     return NextResponse.json({
