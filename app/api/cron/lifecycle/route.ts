@@ -18,7 +18,7 @@ export const maxDuration = 60;
 // tous les envois (sans toucher au cron-job.org).
 // L'email de bienvenue (WelcomeEmail) n'est PAS concerne, il est envoye via
 // /api/welcome-email, hors de ce cron.
-const LIFECYCLE_EMAILS_PAUSED = false;
+const LIFECYCLE_EMAILS_PAUSED = true;
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -452,25 +452,29 @@ export async function GET(request: Request) {
     // ═══════════════════════════════════════════════════════════════
 
     // 5.1 retention_no_newsletter_30d
-    // Users dont la derniere newsletter date d'il y a 30-31 jours
-    // (fenetre d'1 jour pour eviter les envois quotidiens).
+    // Users dont la derniere newsletter date d'il y a plus de 35 jours.
+    // Fenetre a 35-36j (au lieu de 30-31) pour eviter les faux positifs
+    // sur les plans mensuels : le cron lifecycle (minuit) tournait avant
+    // le cron newsletter (6-7h), declenchant un email de retention le
+    // jour meme ou la newsletter mensuelle allait etre envoyee.
+    // 35j donne une marge de 5 jours aux plans mensuels.
     // Cle mensuelle pour autoriser un re-envoi si l'inactivite persiste
     // sur plusieurs mois.
     try {
-      const thirtyDaysAgo = new Date(
-        now.getTime() - 30 * 24 * 60 * 60 * 1000
+      const thirtyFiveDaysAgo = new Date(
+        now.getTime() - 35 * 24 * 60 * 60 * 1000
       );
-      const thirtyOneDaysAgo = new Date(
-        now.getTime() - 31 * 24 * 60 * 60 * 1000
+      const thirtySixDaysAgo = new Date(
+        now.getTime() - 36 * 24 * 60 * 60 * 1000
       );
 
       // Recuperer les user_ids dont une newsletter a ete envoyee dans
-      // la fenetre [J-31, J-30].
+      // la fenetre [J-36, J-35].
       const { data: oldSends } = await supabaseAdmin
         .from("newsletters")
         .select("user_id, sent_at")
-        .gte("sent_at", thirtyOneDaysAgo.toISOString())
-        .lte("sent_at", thirtyDaysAgo.toISOString())
+        .gte("sent_at", thirtySixDaysAgo.toISOString())
+        .lte("sent_at", thirtyFiveDaysAgo.toISOString())
         .not("sent_at", "is", null);
 
       const candidateIds = Array.from(
@@ -481,7 +485,7 @@ export async function GET(request: Request) {
 
       for (const userId of candidateIds) {
         // Verifier que c'est bien leur DERNIERE newsletter
-        // (sinon ils n'ont pas 30j d'inactivite).
+        // (sinon ils n'ont pas 35j d'inactivite).
         const { data: latest } = await supabaseAdmin
           .from("newsletters")
           .select("sent_at")
@@ -493,8 +497,8 @@ export async function GET(request: Request) {
 
         if (!latest?.sent_at) continue;
         const lastSent = new Date(latest.sent_at);
-        if (lastSent > thirtyDaysAgo) continue;
-        if (lastSent < thirtyOneDaysAgo) continue;
+        if (lastSent > thirtyFiveDaysAgo) continue;
+        if (lastSent < thirtySixDaysAgo) continue;
 
         const { data: profile } = await supabaseAdmin
           .from("profiles")

@@ -71,3 +71,21 @@ export function getPlanLimits(plan: string) {
   if (plan === "solo") return PLAN_LIMITS.pro;
   return PLAN_LIMITS[(plan as PlanType)] || PLAN_LIMITS.free;
 }
+
+// ---------------------------------------------------------------------------
+// Modèle IA par plan — plus le plan est élevé, meilleur (et plus coûteux) le modèle.
+// Free → Haiku (rapide, économique) ; Pro → Sonnet ; Business & Enterprise → Opus.
+// ---------------------------------------------------------------------------
+export const DEFAULT_NEWSLETTER_MODEL = "claude-haiku-4-5-20251001";
+
+export const MODEL_BY_PLAN: Record<PlanType, string> = {
+  free: "claude-haiku-4-5-20251001",
+  pro: "claude-sonnet-4-6",
+  business: "claude-opus-4-8",
+  enterprise: "claude-opus-4-8",
+};
+
+export function getModelForPlan(plan: string): string {
+  if (plan === "solo") return MODEL_BY_PLAN.pro;
+  return MODEL_BY_PLAN[(plan as PlanType)] || DEFAULT_NEWSLETTER_MODEL;
+}

@@ -10,6 +10,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
+import { getModelForPlan } from "@/lib/plans";
 
 export async function POST(request: Request) {
   try {
@@ -158,7 +159,7 @@ export async function POST(request: Request) {
         feedbackHistory,
         currentFeedback: feedback,
       },
-      { referenceDate: now }
+      { referenceDate: now, model: getModelForPlan(plan) }
     );
 
     if (freshArticleCount === 0) {

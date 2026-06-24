@@ -76,16 +76,17 @@ function buildPrompt({ topics, customBrief, dateString, searchDateHint }) {
 ${customBrief ? `BRIEF DU CLIENT :
 "${customBrief}"
 
-Essaie d'abord de trouver des articles qui correspondent précisément à ce brief. Si tu n'en trouves pas suffisamment, ÉLARGIS à la thématique générale (${topics}) et au secteur d'activité concerné. L'objectif est de toujours livrer une newsletter utile au lecteur.
+Essaie d'abord de trouver des articles qui correspondent précisément à ce brief. Si tu n'en trouves pas suffisamment d'articles RÉCENTS (<90 jours), ÉLARGIS à la thématique générale (${topics}) et au secteur d'activité concerné. L'objectif est de livrer une newsletter UTILE et RÉCENTE.
 
 ` : ""}Thématiques : ${topics}
 Date du jour : ${dateString}
 
 INSTRUCTIONS :
-1. Utilise la recherche web pour trouver 5 actualités RÉELLES et récentes (idéalement <30 jours, acceptable jusqu'à 90 jours).
+1. Utilise la recherche web pour trouver 5 actualités RÉELLES et récentes (idéalement <30 jours, maximum 90 jours).
 2. Si le brief est très niche et que tu ne trouves pas assez d'actus ciblées, ÉLARGIS à la thématique générale indiquée ci-dessus. Ne refuse JAMAIS de produire le JSON.
 3. Pour chaque actualité trouvée, rédige un article de newsletter professionnel.
 4. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
+5. Chaque article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD. Utilise la date affichée sur la page source. Si tu ne trouves pas la date, écarte l'article.
 
 GÉNÈRE un JSON avec cette structure exacte :
 
@@ -102,6 +103,7 @@ GÉNÈRE un JSON avec cette structure exacte :
       "content": "2-3 phrases de contenu factuel. Chiffres, noms, faits concrets.",
       "source": "nom du média",
       "url": "URL COMPLÈTE de l'article original (https://...)",
+      "published_at": "YYYY-MM-DD (date de publication lue sur la page source)",
       "featured": true
     }
   ]
@@ -110,7 +112,8 @@ GÉNÈRE un JSON avec cette structure exacte :
 CONSIGNES :
 - Effectue MAXIMUM 5 recherches web ciblées.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle.
-- Si tu ne trouves pas 5 articles, livre ce que tu as (minimum 3).
+- FRAÎCHEUR OBLIGATOIRE : ne retiens QUE les articles publiés dans les 90 derniers jours. Écarte les articles plus anciens.
+- Si tu ne trouves pas 5 articles récents, livre ce que tu as (minimum 3). Mieux vaut 3 articles frais que 5 périmés.
 - key_figures : 2-3 chiffres trouvés dans les articles. Si rien de pertinent, tableau vide [].
 - Le premier article est "featured": true.
 - Sois factuel.
@@ -252,12 +255,16 @@ async function main() {
     .from("recipients").select("email, name").eq("user_id", userId);
   if (rErr || !recipients?.length) throw new Error(`Aucun recipient : ${rErr?.message}`);
 
+  const forceMode = process.argv.includes("--force");
   const { count: existingCount } = await supabase
     .from("newsletters").select("id", { count: "exact", head: true }).eq("user_id", userId);
-  if ((existingCount || 0) > 0) {
+  if ((existingCount || 0) > 0 && !forceMode) {
     console.warn(`ATTENTION : l'user a déjà ${existingCount} newsletter(s). Interrompu pour éviter un doublon.`);
-    console.warn(`Pour forcer, commente ce garde-fou dans le script.`);
+    console.warn(`Pour forcer, relance avec --force`);
     process.exit(2);
+  }
+  if (forceMode && (existingCount || 0) > 0) {
+    console.log(`      Mode --force : ${existingCount} newsletter(s) existante(s), on continue quand même.`);
   }
 
   const topicsList = (config.topics || [])

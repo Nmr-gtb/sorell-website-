@@ -104,6 +104,7 @@ Refonte 2026-05 : déclencheurs basés sur l'expérience produit vécue (et non 
 9. **Rate limiting** : Upstash Redis (pas in-memory, incompatible serverless)
 10. **RLS** : activée sur les 7 tables avec 26 policies
 11. **Prix annuels** : afficher 190€/an et 490€/an (pas mensuel divisé)
+12. **retention_no_newsletter_30d** : fenêtre à 35-36j (pas 30-31). Le cron lifecycle (minuit) tournait avant le cron newsletter (6-7h), envoyant un faux email de rétention aux plans mensuels le jour même de leur envoi. 35j donne une marge de 5 jours.
 
 ## Règles de travail
 

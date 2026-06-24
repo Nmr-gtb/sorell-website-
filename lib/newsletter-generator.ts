@@ -222,12 +222,17 @@ export interface NewsletterContent {
   articles: NewsletterArticle[];
 }
 
-/** Call Claude Haiku with web search, parse & clean the JSON response. */
+/** Default model when none is provided (free plan / public contexts). */
+export const DEFAULT_MODEL = "claude-haiku-4-5-20251001";
+
+/** Call Claude with web search, parse & clean the JSON response.
+ *  The model defaults to Haiku but can be overridden per plan (Sonnet/Opus). */
 export async function generateNewsletterContent(
-  prompt: string
+  prompt: string,
+  model: string = DEFAULT_MODEL
 ): Promise<NewsletterContent> {
   const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model,
     max_tokens: 4096,
     tools: [
       {
@@ -424,6 +429,8 @@ export interface FreshNewsletterOptions {
   referenceDate?: Date;
   /** Hard cap on articles kept in the final newsletter. Default 5. */
   maxArticles?: number;
+  /** Claude model to use. Defaults to Haiku; pass Sonnet/Opus for higher plans. */
+  model?: string;
 }
 
 export interface FreshNewsletterResult {
@@ -452,10 +459,11 @@ export async function generateFreshNewsletter(
   const maxAge = options.maxAgeDays ?? 90;
   const refDate = options.referenceDate ?? new Date();
   const maxArticles = options.maxArticles ?? 5;
+  const model = options.model ?? DEFAULT_MODEL;
 
   // --- Attempt 1 : with brief ---------------------------------------------
   const firstPrompt = buildNewsletterPrompt(params);
-  const firstContent = await generateNewsletterContent(firstPrompt);
+  const firstContent = await generateNewsletterContent(firstPrompt, model);
   const first = filterFreshArticles(firstContent.articles, refDate, maxAge);
 
   const hasBrief = Boolean(params.customBrief && params.customBrief.trim());
@@ -484,7 +492,7 @@ export async function generateFreshNewsletter(
     customBrief: "",
   };
   const secondPrompt = buildNewsletterPrompt(broadenedParams);
-  const secondContent = await generateNewsletterContent(secondPrompt);
+  const secondContent = await generateNewsletterContent(secondPrompt, model);
   const second = filterFreshArticles(secondContent.articles, refDate, maxAge);
 
   // Brief-specific articles first, then sector-wide to fill up

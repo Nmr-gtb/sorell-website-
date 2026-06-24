@@ -5,8 +5,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const PRICE_IDS = {
-  pro_monthly: "price_1TE3pa7A2mOEJEeWltqInvgW",
-  pro_annual: "price_1TE3ps7A2mOEJEeW4m1wm00z",
+  pro_monthly: "price_1Tlm577A2mOEJEeWRGeMx6YD",
+  pro_annual: "price_1Tlm5T7A2mOEJEeWw4ggdmWU",
   business_monthly: "price_1TE3qf7A2mOEJEeWiTAz8oWd",
   business_annual: "price_1TE3qv7A2mOEJEeWEB04fuCE",
 } as const;

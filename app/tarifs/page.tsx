@@ -13,8 +13,8 @@ import { authFetch } from "@/lib/api";
 // Features arrays and FAQ are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
-  "pro-monthly": "price_1TE3pa7A2mOEJEeWltqInvgW",
-  "pro-annual": "price_1TE3ps7A2mOEJEeW4m1wm00z",
+  "pro-monthly": "price_1Tlm577A2mOEJEeWRGeMx6YD",
+  "pro-annual": "price_1Tlm5T7A2mOEJEeWw4ggdmWU",
   "business-monthly": "price_1TE3qf7A2mOEJEeWiTAz8oWd",
   "business-annual": "price_1TE3qv7A2mOEJEeWEB04fuCE",
 };
@@ -53,6 +53,7 @@ export default function PricingPage() {
 
   const proFeatures = [
     t("pricing.pro_f1"),
+    t("pricing.pro_f7"),
     t("pricing.pro_f2"),
     t("pricing.pro_f3"),
     t("pricing.pro_f4"),
@@ -62,6 +63,7 @@ export default function PricingPage() {
 
   const businessFeatures = [
     t("pricing.biz_f1"),
+    t("pricing.biz_f7"),
     t("pricing.biz_f2"),
     t("pricing.biz_f3"),
     t("pricing.biz_f4"),
@@ -71,6 +73,7 @@ export default function PricingPage() {
 
   const enterpriseFeatures = [
     t("pricing.ent_f1"),
+    t("pricing.ent_f7"),
     t("pricing.ent_f2"),
     t("pricing.ent_f3"),
     t("pricing.ent_f4"),
@@ -254,8 +257,8 @@ export default function PricingPage() {
             />
             <PricingCard
               name={t("pricing.pro")}
-              price={19}
-              annualPrice={190}
+              price={9.99}
+              annualPrice={99}
               period={period}
               tagline={t("pricing.pro_desc")}
               features={proFeatures}

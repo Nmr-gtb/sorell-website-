@@ -147,7 +147,7 @@ export default function PricingCard({
               {typeof displayPrice === "number"
                 ? Number.isInteger(displayPrice)
                   ? displayPrice
-                  : displayPrice.toFixed(1).replace(".", ",")
+                  : displayPrice.toFixed(2).replace(".", ",")
                 : displayPrice}€
             </span>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
