@@ -50,6 +50,21 @@ export interface NewsletterEmailProps {
 const fontSans = "'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif";
 const fontSerif = "Georgia,'Times New Roman',serif";
 
+// Éclaircit une couleur hex vers le blanc d'un facteur (0-1).
+// Sert à dériver un ton d'accent à partir de la couleur de marque,
+// pour que le panneau décoratif suive la personnalisation (white-label).
+function lightenHex(hex: string, amount: number): string {
+  let h = (hex || "").replace("#", "").trim();
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  if (h.length !== 6 || /[^0-9a-fA-F]/.test(h)) return hex; // fallback si couleur invalide
+  const n = parseInt(h, 16);
+  const mix = (c: number) => Math.round(c + (255 - c) * amount);
+  const r = mix((n >> 16) & 255);
+  const g = mix((n >> 8) & 255);
+  const b = mix(n & 255);
+  return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
@@ -84,6 +99,7 @@ function HeroSection({
   subject: string;
   brandColor: string;
 }) {
+  const accent = lightenHex(brandColor, 0.13);
   return (
     <Section style={{ background: brandColor, padding: 0 }}>
       <Row>
@@ -131,7 +147,7 @@ function HeroSection({
           <table cellPadding={0} cellSpacing={0} width="100%" style={{ borderCollapse: "collapse" as const }}>
             <tbody>
               <tr>
-                <td style={{ height: "140px", background: "#0a5c65" }} />
+                <td style={{ height: "140px", background: accent }} />
               </tr>
             </tbody>
           </table>
@@ -662,6 +678,8 @@ function ContextualCtaSection({
     ? "https://sorell.fr/tarifs"
     : `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("D\u00e9couvre cette newsletter sectorielle : https://sorell.fr")}`;
 
+  const accent = lightenHex(brandColor, 0.13);
+
   return (
     <Section style={{ padding: "8px 32px 28px" }}>
       <table
@@ -733,7 +751,7 @@ function ContextualCtaSection({
                       <table cellPadding={0} cellSpacing={0} width="100%" style={{ borderCollapse: "collapse" as const }}>
                         <tbody>
                           <tr>
-                            <td style={{ height: "120px", background: "#0a5c65" }} />
+                            <td style={{ height: "120px", background: accent }} />
                           </tr>
                         </tbody>
                       </table>
