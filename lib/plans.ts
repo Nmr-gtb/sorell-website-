@@ -89,3 +89,21 @@ export function getModelForPlan(plan: string): string {
   if (plan === "solo") return MODEL_BY_PLAN.pro;
   return MODEL_BY_PLAN[(plan as PlanType)] || DEFAULT_NEWSLETTER_MODEL;
 }
+
+// ---------------------------------------------------------------------------
+// Nombre d'articles par newsletter selon le plan.
+// Les plans supérieurs ont des newsletters plus riches (jusqu'à 10 actus).
+// ---------------------------------------------------------------------------
+export const DEFAULT_ARTICLE_COUNT = 5;
+
+export const ARTICLES_BY_PLAN: Record<PlanType, number> = {
+  free: 5,
+  pro: 5,
+  business: 8,
+  enterprise: 10,
+};
+
+export function getArticlesForPlan(plan: string): number {
+  if (plan === "solo") return ARTICLES_BY_PLAN.pro;
+  return ARTICLES_BY_PLAN[(plan as PlanType)] || DEFAULT_ARTICLE_COUNT;
+}

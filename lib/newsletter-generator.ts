@@ -48,6 +48,8 @@ export interface BuildPromptParams {
   previousTitles: string[];
   feedbackHistory?: Array<{ feedback: string; date: string }>;
   currentFeedback?: string;
+  /** Nombre d'articles visé (dépend du plan). Défaut 5. */
+  articleCount?: number;
 }
 
 /** Build the feedback injection block for the prompt (empty string if no feedback). */
@@ -99,7 +101,10 @@ export function buildNewsletterPrompt(params: BuildPromptParams): string {
     previousTitles,
     feedbackHistory,
     currentFeedback,
+    articleCount,
   } = params;
+
+  const count = articleCount ?? 5;
 
   const sourcesLine = sources
     ? `Sources préférées (à inclure si pertinent, mais ne te limite PAS à celles-ci - cherche sur TOUT le web) : ${sources}`
@@ -131,7 +136,7 @@ ${sourcesLine}
 Date du jour : ${dateString}
 
 INSTRUCTIONS :
-1. Utilise la recherche web pour trouver 5 actualités RÉELLES et RÉCENTES (moins de 30 jours idéalement, maximum 90 jours) correspondant aux thématiques demandées.
+1. Utilise la recherche web pour trouver ${count} actualités RÉELLES et RÉCENTES (moins de 30 jours idéalement, maximum 90 jours) correspondant aux thématiques demandées.
 2. Pour chaque actualité trouvée, rédige un article de newsletter professionnel.
 3. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
 4. Chaque article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD. Utilise la date affichée sur la page source. Ne devine pas, ne hallucine pas : si tu ne trouves pas la date précise, écarte l'article.
@@ -158,11 +163,11 @@ GÉNÈRE un JSON avec cette structure exacte :
 }
 
 CONSIGNES :
-- OPTIMISATION : Effectue MAXIMUM 5 recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${topics} actualités ${searchDateHint}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les 5 articles.
+- OPTIMISATION : Effectue MAXIMUM ${Math.min(8, count + 1)} recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${topics} actualités ${searchDateHint}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les ${count} articles.
 - Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
 - TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
 - FRAÎCHEUR OBLIGATOIRE : ne retiens QUE les articles publiés dans les 90 derniers jours maximum. Écarte sans exception les articles plus anciens, même s'ils semblent pertinents.
-- Si tu ne trouves pas 5 articles récents pertinents, réduis à ce que tu trouves (minimum 3). Mieux vaut 3 articles frais que 5 articles périmés.
+- Si tu ne trouves pas ${count} articles récents pertinents, réduis à ce que tu trouves (minimum 3). Mieux vaut quelques articles frais que des articles périmés.
 - key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].
 - Le premier article est "featured": true.
 - Sois factuel : ne déforme pas les informations des articles sources.
@@ -174,7 +179,7 @@ RÈGLES DE DIVERSITÉ DU CONTENU (OBLIGATOIRE) :
 
 2. VARIER les angles : Si un sujet majeur domine l'actualité (ex: une nouvelle réglementation), traiter UN SEUL article dessus et chercher 4 autres sujets COMPLÈTEMENT DIFFÉRENTS. Si ce sujet majeur a déjà été couvert la semaine précédente, chercher plutôt : les réactions des entreprises, les cas concrets d'application, les impacts business chiffrés, les solutions adoptées par les acteurs du secteur, ou passer à un autre sujet.
 
-3. DIVERSIFIER les catégories : Les 5 articles doivent couvrir AU MINIMUM 3 catégories différentes parmi :
+3. DIVERSIFIER les catégories : Les ${count} articles doivent couvrir AU MINIMUM 3 catégories différentes parmi :
    - Réglementation / Conformité
    - Innovation produit / R&D
    - Marché / Business / Chiffres
@@ -229,11 +234,12 @@ export const DEFAULT_MODEL = "claude-haiku-4-5-20251001";
  *  The model defaults to Haiku but can be overridden per plan (Sonnet/Opus). */
 export async function generateNewsletterContent(
   prompt: string,
-  model: string = DEFAULT_MODEL
+  model: string = DEFAULT_MODEL,
+  maxTokens: number = 4096
 ): Promise<NewsletterContent> {
   const message = await anthropic.messages.create({
     model,
-    max_tokens: 4096,
+    max_tokens: maxTokens,
     tools: [
       {
         type: "web_search_20250305" as const,
@@ -460,10 +466,14 @@ export async function generateFreshNewsletter(
   const refDate = options.referenceDate ?? new Date();
   const maxArticles = options.maxArticles ?? 5;
   const model = options.model ?? DEFAULT_MODEL;
+  // Plus d'articles = plus de tokens nécessaires pour ne pas couper le JSON.
+  const maxTokens = Math.min(8192, 3000 + maxArticles * 550);
+  // On demande au modèle le nombre d'articles visé (dépend du plan).
+  const promptParams: BuildPromptParams = { ...params, articleCount: maxArticles };
 
   // --- Attempt 1 : with brief ---------------------------------------------
-  const firstPrompt = buildNewsletterPrompt(params);
-  const firstContent = await generateNewsletterContent(firstPrompt, model);
+  const firstPrompt = buildNewsletterPrompt(promptParams);
+  const firstContent = await generateNewsletterContent(firstPrompt, model, maxTokens);
   const first = filterFreshArticles(firstContent.articles, refDate, maxAge);
 
   const hasBrief = Boolean(params.customBrief && params.customBrief.trim());
@@ -488,11 +498,11 @@ export async function generateFreshNewsletter(
 
   // --- Attempt 2 : broadened (drop the brief) -----------------------------
   const broadenedParams: BuildPromptParams = {
-    ...params,
+    ...promptParams,
     customBrief: "",
   };
   const secondPrompt = buildNewsletterPrompt(broadenedParams);
-  const secondContent = await generateNewsletterContent(secondPrompt, model);
+  const secondContent = await generateNewsletterContent(secondPrompt, model, maxTokens);
   const second = filterFreshArticles(secondContent.articles, refDate, maxAge);
 
   // Brief-specific articles first, then sector-wide to fill up
