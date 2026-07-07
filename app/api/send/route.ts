@@ -141,6 +141,16 @@ export async function POST(request: Request) {
       .update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length })
       .eq("id", newsletterId);
 
+    // Mode éditeur : si cette newsletter était le brouillon en attente de validation,
+    // libérer le slot (le cron pourra regénérer au prochain créneau) et marquer
+    // last_sent_at pour éviter un double envoi le même jour. No-op pour les envois
+    // manuels classiques grâce au filtre sur pending_draft_id.
+    await supabase
+      .from("newsletter_config")
+      .update({ pending_draft_id: null, last_sent_at: new Date().toISOString() })
+      .eq("user_id", verifiedUserId)
+      .eq("pending_draft_id", newsletterId);
+
     // Activity log
     void logNewsletterSent(verifiedUserId, authUser.email || "", recipients.length, newsletter.subject);
 

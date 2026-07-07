@@ -12,7 +12,7 @@ import {
   getProfile,
 } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
-import { getPlanLimits } from "@/lib/plans";
+import { getPlanLimits, canUseEditor } from "@/lib/plans";
 import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
@@ -200,6 +200,7 @@ export default function ConfigPage() {
   const [sendDay, setSendDay] = useState("monday");
   const [sendDay2, setSendDay2] = useState("thursday");
   const [sendHour, setSendHour] = useState(9);
+  const [editMode, setEditMode] = useState<"auto" | "editor">("auto");
 
   // Recipients state
   const [recipients, setRecipients] = useState<Recipient[]>([]);
@@ -259,6 +260,7 @@ export default function ConfigPage() {
           }
         }
         if (cfg.send_hour !== undefined && cfg.send_hour !== null) setSendHour(cfg.send_hour);
+        if (cfg.edit_mode === "editor" || cfg.edit_mode === "auto") setEditMode(cfg.edit_mode);
         if (cfg.custom_brief) setCustomBrief(cfg.custom_brief);
         if (cfg.brand_color) setBrandColor(cfg.brand_color);
         if (cfg.custom_logo_url) setLogoUrl(cfg.custom_logo_url);
@@ -287,6 +289,7 @@ export default function ConfigPage() {
   const limits = getPlanLimits(plan);
   const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
   const canUseLogo = plan === "business" || plan === "enterprise";
+  const canEditorMode = canUseEditor(plan);
 
   /* ─── Topic handlers ─── */
   const toggleTopic = (id: string) => {
@@ -377,7 +380,15 @@ export default function ConfigPage() {
       custom_brief: customBrief,
       send_day: savedSendDay,
       send_hour: savedSendHour,
+      // Mode éditeur réservé aux plans Business/Enterprise — retombe sur "auto" sinon
+      edit_mode: canEditorMode ? editMode : "auto",
     };
+
+    // Retour au mode auto : libérer un éventuel brouillon en attente pour que
+    // le cron reprenne les envois automatiques sans être bloqué.
+    if (!canEditorMode || editMode === "auto") {
+      updateData.pending_draft_id = null;
+    }
 
     if (isPro) {
       updateData.brand_color = brandColor;
@@ -1134,6 +1145,115 @@ export default function ConfigPage() {
                   </span>
                   {getScheduleConfirmation()}
                 </div>
+              </div>
+
+              {/* Edit mode section (auto vs éditeur) */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  <span style={{ display: "flex", color: "var(--accent)" }}><IconEye /></span>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: 0 }}>
+                    {t("config.edit_mode_title")}
+                  </h2>
+                </div>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  {t("config.edit_mode_desc")}
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {/* Option AUTO */}
+                  <button
+                    type="button"
+                    onClick={() => setEditMode("auto")}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      padding: "14px 16px",
+                      borderRadius: 10,
+                      border: editMode === "auto" ? "1.5px solid var(--accent)" : "1px solid var(--border)",
+                      background: editMode === "auto" ? "rgba(0,80,88,0.04)" : "var(--surface)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <span style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      border: editMode === "auto" ? "5px solid var(--accent)" : "1.5px solid var(--border)",
+                      flexShrink: 0,
+                      marginTop: 1,
+                      boxSizing: "border-box",
+                      background: "var(--surface)",
+                      transition: "border 0.15s ease",
+                    }} />
+                    <span>
+                      <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 2 }}>
+                        {t("config.edit_mode_auto")}
+                      </span>
+                      <span style={{ display: "block", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                        {t("config.edit_mode_auto_desc")}
+                      </span>
+                    </span>
+                  </button>
+
+                  {/* Option ÉDITEUR */}
+                  <button
+                    type="button"
+                    onClick={() => { if (canEditorMode) setEditMode("editor"); }}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      padding: "14px 16px",
+                      borderRadius: 10,
+                      border: editMode === "editor" && canEditorMode ? "1.5px solid var(--accent)" : "1px solid var(--border)",
+                      background: editMode === "editor" && canEditorMode ? "rgba(0,80,88,0.04)" : "var(--surface)",
+                      cursor: canEditorMode ? "pointer" : "not-allowed",
+                      opacity: canEditorMode ? 1 : 0.65,
+                      textAlign: "left",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <span style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      border: editMode === "editor" && canEditorMode ? "5px solid var(--accent)" : "1.5px solid var(--border)",
+                      flexShrink: 0,
+                      marginTop: 1,
+                      boxSizing: "border-box",
+                      background: "var(--surface)",
+                      transition: "border 0.15s ease",
+                    }} />
+                    <span style={{ flex: 1 }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+                          {t("config.edit_mode_editor")}
+                        </span>
+                        {!canEditorMode && (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#FEF3C7", padding: "3px 9px", borderRadius: 99, fontSize: 11, fontWeight: 600, color: "#D97706" }}>
+                            <CrownIcon /> Business
+                          </span>
+                        )}
+                      </span>
+                      <span style={{ display: "block", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                        {t("config.edit_mode_editor_desc")}
+                      </span>
+                    </span>
+                  </button>
+                </div>
+                {!canEditorMode && (
+                  <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "12px 0 0" }}>
+                    {t("config.edit_mode_locked")}{" "}
+                    <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>{t("dash.upgrade_btn")}</a>
+                  </p>
+                )}
               </div>
 
               {/* Recipients section */}

@@ -32,6 +32,10 @@ vi.mock("@/lib/email-template", () => ({
 let mockNewsletterData: Record<string, unknown> | null = null;
 let mockRecipientsData: Array<{ email: string; user_id: string }> | null = null;
 const mockUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
+// Mode éditeur : /api/send libère pending_draft_id via update().eq().eq()
+const mockConfigUpdate = vi.fn().mockReturnValue({
+  eq: () => ({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+});
 
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
@@ -68,6 +72,7 @@ vi.mock("@/lib/supabase-admin", () => ({
                 }),
             }),
           }),
+          update: (...args: unknown[]) => mockConfigUpdate(...args),
         };
       }
       if (table === "profiles") {
@@ -203,6 +208,52 @@ describe("POST /api/send", () => {
     expect(mockSend).toHaveBeenCalledTimes(2);
     expect(data.results[0].email).toBe("recipient1@test.com");
     expect(data.results[1].email).toBe("recipient2@test.com");
+  });
+
+  it("clears pending_draft_id on the config after a successful send (editor mode)", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+
+    const request = new Request("http://localhost/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer token",
+      },
+      body: JSON.stringify({ newsletterId: "nl-123", userId: "user-123" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    // La libération du brouillon en attente est conditionnelle (filtre .eq sur
+    // pending_draft_id) mais l'update doit toujours être tenté, avec
+    // last_sent_at pour éviter un double envoi le même jour côté cron
+    expect(mockConfigUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pending_draft_id: null,
+        last_sent_at: expect.any(String),
+      })
+    );
+  });
+
+  it("returns 200 with per-recipient failures when all sends fail", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+    mockSend.mockRejectedValue(new Error("SMTP unavailable"));
+
+    const request = new Request("http://localhost/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer token",
+      },
+      body: JSON.stringify({ newsletterId: "nl-123", userId: "user-123" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.results).toHaveLength(2);
+    expect(data.results.every((r: { success: boolean }) => r.success === false)).toBe(true);
+    // Le message d'erreur reste générique, sans détail technique
+    expect(data.results[0].error).toBe("Échec de l'envoi.");
+    expect(JSON.stringify(data.results)).not.toContain("SMTP");
   });
 
   it("returns 429 if rate limited", async () => {

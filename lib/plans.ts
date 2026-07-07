@@ -107,3 +107,11 @@ export function getArticlesForPlan(plan: string): number {
   if (plan === "solo") return ARTICLES_BY_PLAN.pro;
   return ARTICLES_BY_PLAN[(plan as PlanType)] || DEFAULT_ARTICLE_COUNT;
 }
+
+// ---------------------------------------------------------------------------
+// Mode Éditeur : le cron génère un brouillon qui attend la validation manuelle
+// au lieu d'envoyer directement. Réservé aux plans Business et Enterprise.
+// ---------------------------------------------------------------------------
+export function canUseEditor(plan: string): boolean {
+  return plan === "business" || plan === "enterprise";
+}

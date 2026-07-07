@@ -8,7 +8,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, getArticlesForPlan } from "@/lib/plans";
+import { getModelForPlan, getArticlesForPlan, canUseEditor } from "@/lib/plans";
 
 export const maxDuration = 60;
 
@@ -127,6 +127,15 @@ export async function GET(request: Request) {
       // Double opt-in : skip les utilisateurs qui n'ont pas verifie leur email
       if (!profileData.email_verified) continue;
 
+      // --- MODE ÉDITEUR (Business/Enterprise) : générer un brouillon au lieu d'envoyer.
+      // Un plan non éligible avec edit_mode="editor" retombe sur le mode auto.
+      const editorMode = config.edit_mode === "editor" && canUseEditor(userPlan);
+      if (editorMode && config.pending_draft_id) {
+        // Un brouillon attend déjà sa validation : ne rien regénérer, ne rien envoyer.
+        results.push({ userId: config.user_id, status: "editor_draft_waiting" });
+        continue;
+      }
+
       const autoLimits: Record<string, number> = { free: 1, pro: -1, business: -1, enterprise: -1 };
       const maxAuto = autoLimits[userPlan] ?? 1;
 
@@ -175,6 +184,17 @@ export async function GET(request: Request) {
         .single();
 
       if (!newsletter) continue;
+
+      if (editorMode) {
+        // Le brouillon attend la validation manuelle : on mémorise son id,
+        // on n'envoie rien et on ne touche pas à last_sent_at.
+        await supabaseAdmin
+          .from("newsletter_config")
+          .update({ pending_draft_id: newsletter.id })
+          .eq("user_id", config.user_id);
+        results.push({ userId: config.user_id, status: "editor_draft_created", newsletterId: newsletter.id });
+        continue;
+      }
 
       let recipients = (await supabaseAdmin
         .from("recipients")

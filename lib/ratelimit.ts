@@ -62,6 +62,14 @@ export const adminLoginRateLimit = new Ratelimit({
   prefix: "ratelimit:admin:login",
 });
 
+// Sauvegarde du brouillon (mode éditeur) — plus généreux que apiRateLimit car
+// chaque action d'édition (réordonner, supprimer, éditer un texte) sauvegarde.
+export const draftSaveRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(120, "1 h"),
+  prefix: "ratelimit:draft",
+});
+
 // Checkout Stripe — 10 créations de session par heure par user (anti-abuse)
 export const checkoutRateLimit = new Ratelimit({
   redis,

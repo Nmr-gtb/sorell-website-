@@ -97,6 +97,15 @@ function IconLogout() {
   );
 }
 
+function IconPen() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+}
+
 function IconClose() {
   return (
     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -140,6 +149,7 @@ export default function DashboardSidebar({ mobileOpen, onClose }: Props) {
     { label: t("dash.overview"), href: "/dashboard", icon: <IconGrid />, crown: false },
     { label: t("dash.newsletter"), href: "/dashboard/config", icon: <IconMail />, crown: false, alsoActive: ["/dashboard/customization"] },
     { label: t("dash.generate"), href: "/dashboard/generate", icon: <IconSparkles />, crown: false },
+    { label: t("dash.editor"), href: "/dashboard/editor", icon: <IconPen />, crown: false },
     { label: t("dash.analytics"), href: "/dashboard/analytics", icon: <IconChart />, crown: false, alsoActive: ["/dashboard/historique"] },
     { label: t("dash.profile"), href: "/dashboard/profile", icon: <IconUser />, crown: false },
   ];

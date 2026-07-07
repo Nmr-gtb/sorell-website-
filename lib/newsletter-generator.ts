@@ -337,6 +337,255 @@ export function parseAndCleanResponse(responseText: string): NewsletterContent {
   return newsletterContent;
 }
 
+// --- Régénération ciblée (mode éditeur) --------------------------------------
+// Le mode éditeur permet de régénérer un seul bloc du brouillon (un article,
+// l'édito ou les chiffres clés) sans toucher au reste de la newsletter.
+
+export interface SingleArticleParams {
+  topics: string;
+  sources: string;
+  customBrief: string;
+  dateString: string;
+  searchDateHint: string;
+  /** Titres à exclure : les autres articles du brouillon + les newsletters récentes. */
+  excludeTitles: string[];
+}
+
+export function buildSingleArticlePrompt(params: SingleArticleParams): string {
+  const { topics, sources, customBrief, dateString, searchDateHint, excludeTitles } = params;
+
+  const sourcesLine = sources
+    ? `Sources préférées (indicatives, pas restrictives - cherche sur TOUT le web) : ${sources}`
+    : "";
+
+  const briefBlock = customBrief
+    ? `BRIEF DU CLIENT :
+"${customBrief}"
+
+`
+    : "";
+
+  const excludeBlock = excludeTitles.length
+    ? `
+=== SUJETS DÉJÀ TRAITÉS (INTERDITS) ===
+NE PAS reprendre ces sujets, NE PAS reformuler les mêmes informations. Chercher une actualité COMPLÈTEMENT DIFFÉRENTE.
+${excludeTitles.map((t) => "- " + t).join("\n")}
+=== FIN DES SUJETS INTERDITS ===
+`
+    : "";
+
+  return `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Tu dois rédiger UN SEUL article de newsletter basé sur une VRAIE actualité récente trouvée sur le web.
+
+${briefBlock}Thématiques : ${topics}
+${sourcesLine}
+Date du jour : ${dateString}
+
+INSTRUCTIONS :
+1. Utilise la recherche web (MAXIMUM 3 recherches ciblées, ex: '${topics} actualités ${searchDateHint}') pour trouver UNE actualité RÉELLE et RÉCENTE (moins de 30 jours idéalement, maximum 90 jours).
+2. L'article DOIT être basé sur un vrai article publié avec une vraie URL.
+3. L'article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD, lue sur la page source. Si tu ne trouves pas la date précise, écarte l'article et cherches-en un autre.
+4. FRAÎCHEUR OBLIGATOIRE : uniquement un article publié dans les 90 derniers jours.
+${excludeBlock}
+GÉNÈRE un JSON avec cette structure exacte (un seul objet, pas de tableau) :
+
+{
+  "tag": "catégorie courte",
+  "title": "titre accrocheur basé sur le vrai article (max 80 chars)",
+  "hook": "une phrase d'accroche (max 120 chars)",
+  "content": "2-3 phrases de contenu factuel basé sur le vrai article. Chiffres, noms, faits concrets.",
+  "source": "nom du média (ex: Les Echos, TechCrunch, Reuters...)",
+  "url": "URL COMPLÈTE de l'article original (https://...)",
+  "published_at": "YYYY-MM-DD"
+}
+
+CRITICAL : Ta réponse doit commencer par { et se terminer par }. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks, pas d'explication. UNIQUEMENT le JSON brut.`;
+}
+
+/** Parse the raw response of a single-article regeneration into a clean article. */
+export function parseSingleArticleResponse(responseText: string): NewsletterArticle | null {
+  const cleanJson = responseText
+    .replace(/```json\n?/g, "")
+    .replace(/```\n?/g, "")
+    .trim();
+
+  const start = cleanJson.indexOf("{");
+  const end = cleanJson.lastIndexOf("}");
+  if (start === -1 || end <= start) return null;
+
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(cleanJson.substring(start, end + 1));
+  } catch {
+    return null;
+  }
+
+  // Tolère un objet enveloppé ({ articles: [...] } ou { article: {...} })
+  if (Array.isArray(parsed.articles) && parsed.articles.length) {
+    parsed = parsed.articles[0] as Record<string, unknown>;
+  } else if (parsed.article && typeof parsed.article === "object") {
+    parsed = parsed.article as Record<string, unknown>;
+  }
+
+  const title = cleanCiteTags((parsed.title as string) || "");
+  const url = typeof parsed.url === "string" ? parsed.url.trim() : "";
+  if (!title || !url) return null;
+
+  const rawPublishedAt = parsed.published_at;
+  return {
+    tag: cleanCiteTags((parsed.tag as string) || ""),
+    title,
+    hook: cleanCiteTags((parsed.hook as string) || ""),
+    content: cleanCiteTags((parsed.content as string) || ""),
+    source: cleanCiteTags((parsed.source as string) || ""),
+    url,
+    featured: false,
+    published_at:
+      typeof rawPublishedAt === "string" && rawPublishedAt.trim()
+        ? rawPublishedAt.trim()
+        : undefined,
+  };
+}
+
+export interface SingleArticleOptions {
+  /** Claude model to use (dépend du plan). */
+  model?: string;
+  /** Reference date for the freshness check. Default now. */
+  referenceDate?: Date;
+  /** Max age in days. Default 90. */
+  maxAgeDays?: number;
+}
+
+/**
+ * Regenerate a single article with web search.
+ * Returns null when no fresh, valid article could be produced.
+ */
+export async function generateSingleArticle(
+  params: SingleArticleParams,
+  options: SingleArticleOptions = {}
+): Promise<NewsletterArticle | null> {
+  const model = options.model ?? DEFAULT_MODEL;
+  const refDate = options.referenceDate ?? new Date();
+  const maxAge = options.maxAgeDays ?? 90;
+
+  const prompt = buildSingleArticlePrompt(params);
+  const message = await anthropic.messages.create({
+    model,
+    max_tokens: 2048,
+    tools: [
+      {
+        type: "web_search_20250305" as const,
+        name: "web_search",
+      },
+    ],
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const responseText = message.content
+    .filter((block: { type: string }) => block.type === "text")
+    .map((block: { type: string; text?: string }) => block.text || "")
+    .join("");
+
+  const article = parseSingleArticleResponse(responseText);
+  if (!article) return null;
+  if (!isArticleFresh(article, refDate, maxAge)) return null;
+  return article;
+}
+
+/**
+ * Rewrite the editorial based on the current articles of the draft.
+ * Plain text call, no web search needed.
+ */
+export async function regenerateEditorial(
+  articles: NewsletterArticle[],
+  model: string = DEFAULT_MODEL
+): Promise<string | null> {
+  const articlesBlock = articles
+    .map((a, i) => `${i + 1}. [${a.tag}] ${a.title} — ${a.content || a.hook || ""}`)
+    .join("\n");
+
+  const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Voici les articles de la newsletter de cette semaine :
+
+${articlesBlock}
+
+Rédige un éditorial de 2-3 phrases qui donne le ton de la semaine. Identifie la tendance principale ou le fil rouge entre ces actualités. Ton professionnel mais engageant. Sois factuel, ne déforme pas les informations.
+
+CRITICAL : Réponds UNIQUEMENT avec le texte de l'éditorial. Pas de guillemets, pas de titre, pas d'explication.`;
+
+  const message = await anthropic.messages.create({
+    model,
+    max_tokens: 1024,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const text = message.content
+    .filter((block: { type: string }) => block.type === "text")
+    .map((block: { type: string; text?: string }) => block.text || "")
+    .join("")
+    .trim();
+
+  const cleaned = cleanCiteTags(text);
+  return cleaned || null;
+}
+
+/**
+ * Re-extract the key figures from the current articles of the draft.
+ * Plain text call, no web search needed.
+ */
+export async function regenerateKeyFigures(
+  articles: NewsletterArticle[],
+  model: string = DEFAULT_MODEL
+): Promise<Array<{ value: string; label: string; context: string }> | null> {
+  const articlesBlock = articles
+    .map((a, i) => `${i + 1}. [${a.tag}] ${a.title} — ${a.content || a.hook || ""} (source : ${a.source})`)
+    .join("\n");
+
+  const prompt = `Tu es un rédacteur en chef spécialisé en veille sectorielle B2B. Voici les articles de la newsletter de cette semaine :
+
+${articlesBlock}
+
+Extrais 2-3 chiffres marquants présents dans ces articles. Ne pas inventer de chiffres : uniquement ceux mentionnés dans les textes ci-dessus. S'il n'y a pas de chiffres pertinents, renvoie un tableau vide.
+
+GÉNÈRE un JSON avec cette structure exacte :
+[
+  { "value": "chiffre marquant", "label": "explication courte", "context": "source" }
+]
+
+CRITICAL : Ta réponse doit commencer par [ et se terminer par ]. Aucun texte avant, aucun texte après. Pas de markdown, pas de backticks. UNIQUEMENT le JSON brut.`;
+
+  const message = await anthropic.messages.create({
+    model,
+    max_tokens: 1024,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const text = message.content
+    .filter((block: { type: string }) => block.type === "text")
+    .map((block: { type: string; text?: string }) => block.text || "")
+    .join("")
+    .trim();
+
+  const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  const start = cleaned.indexOf("[");
+  const end = cleaned.lastIndexOf("]");
+  if (start === -1 || end <= start) return null;
+
+  try {
+    const parsed = JSON.parse(cleaned.substring(start, end + 1));
+    if (!Array.isArray(parsed)) return null;
+    return parsed
+      .filter((f: Record<string, unknown>) => f && typeof f === "object")
+      .slice(0, 3)
+      .map((f: Record<string, unknown>) => ({
+        value: cleanCiteTags((f.value as string) || ""),
+        label: cleanCiteTags((f.label as string) || ""),
+        context: cleanCiteTags((f.context as string) || ""),
+      }))
+      .filter((f) => f.value);
+  } catch {
+    return null;
+  }
+}
+
 // --- Subject line builder --------------------------------------------------
 
 export function buildSubjectLine(

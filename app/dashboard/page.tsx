@@ -160,7 +160,7 @@ export default function DashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
   const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
   const [loadingNewsletter, setLoadingNewsletter] = useState(true);
-  const [config, setConfig] = useState<{ custom_brief?: string } | null>(null);
+  const [config, setConfig] = useState<{ custom_brief?: string; edit_mode?: string; pending_draft_id?: string | null } | null>(null);
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
 
   // Onboarding state
@@ -1268,6 +1268,44 @@ export default function DashboardPage() {
               : "Email address confirmed. Your newsletters will be sent automatically."}
           </span>
         </div>
+      )}
+
+      {/* Brouillon en attente de validation (mode éditeur) */}
+      {config?.edit_mode === "editor" && config?.pending_draft_id && (
+        <Link
+          href="/dashboard/editor"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            background: "rgba(0,80,88,0.05)",
+            border: "1px solid rgba(0,80,88,0.2)",
+            borderRadius: 10,
+            padding: "14px 20px",
+            marginBottom: 16,
+            textDecoration: "none",
+            transition: "background 0.15s ease",
+          }}
+        >
+          <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            <span>
+              <span style={{ display: "block", fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+                {t("dashboard.pending_draft_title")}
+              </span>
+              <span style={{ display: "block", fontSize: 13, color: "var(--text-secondary)" }}>
+                {t("dashboard.pending_draft_desc")}
+              </span>
+            </span>
+          </span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "var(--accent)", whiteSpace: "nowrap" }}>
+            {t("dashboard.pending_draft_cta")} →
+          </span>
+        </Link>
       )}
 
       {/* Checklist de progression */}
