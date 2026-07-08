@@ -217,4 +217,64 @@ describe("POST /api/newsletters/draft", () => {
     const response = await POST(makeRequest({ newsletterId: "nl-123", content: validContent() }));
     expect(response.status).toBe(429);
   });
+
+  /* ─── Réinitialisation (retour à la version d'origine) ─── */
+
+  it("reset: restores original_content and original_subject", async () => {
+    const originalContent = {
+      editorial: "Éditorial d'origine",
+      key_figures: [],
+      articles: [
+        { tag: "TECH", title: "Titre Original", hook: "H", content: "C", source: "Reuters", url: "https://reuters.com/orig", featured: true },
+      ],
+    };
+    mockNewsletterData = {
+      id: "nl-123",
+      status: "draft",
+      original_content: originalContent,
+      original_subject: "TECH - Titre Original",
+    };
+
+    const response = await POST(makeRequest({ newsletterId: "nl-123", reset: true }));
+    expect(response.status).toBe(200);
+
+    expect(mockNlUpdate).toHaveBeenCalledTimes(1);
+    const payload = mockNlUpdate.mock.calls[0][0] as Record<string, unknown>;
+    expect(payload.content).toEqual(originalContent);
+    expect(payload.subject).toBe("TECH - Titre Original");
+  });
+
+  it("reset: returns 400 when no original snapshot exists", async () => {
+    mockNewsletterData = { id: "nl-123", status: "draft", original_content: null, original_subject: null };
+
+    const response = await POST(makeRequest({ newsletterId: "nl-123", reset: true }));
+    expect(response.status).toBe(400);
+    expect(mockNlUpdate).not.toHaveBeenCalled();
+  });
+
+  it("reset: returns 400 on a sent newsletter", async () => {
+    mockNewsletterData = {
+      id: "nl-123",
+      status: "sent",
+      original_content: { editorial: "", key_figures: [], articles: [] },
+      original_subject: "X",
+    };
+
+    const response = await POST(makeRequest({ newsletterId: "nl-123", reset: true }));
+    expect(response.status).toBe(400);
+    expect(mockNlUpdate).not.toHaveBeenCalled();
+  });
+
+  it("reset: returns 404 when the newsletter does not belong to the user", async () => {
+    mockNewsletterData = null;
+    const response = await POST(makeRequest({ newsletterId: "nl-999", reset: true }));
+    expect(response.status).toBe(404);
+  });
+
+  it("reset: still gated for plans without editor access", async () => {
+    mockProfileData = { plan: "free" };
+    const response = await POST(makeRequest({ newsletterId: "nl-123", reset: true }));
+    expect(response.status).toBe(403);
+    expect(mockNlUpdate).not.toHaveBeenCalled();
+  });
 });

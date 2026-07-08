@@ -320,10 +320,18 @@ async function main() {
   const subject = buildSubjectLine(content, dateLabel);
   console.log(`      Subject : ${subject}`);
 
-  console.log(`[4/5] Insertion en BDD (status=draft)...`);
+  console.log(`[4/5] Insertion en BDD (status=draft, avec instantané d'origine)...`);
   const { data: inserted, error: insErr } = await supabase
     .from("newsletters")
-    .insert({ user_id: userId, subject, content, status: "draft" })
+    .insert({
+      user_id: userId,
+      subject,
+      content,
+      status: "draft",
+      // Instantané figé pour le bouton "Réinitialiser" de l'éditeur
+      original_content: content,
+      original_subject: subject,
+    })
     .select()
     .single();
   if (insErr) throw new Error(`Insert newsletter échoué : ${insErr.message}`);

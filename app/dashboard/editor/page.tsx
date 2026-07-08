@@ -168,6 +168,10 @@ export default function EditorPage() {
   const [sendResults, setSendResults] = useState<SendResult[] | null>(null);
   const [sendError, setSendError] = useState("");
 
+  const [hasOriginal, setHasOriginal] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
   useEffect(() => {
     if (!user) return;
     async function loadData() {
@@ -193,7 +197,7 @@ export default function EditorPage() {
           if (cfg.pending_draft_id) {
             const { data: nl } = await supabase
               .from("newsletters")
-              .select("id, subject, content, status")
+              .select("id, subject, content, status, original_content")
               .eq("id", cfg.pending_draft_id)
               .single();
 
@@ -207,6 +211,7 @@ export default function EditorPage() {
               setArticles(normalizeArticles(content.articles || []));
               setEditorial(content.editorial || "");
               setKeyFigures(content.key_figures || []);
+              setHasOriginal(Boolean(nl.original_content));
             }
           }
         }
@@ -361,6 +366,40 @@ export default function EditorPage() {
     setKeyFigures(cleaned);
     setEditingBlock(null);
     saveDraft(articles, editorial, cleaned, subject);
+  }
+
+  /* ─── Réinitialisation : retour à la version générée d'origine ─── */
+  async function handleReset() {
+    if (!newsletterId) return;
+    setResetting(true);
+    setRegenError("");
+    try {
+      const response = await authFetch("/api/newsletters/draft", {
+        method: "POST",
+        body: JSON.stringify({ newsletterId, reset: true }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setRegenError(data.error || t("editor.reset_error"));
+      } else {
+        const raw = data.newsletter?.content;
+        const restored = Array.isArray(raw)
+          ? { editorial: "", key_figures: [], articles: raw }
+          : raw || { editorial: "", key_figures: [], articles: [] };
+        setArticles(normalizeArticles(restored.articles || []));
+        setEditorial(restored.editorial || "");
+        setKeyFigures(restored.key_figures || []);
+        if (data.newsletter?.subject) setSubject(data.newsletter.subject);
+        setEditingBlock(null);
+        setSaveState("saved");
+        setTimeout(() => setSaveState("idle"), 2000);
+      }
+    } catch {
+      setRegenError(t("editor.reset_error"));
+    } finally {
+      setResetting(false);
+      setConfirmReset(false);
+    }
   }
 
   /* ─── Envoi ─── */
@@ -690,6 +729,90 @@ export default function EditorPage() {
               </span>
             </div>
           </div>
+
+          {/* Réinitialiser : retour à la version générée d'origine */}
+          {hasOriginal && (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 10,
+              marginBottom: 16,
+              minHeight: 30,
+              flexWrap: "wrap",
+            }}>
+              {confirmReset ? (
+                <>
+                  <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                    {t("editor.reset_confirm")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    disabled={resetting}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "6px 14px",
+                      borderRadius: 6,
+                      border: "1px solid #EF4444",
+                      background: "rgba(239,68,68,0.06)",
+                      color: "#EF4444",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: resetting ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    {resetting ? <Spinner /> : null}
+                    {resetting ? t("editor.resetting") : t("editor.reset_yes")}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => setConfirmReset(false)}
+                    disabled={resetting}
+                    style={{ fontSize: 13, padding: "6px 12px" }}
+                  >
+                    {t("editor.cancel")}
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmReset(true)}
+                  disabled={resetting || sending || regenTarget !== null}
+                  title={t("editor.reset_tooltip")}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "6px 12px",
+                    borderRadius: 6,
+                    border: "1px solid var(--border)",
+                    background: "transparent",
+                    color: "var(--text-muted)",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)";
+                    (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                    (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
+                  }}
+                >
+                  <IconRefresh />
+                  {t("editor.reset")}
+                </button>
+              )}
+            </div>
+          )}
 
           {sendError && (
             <p style={{ fontSize: 14, color: "#EF4444", marginBottom: 16 }}>{sendError}</p>

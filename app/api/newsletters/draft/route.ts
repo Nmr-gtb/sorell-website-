@@ -123,10 +123,54 @@ export async function POST(request: Request) {
       newsletterId?: string;
       content?: unknown;
       subject?: unknown;
+      reset?: boolean;
     };
 
     if (!body.newsletterId || typeof body.newsletterId !== "string") {
       return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
+    }
+
+    // --- RESET : restaurer la version générée d'origine ----------------------
+    if (body.reset === true) {
+      const { data: original, error: origError } = await supabase
+        .from("newsletters")
+        .select("id, status, original_content, original_subject")
+        .eq("id", body.newsletterId)
+        .eq("user_id", verifiedUserId)
+        .single();
+
+      if (origError || !original) {
+        return NextResponse.json({ error: "Newsletter introuvable" }, { status: 404 });
+      }
+      if (original.status !== "draft") {
+        return NextResponse.json(
+          { error: "Seul un brouillon peut être modifié." },
+          { status: 400 }
+        );
+      }
+      if (!original.original_content) {
+        return NextResponse.json(
+          { error: "Aucune version d'origine disponible pour ce brouillon." },
+          { status: 400 }
+        );
+      }
+
+      const resetUpdates: Record<string, unknown> = { content: original.original_content };
+      if (original.original_subject) resetUpdates.subject = original.original_subject;
+
+      const { data: restored, error: resetError } = await supabase
+        .from("newsletters")
+        .update(resetUpdates)
+        .eq("id", body.newsletterId)
+        .eq("user_id", verifiedUserId)
+        .select()
+        .single();
+
+      if (resetError || !restored) {
+        return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
+      }
+
+      return NextResponse.json({ newsletter: restored });
     }
 
     const content = sanitizeContent(body.content);

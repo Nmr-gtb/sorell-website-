@@ -13,6 +13,7 @@ const mockNewslettersCountSelect = vi.fn();
 const mockNewslettersMonthlySentSelect = vi.fn();
 const mockNewslettersRecentSelect = vi.fn();
 const mockNewslettersInsert = vi.fn();
+const mockNewslettersInsertPayload = vi.fn();
 const mockNewslettersUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
 const mockConfigUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
 const mockRecipientsSelect = vi.fn();
@@ -68,11 +69,14 @@ vi.mock("@/lib/supabase-admin", () => ({
               }),
             };
           },
-          insert: () => ({
-            select: () => ({
-              single: () => mockNewslettersInsert(),
-            }),
-          }),
+          insert: (...args: unknown[]) => {
+            mockNewslettersInsertPayload(...args);
+            return {
+              select: () => ({
+                single: () => mockNewslettersInsert(),
+              }),
+            };
+          },
           update: (...args: unknown[]) => mockNewslettersUpdate(...args),
         };
       }
@@ -217,6 +221,13 @@ describe("GET /api/cron - mode éditeur", () => {
     expect(mockConfigUpdate).toHaveBeenCalledWith({ pending_draft_id: "draft-789" });
     const updatePayload = mockConfigUpdate.mock.calls[0][0] as Record<string, unknown>;
     expect(updatePayload.last_sent_at).toBeUndefined();
+
+    // Instantané d'origine figé à la création (pour le bouton Réinitialiser)
+    const insertPayload = mockNewslettersInsertPayload.mock.calls[0][0] as Record<string, unknown>;
+    expect(insertPayload.status).toBe("draft");
+    expect(insertPayload.original_content).toBeDefined();
+    expect(insertPayload.original_content).toEqual(insertPayload.content);
+    expect(insertPayload.original_subject).toBe(insertPayload.subject);
   });
 
   it("does nothing when a pending draft already awaits validation", async () => {
@@ -295,5 +306,10 @@ describe("GET /api/cron - mode éditeur", () => {
     const updatePayload = mockConfigUpdate.mock.calls[0][0] as Record<string, unknown>;
     expect(updatePayload.last_sent_at).toBeDefined();
     expect(updatePayload.pending_draft_id).toBeUndefined();
+
+    // En mode auto, pas d'instantané d'origine (inutile : la newsletter part directement)
+    const insertPayload = mockNewslettersInsertPayload.mock.calls[0][0] as Record<string, unknown>;
+    expect(insertPayload.original_content).toBeUndefined();
+    expect(insertPayload.original_subject).toBeUndefined();
   });
 });

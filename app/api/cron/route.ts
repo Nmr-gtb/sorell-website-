@@ -177,9 +177,15 @@ export async function GET(request: Request) {
       const dateLabel = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
       const subject = buildSubjectLine(newsletterContent, dateLabel);
 
+      // En mode éditeur, on fige un instantané de la version générée d'origine
+      // pour permettre le "Réinitialiser" de l'éditeur.
+      const insertPayload: Record<string, unknown> = editorMode
+        ? { user_id: config.user_id, subject, content: newsletterContent, status: "draft", original_content: newsletterContent, original_subject: subject }
+        : { user_id: config.user_id, subject, content: newsletterContent, status: "draft" };
+
       const { data: newsletter } = await supabaseAdmin
         .from("newsletters")
-        .insert({ user_id: config.user_id, subject, content: newsletterContent, status: "draft" })
+        .insert(insertPayload)
         .select()
         .single();
 
