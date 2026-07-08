@@ -8,7 +8,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, getArticlesForPlan, canUseEditor } from "@/lib/plans";
+import { getModelForPlan, resolveArticleCount, canUseEditor } from "@/lib/plans";
 
 export const maxDuration = 60;
 
@@ -163,7 +163,7 @@ export async function GET(request: Request) {
           searchDateHint: franceTime.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
           previousTitles,
         },
-        { referenceDate: franceTime, model: getModelForPlan(userPlan), maxArticles: getArticlesForPlan(userPlan) }
+        { referenceDate: franceTime, model: getModelForPlan(userPlan), maxArticles: resolveArticleCount(userPlan, config.article_count) }
       );
 
       // Skip silently when no fresh content could be found even after broadening.

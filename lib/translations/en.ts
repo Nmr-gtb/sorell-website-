@@ -474,6 +474,13 @@ const en: Record<string, string> = {
   "config.edit_mode_editor": "Review before sending",
   "config.edit_mode_editor_desc": "The newsletter is generated as a draft. You review it, edit it if needed, then approve the sending from the editor.",
   "config.edit_mode_locked": "Review before sending is available with the Business and Enterprise plans.",
+
+  // Newsletter length
+  "config.article_count_title": "Newsletter length",
+  "config.article_count_desc": "Choose how many articles each newsletter contains. Depending on available news, the final count may be slightly lower (only recent articles are kept).",
+  "config.article_count_auto": "Automatic — your plan default ({count} articles)",
+  "config.article_count_option": "{count} articles",
+  "config.article_count_locked": "Your plan generates {count} articles per newsletter. Choosing the length freely is available with the Business and Enterprise plans.",
   "config.recipients": "Recipients",
   "config.recipient_count": "recipient(s)",
   "config.add_recipient": "+ Add a recipient",

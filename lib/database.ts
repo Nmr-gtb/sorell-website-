@@ -49,6 +49,7 @@ export async function upsertNewsletterConfig(userId: string, config: Record<stri
   if (config.body_text_color !== undefined) upsertData.body_text_color = config.body_text_color;
   if (config.custom_logo_url !== undefined) upsertData.custom_logo_url = config.custom_logo_url;
   if (config.edit_mode !== undefined) upsertData.edit_mode = config.edit_mode;
+  if (config.article_count !== undefined) upsertData.article_count = config.article_count;
   // pending_draft_id est géré par le serveur (cron + /api/send) : le client
   // peut uniquement le remettre à null (retour au mode auto), jamais le définir.
   if (config.pending_draft_id === null) upsertData.pending_draft_id = null;

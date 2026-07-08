@@ -474,6 +474,13 @@ const fr: Record<string, string> = {
   "config.edit_mode_editor_desc": "La newsletter est générée en brouillon. Vous la relisez, la modifiez si besoin, puis vous validez l'envoi depuis l'éditeur.",
   "config.edit_mode_locked": "La relecture avant envoi est disponible avec les plans Business et Enterprise.",
 
+  // Longueur de la newsletter
+  "config.article_count_title": "Longueur de la newsletter",
+  "config.article_count_desc": "Choisissez le nombre d'articles par newsletter. Selon l'actualité disponible, le nombre final peut être légèrement inférieur (seuls les articles récents sont retenus).",
+  "config.article_count_auto": "Automatique — défaut de votre plan ({count} articles)",
+  "config.article_count_option": "{count} articles",
+  "config.article_count_locked": "Votre plan génère {count} articles par newsletter. Le choix libre de la longueur est disponible avec les plans Business et Enterprise.",
+
   "config.recipients": "Destinataires",
   "config.recipient_count": "destinataire(s)",
   "config.add_recipient": "+ Ajouter un destinataire",

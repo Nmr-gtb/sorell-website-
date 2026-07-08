@@ -10,7 +10,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, getArticlesForPlan } from "@/lib/plans";
+import { getModelForPlan, resolveArticleCount } from "@/lib/plans";
 
 export async function POST(request: Request) {
   try {
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
 
     const { data: config } = await supabase
       .from("newsletter_config")
-      .select("topics, sources, custom_brief, feedback_history")
+      .select("topics, sources, custom_brief, feedback_history, article_count")
       .eq("user_id", verifiedUserId)
       .single();
 
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
         feedbackHistory,
         currentFeedback: feedback,
       },
-      { referenceDate: now, model: getModelForPlan(plan), maxArticles: getArticlesForPlan(plan) }
+      { referenceDate: now, model: getModelForPlan(plan), maxArticles: resolveArticleCount(plan, config?.article_count) }
     );
 
     if (freshArticleCount === 0) {

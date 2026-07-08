@@ -57,6 +57,19 @@ const MODEL_BY_PLAN = {
 const ARTICLES_BY_PLAN = { free: 5, pro: 5, business: 8, enterprise: 10 };
 const canUseEditor = (plan) => plan === "business" || plan === "enterprise";
 
+// Longueur personnalisée (aligné sur lib/plans.ts resolveArticleCount)
+function resolveArticleCount(plan, configured) {
+  if (
+    canUseEditor(plan) &&
+    Number.isInteger(configured) &&
+    configured >= 3 &&
+    configured <= 12
+  ) {
+    return configured;
+  }
+  return ARTICLES_BY_PLAN[plan] || 5;
+}
+
 // --- Helpers (alignés sur lib/newsletter-generator.ts) ----------------------
 
 function cleanCiteTags(text) {
@@ -230,7 +243,7 @@ async function main() {
 
   const { data: config, error: cErr } = await supabase
     .from("newsletter_config")
-    .select("topics, custom_brief, sources, edit_mode, pending_draft_id")
+    .select("topics, custom_brief, sources, edit_mode, pending_draft_id, article_count")
     .eq("user_id", userId).single();
   if (cErr || !config) throw new Error(`Config introuvable : ${cErr?.message}`);
 
@@ -251,7 +264,7 @@ async function main() {
 
   const sourcesList = Array.isArray(config.sources) ? config.sources.join(", ") : "";
   const model = MODEL_BY_PLAN[profile.plan] || MODEL_BY_PLAN.free;
-  const maxArticles = ARTICLES_BY_PLAN[profile.plan] || 5;
+  const maxArticles = resolveArticleCount(profile.plan, config.article_count);
 
   console.log(`      Email : ${profile.email}`);
   console.log(`      Plan : ${profile.plan} -> ${model}, ${maxArticles} articles`);
@@ -279,7 +292,7 @@ async function main() {
     count: maxArticles,
   });
 
-  const maxTokens = Math.min(8192, 3000 + maxArticles * 550);
+  const maxTokens = Math.min(12000, 3000 + maxArticles * 550);
   const message = await anthropic.messages.create({
     model,
     max_tokens: maxTokens,

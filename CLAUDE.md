@@ -40,8 +40,14 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 ## Base de données
 
 - **profiles** : id, email, plan (free/pro/business/enterprise), full_name, email_verified, email_verified_at, stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code, referred_by, created_at
-- **newsletter_config** : user_id, topics, custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics
-- **newsletters** : id, user_id, content, subject, status, generated_at, created_at, sent_at, recipient_count
+- **newsletter_config** : user_id, topics, custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics, edit_mode (auto/editor), pending_draft_id, article_count (3-12, NULL = défaut du plan)
+- **newsletters** : id, user_id, content, subject, status, generated_at, created_at, sent_at, recipient_count, original_content, original_subject (instantané pour le Réinitialiser de l'éditeur)
+
+### Mode Éditeur (relecture avant envoi — Business/Enterprise)
+- edit_mode="editor" : le cron génère un brouillon (pending_draft_id), n'envoie rien, attend la validation dans /dashboard/editor
+- /api/send libère pending_draft_id ; /api/generate/article régénère un bloc ; /api/newsletters/draft sauvegarde/reset
+- Script de secours : node scripts/trigger-editor-draft.js <user_id> [--force] (contourne le timeout Vercel 60s)
+- Longueur : article_count (3-12) via resolveArticleCount(plan, configured) — gating serveur canCustomizeLength
 - **newsletter_events** : id, newsletter_id, recipient_email, event_type (opened/clicked/delivered/bounced/complained), created_at
 - **referrals** : id, referrer_id, referee_id, code, status (pending/converted), created_at, converted_at, expires_at
 - **activity_log** : id, user_id, user_email, action_type, action_label, details, metadata, synced_to_notion, created_at

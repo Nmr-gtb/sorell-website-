@@ -252,6 +252,28 @@ describe("GET /api/cron - mode éditeur", () => {
     expect(mockConfigUpdate).not.toHaveBeenCalled();
   });
 
+  it("uses the configured newsletter length for eligible plans", async () => {
+    const config = makeConfigForNow();
+    config.article_count = 12;
+    mockConfigsSelect.mockResolvedValue({ data: [config], error: null });
+    mockProfilesSelect.mockResolvedValue({
+      data: [{ id: "user-biz", plan: "enterprise", email_verified: true }],
+    });
+    mockNewslettersInsert.mockResolvedValue({
+      data: { id: "draft-12", user_id: "user-biz", subject: "Test", content: {}, status: "draft" },
+      error: null,
+    });
+    mockCreate.mockResolvedValue({ content: [{ type: "text", text: makeClaudeResponse() }] });
+
+    const response = await GET(makeCronRequest());
+    expect(response.status).toBe(200);
+
+    // Le nombre configuré atteint le prompt et le budget de tokens suit
+    const createArgs = mockCreate.mock.calls[0][0] as { max_tokens: number; messages: Array<{ content: string }> };
+    expect(createArgs.messages[0].content).toContain("12 actualités RÉELLES");
+    expect(createArgs.max_tokens).toBe(3000 + 12 * 550); // 9600, sous le plafond de 12000
+  });
+
   it("does not create a draft in editor mode when no fresh content is found", async () => {
     const config = makeConfigForNow();
     mockConfigsSelect.mockResolvedValue({ data: [config], error: null });

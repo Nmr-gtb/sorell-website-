@@ -12,7 +12,7 @@ import {
   getProfile,
 } from "@/lib/database";
 import { supabase } from "@/lib/supabase";
-import { getPlanLimits, canUseEditor } from "@/lib/plans";
+import { getPlanLimits, canUseEditor, canCustomizeLength, getArticlesForPlan, MIN_CUSTOM_ARTICLES, MAX_CUSTOM_ARTICLES } from "@/lib/plans";
 import { useLanguage } from "@/lib/LanguageContext";
 import { DEFAULT_TOPICS } from "@/lib/topics";
 import { authFetch } from "@/lib/api";
@@ -188,6 +188,7 @@ export default function ConfigPage() {
   // Content state
   const [topics, setTopics] = useState(defaultTopics);
   const [customBrief, setCustomBrief] = useState("");
+  const [articleCount, setArticleCount] = useState<number | null>(null); // null = défaut du plan
   const [newTopicLabel, setNewTopicLabel] = useState("");
   const [showAddTopic, setShowAddTopic] = useState(false);
 
@@ -261,6 +262,7 @@ export default function ConfigPage() {
         }
         if (cfg.send_hour !== undefined && cfg.send_hour !== null) setSendHour(cfg.send_hour);
         if (cfg.edit_mode === "editor" || cfg.edit_mode === "auto") setEditMode(cfg.edit_mode);
+        if (typeof cfg.article_count === "number") setArticleCount(cfg.article_count);
         if (cfg.custom_brief) setCustomBrief(cfg.custom_brief);
         if (cfg.brand_color) setBrandColor(cfg.brand_color);
         if (cfg.custom_logo_url) setLogoUrl(cfg.custom_logo_url);
@@ -290,6 +292,8 @@ export default function ConfigPage() {
   const isPro = plan === "pro" || plan === "business" || plan === "enterprise";
   const canUseLogo = plan === "business" || plan === "enterprise";
   const canEditorMode = canUseEditor(plan);
+  const canCustomLength = canCustomizeLength(plan);
+  const planDefaultArticles = getArticlesForPlan(plan);
 
   /* ─── Topic handlers ─── */
   const toggleTopic = (id: string) => {
@@ -382,6 +386,8 @@ export default function ConfigPage() {
       send_hour: savedSendHour,
       // Mode éditeur réservé aux plans Business/Enterprise — retombe sur "auto" sinon
       edit_mode: canEditorMode ? editMode : "auto",
+      // Longueur personnalisée réservée aux plans Business/Enterprise
+      article_count: canCustomLength ? articleCount : null,
     };
 
     // Retour au mode auto : libérer un éventuel brouillon en attente pour que
@@ -770,6 +776,57 @@ export default function ConfigPage() {
                     <CrownBadge tooltip={t("config.custom_topics_locked")} />
                     <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
                       {t("config.custom_topics_locked")}{" "}
+                      <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>{t("dash.upgrade_btn")}</a>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Newsletter length section */}
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 12,
+                padding: 24,
+              }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", margin: "0 0 6px" }}>
+                  {t("config.article_count_title")}
+                </h2>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
+                  {t("config.article_count_desc")}
+                </p>
+                {canCustomLength ? (
+                  <select
+                    className="select-field"
+                    value={articleCount === null ? "auto" : String(articleCount)}
+                    onChange={(e) => setArticleCount(e.target.value === "auto" ? null : Number(e.target.value))}
+                    style={{ height: 42, maxWidth: 360 }}
+                  >
+                    <option value="auto">
+                      {t("config.article_count_auto").replace("{count}", String(planDefaultArticles))}
+                    </option>
+                    {Array.from(
+                      { length: MAX_CUSTOM_ARTICLES - MIN_CUSTOM_ARTICLES + 1 },
+                      (_, i) => MIN_CUSTOM_ARTICLES + i
+                    ).map((n) => (
+                      <option key={n} value={n}>
+                        {t("config.article_count_option").replace("{count}", String(n))}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "10px 16px",
+                    borderRadius: 8,
+                    background: "var(--surface-alt, #f9fafb)",
+                    border: "1px solid var(--border)",
+                  }}>
+                    <CrownBadge tooltip={t("config.article_count_locked")} />
+                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                      {t("config.article_count_locked").replace("{count}", String(planDefaultArticles))}{" "}
                       <a href="/tarifs" style={{ color: "var(--accent)", textDecoration: "underline" }}>{t("dash.upgrade_btn")}</a>
                     </span>
                   </div>

@@ -716,7 +716,9 @@ export async function generateFreshNewsletter(
   const maxArticles = options.maxArticles ?? 5;
   const model = options.model ?? DEFAULT_MODEL;
   // Plus d'articles = plus de tokens nécessaires pour ne pas couper le JSON.
-  const maxTokens = Math.min(8192, 3000 + maxArticles * 550);
+  // Plafond à 12000 pour les newsletters longues (jusqu'à 12 articles, plans
+  // premium sur Opus) — largement sous les limites de sortie des modèles.
+  const maxTokens = Math.min(12000, 3000 + maxArticles * 550);
   // On demande au modèle le nombre d'articles visé (dépend du plan).
   const promptParams: BuildPromptParams = { ...params, articleCount: maxArticles };
 

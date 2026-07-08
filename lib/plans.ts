@@ -115,3 +115,33 @@ export function getArticlesForPlan(plan: string): number {
 export function canUseEditor(plan: string): boolean {
   return plan === "business" || plan === "enterprise";
 }
+
+// ---------------------------------------------------------------------------
+// Longueur de newsletter personnalisable : les plans Business et Enterprise
+// peuvent choisir librement le nombre d'articles (3 à 12). Les autres plans
+// restent sur le défaut du plan (ARTICLES_BY_PLAN).
+// ---------------------------------------------------------------------------
+export const MIN_CUSTOM_ARTICLES = 3;
+export const MAX_CUSTOM_ARTICLES = 12;
+
+export function canCustomizeLength(plan: string): boolean {
+  return plan === "business" || plan === "enterprise";
+}
+
+/**
+ * Résout le nombre d'articles effectif pour une génération :
+ * la valeur configurée si le plan y a droit et qu'elle est valide,
+ * sinon le défaut du plan.
+ */
+export function resolveArticleCount(plan: string, configured?: number | null): number {
+  if (
+    canCustomizeLength(plan) &&
+    typeof configured === "number" &&
+    Number.isInteger(configured) &&
+    configured >= MIN_CUSTOM_ARTICLES &&
+    configured <= MAX_CUSTOM_ARTICLES
+  ) {
+    return configured;
+  }
+  return getArticlesForPlan(plan);
+}
