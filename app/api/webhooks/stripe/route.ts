@@ -80,10 +80,13 @@ export async function POST(request: Request) {
           updateData.trial_ends_at = new Date(subscription.trial_end * 1000).toISOString();
         }
 
-        await supabaseAdmin
+        // Vérifier .error : si l'update échoue, throw pour renvoyer 500 et
+        // laisser Stripe rejouer l'événement (sinon plan désynchronisé en silence).
+        const { error: updErr } = await supabaseAdmin
           .from("profiles")
           .update(updateData)
           .eq("id", userId);
+        if (updErr) throw new Error("profiles update failed (checkout.completed)");
 
         // Notifier Noé sur Telegram via Eva
         const { data: subscriberProfile } = await supabaseAdmin
@@ -148,10 +151,11 @@ export async function POST(request: Request) {
         .maybeSingle();
 
       if (profile) {
-        await supabaseAdmin
+        const { error: updErr } = await supabaseAdmin
           .from("profiles")
           .update({ plan, updated_at: new Date().toISOString() })
           .eq("id", profile.id);
+        if (updErr) throw new Error("profiles update failed (subscription.updated)");
       }
     }
 
@@ -200,10 +204,11 @@ export async function POST(request: Request) {
         .maybeSingle();
 
       if (profile) {
-        await supabaseAdmin
+        const { error: updErr } = await supabaseAdmin
           .from("profiles")
           .update({ plan: "free", stripe_subscription_id: null, updated_at: new Date().toISOString() })
           .eq("id", profile.id);
+        if (updErr) throw new Error("profiles update failed (subscription.deleted)");
       }
     }
   } catch {

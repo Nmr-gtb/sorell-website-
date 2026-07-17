@@ -108,6 +108,22 @@ function getNextDate(frequency: string, sendDay: string, sendHour: number, lang:
     };
   }
 
+  // bimonthly : le 1er et le 15 de chaque mois (aligné sur le cron).
+  if (frequency === "bimonthly") {
+    const candidates = [
+      new Date(now.getFullYear(), now.getMonth(), 1),
+      new Date(now.getFullYear(), now.getMonth(), 15),
+      new Date(now.getFullYear(), now.getMonth() + 1, 1),
+    ];
+    const next = candidates.find((d) => d > now) || candidates[2];
+    return {
+      date: lang === "en"
+        ? `${months[next.getMonth()]} ${next.getDate()}, ${next.getFullYear()}`
+        : `${next.getDate()} ${months[next.getMonth()]} ${next.getFullYear()}`,
+      time: timeStr,
+    };
+  }
+
   // weekly
   const targetDay = DAY_INDEX[sendDay] ?? 1;
   let diff = (targetDay - today + 7) % 7;

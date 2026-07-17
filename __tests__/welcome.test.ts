@@ -76,20 +76,24 @@ describe("POST /api/welcome", () => {
     expect(data.error).toContain("Non autoris");
   });
 
-  it("retourne 400 si email manquant", async () => {
+  it("retourne 400 si l'utilisateur authentifié n'a pas d'email", async () => {
+    // L'email vient désormais de l'utilisateur authentifié, pas du corps.
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "" });
     const request = buildRequest({ name: "Test" }, { auth: true });
     const response = await POST(request);
     expect(response.status).toBe(400);
     const data = await response.json();
-    expect(data.error).toContain("Missing email");
+    expect(data.error).toContain("Email invalide");
   });
 
-  it("retourne 400 si email invalide", async () => {
-    const request = buildRequest({ email: "not-an-email", name: "Test" }, { auth: true });
+  it("ignore l'email du corps et n'envoie qu'à l'utilisateur authentifié (anti-spam tiers)", async () => {
+    // Même si le corps contient une adresse tierce, l'email part à user.email.
+    const request = buildRequest({ email: "victime@tiers.com", name: "Test" }, { auth: true });
     const response = await POST(request);
-    expect(response.status).toBe(400);
-    const data = await response.json();
-    expect(data.error).toContain("Format email invalide");
+    expect(response.status).toBe(200);
+    const welcomeCall = mockSend.mock.calls[0][0];
+    expect(welcomeCall.to).toBe("test@example.com");
+    expect(welcomeCall.to).not.toBe("victime@tiers.com");
   });
 
   it("retourne 429 si rate limit depasse", async () => {
@@ -114,9 +118,10 @@ describe("POST /api/welcome", () => {
     // 2 emails: welcome to user + notification to admin
     expect(mockSend).toHaveBeenCalledTimes(2);
 
-    // First call: welcome email to user
+    // First call: welcome email to the AUTHENTICATED user (test@example.com),
+    // not the address in the body.
     const welcomeCall = mockSend.mock.calls[0][0];
-    expect(welcomeCall.to).toBe("john@example.com");
+    expect(welcomeCall.to).toBe("test@example.com");
     expect(welcomeCall.subject).toContain("Bienvenue sur Sorell");
     expect(welcomeCall.html).toBeDefined();
 

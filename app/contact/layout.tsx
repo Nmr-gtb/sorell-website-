@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact — Sorell",
+  title: "Contact",
   description: "Une question sur Sorell ? Contactez notre équipe. Réponse sous 24h.",
   openGraph: {
     title: "Contact — Sorell",

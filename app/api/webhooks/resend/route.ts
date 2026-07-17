@@ -86,6 +86,17 @@ export async function POST(request: Request) {
   try {
     if (type === "email.bounced" || type === "email.complained") {
       const bouncedEmail = data?.to?.[0];
+
+      // Ne pas supprimer sur un bounce TEMPORAIRE (Transient : boîte pleine,
+      // serveur indisponible...) : ce serait détruire la donnée d'un abonné
+      // valide. On ne supprime que sur hard bounce (Permanent), plainte spam
+      // (email.complained), ou bounce dont le type n'est pas précisé.
+      const bounceType = (data as { bounce?: { type?: string } })?.bounce?.type;
+      const isSoftBounce = type === "email.bounced" && bounceType === "Transient";
+      if (isSoftBounce) {
+        return NextResponse.json({ received: true, skipped: "soft_bounce" });
+      }
+
       if (bouncedEmail) {
         // Chercher le destinataire et son propriétaire avant suppression
         const { data: recipients } = await supabaseAdmin

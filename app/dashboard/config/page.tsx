@@ -362,6 +362,10 @@ export default function ConfigPage() {
       savedSendDay = "1st";
     } else if (frequency === "monthly") {
       savedSendDay = "1st";
+    } else if (frequency === "bimonthly") {
+      // 1er et 15 de chaque mois : send_day fixe, pas un jour de semaine
+      // (empêche d'écraser "1st-15th" par le sendDay hebdo par défaut).
+      savedSendDay = "1st-15th";
     } else if (frequency === "biweekly") {
       savedSendDay = `${sendDay},${sendDay2}`;
     }
@@ -527,6 +531,7 @@ export default function ConfigPage() {
     const timeStr = `${Math.floor(sendHour)}h${sendHour % 1 === 0.5 ? "30" : "00"}`;
     if (plan === "free") return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
     if (frequency === "monthly") return t("config.confirm_free").replace("{hour}", `${sendHour}h00`);
+    if (frequency === "bimonthly") return t("config.confirm_bimonthly_dates").replace("{hour}", timeStr);
     if (frequency === "daily") return t("config.confirm_daily").replace("{hour}", timeStr);
     if (frequency === "biweekly") return t("config.confirm_biweekly").replace("{day1}", dayLabel).replace("{day2}", dayLabel2).replace("{hour}", timeStr);
     return t("config.confirm_weekly").replace("{day}", dayLabel).replace("{hour}", timeStr);
@@ -1085,6 +1090,7 @@ export default function ConfigPage() {
                       >
                         <option value="weekly">{t("config.freq_weekly")}</option>
                         <option value="biweekly">{t("config.freq_biweekly")}</option>
+                        <option value="bimonthly">{t("config.freq_bimonthly")}</option>
                         <option value="monthly">{t("config.freq_monthly")}</option>
                       </select>
                     </div>
@@ -1140,6 +1146,7 @@ export default function ConfigPage() {
                       >
                         <option value="weekly">{t("config.freq_weekly")}</option>
                         <option value="biweekly">{t("config.freq_biweekly")}</option>
+                        <option value="bimonthly">{t("config.freq_bimonthly")}</option>
                         <option value="daily">{t("config.freq_daily")}</option>
                       </select>
                     </div>

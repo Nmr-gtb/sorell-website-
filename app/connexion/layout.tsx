@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Connexion — Sorell",
+  title: "Connexion",
   description: "Connectez-vous à votre espace Sorell pour gérer vos newsletters de veille automatisées.",
   openGraph: {
     title: "Connexion — Sorell",

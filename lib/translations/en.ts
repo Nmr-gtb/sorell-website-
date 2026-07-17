@@ -358,6 +358,10 @@ const en: Record<string, string> = {
   "dashboard.promo_apply": "Apply",
   "dashboard.rate_limit_error": "You have reached the request limit. Please try again in one hour.",
   "dashboard.checkout_error": "Error redirecting to payment. Please try again.",
+  "dashboard.error_title": "Something went wrong",
+  "dashboard.error_desc": "An unexpected problem occurred. Please try again.",
+  "common.retry": "Retry",
+  "common.source": "Source",
   "dashboard.first_newsletter_error": "Your configuration is saved but the first newsletter could not be sent. It will be sent at the next scheduled time.",
   "dashboard.resend_error": "Error resending the email. Please try again.",
   "dashboard.generating": "Generating...",
@@ -452,6 +456,7 @@ const en: Record<string, string> = {
   "config.frequency": "Frequency",
   "config.freq_weekly": "Once a week",
   "config.freq_biweekly": "Twice a week",
+  "config.freq_bimonthly": "Twice a month (1st and 15th)",
   "config.freq_daily": "Every day (Mon-Fri)",
   "config.freq_monthly": "Once a month",
   "config.monday": "Monday",
@@ -465,6 +470,7 @@ const en: Record<string, string> = {
   "config.confirm_weekly": "\u2713 Your newsletter will be sent every {day} at {hour}. No action required.",
   "config.confirm_daily": "\u2713 Your newsletter will be sent every day (Mon-Fri) at {hour}. No action required.",
   "config.confirm_biweekly": "\u2713 Your newsletter will be sent every {day1} and {day2} at {hour}. No action required.",
+  "config.confirm_bimonthly_dates": "✓ Your newsletter will be sent on the 1st and the 15th of each month at {hour}. No action required.",
 
   // Validation mode (auto vs editor)
   "config.edit_mode_title": "Validation mode",

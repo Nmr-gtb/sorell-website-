@@ -1,11 +1,14 @@
 "use client";
 
+import { useLanguage } from "@/lib/LanguageContext";
+
 export default function DashboardError({
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="flex flex-col items-center gap-4 text-center max-w-md px-4">
@@ -25,10 +28,10 @@ export default function DashboardError({
           </svg>
         </div>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Une erreur est survenue
+          {t("dashboard.error_title")}
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Un problème inattendu s&apos;est produit. Veuillez réessayer.
+          {t("dashboard.error_desc")}
         </p>
         <button
           onClick={reset}
@@ -41,7 +44,7 @@ export default function DashboardError({
             (e.currentTarget.style.backgroundColor = "#005058")
           }
         >
-          Réessayer
+          {t("common.retry")}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tarifs — Sorell",
+  title: "Tarifs",
   description: "Découvrez nos offres : Free, Pro, Business et Enterprise. Essai gratuit 15 jours sans carte bancaire.",
   openGraph: {
     title: "Tarifs — Sorell",

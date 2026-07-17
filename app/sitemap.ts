@@ -17,7 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://sorell.fr/blog", lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     ...blogEntries,
     { url: "https://sorell.fr/contact", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: "https://sorell.fr/connexion", lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    // /connexion retiré : la page est en noindex, la lister ici envoyait un
+    // signal contradictoire à Google ("envoyée mais non indexée").
     { url: "https://sorell.fr/legal", lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: "https://sorell.fr/cgv", lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: "https://sorell.fr/confidentialite", lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },

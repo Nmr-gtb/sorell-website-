@@ -15,7 +15,7 @@
 - **Email** : Resend — newsletters@sorell.fr (newsletters), noreply@sorell.fr (transactionnel), noe@sorell.fr (support/replyTo)
 - **Paiement** : Stripe production — **Cold email** : sorell-group.fr via Emelia
 - **Hébergement** : Vercel (gratuit) — **CRON** : cron-job.org (chaque heure → /api/cron)
-- **Tests** : Vitest (`npm test`) — 28 tests dans `__tests__/`
+- **Tests** : Vitest (`npm test`, pool threads) — 29 fichiers / ~265 tests dans `__tests__/`
 - **GitHub** : https://github.com/Nmr-gtb/sorell-website-
 
 ## Direction artistique

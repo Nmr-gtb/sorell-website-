@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/dashboard/", "/api/"],
+      disallow: ["/dashboard/", "/api/", "/admin", "/admin/", "/admin-login", "/connexion"],
     },
     sitemap: "https://sorell.fr/sitemap.xml",
   };

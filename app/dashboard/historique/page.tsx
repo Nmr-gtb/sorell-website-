@@ -18,7 +18,8 @@ interface Newsletter {
 export default function HistoriquePage() {
   const { user } = useAuth();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const dateLocale = lang === "en" ? "en-US" : "fr-FR";
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [loading, setLoading] = useState(true);
   const [planLoaded, setPlanLoaded] = useState(false);
@@ -158,7 +159,7 @@ export default function HistoriquePage() {
           {selectedNewsletter.subject || "Newsletter"}
         </h1>
         <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
-          {new Date(selectedNewsletter.generated_at).toLocaleDateString("fr-FR", {
+          {new Date(selectedNewsletter.generated_at).toLocaleDateString(dateLocale, {
             day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
           })}
         </p>
@@ -190,7 +191,7 @@ export default function HistoriquePage() {
                 <h2 style={{ fontSize: 17, fontWeight: 600, color: "white", margin: "10px 0 6px" }}>{parsedContent.featuredArticle.title}</h2>
                 {parsedContent.featuredArticle.hook && <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", fontStyle: "italic", margin: "0 0 8px" }}>{parsedContent.featuredArticle.hook}</p>}
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: 1.6, margin: "0 0 8px" }}>{parsedContent.featuredArticle.content || parsedContent.featuredArticle.summary}</p>
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Source : {parsedContent.featuredArticle.source}</span>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>{t("common.source")} : {parsedContent.featuredArticle.source}</span>
               </div>
             )}
 
@@ -206,7 +207,7 @@ export default function HistoriquePage() {
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "6px 0" }}>{article.title}</h3>
                 {article.hook && <p style={{ fontSize: 13, color: "var(--text-secondary)", fontStyle: "italic", margin: "0 0 6px" }}>{article.hook}</p>}
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, margin: "0 0 8px" }}>{article.content || article.summary}</p>
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>Source : {article.source}</span>
+                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{t("common.source")} : {article.source}</span>
               </div>
             ))}
 
@@ -289,7 +290,7 @@ export default function HistoriquePage() {
                   {nl.subject || "Newsletter"}
                 </p>
                 <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                  {new Date(nl.generated_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  {new Date(nl.generated_at).toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               </div>
               <span style={{

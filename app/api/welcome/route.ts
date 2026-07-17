@@ -17,13 +17,14 @@ export async function POST(request: Request) {
     }
 
     const raw = await request.json();
-    const email = truncateInput(String(raw.email || ""), 320);
     const name = truncateInput(String(raw.name || ""), 200);
 
-    if (!email) return NextResponse.json({ error: "Missing email" }, { status: 400 });
-
-    if (!isValidEmail(email)) {
-      return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
+    // Toujours envoyer à l'email de l'utilisateur AUTHENTIFIÉ, jamais à une
+    // adresse fournie dans le corps : sinon n'importe quel compte pouvait
+    // envoyer un "Bienvenue sur Sorell" (avec lien de vérification) à des tiers.
+    const email = user.email;
+    if (!email || !isValidEmail(email)) {
+      return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
 
     try {

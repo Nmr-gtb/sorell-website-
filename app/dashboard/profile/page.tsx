@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [newsletter, setNewsletter] = useState(true);
   const [plan, setPlan] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -157,7 +157,7 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const displayName = user.user_metadata?.full_name || user.email || "";
-  const joinDate = new Date(user.created_at).toLocaleDateString("fr-FR", {
+  const joinDate = new Date(user.created_at).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", {
     year: "numeric",
     month: "long",
     day: "numeric",
