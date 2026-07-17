@@ -9,14 +9,15 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { authFetch } from "@/lib/api";
+import { PRICE_IDS } from "@/lib/price-ids";
 
 // Features arrays and FAQ are built inside the component to use t()
 
 const PRICE_MAP: Record<string, string> = {
-  "pro-monthly": "price_1Tlm577A2mOEJEeWRGeMx6YD",
-  "pro-annual": "price_1Tlm5T7A2mOEJEeWw4ggdmWU",
-  "business-monthly": "price_1TE3qf7A2mOEJEeWiTAz8oWd",
-  "business-annual": "price_1TE3qv7A2mOEJEeWEB04fuCE",
+  "pro-monthly": PRICE_IDS.pro_monthly,
+  "pro-annual": PRICE_IDS.pro_annual,
+  "business-monthly": PRICE_IDS.business_monthly,
+  "business-annual": PRICE_IDS.business_annual,
 };
 
 export default function PricingPage() {
@@ -102,6 +103,8 @@ export default function PricingPage() {
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
+    } else if (data.alreadySubscribed) {
+      window.location.href = "/dashboard/profile?upgraded=true";
     } else {
       setCheckoutLoading(null);
     }

@@ -364,9 +364,9 @@ export async function getUserInfo(query: string): Promise<string> {
       // Dernière newsletter
       const { data: lastNl } = await supabaseAdmin
         .from("newsletters")
-        .select("created_at")
+        .select("generated_at")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
+        .order("generated_at", { ascending: false })
         .limit(1);
 
       // Config existante ?
@@ -383,7 +383,7 @@ export async function getUserInfo(query: string): Promise<string> {
       msg += `Inscrit le : ${formatDate(user.created_at)}\n`;
       msg += `Newsletters : ${nlCount ?? 0}`;
       if (lastNl?.[0]) {
-        msg += ` (dernière : ${formatDate(lastNl[0].created_at)})`;
+        msg += ` (dernière : ${formatDate(lastNl[0].generated_at)})`;
       }
       msg += "\n";
       msg += `Config : ${config ? `${config.topics?.length ?? 0} topics, fréquence ${config.frequency ?? "non définie"}` : "Non configuré"}\n`;

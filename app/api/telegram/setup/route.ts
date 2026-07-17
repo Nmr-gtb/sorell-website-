@@ -13,6 +13,7 @@ import {
   getBotWebhookPath,
 } from "@/lib/telegram-bot";
 import type { BotName } from "@/lib/telegram-bot";
+import { verifyCronSecret } from "@/lib/auth";
 
 const ALL_BOTS: BotName[] = ["eva", "jade"];
 
@@ -47,6 +48,12 @@ async function setupBot(bot: BotName, appUrl: string): Promise<{
 }
 
 export async function GET(request: Request): Promise<Response> {
+  // Endpoint interne : re-enregistre les webhooks Telegram (effet externe).
+  // Protégé par CRON_SECRET pour empêcher tout déclenchement public.
+  if (!verifyCronSecret(request)) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   try {
     const url = new URL(request.url);
     const botParam = url.searchParams.get("bot") as BotName | null;

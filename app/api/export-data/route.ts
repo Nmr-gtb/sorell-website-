@@ -30,9 +30,9 @@ export async function GET(request: Request) {
           .eq("user_id", userId),
         supabaseAdmin
           .from("newsletters")
-          .select("id, subject, content, created_at, sent_at")
+          .select("id, subject, content, generated_at, sent_at")
           .eq("user_id", userId)
-          .order("created_at", { ascending: false }),
+          .order("generated_at", { ascending: false }),
         supabaseAdmin
           .from("lifecycle_emails")
           .select("email_type, sent_at")

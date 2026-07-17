@@ -12,24 +12,12 @@
 
 import { NextResponse } from "next/server";
 import { pushNotionToEmelia, pushNotionToDefaultCampaign } from "@/lib/notion-to-emelia";
+import { verifyCronSecret } from "@/lib/auth";
 
 export const maxDuration = 60;
 
-function verifySecret(request: Request): boolean {
-  const url = new URL(request.url);
-  const secret = url.searchParams.get("secret");
-  const authHeader = request.headers.get("authorization");
-  const bearerSecret = authHeader?.startsWith("Bearer ")
-    ? authHeader.slice(7)
-    : null;
-  return (
-    secret === process.env.CRON_SECRET ||
-    bearerSecret === process.env.CRON_SECRET
-  );
-}
-
 export async function POST(request: Request): Promise<Response> {
-  if (!verifySecret(request)) {
+  if (!verifyCronSecret(request)) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
@@ -52,8 +40,8 @@ export async function POST(request: Request): Promise<Response> {
       ...result,
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Erreur inconnue";
-    return NextResponse.json({ error: message }, { status: 500 });
+    // Erreur loggée côté serveur, message générique au client (pas de détail technique).
+    console.error("[emelia/push]", error);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

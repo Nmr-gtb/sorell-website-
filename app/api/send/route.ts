@@ -116,7 +116,7 @@ export async function POST(request: Request) {
         plan,
       });
 
-      const unsubscribeUrl = buildUnsubscribeUrl(recipient.email);
+      const unsubscribeUrl = buildUnsubscribeUrl(recipient.email, verifiedUserId);
       try {
         const result = await resend.emails.send({
           from: "Sorell <newsletters@sorell.fr>",

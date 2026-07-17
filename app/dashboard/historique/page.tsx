@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 interface Newsletter {
   id: string;
-  created_at: string;
+  generated_at: string;
   subject: string;
   status: string;
   content: string;
@@ -36,9 +36,9 @@ export default function HistoriquePage() {
     });
     supabase
       .from("newsletters")
-      .select("id, created_at, subject, status, content")
+      .select("id, generated_at, subject, status, content")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .then(({ data }) => {
         setNewsletters(data || []);
         setLoading(false);
@@ -158,7 +158,7 @@ export default function HistoriquePage() {
           {selectedNewsletter.subject || "Newsletter"}
         </h1>
         <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
-          {new Date(selectedNewsletter.created_at).toLocaleDateString("fr-FR", {
+          {new Date(selectedNewsletter.generated_at).toLocaleDateString("fr-FR", {
             day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
           })}
         </p>
@@ -289,7 +289,7 @@ export default function HistoriquePage() {
                   {nl.subject || "Newsletter"}
                 </p>
                 <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>
-                  {new Date(nl.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  {new Date(nl.generated_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               </div>
               <span style={{

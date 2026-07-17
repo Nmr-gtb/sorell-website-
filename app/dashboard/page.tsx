@@ -11,15 +11,16 @@ import { DEFAULT_TOPICS } from "@/lib/topics";
 import { useLanguage } from "@/lib/LanguageContext";
 import { openSolyBrief } from "@/components/ChatWidget";
 import NewsletterLoader from "@/components/NewsletterLoader";
+import { PRICE_IDS as STRIPE_PRICE_IDS } from "@/lib/price-ids";
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
   pro: {
-    monthly: "price_1TE3pa7A2mOEJEeWltqInvgW",
-    annual: "price_1TE3ps7A2mOEJEeW4m1wm00z",
+    monthly: STRIPE_PRICE_IDS.pro_monthly,
+    annual: STRIPE_PRICE_IDS.pro_annual,
   },
   business: {
-    monthly: "price_1TE3qf7A2mOEJEeWiTAz8oWd",
-    annual: "price_1TE3qv7A2mOEJEeWEB04fuCE",
+    monthly: STRIPE_PRICE_IDS.business_monthly,
+    annual: STRIPE_PRICE_IDS.business_annual,
   },
 };
 
@@ -332,6 +333,8 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.alreadySubscribed) {
+        window.location.href = "/dashboard/profile?upgraded=true";
       } else {
         setCheckoutLoading(false);
       }

@@ -133,7 +133,7 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (confirmText !== "SUPPRIMER" || !user) return;
+    if (confirmText !== t("profile.delete_word") || !user) return;
     setDeleting(true);
     try {
       const res = await authFetch("/api/delete-account", {
@@ -658,7 +658,7 @@ export default function ProfilePage() {
               className="input-field"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder="SUPPRIMER"
+              placeholder={t("profile.delete_word")}
               style={{ marginBottom: 16 }}
             />
 
@@ -679,15 +679,15 @@ export default function ProfilePage() {
               </button>
               <button
                 onClick={handleDeleteAccount}
-                disabled={confirmText !== "SUPPRIMER" || deleting}
+                disabled={confirmText !== t("profile.delete_word") || deleting}
                 style={{
                   fontSize: 14,
                   padding: "7px 14px",
                   borderRadius: 8,
                   border: "none",
-                  background: confirmText === "SUPPRIMER" && !deleting ? "var(--error)" : "rgba(239,68,68,0.3)",
+                  background: confirmText === t("profile.delete_word") && !deleting ? "var(--error)" : "rgba(239,68,68,0.3)",
                   color: "white",
-                  cursor: confirmText === "SUPPRIMER" && !deleting ? "pointer" : "not-allowed",
+                  cursor: confirmText === t("profile.delete_word") && !deleting ? "pointer" : "not-allowed",
                   fontWeight: 500,
                   transition: "background 0.2s ease",
                 }}

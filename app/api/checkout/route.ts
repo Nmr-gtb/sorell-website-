@@ -39,6 +39,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid price" }, { status: 400 });
     }
 
+    // --- Garde-fou anti double-abonnement + réutilisation du customer Stripe ---
+    // Sans ça, chaque checkout créait un NOUVEAU customer (customer_email) : un
+    // abonné payant pouvait souscrire une 2e fois (double facturation) et le
+    // trial de 15j était réutilisable à l'infini. On lit le profil pour bloquer
+    // les abonnés actifs et réutiliser leur customer existant (Stripe gère alors
+    // l'unicité du trial et détecte les abonnements en cours).
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("plan, stripe_customer_id, stripe_subscription_id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const hasPaidPlan = profile?.plan === "pro" || profile?.plan === "business";
+    if (hasPaidPlan && profile?.stripe_subscription_id) {
+      return NextResponse.json(
+        {
+          error:
+            "Vous avez déjà un abonnement actif. Gérez-le depuis votre espace facturation.",
+          alreadySubscribed: true,
+        },
+        { status: 409 }
+      );
+    }
+
     const base = process.env.NEXT_PUBLIC_SITE_URL || "https://sorell.fr";
     const successUrl = fromOnboarding
       ? `${base}/dashboard?onboarding=true`
@@ -77,10 +101,15 @@ export async function POST(request: Request) {
     }
 
     // --- Construire la session Stripe ---
+    // Réutiliser le customer existant s'il y en a un (évite les doublons et
+    // permet à Stripe d'appliquer sa règle d'unicité de trial par customer) ;
+    // sinon, laisser Stripe créer le customer à partir de l'email.
     const sessionParams: Record<string, unknown> = {
       mode: "subscription",
       payment_method_types: ["card"],
-      customer_email: userEmail,
+      ...(profile?.stripe_customer_id
+        ? { customer: profile.stripe_customer_id }
+        : { customer_email: userEmail }),
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
         trial_period_days: referralCouponId ? undefined : 15,

@@ -10,6 +10,21 @@ vi.mock("resend", () => {
   };
 });
 
+// Mock du rate limiter : sans ça, la route faisait un VRAI appel Upstash Redis
+// (emailRateLimit.limit) qui échoue/timeout sous charge -> test flaky dans la
+// suite complète (254/255). On simule un succès déterministe.
+vi.mock("@/lib/ratelimit", () => ({
+  emailRateLimit: { limit: vi.fn().mockResolvedValue({ success: true }) },
+}));
+
+// Mock du rendu email : le vrai render() de @react-email compile les templates
+// (dépasse le timeout de 5s au premier appel en suite complète). On garde le vrai
+// module pour les composants (Html, Body...) et on ne stubbe QUE render.
+vi.mock("@react-email/components", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@react-email/components")>();
+  return { ...actual, render: vi.fn().mockResolvedValue("<html>email</html>") };
+});
+
 import { POST } from "@/app/api/contact/route";
 import * as resendModule from "resend";
 

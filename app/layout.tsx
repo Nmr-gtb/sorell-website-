@@ -57,14 +57,12 @@ export const metadata: Metadata = {
     },
   },
   icons: { icon: "/icone.png" },
-  alternates: {
-    canonical: "https://sorell.fr",
-    languages: {
-      "fr": "https://sorell.fr",
-      "en": "https://sorell.fr",
-      "x-default": "https://sorell.fr",
-    },
-  },
+  // Pas de canonical globale ici : une canonical fixe vers la home au niveau du
+  // root layout se propageait à /demo, /cgv, /legal, /confidentialite (pages sans
+  // alternates propre) et poussait Google à les désindexer comme doublons de la
+  // home. Chaque page dérive désormais sa propre canonical (défaut Next = URL de
+  // la page). Le hreflang fr/en/x-default pointait aussi tout vers la même URL
+  // (donc inutile) — retiré.
 };
 
 const themeScript = `

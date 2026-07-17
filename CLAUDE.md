@@ -27,10 +27,13 @@
 
 ## Stripe PRODUCTION
 
-- Pro monthly (19€) : `price_1TE3pa7A2mOEJEeWltqInvgW`
-- Pro annual (190€) : `price_1TE3ps7A2mOEJEeW4m1wm00z`
-- Business monthly (49€) : `price_1TE3qf7A2mOEJEeWiTAz8oWd`
-- Business annual (490€) : `price_1TE3qv7A2mOEJEeWEB04fuCE`
+Source de vérité UNIQUE des price IDs : `lib/price-ids.ts` (constantes sans SDK, importées par lib/stripe.ts, app/api/checkout, app/dashboard/page.tsx et app/tarifs/page.tsx). Ne jamais hardcoder un price ID ailleurs.
+
+- Pro monthly (9,99€) : `price_1Tlm577A2mOEJEeWRGeMx6YD` (actif)
+- Pro annual (99€) : `price_1Tlm5T7A2mOEJEeWw4ggdmWU` (actif)
+- Business monthly (49€) : `price_1TE3qf7A2mOEJEeWiTAz8oWd` (actif)
+- Business annual (490€) : `price_1TE3qv7A2mOEJEeWEB04fuCE` (actif)
+- Anciens Pro 19€ (`price_1TE3pa...` archivé, `price_1TE3ps...` supprimé) : mappés vers "pro" dans LEGACY_PRICE_TO_PLAN (garde-fou anti-downgrade).
 - Trial : 15 jours sur Pro et Business
 
 ## Variables d'environnement

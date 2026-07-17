@@ -25,13 +25,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Format email invalide" }, { status: 400 });
     }
 
+    // Rate limit par IP réelle, PAS par email : l'email est fourni par
+    // l'appelant, donc le faire varier contournait totalement la limite (spam
+    // Resant illimité). L'IP est stable côté Vercel (x-forwarded-for / x-real-ip).
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
     try {
-      const { success: rateLimitOk } = await emailRateLimit.limit(`contact:${email}`);
+      const { success: rateLimitOk } = await emailRateLimit.limit(`contact:${ip}`);
       if (!rateLimitOk) {
         return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
       }
     } catch {
-      // Redis unavailable — allow contact form to proceed
+      // Redis indisponible : on laisse passer pour ne pas casser un formulaire
+      // de contact légitime (fail-open assumé ; la protection principale reste
+      // la clé IP ci-dessus).
     }
 
     const adminHtml = await render(

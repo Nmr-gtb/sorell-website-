@@ -41,7 +41,8 @@ export async function GET(request: Request) {
     .not("topics", "eq", "[]");
 
   if (error || !configs?.length) {
-    return NextResponse.json({ message: "No configs to process", error });
+    if (error) console.error("[cron] load configs", error);
+    return NextResponse.json({ message: "No configs to process" });
   }
 
   // Batch fetch all profiles to avoid N+1 queries
@@ -258,7 +259,7 @@ export async function GET(request: Request) {
           plan: userPlan,
         });
 
-        const unsubscribeUrl = buildUnsubscribeUrl(recipient.email);
+        const unsubscribeUrl = buildUnsubscribeUrl(recipient.email, config.user_id);
         try {
           await resend.emails.send({
             from: "Sorell <newsletters@sorell.fr>",

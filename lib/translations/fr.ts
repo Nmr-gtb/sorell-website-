@@ -780,6 +780,7 @@ const fr: Record<string, string> = {
   "profile.delete_account": "Supprimer mon compte",
   "profile.delete_warning": "Cette action est irr\u00e9versible. Toutes vos donn\u00e9es, newsletters et configurations seront d\u00e9finitivement supprim\u00e9es.",
   "profile.delete_confirm": "Tapez <strong>SUPPRIMER</strong> pour confirmer",
+  "profile.delete_word": "SUPPRIMER",
   "profile.delete_permanently": "Supprimer d\u00e9finitivement",
   "profile.deleting": "Suppression...",
   "profile.delete_error": "Erreur lors de la suppression. Contactez le support.",

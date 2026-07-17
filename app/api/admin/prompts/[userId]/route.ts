@@ -52,7 +52,7 @@ export async function GET(
       .from("newsletters")
       .select("content")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .limit(3);
 
     const previousTitles = extractPreviousTitles(recentNewsletters || []);
@@ -85,7 +85,7 @@ export async function GET(
       .from("newsletters")
       .select("*")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false })
+      .order("generated_at", { ascending: false })
       .limit(1)
       .single();
 

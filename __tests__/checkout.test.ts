@@ -31,20 +31,16 @@ vi.mock("@/lib/ratelimit", () => ({
   },
 }));
 
-// Mock supabaseAdmin for referral lookup in checkout
-vi.mock("@/lib/supabase-admin", () => ({
-  supabaseAdmin: {
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          eq: () => ({
-            maybeSingle: () => Promise.resolve({ data: null, error: null }),
-          }),
-        }),
-      }),
-    }),
-  },
-}));
+// Mock supabaseAdmin : profil (1 eq) + referral (2 eq). Chaîne flexible qui
+// répond maybeSingle à n'importe quelle profondeur → data:null (pas d'abonnement
+// actif, pas de referral) : le checkout suit le chemin nominal.
+vi.mock("@/lib/supabase-admin", () => {
+  const chain: Record<string, unknown> = {};
+  chain.select = () => chain;
+  chain.eq = () => chain;
+  chain.maybeSingle = () => Promise.resolve({ data: null, error: null });
+  return { supabaseAdmin: { from: () => chain } };
+});
 
 import { POST } from "@/app/api/checkout/route";
 import { stripe } from "@/lib/stripe";

@@ -338,7 +338,7 @@ export async function GET(request: Request) {
             .from("newsletters")
             .select("id", { count: "exact", head: true })
             .eq("user_id", user.id)
-            .gte("created_at", startOfMonth)
+            .gte("generated_at", startOfMonth)
             .not("sent_at", "is", null);
 
           if (count === null || count < limit) continue;
@@ -610,8 +610,8 @@ export async function GET(request: Request) {
       ).toISOString();
       const { data: recentNewsletters } = await supabaseAdmin
         .from("newsletters")
-        .select("id, user_id, created_at, sent_at")
-        .gte("created_at", oneHourAgo)
+        .select("id, user_id, generated_at, sent_at")
+        .gte("generated_at", oneHourAgo)
         .is("sent_at", null);
 
       if (recentNewsletters && recentNewsletters.length > 3) {

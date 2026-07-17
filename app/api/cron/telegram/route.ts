@@ -388,7 +388,7 @@ export async function GET(request: Request): Promise<Response> {
 
     return NextResponse.json({ ok: true, results, hour: parisHour, date: parisDate });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erreur inconnue";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[cron/telegram]", error);
+    return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

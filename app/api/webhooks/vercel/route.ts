@@ -7,8 +7,20 @@
  */
 
 import { NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { sendTelegramMessage, getBotToken } from "@/lib/telegram-bot";
 import { runFullReview } from "@/lib/eva-monitor";
+
+// Vérifie la signature Vercel (HMAC-SHA1 du corps brut avec VERCEL_WEBHOOK_SECRET,
+// en-tête x-vercel-signature). Fail-close : sans secret configuré, on refuse.
+function verifyVercelSignature(rawBody: string, signature: string | null): boolean {
+  const secret = process.env.VERCEL_WEBHOOK_SECRET;
+  if (!secret || !signature) return false;
+  const expected = createHmac("sha1", secret).update(rawBody).digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 interface VercelWebhookPayload {
   type: string;
@@ -32,7 +44,14 @@ function getChatId(): number {
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const body = (await request.json()) as VercelWebhookPayload;
+    // Lire le corps brut pour vérifier la signature AVANT tout traitement
+    // (empêche un tiers de déclencher un runFullReview coûteux + des messages Telegram).
+    const rawBody = await request.text();
+    if (!verifyVercelSignature(rawBody, request.headers.get("x-vercel-signature"))) {
+      return NextResponse.json({ error: "Signature invalide" }, { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody) as VercelWebhookPayload;
     const jadeToken = getBotToken("jade");
     const chatId = getChatId();
 

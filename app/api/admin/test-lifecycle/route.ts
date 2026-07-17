@@ -180,11 +180,9 @@ export async function POST(request: Request) {
       name,
     });
   } catch (error) {
+    console.error("[admin/test-lifecycle]", error);
     return NextResponse.json(
-      {
-        error: "Erreur lors de l'envoi de l'email de test",
-        details: error instanceof Error ? error.message : "Erreur inconnue",
-      },
+      { error: "Erreur lors de l'envoi de l'email de test" },
       { status: 500 }
     );
   }

@@ -18,15 +18,14 @@ vi.mock("@/lib/supabase-admin", () => ({
   },
 }));
 
-import { GET } from "@/app/api/unsubscribe/route";
+import { GET, POST } from "@/app/api/unsubscribe/route";
 
 describe("GET /api/unsubscribe", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("redirects to error when token is valid and deletion succeeds", async () => {
-    // Actually test valid token -> success redirect
+  it("redirects to success when token is valid and deletion succeeds", async () => {
     mockVerifyUnsubscribeToken.mockReturnValue(true);
 
     const request = new Request(
@@ -76,5 +75,35 @@ describe("GET /api/unsubscribe", () => {
     expect(response.status).toBe(307);
     const location = response.headers.get("location");
     expect(location).toContain("/desabonnement?status=error");
+  });
+});
+
+describe("POST /api/unsubscribe (one-click RFC 8058)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns 200 {unsubscribed:true} on a valid one-click POST", async () => {
+    mockVerifyUnsubscribeToken.mockReturnValue(true);
+    const request = new Request(
+      "http://localhost/api/unsubscribe?email=user@test.com&token=valid-token&uid=user-123",
+      { method: "POST" }
+    );
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ unsubscribed: true });
+    expect(mockDelete).toHaveBeenCalled();
+  });
+
+  it("returns 200 {unsubscribed:false} on an invalid token without leaking", async () => {
+    mockVerifyUnsubscribeToken.mockReturnValue(false);
+    const request = new Request(
+      "http://localhost/api/unsubscribe?email=user@test.com&token=bad",
+      { method: "POST" }
+    );
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ unsubscribed: false });
+    expect(mockDelete).not.toHaveBeenCalled();
   });
 });
