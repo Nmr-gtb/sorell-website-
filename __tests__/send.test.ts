@@ -12,14 +12,17 @@ vi.mock("@/lib/ratelimit", () => ({
   apiRateLimit: { limit: (...args: unknown[]) => mockLimit(...args) },
 }));
 
-// Mock Resend
+// Mock Resend — l'envoi passe par l'API batch (lib/send-newsletter-batch).
 vi.mock("resend", () => {
   const mockSend = vi.fn();
+  const mockBatchSend = vi.fn();
   return {
     Resend: class {
       emails = { send: mockSend };
+      batch = { send: mockBatchSend };
     },
     __mockSend: mockSend,
+    __mockBatchSend: mockBatchSend,
   };
 });
 
@@ -102,6 +105,7 @@ import { POST } from "@/app/api/send/route";
 import * as resendModule from "resend";
 
 const mockSend = (resendModule as unknown as { __mockSend: ReturnType<typeof vi.fn> }).__mockSend;
+const mockBatchSend = (resendModule as unknown as { __mockBatchSend: ReturnType<typeof vi.fn> }).__mockBatchSend;
 
 describe("POST /api/send", () => {
   beforeEach(() => {
@@ -112,6 +116,13 @@ describe("POST /api/send", () => {
     process.env.UNSUBSCRIBE_SECRET = "test-unsubscribe-secret";
     mockLimit.mockResolvedValue({ success: true });
     mockSend.mockResolvedValue({ data: { id: "email-123" }, error: null });
+    // batch.send : succès pour chaque email du lot, ids dans l'ordre du payload
+    mockBatchSend.mockImplementation((payload: Array<{ to: string }>) =>
+      Promise.resolve({
+        data: { data: payload.map((_, i) => ({ id: `email-${i}` })), errors: [] },
+        error: null,
+      })
+    );
 
     // Default: newsletter exists with content
     mockNewsletterData = {
@@ -205,7 +216,25 @@ describe("POST /api/send", () => {
     const data = await response.json();
     expect(data.success).toBe(true);
     expect(data.results).toHaveLength(2);
-    expect(mockSend).toHaveBeenCalledTimes(2);
+    // Envoi groupé : 1 seul appel batch pour les 2 destinataires
+    expect(mockBatchSend).toHaveBeenCalledTimes(1);
+    const payload = mockBatchSend.mock.calls[0][0] as Array<{
+      to: string;
+      subject: string;
+      headers: Record<string, string>;
+      tags: Array<{ name: string; value: string }>;
+    }>;
+    expect(payload).toHaveLength(2);
+    expect(payload[0].to).toBe("recipient1@test.com");
+    expect(payload[1].to).toBe("recipient2@test.com");
+    // Le one-click unsubscribe et les tags d'attribution voyagent avec chaque email
+    expect(payload[0].headers["List-Unsubscribe-Post"]).toBe("List-Unsubscribe=One-Click");
+    expect(payload[0].tags).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "newsletter_id", value: "nl-123" }),
+        expect.objectContaining({ name: "user_id", value: "user-123" }),
+      ])
+    );
     expect(data.results[0].email).toBe("recipient1@test.com");
     expect(data.results[1].email).toBe("recipient2@test.com");
   });
@@ -236,7 +265,7 @@ describe("POST /api/send", () => {
 
   it("returns 200 with per-recipient failures when all sends fail", async () => {
     mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
-    mockSend.mockRejectedValue(new Error("SMTP unavailable"));
+    mockBatchSend.mockRejectedValue(new Error("SMTP unavailable"));
 
     const request = new Request("http://localhost/api/send", {
       method: "POST",
@@ -254,6 +283,36 @@ describe("POST /api/send", () => {
     // Le message d'erreur reste générique, sans détail technique
     expect(data.results[0].error).toBe("Échec de l'envoi.");
     expect(JSON.stringify(data.results)).not.toContain("SMTP");
+  });
+
+  it("counts only the really sent emails on a partial batch failure (permissive mode)", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+    // Le 1er email du lot est rejeté (index 0), le 2e part correctement.
+    mockBatchSend.mockResolvedValue({
+      data: { data: [{ id: "email-ok" }], errors: [{ index: 0 }] },
+      error: null,
+    });
+
+    const request = new Request("http://localhost/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer token",
+      },
+      body: JSON.stringify({ newsletterId: "nl-123", userId: "user-123" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+
+    expect(data.results).toHaveLength(2);
+    expect(data.results[0]).toMatchObject({ email: "recipient1@test.com", success: false });
+    expect(data.results[1]).toMatchObject({ email: "recipient2@test.com", success: true, id: "email-ok" });
+
+    // recipient_count reflète le nombre réellement envoyé (1), pas la taille de la liste (2)
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "sent", recipient_count: 1 })
+    );
   });
 
   it("returns 429 if rate limited", async () => {

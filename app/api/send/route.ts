@@ -3,8 +3,8 @@ import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
-import { buildNewsletterHtml, Article, KeyFigure } from "@/lib/email-template";
-import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import { Article, KeyFigure } from "@/lib/email-template";
+import { sendNewsletterEmails } from "@/lib/send-newsletter-batch";
 import { logNewsletterSent } from "@/lib/activity-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
@@ -97,48 +97,30 @@ export async function POST(request: Request) {
 
     const dateStr = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-    const results = [];
-    for (const recipient of recipients) {
-      const emailHtml = await buildNewsletterHtml({
-        newsletterId: newsletter.id,
-        recipientEmail: recipient.email,
-        subject: newsletter.subject,
-        brandColor,
-        textColor,
-        bgColor,
-        bodyTextColor,
-        customLogo,
-        date: `Semaine du ${dateStr}`,
-        editorial,
-        keyFigures,
-        featuredArticle,
-        otherArticles,
-        plan,
-      });
-
-      const unsubscribeUrl = buildUnsubscribeUrl(recipient.email, verifiedUserId);
-      try {
-        const result = await resend.emails.send({
-          from: "Sorell <newsletters@sorell.fr>",
-          replyTo: "noe@sorell.fr",
-          to: recipient.email,
-          subject: newsletter.subject,
-          html: emailHtml,
-          text: `${newsletter.subject}\n\nPour lire cette newsletter, ouvrez-la dans un client email compatible HTML.\n\nSe désabonner : ${unsubscribeUrl}`,
-          headers: {
-            "List-Unsubscribe": `<${unsubscribeUrl}>`,
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-          },
-        });
-        results.push({ email: recipient.email, success: true, id: result.data?.id });
-      } catch (e) {
-        results.push({ email: recipient.email, success: false, error: "Échec de l'envoi." });
-      }
-    }
+    // Envoi par lots (batch Resend) : rendu HTML concurrent + 1 requête par
+    // tranche de 100, avec détail par destinataire et décompte réel des succès.
+    const { results, sentCount } = await sendNewsletterEmails({
+      resend,
+      newsletterId: newsletter.id,
+      userId: verifiedUserId,
+      recipients,
+      subject: newsletter.subject,
+      brandColor,
+      textColor,
+      bgColor,
+      bodyTextColor,
+      customLogo,
+      date: `Semaine du ${dateStr}`,
+      editorial,
+      keyFigures,
+      featuredArticle,
+      otherArticles,
+      plan,
+    });
 
     await supabase
       .from("newsletters")
-      .update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length })
+      .update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: sentCount })
       .eq("id", newsletterId);
 
     // Mode éditeur : si cette newsletter était le brouillon en attente de validation,
@@ -152,7 +134,7 @@ export async function POST(request: Request) {
       .eq("pending_draft_id", newsletterId);
 
     // Activity log
-    void logNewsletterSent(verifiedUserId, authUser.email || "", recipients.length, newsletter.subject);
+    void logNewsletterSent(verifiedUserId, authUser.email || "", sentCount, newsletter.subject);
 
     return NextResponse.json({ success: true, results });
   } catch {

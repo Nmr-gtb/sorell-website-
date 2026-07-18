@@ -111,14 +111,22 @@ vi.mock("@anthropic-ai/sdk", () => {
   };
 });
 
-// Mock Resend
+// Mock Resend — l'envoi passe par l'API batch (lib/send-newsletter-batch).
 vi.mock("resend", () => {
   const mockSend = vi.fn().mockResolvedValue({ id: "email-123" });
+  const mockBatchSend = vi.fn().mockImplementation((payload: Array<{ to: string }>) =>
+    Promise.resolve({
+      data: { data: payload.map((_, i) => ({ id: `email-${i}` })), errors: [] },
+      error: null,
+    })
+  );
   return {
     Resend: class {
       emails = { send: mockSend };
+      batch = { send: mockBatchSend };
     },
     __mockSend: mockSend,
+    __mockBatchSend: mockBatchSend,
   };
 });
 
@@ -133,6 +141,7 @@ import * as resendModule from "resend";
 
 const mockCreate = (anthropicModule as unknown as { __mockCreate: ReturnType<typeof vi.fn> }).__mockCreate;
 const mockSend = (resendModule as unknown as { __mockSend: ReturnType<typeof vi.fn> }).__mockSend;
+const mockBatchSend = (resendModule as unknown as { __mockBatchSend: ReturnType<typeof vi.fn> }).__mockBatchSend;
 
 // Config alignée sur "maintenant" (heure de Paris) pour passer les checks de planification
 function makeConfigForNow(): Record<string, unknown> {
@@ -214,6 +223,7 @@ describe("GET /api/cron - mode éditeur", () => {
 
     // Aucun email envoyé
     expect(mockSend).not.toHaveBeenCalled();
+    expect(mockBatchSend).not.toHaveBeenCalled();
     // La newsletter n'est PAS passée en "sent"
     expect(mockNewslettersUpdate).not.toHaveBeenCalled();
     // pending_draft_id stocké, sans toucher à last_sent_at
@@ -248,6 +258,7 @@ describe("GET /api/cron - mode éditeur", () => {
     // Ni génération, ni envoi, ni écriture
     expect(mockCreate).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
+    expect(mockBatchSend).not.toHaveBeenCalled();
     expect(mockNewslettersInsert).not.toHaveBeenCalled();
     expect(mockConfigUpdate).not.toHaveBeenCalled();
   });
@@ -327,6 +338,7 @@ describe("GET /api/cron - mode éditeur", () => {
     expect(mockNewslettersInsert).not.toHaveBeenCalled();
     expect(mockConfigUpdate).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
+    expect(mockBatchSend).not.toHaveBeenCalled();
   });
 
   it("falls back to auto mode (generate + send) when the plan is not eligible", async () => {
@@ -348,7 +360,7 @@ describe("GET /api/cron - mode éditeur", () => {
 
     expect(data.results.length).toBe(1);
     expect(data.results[0].status).toBe("sent");
-    expect(mockSend).toHaveBeenCalled();
+    expect(mockBatchSend).toHaveBeenCalled();
     // En mode auto le seul update de config est last_sent_at (pas de pending_draft_id)
     expect(mockConfigUpdate).toHaveBeenCalledTimes(1);
     const updatePayload = mockConfigUpdate.mock.calls[0][0] as Record<string, unknown>;

@@ -104,10 +104,18 @@ vi.mock("@anthropic-ai/sdk", () => {
   };
 });
 
-// Mock Resend
+// Mock Resend — l'envoi passe par l'API batch (lib/send-newsletter-batch).
 vi.mock("resend", () => ({
   Resend: class {
     emails = { send: vi.fn().mockResolvedValue({ id: "email-123" }) };
+    batch = {
+      send: vi.fn().mockImplementation((payload: Array<{ to: string }>) =>
+        Promise.resolve({
+          data: { data: payload.map((_, i) => ({ id: `email-${i}` })), errors: [] },
+          error: null,
+        })
+      ),
+    };
   },
 }));
 

@@ -1,8 +1,7 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { buildNewsletterHtml } from "@/lib/email-template";
-import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import { sendNewsletterEmails } from "@/lib/send-newsletter-batch";
 import {
   extractPreviousTitles,
   generateFreshNewsletter,
@@ -241,47 +240,33 @@ export async function GET(request: Request) {
       const { editorial, key_figures: keyFigures } = newsletterContent;
       const dateStr = franceTime.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-      for (const recipient of recipients) {
-        const emailHtml = await buildNewsletterHtml({
-          newsletterId: newsletter.id,
-          recipientEmail: recipient.email,
-          subject,
-          brandColor,
-          textColor,
-          bgColor,
-          bodyTextColor,
-          customLogo,
-          date: `Semaine du ${dateStr}`,
-          editorial: editorial || "",
-          keyFigures: keyFigures || [],
-          featuredArticle,
-          otherArticles,
-          plan: userPlan,
-        });
+      // Envoi par lots (batch Resend) : rendu HTML concurrent + 1 requête par
+      // tranche de 100. Évite le timeout Vercel 60s (l'ancienne boucle
+      // séquentielle coûtait ~200-450ms par destinataire) et le rate limit
+      // Resend, avec un décompte réel des envois réussis.
+      const { sentCount } = await sendNewsletterEmails({
+        resend,
+        newsletterId: newsletter.id,
+        userId: config.user_id,
+        recipients,
+        subject,
+        brandColor,
+        textColor,
+        bgColor,
+        bodyTextColor,
+        customLogo,
+        date: `Semaine du ${dateStr}`,
+        editorial: editorial || "",
+        keyFigures: keyFigures || [],
+        featuredArticle,
+        otherArticles,
+        plan: userPlan,
+      });
 
-        const unsubscribeUrl = buildUnsubscribeUrl(recipient.email, config.user_id);
-        try {
-          await resend.emails.send({
-            from: "Sorell <newsletters@sorell.fr>",
-            replyTo: "noe@sorell.fr",
-            to: recipient.email,
-            subject,
-            html: emailHtml,
-            text: `${subject}\n\nPour lire cette newsletter, ouvrez-la dans un client email compatible HTML.\n\nSe désabonner : ${unsubscribeUrl}`,
-            headers: {
-              "List-Unsubscribe": `<${unsubscribeUrl}>`,
-              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-            },
-          });
-        } catch {
-          // silently ignore
-        }
-      }
-
-      await supabaseAdmin.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: recipients.length }).eq("id", newsletter.id);
+      await supabaseAdmin.from("newsletters").update({ status: "sent", sent_at: new Date().toISOString(), recipient_count: sentCount }).eq("id", newsletter.id);
       await supabaseAdmin.from("newsletter_config").update({ last_sent_at: new Date().toISOString() }).eq("user_id", config.user_id);
 
-      results.push({ userId: config.user_id, status: "sent", recipients: recipients.length });
+      results.push({ userId: config.user_id, status: "sent", recipients: sentCount });
     } catch (err) {
       results.push({ userId: config.user_id, status: "error", error: "Erreur lors du traitement" });
     }
