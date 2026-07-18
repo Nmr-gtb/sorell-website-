@@ -145,3 +145,44 @@ export function resolveArticleCount(plan: string, configured?: number | null): n
   }
   return getArticlesForPlan(plan);
 }
+
+// ---------------------------------------------------------------------------
+// Plafond serverless : sur Vercel gratuit, une fonction est coupée à 60s.
+// Une génération Opus (Enterprise) de 10 articles + web search prend ~101s et
+// dépasse donc la limite. On plafonne le nombre d'articles générés dans une
+// fonction serverless (cron + /api/generate) pour tenir sous ~50s, par MODÈLE
+// (mesuré : Opus lent, Sonnet/Haiku rapides). L'utilisateur complète ensuite
+// jusqu'à la longueur voulue via l'éditeur (bouton "Ajouter un article", chaque
+// ajout = 1 appel court). Le script hors-Vercel (scripts/trigger-editor-draft)
+// n'est PAS soumis à ce plafond.
+// ---------------------------------------------------------------------------
+// Mesuré (Opus + web search) : 5 articles = 53s, 10 articles = 101s, soit
+// ~9,7s/article + ~4s d'overhead. On plafonne Opus à 4 (~43s) pour garder ~17s
+// de marge sous les 60s Vercel (recherches web parfois plus lentes + envoi
+// éventuel des emails en mode auto).
+const SERVERLESS_ARTICLE_CAP: Record<string, number> = {
+  "claude-opus-4-8": 4,
+  "claude-opus-4-7": 4,
+  "claude-opus-4-6": 4,
+  // Sonnet et Haiku génèrent assez vite pour ne pas nécessiter de plafond.
+};
+
+/** Nombre d'articles max qu'une génération serverless peut produire sous ~50s. */
+export function serverlessArticleCap(model: string): number {
+  return SERVERLESS_ARTICLE_CAP[model] ?? MAX_CUSTOM_ARTICLES;
+}
+
+/**
+ * Nombre d'articles effectif pour une génération SERVERLESS : la longueur
+ * résolue, mais bornée par le plafond de temps du modèle (évite le timeout
+ * Vercel 60s). Retourne aussi si un plafonnage a eu lieu (pour informer l'UI).
+ */
+export function resolveServerlessArticleCount(
+  plan: string,
+  configured: number | null | undefined,
+  model: string
+): { count: number; capped: boolean } {
+  const wanted = resolveArticleCount(plan, configured);
+  const cap = serverlessArticleCap(model);
+  return { count: Math.min(wanted, cap), capped: wanted > cap };
+}

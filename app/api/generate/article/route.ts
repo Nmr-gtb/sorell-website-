@@ -14,9 +14,9 @@ import {
   NewsletterArticle,
   NewsletterContent,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, canUseEditor } from "@/lib/plans";
+import { getModelForPlan, canUseEditor, MAX_CUSTOM_ARTICLES } from "@/lib/plans";
 
-type RegenerateTarget = "article" | "editorial" | "key_figures";
+type RegenerateTarget = "article" | "editorial" | "key_figures" | "new_article";
 
 /** Normalise le content JSONB (objet moderne ou tableau legacy) en NewsletterContent. */
 function normalizeContent(raw: unknown): NewsletterContent {
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     }
 
     const resolvedTarget: RegenerateTarget = target || "article";
-    if (!["article", "editorial", "key_figures"].includes(resolvedTarget)) {
+    if (!["article", "editorial", "key_figures", "new_article"].includes(resolvedTarget)) {
       return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
     }
 
@@ -114,17 +114,13 @@ export async function POST(request: Request) {
     const model = getModelForPlan(plan);
     let newSubject = newsletter.subject as string;
 
-    if (resolvedTarget === "article") {
-      if (
-        typeof articleIndex !== "number" ||
-        !Number.isInteger(articleIndex) ||
-        articleIndex < 0 ||
-        articleIndex >= content.articles.length
-      ) {
-        return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
-      }
-
-      // Config de l'utilisateur : thématiques, sources, brief
+    // Génère un article frais en excluant une liste de titres (anti-doublon).
+    // Réutilise la config de l'utilisateur (thématiques, sources, brief) et les
+    // titres des newsletters récentes. Partagé entre "article" (remplacement) et
+    // "new_article" (ajout).
+    async function generateFreshArticle(
+      draftTitlesToExclude: string[]
+    ): Promise<NewsletterArticle | null> {
       const { data: config } = await supabase
         .from("newsletter_config")
         .select("topics, sources, custom_brief")
@@ -138,7 +134,7 @@ export async function POST(request: Request) {
       const sourcesList = ((config?.sources as string[]) || []).join(", ");
       const customBrief = (config?.custom_brief as string) || "";
 
-      // Anti-doublon : les autres articles du brouillon + les newsletters récentes
+      // Anti-doublon : titres du brouillon + titres des newsletters récentes.
       const { data: recentNewsletters } = await supabase
         .from("newsletters")
         .select("content")
@@ -148,14 +144,10 @@ export async function POST(request: Request) {
         .limit(3);
 
       const previousTitles = extractPreviousTitles(recentNewsletters || []);
-      const otherTitles = content.articles
-        .filter((_, i) => i !== articleIndex)
-        .map((a) => a.title)
-        .filter(Boolean);
-      const excludeTitles = [...otherTitles, ...previousTitles];
+      const excludeTitles = [...draftTitlesToExclude, ...previousTitles].filter(Boolean);
 
       const now = new Date();
-      const newArticle = await generateSingleArticle(
+      return generateSingleArticle(
         {
           topics: topicsList,
           sources: sourcesList,
@@ -166,6 +158,24 @@ export async function POST(request: Request) {
         },
         { model, referenceDate: now }
       );
+    }
+
+    if (resolvedTarget === "article") {
+      if (
+        typeof articleIndex !== "number" ||
+        !Number.isInteger(articleIndex) ||
+        articleIndex < 0 ||
+        articleIndex >= content.articles.length
+      ) {
+        return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
+      }
+
+      const otherTitles = content.articles
+        .filter((_, i) => i !== articleIndex)
+        .map((a) => a.title)
+        .filter(Boolean);
+
+      const newArticle = await generateFreshArticle(otherTitles);
 
       if (!newArticle) {
         return NextResponse.json(
@@ -187,6 +197,31 @@ export async function POST(request: Request) {
         const dateLabel = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
         newSubject = buildSubjectLine(content, dateLabel);
       }
+    } else if (resolvedTarget === "new_article") {
+      // Compléter un brouillon plafonné par la génération serverless (Vercel 60s).
+      if (content.articles.length >= MAX_CUSTOM_ARTICLES) {
+        return NextResponse.json(
+          { error: `Le nombre maximum de ${MAX_CUSTOM_ARTICLES} articles est atteint.` },
+          { status: 400 }
+        );
+      }
+
+      const existingTitles = content.articles.map((a) => a.title).filter(Boolean);
+      const newArticle = await generateFreshArticle(existingTitles);
+
+      if (!newArticle) {
+        return NextResponse.json(
+          {
+            error:
+              "Aucune actualité récente (moins de 90 jours) n'a été trouvée pour ajouter un article. Réessayez plus tard.",
+          },
+          { status: 422 }
+        );
+      }
+
+      // Le nouvel article vient s'ajouter à la fin, jamais à la une (l'article
+      // vedette existant reste inchangé).
+      content.articles = [...content.articles, { ...newArticle, featured: false }];
     } else if (resolvedTarget === "editorial") {
       if (!content.articles.length) {
         return NextResponse.json({ error: "Requête invalide" }, { status: 400 });

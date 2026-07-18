@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { getNewsletterConfig, getProfile, getRecipients } from "@/lib/database";
-import { canUseEditor } from "@/lib/plans";
+import { canUseEditor, MAX_CUSTOM_ARTICLES } from "@/lib/plans";
 import { authFetch } from "@/lib/api";
 import CrownBadge from "@/components/CrownBadge";
 
@@ -118,6 +118,15 @@ function IconStar() {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+    </svg>
+  );
+}
+
+function IconPlus() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
     </svg>
   );
 }
@@ -305,6 +314,34 @@ export default function EditorPage() {
       const response = await authFetch("/api/generate/article", {
         method: "POST",
         body: JSON.stringify({ newsletterId, target, articleIndex }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setRegenError(data.error || t("editor.regen_error"));
+      } else {
+        setArticles(normalizeArticles(data.articles || []));
+        setEditorial(data.editorial || "");
+        setKeyFigures(data.keyFigures || []);
+        if (data.subject) setSubject(data.subject);
+        setSaveState("saved");
+        setTimeout(() => setSaveState("idle"), 2000);
+      }
+    } catch {
+      setRegenError(t("editor.regen_error"));
+    } finally {
+      setRegenTarget(null);
+    }
+  }
+
+  /* ─── Ajout d'un article (complète un brouillon plafonné par la génération auto) ─── */
+  async function addArticle() {
+    if (!newsletterId || articles.length >= MAX_CUSTOM_ARTICLES) return;
+    setRegenTarget("new_article");
+    setRegenError("");
+    try {
+      const response = await authFetch("/api/generate/article", {
+        method: "POST",
+        body: JSON.stringify({ newsletterId, target: "new_article" }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -1112,6 +1149,46 @@ export default function EditorPage() {
                 })}
               </div>
             )}
+
+            {/* Ajouter un article — complète un brouillon plafonné par la génération auto (Vercel 60s) */}
+            <div style={{ padding: "0 32px 24px" }}>
+              <button
+                type="button"
+                onClick={addArticle}
+                disabled={regenTarget !== null || articles.length >= MAX_CUSTOM_ARTICLES}
+                style={{
+                  width: "100%",
+                  padding: "14px",
+                  border: `1.5px dashed ${articles.length >= MAX_CUSTOM_ARTICLES ? "#D8CFC5" : brandColor}`,
+                  borderRadius: 10,
+                  background: "transparent",
+                  color: articles.length >= MAX_CUSTOM_ARTICLES ? "#A89F94" : brandColor,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  fontFamily: "'Segoe UI', Roboto, Arial, sans-serif",
+                  cursor: regenTarget !== null || articles.length >= MAX_CUSTOM_ARTICLES ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  transition: "background 0.2s ease, border-color 0.2s ease",
+                }}
+              >
+                {regenTarget === "new_article" ? (
+                  <>
+                    <IconRefresh />
+                    {t("editor.adding")}
+                  </>
+                ) : articles.length >= MAX_CUSTOM_ARTICLES ? (
+                  t("editor.add_article_max")
+                ) : (
+                  <>
+                    <IconPlus />
+                    {t("editor.add_article")}
+                  </>
+                )}
+              </button>
+            </div>
 
             {/* Footer */}
             <div style={{ padding: "22px 32px", borderTop: "1px solid #E8E0D8", background: "#F5F0EB" }}>

@@ -299,6 +299,64 @@ describe("POST /api/generate/article", () => {
     expect(data.articles).toHaveLength(3);
   });
 
+  it("appends a fresh article (new_article) without touching the existing ones", async () => {
+    const today = new Date().toISOString().substring(0, 10);
+    mockCreate.mockResolvedValue({
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          tag: "RSE",
+          title: "Article Ajouté",
+          hook: "Accroche",
+          content: "Contenu factuel.",
+          source: "La Tribune",
+          url: "https://latribune.fr/ajoute",
+          published_at: today,
+        }),
+      }],
+    });
+
+    const response = await POST(makeRequest({ newsletterId: "nl-123", target: "new_article" }));
+    expect(response.status).toBe(200);
+    const data = await response.json();
+
+    // Un quatrième article vient s'ajouter à la fin, non mis à la une.
+    expect(data.articles).toHaveLength(4);
+    expect(data.articles[3].title).toBe("Article Ajouté");
+    expect(data.articles[3].featured).toBe(false);
+    // Les articles existants (dont la une) restent inchangés.
+    expect(data.articles[0].title).toBe("Article Un");
+    expect(data.articles[0].featured).toBe(true);
+    expect(data.subject).toBe("TECH - Article Un");
+
+    // Anti-doublon : le prompt exclut tous les titres déjà présents.
+    const prompt = mockCreate.mock.calls[0][0].messages[0].content as string;
+    expect(prompt).toContain("Article Un");
+    expect(prompt).toContain("Article Deux");
+    expect(prompt).toContain("Article Trois");
+  });
+
+  it("returns 400 for new_article when the max article count is reached", async () => {
+    const fullArticles = Array.from({ length: 12 }, (_, i) => ({
+      tag: "TECH",
+      title: `Article ${i + 1}`,
+      hook: "H",
+      content: "C",
+      source: "Reuters",
+      url: `https://reuters.com/${i}`,
+      featured: i === 0,
+    }));
+    mockNewsletterData = {
+      ...mockNewsletterData!,
+      content: { editorial: "E", key_figures: [], articles: fullArticles },
+    };
+
+    const response = await POST(makeRequest({ newsletterId: "nl-123", target: "new_article" }));
+    expect(response.status).toBe(400);
+    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockNlUpdate).not.toHaveBeenCalled();
+  });
+
   it("returns 429 when rate limited", async () => {
     mockLimit.mockResolvedValue({ success: false });
     const response = await POST(makeRequest({ newsletterId: "nl-123", target: "article", articleIndex: 1 }));

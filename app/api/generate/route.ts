@@ -10,7 +10,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, resolveArticleCount } from "@/lib/plans";
+import { getModelForPlan, resolveServerlessArticleCount } from "@/lib/plans";
 
 export async function POST(request: Request) {
   try {
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
         feedbackHistory,
         currentFeedback: feedback,
       },
-      { referenceDate: now, model: getModelForPlan(plan), maxArticles: resolveArticleCount(plan, config?.article_count) }
+      { referenceDate: now, model: getModelForPlan(plan), maxArticles: resolveServerlessArticleCount(plan, config?.article_count, getModelForPlan(plan)).count }
     );
 
     if (freshArticleCount === 0) {

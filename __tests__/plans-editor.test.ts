@@ -1,5 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { canUseEditor, getModelForPlan, getArticlesForPlan, canCustomizeLength, resolveArticleCount } from "@/lib/plans";
+import {
+  canUseEditor,
+  getModelForPlan,
+  getArticlesForPlan,
+  canCustomizeLength,
+  resolveArticleCount,
+  serverlessArticleCap,
+  resolveServerlessArticleCount,
+  MAX_CUSTOM_ARTICLES,
+} from "@/lib/plans";
 
 // ---------------------------------------------------------------------------
 // Gating du mode éditeur : réservé aux plans Business et Enterprise.
@@ -65,5 +74,58 @@ describe("longueur de newsletter personnalisable", () => {
   it("ignores the configured count for non-eligible plans (server-side gating)", () => {
     expect(resolveArticleCount("free", 12)).toBe(5);
     expect(resolveArticleCount("pro", 12)).toBe(5);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Plafond serverless : évite le timeout Vercel 60s en bornant le nombre
+// d'articles générés dans une fonction (cron + /api/generate) selon le modèle.
+// ---------------------------------------------------------------------------
+describe("plafond serverless (anti-timeout Vercel 60s)", () => {
+  it("caps Opus models to 4 articles per serverless generation", () => {
+    expect(serverlessArticleCap("claude-opus-4-8")).toBe(4);
+    expect(serverlessArticleCap("claude-opus-4-7")).toBe(4);
+    expect(serverlessArticleCap("claude-opus-4-6")).toBe(4);
+  });
+
+  it("does not cap faster models (Sonnet, Haiku, unknown)", () => {
+    expect(serverlessArticleCap("claude-sonnet-4-6")).toBe(MAX_CUSTOM_ARTICLES);
+    expect(serverlessArticleCap("claude-haiku-4-5-20251001")).toBe(MAX_CUSTOM_ARTICLES);
+    expect(serverlessArticleCap("some-future-model")).toBe(MAX_CUSTOM_ARTICLES);
+  });
+
+  it("caps an Enterprise/Opus request of 10 down to 4 and flags it", () => {
+    const model = getModelForPlan("enterprise");
+    const { count, capped } = resolveServerlessArticleCount("enterprise", 10, model);
+    expect(count).toBe(4);
+    expect(capped).toBe(true);
+  });
+
+  it("caps the Business default of 8 (Opus) down to 4", () => {
+    const model = getModelForPlan("business");
+    const { count, capped } = resolveServerlessArticleCount("business", null, model);
+    expect(count).toBe(4);
+    expect(capped).toBe(true);
+  });
+
+  it("does not cap when the wanted count is already under the model cap", () => {
+    const model = getModelForPlan("enterprise");
+    const { count, capped } = resolveServerlessArticleCount("enterprise", 3, model);
+    expect(count).toBe(3);
+    expect(capped).toBe(false);
+  });
+
+  it("never caps Pro (Sonnet) since its default (5) fits", () => {
+    const model = getModelForPlan("pro");
+    const { count, capped } = resolveServerlessArticleCount("pro", null, model);
+    expect(count).toBe(5);
+    expect(capped).toBe(false);
+  });
+
+  it("never caps Free (Haiku) since its default (5) fits", () => {
+    const model = getModelForPlan("free");
+    const { count, capped } = resolveServerlessArticleCount("free", null, model);
+    expect(count).toBe(5);
+    expect(capped).toBe(false);
   });
 });
