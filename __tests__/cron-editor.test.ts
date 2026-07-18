@@ -252,7 +252,10 @@ describe("GET /api/cron - mode éditeur", () => {
     expect(mockConfigUpdate).not.toHaveBeenCalled();
   });
 
-  it("uses the configured newsletter length for eligible plans", async () => {
+  it("caps the serverless newsletter length for Opus plans to fit the Vercel 60s limit", async () => {
+    // Enterprise = Opus : une génération de 12 articles prendrait ~120s et
+    // dépasserait le timeout Vercel (60s). Le cron plafonne donc à 4 articles.
+    // L'utilisateur complète ensuite via l'éditeur ("Ajouter un article").
     const config = makeConfigForNow();
     config.article_count = 12;
     mockConfigsSelect.mockResolvedValue({ data: [config], error: null });
@@ -268,10 +271,33 @@ describe("GET /api/cron - mode éditeur", () => {
     const response = await GET(makeCronRequest());
     expect(response.status).toBe(200);
 
-    // Le nombre configuré atteint le prompt et le budget de tokens suit
+    // Le prompt et le budget de tokens suivent le nombre PLAFONNÉ (4), pas 12.
     const createArgs = mockCreate.mock.calls[0][0] as { max_tokens: number; messages: Array<{ content: string }> };
-    expect(createArgs.messages[0].content).toContain("12 actualités RÉELLES");
-    expect(createArgs.max_tokens).toBe(3000 + 12 * 550); // 9600, sous le plafond de 12000
+    expect(createArgs.messages[0].content).toContain("4 actualités RÉELLES");
+    expect(createArgs.messages[0].content).not.toContain("12 actualités RÉELLES");
+    expect(createArgs.max_tokens).toBe(3000 + 4 * 550); // 5200
+  });
+
+  it("honours a configured length that already fits under the serverless cap", async () => {
+    // 3 articles < plafond Opus (4) : la valeur configurée passe telle quelle.
+    const config = makeConfigForNow();
+    config.article_count = 3;
+    mockConfigsSelect.mockResolvedValue({ data: [config], error: null });
+    mockProfilesSelect.mockResolvedValue({
+      data: [{ id: "user-biz", plan: "enterprise", email_verified: true }],
+    });
+    mockNewslettersInsert.mockResolvedValue({
+      data: { id: "draft-3", user_id: "user-biz", subject: "Test", content: {}, status: "draft" },
+      error: null,
+    });
+    mockCreate.mockResolvedValue({ content: [{ type: "text", text: makeClaudeResponse() }] });
+
+    const response = await GET(makeCronRequest());
+    expect(response.status).toBe(200);
+
+    const createArgs = mockCreate.mock.calls[0][0] as { max_tokens: number; messages: Array<{ content: string }> };
+    expect(createArgs.messages[0].content).toContain("3 actualités RÉELLES");
+    expect(createArgs.max_tokens).toBe(3000 + 3 * 550); // 4650
   });
 
   it("does not create a draft in editor mode when no fresh content is found", async () => {
