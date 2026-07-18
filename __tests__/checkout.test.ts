@@ -31,15 +31,25 @@ vi.mock("@/lib/ratelimit", () => ({
   },
 }));
 
-// Mock supabaseAdmin : profil (1 eq) + referral (2 eq). Chaîne flexible qui
-// répond maybeSingle à n'importe quelle profondeur → data:null (pas d'abonnement
-// actif, pas de referral) : le checkout suit le chemin nominal.
+// Mock supabaseAdmin conscient de la table : profiles + referrals renvoient
+// chacun une donnée pilotable (null par défaut = pas d'abonnement actif, pas de
+// parrainage → chemin nominal). Piloté par mockState pour tester le parrainage.
+const { mockState } = vi.hoisted(() => ({
+  mockState: { profile: null as Record<string, unknown> | null, referral: null as Record<string, unknown> | null },
+}));
 vi.mock("@/lib/supabase-admin", () => {
-  const chain: Record<string, unknown> = {};
-  chain.select = () => chain;
-  chain.eq = () => chain;
-  chain.maybeSingle = () => Promise.resolve({ data: null, error: null });
-  return { supabaseAdmin: { from: () => chain } };
+  const makeChain = (table: string) => {
+    const chain: Record<string, unknown> = {};
+    chain.select = () => chain;
+    chain.eq = () => chain;
+    chain.maybeSingle = () =>
+      Promise.resolve({
+        data: table === "referrals" ? mockState.referral : table === "profiles" ? mockState.profile : null,
+        error: null,
+      });
+    return chain;
+  };
+  return { supabaseAdmin: { from: (table: string) => makeChain(table) } };
 });
 
 import { POST } from "@/app/api/checkout/route";
@@ -48,6 +58,10 @@ import { checkoutRateLimit } from "@/lib/ratelimit";
 
 const mockCreate = stripe.checkout.sessions.create as ReturnType<typeof vi.fn>;
 const mockRateLimit = checkoutRateLimit.limit as ReturnType<typeof vi.fn>;
+const mockCoupons = stripe.coupons as unknown as {
+  retrieve: ReturnType<typeof vi.fn>;
+  create: ReturnType<typeof vi.fn>;
+};
 
 describe("POST /api/checkout", () => {
   beforeEach(() => {
@@ -55,6 +69,10 @@ describe("POST /api/checkout", () => {
     mockCreate.mockResolvedValue({ url: "https://checkout.stripe.com/session-123" });
     mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
     mockRateLimit.mockResolvedValue({ success: true });
+    mockState.profile = null;
+    mockState.referral = null;
+    mockCoupons.retrieve.mockRejectedValue(new Error("not found"));
+    mockCoupons.create.mockResolvedValue({ id: "coupon_test" });
     process.env.NEXT_PUBLIC_SITE_URL = "https://sorell.fr";
   });
 
@@ -143,5 +161,43 @@ describe("POST /api/checkout", () => {
         cancel_url: "https://sorell.fr/dashboard",
       })
     );
+  });
+
+  // --- Parrainage : le montant de la remise (amount_off) doit rester < prix plein,
+  // sinon le 1er mois passe à 0€. Ces montants correspondent à -20% arrondi au
+  // chiffre en dessous (Pro 9,99€ → 7€ ; Business 49€ → 39€). ---
+  it("applies a 2,99€ referral discount for Pro (9,99€ → 7€), never a free month", async () => {
+    mockState.referral = { id: "ref-1", referrer_id: "user-parrain", expires_at: "2099-01-01T00:00:00.000Z" };
+    const request = new Request("http://localhost/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: "price_pro_monthly" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    // La remise Pro doit être 299 centimes (2,99€), strictement < 999 (9,99€).
+    expect(mockCoupons.create).toHaveBeenCalledWith(
+      expect.objectContaining({ amount_off: 299, currency: "eur", duration: "once" })
+    );
+    const arg = mockCoupons.create.mock.calls[0][0] as { amount_off: number };
+    expect(arg.amount_off).toBeLessThan(999);
+  });
+
+  it("applies a 10€ referral discount for Business (49€ → 39€)", async () => {
+    mockState.referral = { id: "ref-2", referrer_id: "user-parrain", expires_at: "2099-01-01T00:00:00.000Z" };
+    const request = new Request("http://localhost/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: "price_business_monthly" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockCoupons.create).toHaveBeenCalledWith(
+      expect.objectContaining({ amount_off: 1000, currency: "eur", duration: "once" })
+    );
+    const arg = mockCoupons.create.mock.calls[0][0] as { amount_off: number };
+    expect(arg.amount_off).toBeLessThan(4900);
   });
 });

@@ -6,10 +6,12 @@ import { checkoutRateLimit } from "@/lib/ratelimit";
 
 const VALID_PRICE_IDS = new Set(Object.values(PRICE_IDS));
 
-// Prix filleul avec -20% (arrondis au chiffre en dessous)
+// Remise parrainage appliquée au 1er mois : -20% arrondi au chiffre en dessous.
+// La valeur est le montant DÉDUIT (amount_off Stripe, en centimes) = prix plein
+// - prix filleul cible. Doit rester < prix plein, sinon le 1er mois passe à 0€.
 const REFERRAL_PRICES: Record<string, number> = {
-  [PRICE_IDS.pro_monthly]: 1500,       // 19€ → 15€ (en centimes)
-  [PRICE_IDS.business_monthly]: 3900,   // 49€ → 39€ (en centimes)
+  [PRICE_IDS.pro_monthly]: 299,        // 9,99€ → 7€ (remise 2,99€)
+  [PRICE_IDS.business_monthly]: 1000,   // 49€ → 39€ (remise 10€)
 };
 
 export async function POST(request: Request) {
