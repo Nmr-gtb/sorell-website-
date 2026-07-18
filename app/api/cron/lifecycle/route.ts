@@ -281,14 +281,24 @@ export async function GET(request: Request) {
           .select("id, email, full_name")
           .in("id", candidateIds);
 
-        for (const user of candidates || []) {
-          const { count } = await supabaseAdmin
-            .from("newsletters")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", user.id)
-            .not("sent_at", "is", null);
+        // Batch : compter les newsletters envoyees de tous les candidats
+        // en UNE requete (evite le N+1 : 1 count par user).
+        const { data: totalSentRows } = await supabaseAdmin
+          .from("newsletters")
+          .select("user_id")
+          .in("user_id", candidateIds)
+          .not("sent_at", "is", null);
 
-          if (count !== null && count >= 3) {
+        const totalCounts = new Map<string, number>();
+        for (const row of totalSentRows || []) {
+          totalCounts.set(
+            row.user_id,
+            (totalCounts.get(row.user_id) || 0) + 1
+          );
+        }
+
+        for (const user of candidates || []) {
+          if ((totalCounts.get(user.id) ?? 0) >= 3) {
             const name = displayName(user);
             const subject = `${name}, 3 newsletters reçues - votre avis nous intéresse`;
             const html = await render(EngagementFeedbackEmail({ name }));
@@ -330,18 +340,31 @@ export async function GET(request: Request) {
       if (limitCandidates && limitCandidates.length > 0) {
         const planLimits: Record<string, number> = { free: 1, pro: 4 };
 
+        // Batch : compter les newsletters envoyees ce mois-ci pour TOUS
+        // les candidats free/pro en UNE requete (evite le N+1 : 1 count
+        // par user sur l'ensemble des profils free+pro).
+        const ids = (limitCandidates as Profile[]).map((u) => u.id);
+        const { data: sentRows } = await supabaseAdmin
+          .from("newsletters")
+          .select("user_id")
+          .in("user_id", ids)
+          .gte("generated_at", startOfMonth)
+          .not("sent_at", "is", null);
+
+        const sentCounts = new Map<string, number>();
+        for (const row of sentRows || []) {
+          sentCounts.set(
+            row.user_id,
+            (sentCounts.get(row.user_id) || 0) + 1
+          );
+        }
+
         for (const user of limitCandidates as Profile[]) {
           const limit = planLimits[user.plan];
           if (!limit) continue;
 
-          const { count } = await supabaseAdmin
-            .from("newsletters")
-            .select("id", { count: "exact", head: true })
-            .eq("user_id", user.id)
-            .gte("generated_at", startOfMonth)
-            .not("sent_at", "is", null);
-
-          if (count === null || count < limit) continue;
+          const count = sentCounts.get(user.id) ?? 0;
+          if (count < limit) continue;
 
           const name = displayName(user);
           const planLabel = user.plan === "free" ? "Free" : "Pro";
@@ -483,43 +506,68 @@ export async function GET(request: Request) {
         )
       );
 
-      for (const userId of candidateIds) {
-        // Verifier que c'est bien leur DERNIERE newsletter
-        // (sinon ils n'ont pas 35j d'inactivite).
-        const { data: latest } = await supabaseAdmin
-          .from("newsletters")
-          .select("sent_at")
-          .eq("user_id", userId)
-          .not("sent_at", "is", null)
-          .order("sent_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (!latest?.sent_at) continue;
-        const lastSent = new Date(latest.sent_at);
-        if (lastSent > thirtyFiveDaysAgo) continue;
-        if (lastSent < thirtySixDaysAgo) continue;
-
-        const { data: profile } = await supabaseAdmin
+      if (candidateIds.length > 0) {
+        // Batch : profils de tous les candidats en UNE requete
+        // (evite le N+1 : 1 requete profil par candidat).
+        const { data: retentionProfiles } = await supabaseAdmin
           .from("profiles")
           .select("id, email, full_name")
-          .eq("id", userId)
-          .maybeSingle();
+          .in("id", candidateIds);
 
-        if (!profile) continue;
-
-        const name = displayName(profile);
-        const subject = `${name}, votre veille Sorell s'est arrêtée`;
-        const html = await render(RetentionInactiveEmail({ name }));
-        const key = monthlyKey("retention_no_newsletter_30d", now);
-        const sent = await sendLifecycleEmail(
-          profile.id,
-          key,
-          profile.email,
-          subject,
-          html
+        const retentionProfileMap = new Map<
+          string,
+          { id: string; email: string; full_name: string | null }
+        >(
+          (retentionProfiles || []).map(
+            (p: { id: string; email: string; full_name: string | null }) => [
+              p.id,
+              p,
+            ]
+          )
         );
-        if (sent) results.retention_no_newsletter_30d++;
+
+        // Batch : date de DERNIER envoi par candidat en UNE requete,
+        // reduite en Map<user_id, maxSentAt> (evite le N+1 : 1 requete
+        // "derniere newsletter" par candidat).
+        const { data: sentDates } = await supabaseAdmin
+          .from("newsletters")
+          .select("user_id, sent_at")
+          .in("user_id", candidateIds)
+          .not("sent_at", "is", null);
+
+        const maxSentMap = new Map<string, Date>();
+        for (const row of sentDates || []) {
+          const sentAt = new Date(row.sent_at);
+          const current = maxSentMap.get(row.user_id);
+          if (!current || sentAt > current) {
+            maxSentMap.set(row.user_id, sentAt);
+          }
+        }
+
+        for (const userId of candidateIds) {
+          // Verifier que c'est bien leur DERNIERE newsletter
+          // (sinon ils n'ont pas 35j d'inactivite).
+          const lastSent = maxSentMap.get(userId);
+          if (!lastSent) continue;
+          if (lastSent > thirtyFiveDaysAgo) continue;
+          if (lastSent < thirtySixDaysAgo) continue;
+
+          const profile = retentionProfileMap.get(userId);
+          if (!profile) continue;
+
+          const name = displayName(profile);
+          const subject = `${name}, votre veille Sorell s'est arrêtée`;
+          const html = await render(RetentionInactiveEmail({ name }));
+          const key = monthlyKey("retention_no_newsletter_30d", now);
+          const sent = await sendLifecycleEmail(
+            profile.id,
+            key,
+            profile.email,
+            subject,
+            html
+          );
+          if (sent) results.retention_no_newsletter_30d++;
+        }
       }
     } catch {
       results.errors++;
@@ -550,51 +598,98 @@ export async function GET(request: Request) {
         )
       );
 
-      for (const userId of activeUserIds) {
-        // Recuperer le profil + email
-        const { data: profile } = await supabaseAdmin
+      if (activeUserIds.length > 0) {
+        // Batch : profils de tous les users actifs en UNE requete
+        // (evite le N+1 : 1 requete profil par user).
+        const { data: activeProfiles } = await supabaseAdmin
           .from("profiles")
           .select("id, email, full_name")
-          .eq("id", userId)
-          .maybeSingle();
+          .in("id", activeUserIds);
 
-        if (!profile?.email) continue;
+        const activeProfileMap = new Map<
+          string,
+          { id: string; email: string; full_name: string | null }
+        >(
+          (activeProfiles || []).map(
+            (p: { id: string; email: string; full_name: string | null }) => [
+              p.id,
+              p,
+            ]
+          )
+        );
 
-        // Recuperer les 5 dernieres newsletters envoyees
-        const { data: last5 } = await supabaseAdmin
+        // Batch : les 5 dernieres newsletters envoyees par user en UNE
+        // requete, groupees en Map en tronquant a 5 par user (meme
+        // pattern que recentNlMap dans /api/cron).
+        const { data: recentSentNl } = await supabaseAdmin
           .from("newsletters")
-          .select("id, sent_at")
-          .eq("user_id", userId)
+          .select("id, user_id, sent_at")
+          .in("user_id", activeUserIds)
           .not("sent_at", "is", null)
           .order("sent_at", { ascending: false })
-          .limit(5);
+          .limit(activeUserIds.length * 5);
 
-        if (!last5 || last5.length < 5) continue;
+        const last5Map = new Map<string, string[]>();
+        for (const row of recentSentNl || []) {
+          const arr = last5Map.get(row.user_id) || [];
+          if (arr.length < 5) {
+            arr.push(row.id);
+            last5Map.set(row.user_id, arr);
+          }
+        }
 
-        const nlIds = last5.map((n: { id: string }) => n.id);
+        // Batch : opens sur TOUTES les newsletters candidates en UNE
+        // requete (evite le N+1 : 1 count opens par user), reduites en
+        // Map<newsletter_id, Set<recipient_email>>.
+        const allNlIds: string[] = [];
+        for (const nlIds of last5Map.values()) {
+          if (nlIds.length === 5) allNlIds.push(...nlIds);
+        }
 
-        // Compter les opens du proprietaire sur ces 5 newsletters
-        const { count: openCount } = await supabaseAdmin
-          .from("newsletter_events")
-          .select("id", { count: "exact", head: true })
-          .in("newsletter_id", nlIds)
-          .eq("recipient_email", profile.email)
-          .eq("event_type", "opened");
+        const openersByNl = new Map<string, Set<string>>();
+        if (allNlIds.length > 0) {
+          const { data: openEvents } = await supabaseAdmin
+            .from("newsletter_events")
+            .select("newsletter_id, recipient_email")
+            .in("newsletter_id", allNlIds)
+            .eq("event_type", "opened");
 
-        if (openCount !== null && openCount === 0) {
-          const name = displayName(profile);
-          const subject =
-            "Vos newsletters Sorell vous intéressent-elles encore ?";
-          const html = await render(RetentionUnopenedEmail({ name }));
-          const key = monthlyKey("retention_unopened_5nl", now);
-          const sent = await sendLifecycleEmail(
-            profile.id,
-            key,
-            profile.email,
-            subject,
-            html
+          for (const ev of openEvents || []) {
+            const openers =
+              openersByNl.get(ev.newsletter_id) || new Set<string>();
+            openers.add(ev.recipient_email);
+            openersByNl.set(ev.newsletter_id, openers);
+          }
+        }
+
+        for (const userId of activeUserIds) {
+          const profile = activeProfileMap.get(userId);
+          if (!profile?.email) continue;
+
+          const nlIds = last5Map.get(userId) || [];
+          if (nlIds.length < 5) continue;
+
+          // Verifier qu'aucune des 5 newsletters n'a ete ouverte par
+          // le proprietaire (recipient_email = profile.email).
+          const ownerOpened = nlIds.some((nlId) =>
+            openersByNl.get(nlId)?.has(profile.email) ?? false
           );
-          if (sent) results.retention_unopened_5nl++;
+
+          if (!ownerOpened) {
+            const name = displayName(profile);
+            const subject =
+              "Vos newsletters Sorell vous intéressent-elles encore ?";
+            const html = await render(RetentionUnopenedEmail({ name }));
+            const key = monthlyKey("retention_unopened_5nl", now);
+            const sent = await sendLifecycleEmail(
+              profile.id,
+              key,
+              profile.email,
+              subject,
+              html
+            );
+            if (sent) results.retention_unopened_5nl++;
+          }
         }
       }
     } catch {
