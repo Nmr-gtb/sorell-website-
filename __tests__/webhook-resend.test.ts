@@ -23,6 +23,10 @@ const mockRecipientsSelect = vi.fn().mockResolvedValue({
 const mockProfileSelect = vi.fn().mockResolvedValue({
   data: { email: "owner@test.com", full_name: "Pierre Martin" },
 });
+// Attribution opens/clics : état pilotable par test
+let mockTaggedNewsletter: { id: string } | null = null;
+let mockCandidateNewsletters: Array<{ id: string }> = [];
+const mockEventsInsert = vi.fn().mockResolvedValue({ error: null });
 
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
@@ -43,6 +47,22 @@ vi.mock("@/lib/supabase-admin", () => ({
             }),
           }),
         };
+      }
+      if (table === "newsletters") {
+        // Chaîne flexible : .eq("id").maybeSingle() (attribution par tag) ou
+        // .eq("subject").in().not().order().limit() (fallback scopé, → tableau)
+        const chain: Record<string, unknown> = {};
+        chain.select = () => chain;
+        chain.eq = () => chain;
+        chain.in = () => chain;
+        chain.not = () => chain;
+        chain.order = () => chain;
+        chain.limit = () => Promise.resolve({ data: mockCandidateNewsletters, error: null });
+        chain.maybeSingle = () => Promise.resolve({ data: mockTaggedNewsletter, error: null });
+        return chain;
+      }
+      if (table === "newsletter_events") {
+        return { insert: (...args: unknown[]) => mockEventsInsert(...args) };
       }
       return {
         select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null }) }) }),
@@ -187,6 +207,74 @@ describe("POST /api/webhooks/resend", () => {
 
     // Should NOT call delete since email.delivered is not handled
     expect(mockDeleteEq).not.toHaveBeenCalled();
+  });
+
+  // --- Attribution des opens/clics : par tag d'abord, fallback scopé sinon ---
+
+  function makeTrackedRequest(data: Record<string, unknown>): Request {
+    return new Request("http://localhost/api/webhooks/resend", {
+      method: "POST",
+      headers: {
+        "svix-id": "msg_123",
+        "svix-timestamp": String(Math.floor(Date.now() / 1000)),
+        "svix-signature": "v1,valid-sig",
+      },
+      body: JSON.stringify({ type: "email.opened", data }),
+    });
+  }
+
+  it("attributes an open via the newsletter_id tag (no subject matching)", async () => {
+    mockHmacDigest.mockReturnValue("valid-sig");
+    mockEventsInsert.mockClear();
+    mockTaggedNewsletter = { id: "nl-tagged" };
+    // Le payload webhook Resend livre les tags en objet plat {name: value}
+    const response = await POST(
+      makeTrackedRequest({
+        to: ["reader@test.com"],
+        subject: "Votre veille du 18 juillet",
+        tags: { newsletter_id: "nl-tagged", user_id: "user-123" },
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(mockEventsInsert).toHaveBeenCalledWith({
+      newsletter_id: "nl-tagged",
+      recipient_email: "reader@test.com",
+      event_type: "opened",
+    });
+  });
+
+  it("falls back to recipient-scoped subject matching when no tag (single candidate)", async () => {
+    mockHmacDigest.mockReturnValue("valid-sig");
+    mockEventsInsert.mockClear();
+    mockTaggedNewsletter = null;
+    mockCandidateNewsletters = [{ id: "nl-scoped" }];
+    const response = await POST(
+      makeTrackedRequest({
+        to: ["reader@test.com"],
+        subject: "Votre veille du 18 juillet",
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(mockEventsInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ newsletter_id: "nl-scoped", event_type: "opened" })
+    );
+  });
+
+  it("drops the event instead of guessing when the fallback is ambiguous", async () => {
+    mockHmacDigest.mockReturnValue("valid-sig");
+    mockEventsInsert.mockClear();
+    mockTaggedNewsletter = null;
+    // Deux newsletters au même subject chez les comptes du destinataire :
+    // impossible de trancher, on n'attribue pas (plutôt que cross-user).
+    mockCandidateNewsletters = [{ id: "nl-a" }, { id: "nl-b" }];
+    const response = await POST(
+      makeTrackedRequest({
+        to: ["reader@test.com"],
+        subject: "Votre veille du 18 juillet",
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(mockEventsInsert).not.toHaveBeenCalled();
   });
 
   it("handles bounced email gracefully even if delete fails", async () => {

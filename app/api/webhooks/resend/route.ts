@@ -136,9 +136,11 @@ export async function POST(request: Request) {
 
     // Tracking des ouvertures / clics / livraisons pour les newsletters.
     // Necessaire au declencheur lifecycle retention_unopened_5nl.
-    // Resend identifie chaque newsletter via la table newsletters : on
-    // remonte le newsletter_id en cherchant le subject + le destinataire
-    // dans l'historique (Resend ne renvoie pas notre id interne).
+    // Attribution : l'id interne voyage dans les tags Resend posés à l'envoi
+    // (lib/send-newsletter-batch). Fallback pour les emails partis avant les
+    // tags : matching par subject SCOPÉ aux comptes dont ce destinataire fait
+    // partie — et si plusieurs newsletters restent candidates, on n'insère
+    // rien plutôt que d'attribuer l'événement au mauvais utilisateur.
     if (
       type === "email.opened" ||
       type === "email.clicked" ||
@@ -154,27 +156,67 @@ export async function POST(request: Request) {
       const recipientEmail = data?.to?.[0];
       const subject = data?.subject;
 
-      if (recipientEmail && subject) {
-        // Retrouver la newsletter correspondante (la plus recente envoyee
-        // a ce destinataire avec ce subject).
-        const { data: matchedNewsletter } = await supabaseAdmin
+      // Les tags arrivent en objet plat {name: value} dans les payloads
+      // webhook Resend (mais en tableau [{name, value}] côté API d'envoi) :
+      // on tolère les deux formes.
+      const rawTags = (data as { tags?: unknown })?.tags;
+      let taggedNewsletterId: string | null = null;
+      if (Array.isArray(rawTags)) {
+        const found = (rawTags as Array<{ name?: string; value?: string }>).find(
+          (t) => t?.name === "newsletter_id"
+        );
+        taggedNewsletterId = found?.value || null;
+      } else if (rawTags && typeof rawTags === "object") {
+        const value = (rawTags as Record<string, unknown>).newsletter_id;
+        taggedNewsletterId = typeof value === "string" ? value : null;
+      }
+
+      let newsletterId: string | null = null;
+
+      if (taggedNewsletterId) {
+        // Attribution directe par tag : vérifier que la newsletter existe
+        // (protège des tags forgés ou obsolètes).
+        const { data: tagged } = await supabaseAdmin
           .from("newsletters")
           .select("id")
-          .eq("subject", subject)
-          .not("sent_at", "is", null)
-          .order("sent_at", { ascending: false })
-          .limit(1)
+          .eq("id", taggedNewsletterId)
           .maybeSingle();
+        newsletterId = tagged?.id || null;
+      } else if (recipientEmail && subject) {
+        // Fallback (emails envoyés avant les tags) : scoper la recherche aux
+        // utilisateurs dont ce destinataire fait partie, jamais en global.
+        const { data: ownerRows } = await supabaseAdmin
+          .from("recipients")
+          .select("user_id")
+          .eq("email", recipientEmail);
 
-        if (matchedNewsletter?.id) {
-          // Insertion silencieuse : on tolere les doublons (Resend peut
-          // renvoyer plusieurs evenements pour la meme ouverture).
-          await supabaseAdmin.from("newsletter_events").insert({
-            newsletter_id: matchedNewsletter.id,
-            recipient_email: recipientEmail,
-            event_type: eventType,
-          });
+        const ownerIds = [...new Set((ownerRows || []).map((r) => r.user_id))];
+        if (ownerIds.length > 0) {
+          const { data: candidates } = await supabaseAdmin
+            .from("newsletters")
+            .select("id")
+            .eq("subject", subject)
+            .in("user_id", ownerIds)
+            .not("sent_at", "is", null)
+            .order("sent_at", { ascending: false })
+            .limit(2);
+
+          // Une seule candidate : attribution sûre. Plusieurs : ambigu, on
+          // laisse tomber l'événement plutôt que de deviner.
+          if (candidates?.length === 1) {
+            newsletterId = candidates[0].id;
+          }
         }
+      }
+
+      if (newsletterId && recipientEmail) {
+        // Insertion silencieuse : on tolere les doublons (Resend peut
+        // renvoyer plusieurs evenements pour la meme ouverture).
+        await supabaseAdmin.from("newsletter_events").insert({
+          newsletter_id: newsletterId,
+          recipient_email: recipientEmail,
+          event_type: eventType,
+        });
       }
     }
   } catch {
