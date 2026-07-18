@@ -5,8 +5,8 @@ export default function DashboardLoading() {
           langue-neutre, avec label accessible pour les lecteurs d'écran. */}
       <div className="flex flex-col items-center gap-4" role="status" aria-label="Loading">
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-gray-700" />
-          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#005058] animate-spin" />
+          <div className="absolute inset-0 rounded-full border-2 border-[var(--border)]" />
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--accent)] animate-spin" />
         </div>
       </div>
     </div>

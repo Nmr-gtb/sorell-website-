@@ -24,8 +24,8 @@ export default function KpiCard({ icon, label, value, trend, accent = false, ico
           <div
             className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
               trend.positive
-                ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400"
-                : "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
+                ? "bg-[var(--success-bg)] text-[var(--success)]"
+                : "bg-[var(--error-bg)] text-[var(--error)]"
             }`}
           >
             {trend.positive ? <TrendUpIcon size={12} /> : <TrendDownIcon size={12} />}

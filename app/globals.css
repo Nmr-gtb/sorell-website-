@@ -3,6 +3,11 @@
 @source "../components/**/*.{ts,tsx}";
 @import "./theme.css";
 
+/* Le thème est piloté par data-theme (toggle Navbar + boot script), pas par la
+   préférence OS : recâbler le variant dark: de Tailwind sur cet attribut,
+   sinon les classes dark: ignorent le toggle du site. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @font-face {
   font-family: 'Quiglet';
   src: url('/fonts/quiglet.otf') format('opentype');
@@ -16,7 +21,9 @@ html, body {
 }
 
 *:focus-visible {
-  outline: 2px solid #005058;
+  /* var(--accent) suit le thème : #005058 en clair, #0D9488 en sombre
+     (un teal sombre hardcodé serait illisible sur fond #0F1117). */
+  outline: 2px solid var(--accent, #005058);
   outline-offset: 2px;
 }
 

@@ -12,9 +12,9 @@ export default function DashboardError({
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="flex flex-col items-center gap-4 text-center max-w-md px-4">
-        <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-[var(--error-bg)] flex items-center justify-center">
           <svg
-            className="w-6 h-6 text-red-500"
+            className="w-6 h-6 text-[var(--error)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -27,22 +27,15 @@ export default function DashboardError({
             />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="text-lg font-semibold text-[var(--text)]">
           {t("dashboard.error_title")}
         </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-[var(--text-secondary)]">
           {t("dashboard.error_desc")}
         </p>
         <button
           onClick={reset}
-          className="mt-2 px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors"
-          style={{ backgroundColor: "#005058" }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "#006068")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "#005058")
-          }
+          className="mt-2 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)]"
         >
           {t("common.retry")}
         </button>

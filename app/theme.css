@@ -56,8 +56,10 @@
 
   --accent: #0D9488;
   --accent-hover: #14B8A6;
-  --accent-subtle: rgba(0, 80, 88, 0.06);
-  --accent-border: rgba(0, 80, 88, 0.25);
+  /* Dérivés du dark accent (#0D9488), pas du teal clair : sur fond #0F1117 le
+     rgba(0,80,88,0.06) était à la fois de la mauvaise teinte et invisible. */
+  --accent-subtle: rgba(13, 148, 136, 0.12);
+  --accent-border: rgba(13, 148, 136, 0.35);
   --accent-text: #FFFFFF;
 
   --border: #2A2D38;
@@ -229,71 +231,6 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-}
-
-/* ============================================================
-   EMAIL TAGS
-   ============================================================ */
-.email-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.1875rem 0.5rem;
-  border-radius: 4px;
-  font-family: var(--font-inter, 'Inter', sans-serif);
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid transparent;
-  white-space: nowrap;
-}
-
-.email-tag-ai {
-  background: var(--accent-subtle);
-  color: var(--accent);
-  border-color: var(--accent-border);
-}
-
-.email-tag-reg {
-  background: #F0FDF4;
-  color: #166534;
-  border-color: #BBF7D0;
-}
-
-.email-tag-comp {
-  background: #F9FAFB;
-  color: #374151;
-  border-color: var(--border);
-}
-
-.email-tag-agents {
-  background: #F9FAFB;
-  color: #374151;
-  border-color: var(--border);
-}
-
-.email-tag-featured {
-  background: var(--accent-subtle);
-  color: var(--accent);
-  border-color: var(--accent-border);
-}
-
-[data-theme="dark"] .email-tag-reg {
-  background: rgba(16, 185, 129, 0.08);
-  color: #10B981;
-  border-color: rgba(16, 185, 129, 0.2);
-}
-
-[data-theme="dark"] .email-tag-comp {
-  background: var(--surface-alt);
-  color: var(--text-secondary);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .email-tag-agents {
-  background: var(--surface-alt);
-  color: var(--text-secondary);
-  border-color: var(--border);
 }
 
 [data-theme="dark"] .features-watermark {

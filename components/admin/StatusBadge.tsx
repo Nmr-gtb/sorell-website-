@@ -6,18 +6,22 @@ interface StatusBadgeProps {
   size?: "sm" | "md";
 }
 
+// DA Sorell : un seul accent (teal), statuts sémantiques via les tokens du
+// thème (suivent le toggle dark), tout le décoratif en neutre. Les anciennes
+// teintes Tailwind multi-couleurs (blue/purple/amber/cyan...) violaient la
+// règle "max 1 couleur d'accent" et ne suivaient pas le toggle du site.
 const variantStyles: Record<BadgeVariant, string> = {
   default: "bg-[var(--surface-hover)] text-[var(--text-secondary)]",
-  teal: "bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-400",
-  blue: "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400",
-  purple: "bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400",
-  amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400",
-  green: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400",
-  red: "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400",
-  yellow: "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400",
-  orange: "bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-400",
-  cyan: "bg-cyan-50 text-cyan-700 dark:bg-cyan-950/30 dark:text-cyan-400",
-  emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400",
+  teal: "bg-[var(--accent-subtle)] text-[var(--accent)]",
+  blue: "bg-[var(--accent-subtle)] text-[var(--accent)]",
+  purple: "bg-[var(--surface-hover)] text-[var(--text-secondary)]",
+  amber: "bg-[var(--surface-hover)] text-[var(--text-secondary)]",
+  green: "bg-[var(--success-bg)] text-[var(--success)]",
+  red: "bg-[var(--error-bg)] text-[var(--error)]",
+  yellow: "bg-[var(--surface-hover)] text-[var(--text-secondary)]",
+  orange: "bg-[var(--error-bg)] text-[var(--error)]",
+  cyan: "bg-[var(--accent-subtle)] text-[var(--accent)]",
+  emerald: "bg-[var(--success-bg)] text-[var(--success)]",
   gray: "bg-[var(--surface-hover)] text-[var(--text-secondary)]",
 };
 

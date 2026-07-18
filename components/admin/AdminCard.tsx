@@ -11,7 +11,7 @@ interface AdminCardProps {
 const variantStyles = {
   default: "bg-[var(--surface)] border-[var(--border)]",
   accent: "bg-[var(--surface)] border-[var(--accent-border)]",
-  danger: "bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-800/40",
+  danger: "bg-[var(--error-bg)] border-[var(--error)]/25",
 };
 
 const paddingStyles = {
