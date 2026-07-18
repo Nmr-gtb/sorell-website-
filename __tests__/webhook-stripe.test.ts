@@ -4,11 +4,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockUpdateEq = vi.fn().mockResolvedValue({ error: null });
 const mockUpdate = vi.fn().mockReturnValue({ eq: mockUpdateEq });
 const mockSelectEqSingle = vi.fn();
+// Idempotence : insert() réserve l'event.id, delete().eq() libère en cas d'échec.
+const mockInsert = vi.fn().mockResolvedValue({ error: null });
+const mockDeleteEq = vi.fn().mockResolvedValue({ error: null });
+const mockDelete = vi.fn().mockReturnValue({ eq: mockDeleteEq });
 
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
     from: () => ({
       update: (...args: unknown[]) => mockUpdate(...args),
+      insert: (...args: unknown[]) => mockInsert(...args),
+      delete: (...args: unknown[]) => mockDelete(...args),
       select: () => ({
         eq: () => ({
           single: () => mockSelectEqSingle(),
@@ -61,6 +67,9 @@ describe("POST /api/webhooks/stripe", () => {
     vi.clearAllMocks();
     process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
     mockSelectEqSingle.mockResolvedValue({ data: { id: "user-123" }, error: null });
+    mockInsert.mockResolvedValue({ error: null });
+    mockUpdateEq.mockResolvedValue({ error: null });
+    mockDeleteEq.mockResolvedValue({ error: null });
   });
 
   it("returns 400 if invalid signature", async () => {
@@ -173,5 +182,68 @@ describe("POST /api/webhooks/stripe", () => {
         plan: "business",
       })
     );
+  });
+
+  it("réserve l'event.id avant traitement (idempotence)", async () => {
+    mockConstructEvent.mockReturnValue({
+      id: "evt_abc",
+      type: "customer.subscription.deleted",
+      data: { object: { customer: "cus_123" } },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    await POST(request);
+
+    expect(mockInsert).toHaveBeenCalledWith({ id: "evt_abc", type: "customer.subscription.deleted" });
+  });
+
+  it("ignore un rejeu Stripe déjà traité (event.id en doublon) sans retraiter", async () => {
+    // L'insert de réservation échoue avec une violation d'unicité (23505) → rejeu.
+    mockInsert.mockResolvedValue({ error: { code: "23505", message: "duplicate key" } });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_dup",
+      type: "checkout.session.completed",
+      data: { object: { metadata: { userId: "user-123" }, subscription: "sub_123", customer: "cus_123" } },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.duplicate).toBe(true);
+
+    // Aucun traitement : ni retrieve d'abonnement, ni update de profil.
+    expect(mockRetrieveSubscription).not.toHaveBeenCalled();
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it("libère la réservation si le traitement échoue (permet le rejeu Stripe)", async () => {
+    // L'update du profil échoue → le handler throw → 500 + rollback de la réservation.
+    mockUpdateEq.mockResolvedValue({ error: { message: "db down" } });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_fail",
+      type: "customer.subscription.deleted",
+      data: { object: { customer: "cus_123" } },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(500);
+
+    // La réservation evt_fail doit être supprimée pour autoriser le rejeu.
+    expect(mockDelete).toHaveBeenCalled();
+    expect(mockDeleteEq).toHaveBeenCalledWith("id", "evt_fail");
   });
 });

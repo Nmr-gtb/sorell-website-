@@ -57,6 +57,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // --- Idempotence : Stripe rejoue un événement tant qu'il n'a pas reçu de 200
+  // (timeout, erreur transitoire...). On réserve l'event.id AVANT traitement :
+  // si la clé existe déjà, c'est un rejeu → on renvoie 200 sans retraiter (évite
+  // double notification, double conversion de parrainage, etc.). En cas d'échec
+  // du traitement, la réservation est libérée (catch) pour permettre le rejeu.
+  const { error: claimError } = await supabaseAdmin
+    .from("stripe_webhook_events")
+    .insert({ id: event.id, type: event.type });
+  if (claimError) {
+    if (claimError.code === "23505") {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+    // Impossible de réserver (infra dédup indisponible) : on log et on continue
+    // plutôt que de bloquer un événement de paiement légitime.
+    console.error("[stripe webhook] claim failed", claimError);
+  }
+
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
@@ -212,6 +229,9 @@ export async function POST(request: Request) {
       }
     }
   } catch {
+    // Le traitement a échoué : libérer la réservation pour que le rejeu Stripe
+    // puisse retraiter l'événement (sinon il serait ignoré comme un doublon).
+    await supabaseAdmin.from("stripe_webhook_events").delete().eq("id", event.id);
     return NextResponse.json({ error: "Erreur de traitement du webhook." }, { status: 500 });
   }
 
