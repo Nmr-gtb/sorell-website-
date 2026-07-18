@@ -42,7 +42,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 
 ## Base de données
 
-- **profiles** : id, email, plan (free/pro/business/enterprise), full_name, email_verified, email_verified_at, stripe_customer_id, stripe_subscription_id, trial_ends_at, referral_code, referred_by, created_at
+- **profiles** : id, email, plan (free/pro/business/enterprise), full_name, email_verified, email_verified_at, stripe_customer_id, stripe_subscription_id, stripe_subscription_status (dernier statut Stripe connu, NULL = pas d'abonnement), trial_ends_at, referral_code, referred_by, created_at
 - **newsletter_config** : user_id, topics, custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics, edit_mode (auto/editor), pending_draft_id, article_count (3-12, NULL = défaut du plan)
 - **newsletters** : id, user_id, content, subject, status, generated_at, created_at, sent_at, recipient_count, original_content, original_subject (instantané pour le Réinitialiser de l'éditeur)
 
@@ -117,6 +117,10 @@ Refonte 2026-05 : déclencheurs basés sur l'expérience produit vécue (et non 
 11. **Prix annuels** : afficher 190€/an et 490€/an (pas mensuel divisé)
 12. **retention_no_newsletter_30d** : fenêtre à 35-36j (pas 30-31). Le cron lifecycle (minuit) tournait avant le cron newsletter (6-7h), envoyant un faux email de rétention aux plans mensuels le jour même de leur envoi. 35j donne une marge de 5 jours.
 13. **REFERRAL_PRICES = amount_off (remise), PAS prix cible** : dans app/api/checkout, la valeur est le montant DÉDUIT en centimes (Stripe coupon amount_off), pas le prix payé par le filleul. Doit rester < prix plein sinon 1er mois à 0€. Valeurs actuelles : Pro 299 (9,99€→7€), Business 1000 (49€→39€). Tests verrouillent ces montants dans checkout.test.ts.
+14. **Envoi des newsletters = batch Resend** : toujours passer par sendNewsletterEmails (lib/send-newsletter-batch), jamais une boucle resend.emails.send par destinataire (timeout Vercel 60s + rate limit Resend 2 req/s). Le helper rend le HTML par destinataire en parallèle, envoie par tranches de 100, pose les tags newsletter_id/user_id (attribution webhooks) et retourne sentCount (à utiliser pour recipient_count).
+15. **Plan Stripe = f(statut, prix), pas f(prix)** : planForSubscriptionStatus (lib/price-ids) — grâce sur active/trialing/past_due, coupure free sur unpaid/canceled/paused. Ne jamais réécrire plan depuis le seul price ID dans un webhook.
+16. **Attribution webhooks Resend par tags** : le webhook lit le tag newsletter_id (objet plat côté webhook, tableau côté API d'envoi). Fallback subject scopé par destinataire, jamais global ; si ambigu, ne rien insérer. Vocabulaire : pixel écrit "open"/"click" (lu par analytics), webhook écrit "opened"/"clicked" (lu par retention) — deux paires cohérentes, NE PAS unifier sans gérer le double comptage.
+17. **Variant dark Tailwind recâblé** : @custom-variant dark sur [data-theme="dark"] dans globals.css — les classes dark: suivent le toggle du site, pas la préférence OS. UI admin : tokens du thème (--success/--error/--accent), pas de teintes Tailwind multi-couleurs.
 
 ## Règles de travail
 
