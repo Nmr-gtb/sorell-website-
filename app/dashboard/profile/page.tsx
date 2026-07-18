@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
@@ -54,6 +54,56 @@ export default function ProfilePage() {
   const [exporting, setExporting] = useState(false);
 
   const upgraded = searchParams.get("upgraded") === "true";
+
+  // A11y de la modale de suppression : focus initial, piège du focus (Tab),
+  // fermeture à Échap (sauf suppression en cours), restauration du focus.
+  const deleteModalRef = useRef<HTMLDivElement | null>(null);
+  const deletingRef = useRef(false);
+  useEffect(() => {
+    deletingRef.current = deleting;
+  }, [deleting]);
+
+  useEffect(() => {
+    if (!showDeleteModal) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const focusables = () =>
+      Array.from(
+        deleteModalRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+        ) || []
+      );
+    // Focus initial sur le premier élément interactif (le champ de confirmation)
+    focusables()[0]?.focus();
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        // Ne pas fermer pendant la suppression (même règle que le bouton Annuler)
+        if (deletingRef.current) return;
+        e.preventDefault();
+        setShowDeleteModal(false);
+        return;
+      }
+      if (e.key === "Tab") {
+        const items = focusables();
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [showDeleteModal]);
 
   useEffect(() => {
     if (!user) return;
@@ -549,6 +599,10 @@ export default function ProfilePage() {
           }}
         >
           <div
+            ref={deleteModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-modal-title"
             style={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -576,6 +630,7 @@ export default function ProfilePage() {
             </div>
 
             <h3
+              id="delete-account-modal-title"
               style={{
                 fontSize: 18,
                 fontWeight: 600,
