@@ -51,6 +51,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 - /api/send libère pending_draft_id ; /api/generate/article régénère un bloc ; /api/newsletters/draft sauvegarde/reset
 - Script de secours : node scripts/trigger-editor-draft.js <user_id> [--force] (contourne le timeout Vercel 60s)
 - Longueur : article_count (3-12) via resolveArticleCount(plan, configured) — gating serveur canCustomizeLength
+- **Plafond serverless (anti-timeout Vercel 60s)** : la génération serverless (cron + /api/generate) est plafonnée par MODÈLE via resolveServerlessArticleCount(plan, configured, model). Opus (Business/Enterprise) = 4 articles max (mesuré : 10 art = 101s, 4 art = ~43s ; ~9,7s/article). Sonnet/Haiku non plafonnés. Conséquence : les newsletters AUTO Business/Enterprise sortent à 4 articles ; l'utilisateur complète jusqu'à sa longueur voulue via l'éditeur (bouton "Ajouter un article" → /api/generate/article target="new_article", 1 article/appel). Le script trigger-editor-draft.js n'est PAS plafonné.
 - **newsletter_events** : id, newsletter_id, recipient_email, event_type (opened/clicked/delivered/bounced/complained), created_at
 - **referrals** : id, referrer_id, referee_id, code, status (pending/converted), created_at, converted_at, expires_at
 - **activity_log** : id, user_id, user_email, action_type, action_label, details, metadata, synced_to_notion, created_at
