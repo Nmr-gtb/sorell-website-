@@ -58,6 +58,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 - **lifecycle_emails** : id, user_id, email_type, sent_at (UNIQUE user_id+email_type)
 - **admin_sessions** : id, email, ip_address, user_agent, created_at, expires_at
 - **telegram_messages** : id, bot_name, chat_id, role, content, intent, created_at
+- **stripe_webhook_events** : id (= Stripe event.id, PK), type, received_at — dédup/idempotence des webhooks Stripe (RLS activée, service_role only, aucune policy)
 - Storage : bucket "logos" (public) pour logos custom Business+
 - RLS activée sur TOUTES les tables — API routes utilisent supabaseAdmin (service_role)
 
@@ -115,6 +116,7 @@ Refonte 2026-05 : déclencheurs basés sur l'expérience produit vécue (et non 
 10. **RLS** : activée sur les 7 tables avec 26 policies
 11. **Prix annuels** : afficher 190€/an et 490€/an (pas mensuel divisé)
 12. **retention_no_newsletter_30d** : fenêtre à 35-36j (pas 30-31). Le cron lifecycle (minuit) tournait avant le cron newsletter (6-7h), envoyant un faux email de rétention aux plans mensuels le jour même de leur envoi. 35j donne une marge de 5 jours.
+13. **REFERRAL_PRICES = amount_off (remise), PAS prix cible** : dans app/api/checkout, la valeur est le montant DÉDUIT en centimes (Stripe coupon amount_off), pas le prix payé par le filleul. Doit rester < prix plein sinon 1er mois à 0€. Valeurs actuelles : Pro 299 (9,99€→7€), Business 1000 (49€→39€). Tests verrouillent ces montants dans checkout.test.ts.
 
 ## Règles de travail
 
