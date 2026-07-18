@@ -784,8 +784,6 @@ const fr: Record<string, string> = {
   "profile.email_label": "Adresse email",
   "profile.save": "Sauvegarder",
   "profile.cancel": "Annuler",
-  "profile.newsletter_sorell": "Newsletter Sorell",
-  "profile.newsletter_desc": "Recevez nos actualit\u00e9s et annonces produit",
   "profile.delete_account": "Supprimer mon compte",
   "profile.delete_warning": "Cette action est irr\u00e9versible. Toutes vos donn\u00e9es, newsletters et configurations seront d\u00e9finitivement supprim\u00e9es.",
   "profile.delete_confirm": "Tapez <strong>SUPPRIMER</strong> pour confirmer",

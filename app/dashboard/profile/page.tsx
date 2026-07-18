@@ -31,7 +31,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t, lang } = useLanguage();
-  const [newsletter, setNewsletter] = useState(true);
   const [plan, setPlan] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -471,53 +470,6 @@ export default function ProfilePage() {
               disabled
               style={{ opacity: 0.7, cursor: "not-allowed" }}
             />
-          </div>
-
-          {/* Newsletter toggle */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingTop: 4,
-            }}
-          >
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginBottom: 2 }}>
-                {t("profile.newsletter_sorell")}
-              </div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                {t("profile.newsletter_desc")}
-              </div>
-            </div>
-            <button
-              onClick={() => setNewsletter((v) => !v)}
-              style={{
-                width: 40,
-                height: 22,
-                borderRadius: 11,
-                background: newsletter ? "var(--accent)" : "var(--border)",
-                border: "none",
-                cursor: "pointer",
-                position: "relative",
-                transition: "background 0.2s ease",
-                flexShrink: 0,
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  top: 3,
-                  left: newsletter ? 21 : 3,
-                  width: 16,
-                  height: 16,
-                  borderRadius: "50%",
-                  background: "white",
-                  transition: "left 0.2s ease",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                }}
-              />
-            </button>
           </div>
 
           {/* Divider */}
