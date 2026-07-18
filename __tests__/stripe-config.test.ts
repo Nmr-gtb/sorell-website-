@@ -68,3 +68,35 @@ describe("Stripe configuration", () => {
     expect(shared.PRICE_IDS).toEqual(PRICE_IDS);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Plan effectif selon le statut d'abonnement Stripe (logique RÉELLE, vrais
+// price IDs). Grâce = active/trialing/past_due ; coupure = états terminaux.
+// ---------------------------------------------------------------------------
+describe("planForSubscriptionStatus", () => {
+  it("keeps the paid plan while active, trialing or past_due (grace)", async () => {
+    const { planForSubscriptionStatus } = await import("@/lib/price-ids");
+    expect(planForSubscriptionStatus("active", PRICE_IDS.pro_monthly)).toBe("pro");
+    expect(planForSubscriptionStatus("trialing", PRICE_IDS.business_monthly)).toBe("business");
+    expect(planForSubscriptionStatus("past_due", PRICE_IDS.business_annual)).toBe("business");
+  });
+
+  it("cuts to free on terminal or suspended statuses", async () => {
+    const { planForSubscriptionStatus } = await import("@/lib/price-ids");
+    for (const status of ["unpaid", "canceled", "paused", "incomplete", "incomplete_expired"]) {
+      expect(planForSubscriptionStatus(status, PRICE_IDS.pro_monthly)).toBe("free");
+      expect(planForSubscriptionStatus(status, PRICE_IDS.business_monthly)).toBe("free");
+    }
+  });
+
+  it("falls back to free for unknown price IDs or missing price", async () => {
+    const { planForSubscriptionStatus } = await import("@/lib/price-ids");
+    expect(planForSubscriptionStatus("active", "price_inconnu")).toBe("free");
+    expect(planForSubscriptionStatus("active", undefined)).toBe("free");
+  });
+
+  it("still honours legacy Pro price IDs during grace", async () => {
+    const { planForSubscriptionStatus } = await import("@/lib/price-ids");
+    expect(planForSubscriptionStatus("past_due", "price_1TE3pa7A2mOEJEeWltqInvgW")).toBe("pro");
+  });
+});

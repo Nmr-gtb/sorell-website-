@@ -1,4 +1,5 @@
 import { stripe, PRICE_TO_PLAN } from "@/lib/stripe";
+import { planForSubscriptionStatus } from "@/lib/price-ids";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Resend } from "resend";
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
           plan,
           stripe_customer_id: session.customer as string,
           stripe_subscription_id: subscriptionId,
+          stripe_subscription_status: subscription.status,
           updated_at: new Date().toISOString(),
         };
 
@@ -158,7 +160,11 @@ export async function POST(request: Request) {
     if (event.type === "customer.subscription.updated") {
       const subscription = event.data.object;
       const priceId = subscription.items.data[0]?.price.id;
-      const plan = PRICE_TO_PLAN[priceId] || "free";
+      // Le plan effectif dépend du STATUT, pas seulement du prix : premium
+      // conservé pendant la relance Stripe (past_due), coupé dès que Stripe
+      // passe l'abonnement en unpaid/canceled/paused (états où aucun
+      // customer.subscription.deleted n'arrivera forcément).
+      const plan = planForSubscriptionStatus(subscription.status, priceId);
       const customerId = subscription.customer as string;
 
       const { data: profile } = await supabaseAdmin
@@ -170,7 +176,11 @@ export async function POST(request: Request) {
       if (profile) {
         const { error: updErr } = await supabaseAdmin
           .from("profiles")
-          .update({ plan, updated_at: new Date().toISOString() })
+          .update({
+            plan,
+            stripe_subscription_status: subscription.status,
+            updated_at: new Date().toISOString(),
+          })
           .eq("id", profile.id);
         if (updErr) throw new Error("profiles update failed (subscription.updated)");
       }
@@ -223,7 +233,7 @@ export async function POST(request: Request) {
       if (profile) {
         const { error: updErr } = await supabaseAdmin
           .from("profiles")
-          .update({ plan: "free", stripe_subscription_id: null, updated_at: new Date().toISOString() })
+          .update({ plan: "free", stripe_subscription_id: null, stripe_subscription_status: "canceled", updated_at: new Date().toISOString() })
           .eq("id", profile.id);
         if (updErr) throw new Error("profiles update failed (subscription.deleted)");
       }

@@ -36,3 +36,18 @@ export const PRICE_TO_PLAN: Record<string, string> = {
   [PRICE_IDS.business_annual]: "business",
   ...LEGACY_PRICE_TO_PLAN,
 };
+
+// ---------------------------------------------------------------------------
+// Plan effectif selon le STATUT de l'abonnement Stripe (pas seulement le prix).
+// Politique de grâce : premium conservé pendant la fenêtre de relance Stripe
+// (past_due), coupé dès que Stripe passe l'abonnement dans un état terminal ou
+// suspendu (unpaid, canceled, paused, incomplete_expired, incomplete). Sans ce
+// gating, un abonnement marqué "unpaid" (config Stripe sans annulation auto)
+// gardait le plan premium en base indéfiniment.
+// ---------------------------------------------------------------------------
+const GRACE_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+export function planForSubscriptionStatus(status: string, priceId: string | undefined): string {
+  const paidPlan = (priceId && PRICE_TO_PLAN[priceId]) || "free";
+  return GRACE_STATUSES.has(status) ? paidPlan : "free";
+}

@@ -60,6 +60,34 @@ vi.mock("@/lib/stripe", () => ({
   },
 }));
 
+// Même mapping factice pour @/lib/price-ids (importé directement par la route
+// pour planForSubscriptionStatus). La logique réelle du helper est testée avec
+// les vrais price IDs dans stripe-config.test.ts ; ici on vérifie le CÂBLAGE
+// du handler (statut → plan écrit en base).
+vi.mock("@/lib/price-ids", () => {
+  const PRICE_TO_PLAN: Record<string, string> = {
+    price_pro_monthly: "pro",
+    price_pro_annual: "pro",
+    price_business_monthly: "business",
+    price_business_annual: "business",
+  };
+  const GRACE = new Set(["active", "trialing", "past_due"]);
+  return {
+    PRICE_IDS: {
+      pro_monthly: "price_pro_monthly",
+      pro_annual: "price_pro_annual",
+      business_monthly: "price_business_monthly",
+      business_annual: "price_business_annual",
+    },
+    LEGACY_PRICE_TO_PLAN: {},
+    PRICE_TO_PLAN,
+    planForSubscriptionStatus: (status: string, priceId?: string) => {
+      const paid = (priceId && PRICE_TO_PLAN[priceId]) || "free";
+      return GRACE.has(status) ? paid : "free";
+    },
+  };
+});
+
 import { POST } from "@/app/api/webhooks/stripe/route";
 
 describe("POST /api/webhooks/stripe", () => {
@@ -164,6 +192,7 @@ describe("POST /api/webhooks/stripe", () => {
       data: {
         object: {
           customer: "cus_123",
+          status: "active",
           items: { data: [{ price: { id: "price_business_monthly" } }] },
         },
       },
@@ -180,8 +209,101 @@ describe("POST /api/webhooks/stripe", () => {
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         plan: "business",
+        stripe_subscription_status: "active",
       })
     );
+  });
+
+  // --- Gating par statut : le plan effectif dépend de subscription.status,
+  // pas seulement du prix. past_due = grâce (relance Stripe en cours),
+  // unpaid/canceled/paused = coupure immédiate vers free. ---
+  it("keeps the premium plan during the Stripe dunning window (past_due)", async () => {
+    mockConstructEvent.mockReturnValue({
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "past_due",
+          items: { data: [{ price: { id: "price_pro_monthly" } }] },
+        },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        plan: "pro",
+        stripe_subscription_status: "past_due",
+      })
+    );
+  });
+
+  it("downgrades to free when Stripe marks the subscription unpaid", async () => {
+    // Cas clé : config Stripe "mark as unpaid" (pas d'annulation auto) —
+    // aucun customer.subscription.deleted n'arrivera jamais.
+    mockConstructEvent.mockReturnValue({
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "unpaid",
+          items: { data: [{ price: { id: "price_business_monthly" } }] },
+        },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        plan: "free",
+        stripe_subscription_status: "unpaid",
+      })
+    );
+  });
+
+  it("downgrades to free when the subscription is canceled or paused", async () => {
+    for (const status of ["canceled", "paused"]) {
+      vi.clearAllMocks();
+      mockInsert.mockResolvedValue({ error: null });
+      mockUpdateEq.mockResolvedValue({ error: null });
+      mockSelectEqSingle.mockResolvedValue({ data: { id: "user-123" }, error: null });
+      mockConstructEvent.mockReturnValue({
+        type: "customer.subscription.updated",
+        data: {
+          object: {
+            customer: "cus_123",
+            status,
+            items: { data: [{ price: { id: "price_pro_monthly" } }] },
+          },
+        },
+      });
+
+      const request = new Request("http://localhost/api/webhooks/stripe", {
+        method: "POST",
+        headers: { "stripe-signature": "valid-sig" },
+        body: "{}",
+      });
+      const response = await POST(request);
+      expect(response.status).toBe(200);
+
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ plan: "free", stripe_subscription_status: status })
+      );
+    }
   });
 
   it("réserve l'event.id avant traitement (idempotence)", async () => {
