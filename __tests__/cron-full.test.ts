@@ -306,4 +306,143 @@ describe("GET /api/cron", () => {
     expect(data.results[0].error).not.toContain("429");
     expect(data.results[0].error).not.toContain("rate limit");
   });
+
+  // --- Rattrapage : les jours d'affluence (1er/15), une invocation de 60s ne
+  // sert pas tout le monde. Un utilisateur non servi à son heure doit être
+  // rattrapé par les invocations des 3 heures suivantes. ---
+
+  function setupHappyPath(config: Record<string, unknown>) {
+    mockConfigsSelect.mockResolvedValue({ data: [config], error: null });
+    mockProfilesSelect.mockResolvedValue({
+      data: [{ id: "user-123", plan: "pro", email_verified: true }],
+    });
+    mockNewslettersMonthlySentSelect.mockResolvedValue({ data: [] });
+    mockNewslettersCountSelect.mockResolvedValue({ count: 0 });
+    mockNewslettersRecentSelect.mockResolvedValue({ data: [] });
+    mockNewslettersInsert.mockResolvedValue({
+      data: { id: "nl-456", user_id: "user-123", subject: "Test", content: {}, status: "draft" },
+      error: null,
+    });
+    mockRecipientsSelect.mockResolvedValue({ data: [{ email: "user@test.com", name: "" }] });
+    const today = new Date().toISOString().substring(0, 10);
+    mockCreate.mockResolvedValue({
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          editorial: "Édito",
+          key_figures: [],
+          articles: [
+            { tag: "TECH", title: "Article A", hook: "H", content: "C", source: "Reuters", url: "https://reuters.com/a", published_at: today, featured: true },
+          ],
+        }),
+      }],
+    });
+  }
+
+  it("catches up a user whose send hour was missed 2 hours ago", async () => {
+    const config = makeConfigForNow();
+    config.send_hour = (config.send_hour as number) - 2;
+    setupHappyPath(config);
+
+    const request = new Request("http://localhost/api/cron", {
+      headers: { authorization: `Bearer test-cron-secret` },
+    });
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.results.length).toBe(1);
+    expect(data.results[0].status).toBe("sent");
+  });
+
+  it("does not catch up beyond the 3-hour window", async () => {
+    const config = makeConfigForNow();
+    config.send_hour = (config.send_hour as number) - 4;
+    setupHappyPath(config);
+
+    const request = new Request("http://localhost/api/cron", {
+      headers: { authorization: `Bearer test-cron-secret` },
+    });
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.results.length).toBe(0);
+    expect(mockCreate).not.toHaveBeenCalled();
+  });
+
+  it("does not process a user whose send hour is still in the future", async () => {
+    const config = makeConfigForNow();
+    config.send_hour = (config.send_hour as number) + 1;
+    setupHappyPath(config);
+
+    const request = new Request("http://localhost/api/cron", {
+      headers: { authorization: `Bearer test-cron-secret` },
+    });
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.results.length).toBe(0);
+    expect(mockCreate).not.toHaveBeenCalled();
+  });
+
+  // --- Budget temps : ne pas démarrer une génération qui sera tuée par le
+  // timeout Vercel ; différer l'utilisateur à l'invocation suivante. ---
+  it("defers the second user when the time budget is exhausted (deferred_next_run)", async () => {
+    const configA = makeConfigForNow();
+    configA.user_id = "user-a";
+    const configB = makeConfigForNow();
+    configB.user_id = "user-b";
+
+    mockConfigsSelect.mockResolvedValue({ data: [configA, configB], error: null });
+    mockProfilesSelect.mockResolvedValue({
+      data: [
+        { id: "user-a", plan: "pro", email_verified: true },
+        { id: "user-b", plan: "pro", email_verified: true },
+      ],
+    });
+    mockNewslettersMonthlySentSelect.mockResolvedValue({ data: [] });
+    mockNewslettersCountSelect.mockResolvedValue({ count: 0 });
+    mockNewslettersRecentSelect.mockResolvedValue({ data: [] });
+    mockNewslettersInsert.mockResolvedValue({
+      data: { id: "nl-a", user_id: "user-a", subject: "Test", content: {}, status: "draft" },
+      error: null,
+    });
+    mockRecipientsSelect.mockResolvedValue({ data: [{ email: "user@test.com", name: "" }] });
+
+    // Horloge simulée : la génération du 1er utilisateur consomme 50s du
+    // budget (55s). Le 2e (Sonnet ≈ 30s estimés) ne tient plus -> différé.
+    let fakeNow = 1_000_000;
+    const nowSpy = vi.spyOn(Date, "now").mockImplementation(() => fakeNow);
+
+    const today = new Date().toISOString().substring(0, 10);
+    mockCreate.mockImplementation(() => {
+      fakeNow += 50_000;
+      return Promise.resolve({
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            editorial: "Édito",
+            key_figures: [],
+            articles: [
+              { tag: "TECH", title: "Article A", hook: "H", content: "C", source: "Reuters", url: "https://reuters.com/a", published_at: today, featured: true },
+            ],
+          }),
+        }],
+      });
+    });
+
+    const request = new Request("http://localhost/api/cron", {
+      headers: { authorization: `Bearer test-cron-secret` },
+    });
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+
+    expect(data.results.length).toBe(2);
+    expect(data.results[0]).toMatchObject({ userId: "user-a", status: "sent" });
+    expect(data.results[1]).toMatchObject({ userId: "user-b", status: "deferred_next_run" });
+    // Une seule génération : le 2e utilisateur n'a pas consommé d'API
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+
+    nowSpy.mockRestore();
+  });
 });

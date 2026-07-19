@@ -173,6 +173,18 @@ export function serverlessArticleCap(model: string): number {
 }
 
 /**
+ * Durée estimée (ms) d'une génération serverless pour un modèle, plafond
+ * d'articles inclus. Sert au budget temps du cron : ne démarrer une nouvelle
+ * génération que si elle a le temps de finir avant les 60s Vercel.
+ * Mesuré : Opus 4 articles ≈ 43s ; Sonnet et Haiku nettement plus rapides.
+ */
+export function estimatedGenerationMs(model: string): number {
+  if (model.includes("opus")) return 45_000;
+  if (model.includes("sonnet")) return 30_000;
+  return 20_000; // Haiku et défaut
+}
+
+/**
  * Nombre d'articles effectif pour une génération SERVERLESS : la longueur
  * résolue, mais bornée par le plafond de temps du modèle (évite le timeout
  * Vercel 60s). Retourne aussi si un plafonnage a eu lieu (pour informer l'UI).

@@ -7,7 +7,7 @@ import {
   generateFreshNewsletter,
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
-import { getModelForPlan, resolveServerlessArticleCount, canUseEditor } from "@/lib/plans";
+import { getModelForPlan, resolveServerlessArticleCount, canUseEditor, estimatedGenerationMs } from "@/lib/plans";
 
 export const maxDuration = 60;
 
@@ -85,15 +85,31 @@ export async function GET(request: Request) {
 
   const results = [];
 
+  // Rattrapage : les jours de forte affluence (1er et 15 du mois, tous les
+  // bimensuels/mensuels tombent en même temps), une seule invocation de 60s ne
+  // peut pas générer pour tout le monde. Au lieu d'exiger l'heure EXACTE (un
+  // utilisateur non servi à 9h était perdu jusqu'à l'échéance suivante), on
+  // accepte les CATCHUP_HOURS heures suivantes : les garde-fous existants
+  // (last_sent_at du jour, pending_draft_id, limite mensuelle) empêchent tout
+  // double envoi pour ceux déjà servis.
+  const CATCHUP_HOURS = 3;
+
+  // Budget temps : ne démarrer une nouvelle génération que si elle a le temps
+  // de finir avant le timeout Vercel (60s). Les utilisateurs différés seront
+  // servis par les invocations suivantes grâce à la fenêtre de rattrapage.
+  const INVOCATION_BUDGET_MS = 55_000;
+  const invocationStart = Date.now();
+
   for (const config of configs) {
     try {
       const configHour = config.send_hour ?? 9;
       const currentMinutes = franceTime.getMinutes();
       if (Number.isInteger(configHour)) {
-        if (currentHour !== configHour) continue;
+        if (currentHour < configHour || currentHour > configHour + CATCHUP_HOURS) continue;
       } else {
         const wholeHour = Math.floor(configHour);
-        if (currentHour !== wholeHour || currentMinutes < 30) continue;
+        if (currentHour < wholeHour || currentHour > wholeHour + CATCHUP_HOURS) continue;
+        if (currentHour === wholeHour && currentMinutes < 30) continue;
       }
 
       const freq = config.frequency ?? "weekly";
@@ -142,6 +158,14 @@ export async function GET(request: Request) {
       if (maxAuto !== -1) {
         const sentThisMonth = monthlySentCounts.get(config.user_id) || 0;
         if (sentThisMonth >= maxAuto) continue;
+      }
+
+      // Budget temps : si la génération de CET utilisateur ne tient plus dans
+      // les 60s Vercel, la différer à l'invocation suivante (fenêtre de
+      // rattrapage) plutôt que d'être tué en plein milieu.
+      if (Date.now() - invocationStart + estimatedGenerationMs(getModelForPlan(userPlan)) > INVOCATION_BUDGET_MS) {
+        results.push({ userId: config.user_id, status: "deferred_next_run" });
+        continue;
       }
 
       const topics = (config.topics ?? []).filter((t: { enabled: boolean }) => t.enabled).map((t: { label: string }) => t.label).join(", ");
