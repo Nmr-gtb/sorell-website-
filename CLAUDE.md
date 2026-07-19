@@ -38,7 +38,9 @@ Source de vérité UNIQUE des price IDs : `lib/price-ids.ts` (constantes sans SD
 
 ## Variables d'environnement
 
-ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, CRON_SECRET, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, RESEND_WEBHOOK_SECRET, UNSUBSCRIBE_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, ADMIN_JWT_SECRET, NOTION_API_KEY, NOTION_DATABASE_ID, NOTION_USERS_DB_ID, NOTION_ACTIVITY_DB_ID, TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET, TELEGRAM_USER_ID, TELEGRAM_JADE_BOT_TOKEN, TELEGRAM_JADE_WEBHOOK_SECRET, NEXT_PUBLIC_APP_URL
+ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, CRON_SECRET, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, RESEND_WEBHOOK_SECRET, UNSUBSCRIBE_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, ADMIN_JWT_SECRET, NOTION_API_KEY, NOTION_DATABASE_ID, NOTION_USERS_DB_ID, NOTION_ACTIVITY_DB_ID, NEXT_PUBLIC_APP_URL
+
+(Les variables TELEGRAM_* et VERCEL_WEBHOOK_SECRET sont obsolètes depuis la suppression des bots Eva/Jade en juillet 2026 — à retirer de Vercel.)
 
 ## Base de données
 
@@ -57,7 +59,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 - **activity_log** : id, user_id, user_email, action_type, action_label, details, metadata, synced_to_notion, created_at
 - **lifecycle_emails** : id, user_id, email_type, sent_at (UNIQUE user_id+email_type)
 - **admin_sessions** : id, email, ip_address, user_agent, created_at, expires_at
-- **telegram_messages** : id, bot_name, chat_id, role, content, intent, created_at
+- **telegram_messages** : OBSOLÈTE (bots Eva/Jade supprimés en juillet 2026) — la table existe encore en base avec l'historique, droppable quand Noé le décide
 - **stripe_webhook_events** : id (= Stripe event.id, PK), type, received_at — dédup/idempotence des webhooks Stripe (RLS activée, service_role only, aucune policy)
 - Storage : bucket "logos" (public) pour logos custom Business+
 - RLS activée sur TOUTES les tables — API routes utilisent supabaseAdmin (service_role)
@@ -128,7 +130,8 @@ Refonte 2026-05 : déclencheurs basés sur l'expérience produit vécue (et non 
 - Ne pas utiliser framer-motion ni tirets longs "---"
 - Toujours préciser les clés de traduction FR et EN
 - Vérifier les déploiements Vercel après chaque push
-- Pour le détail des intégrations (Notion, Telegram, admin, parrainage) → `/infra`
+- Pour le détail des intégrations (Notion, admin, parrainage) → `/infra`
+- Bots Telegram Eva/Jade : SUPPRIMÉS (juillet 2026). Ne pas réintroduire de notifications Telegram — l'activity log + Notion couvrent le suivi.
 
 ## Priorités actuelles
 

@@ -72,11 +72,6 @@ vi.mock("@/lib/supabase-admin", () => ({
   },
 }));
 
-// Mock eva-notifications
-vi.mock("@/lib/eva-notifications", () => ({
-  notifyBounce: vi.fn(),
-}));
-
 import { POST } from "@/app/api/webhooks/resend/route";
 
 describe("POST /api/webhooks/resend", () => {

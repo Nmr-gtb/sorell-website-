@@ -5,7 +5,6 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
-import { notifyNewSubscription } from "@/lib/eva-notifications";
 import { logPlanChange, logPaymentFailed, logReferralConverted } from "@/lib/activity-log";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
@@ -107,7 +106,7 @@ export async function POST(request: Request) {
           .eq("id", userId);
         if (updErr) throw new Error("profiles update failed (checkout.completed)");
 
-        // Notifier Noé sur Telegram via Eva
+        // Activity log
         const { data: subscriberProfile } = await supabaseAdmin
           .from("profiles")
           .select("full_name, email")
@@ -115,13 +114,6 @@ export async function POST(request: Request) {
           .maybeSingle();
 
         if (subscriberProfile) {
-          await notifyNewSubscription(
-            subscriberProfile.full_name || "",
-            subscriberProfile.email || "",
-            plan
-          );
-
-          // Activity log
           void logPlanChange(userId, subscriberProfile.email || "", "free", plan);
         }
 

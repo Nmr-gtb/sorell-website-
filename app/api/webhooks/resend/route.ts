@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createHmac, timingSafeEqual } from "crypto";
 import { logBounce } from "@/lib/activity-log";
-import { notifyBounce } from "@/lib/eva-notifications";
 
 function verifyWebhookSignature(
   body: string,
@@ -110,7 +109,7 @@ export async function POST(request: Request) {
           .delete()
           .eq("email", bouncedEmail);
 
-        // Notifier Eva + activity log pour chaque propriétaire concerné
+        // Activity log pour chaque propriétaire concerné
         if (recipients && recipients.length > 0) {
           for (const recipient of recipients) {
             // Récupérer le profil du propriétaire
@@ -120,16 +119,11 @@ export async function POST(request: Request) {
               .eq("id", recipient.user_id)
               .single();
 
-            const ownerEmail = profile?.email || "";
-            const ownerName = profile?.full_name || "";
-
-            void logBounce(recipient.user_id, ownerEmail, bouncedEmail);
-            void notifyBounce(bouncedEmail, recipient.name || "", ownerName, ownerEmail);
+            void logBounce(recipient.user_id, profile?.email || "", bouncedEmail);
           }
         } else {
           // Pas de destinataire trouvé (déjà supprimé ou email direct)
           void logBounce("", "", bouncedEmail);
-          void notifyBounce(bouncedEmail, "", "", "");
         }
       }
     }
