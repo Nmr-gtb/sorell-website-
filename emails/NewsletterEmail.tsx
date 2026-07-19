@@ -65,6 +65,9 @@ function lightenHex(hex: string, amount: number): string {
   return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 
+// À n'utiliser QUE dans les contextes HTML bruts (dangerouslySetInnerHTML).
+// Jamais dans un nœud texte JSX : React échappe déjà, et un double échappement
+// affiche "&amp;" littéralement dans l'email (bug vu sur "Réglementation & conformité").
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
@@ -224,7 +227,7 @@ function FeaturedArticleSection({
                           fontFamily: fontSans,
                         }}
                       >
-                        {escapeHtml(article.tag)}
+                        {article.tag}
                       </span>
                     )}
                   </td>
@@ -308,7 +311,7 @@ function FeaturedArticleSection({
                         fontFamily: fontSans,
                       }}
                     >
-                      via {escapeHtml(article.source)}
+                      via {article.source}
                     </span>
                   </td>
                 </tr>
@@ -448,7 +451,7 @@ function KeyFiguresSection({
                         fontFamily: fontSerif,
                       }}
                     >
-                      {escapeHtml(fig.value)}
+                      {fig.value}
                     </div>
                     <div
                       style={{
@@ -459,7 +462,7 @@ function KeyFiguresSection({
                         fontFamily: fontSans,
                       }}
                     >
-                      {escapeHtml(fig.label)}
+                      {fig.label}
                     </div>
                     <div
                       style={{
@@ -468,7 +471,7 @@ function KeyFiguresSection({
                         fontFamily: fontSans,
                       }}
                     >
-                      {escapeHtml(fig.context)}
+                      {fig.context}
                     </div>
                   </td>
                 </React.Fragment>
@@ -565,7 +568,7 @@ function SecondaryArticlesSection({
                               fontFamily: fontSans,
                             }}
                           >
-                            {escapeHtml(a.tag)}
+                            {a.tag}
                           </span>
                         </td>
                         <td style={{ textAlign: "right" as const }}>
@@ -576,7 +579,7 @@ function SecondaryArticlesSection({
                               fontFamily: fontSans,
                             }}
                           >
-                            {escapeHtml(a.source)}
+                            {a.source}
                           </span>
                         </td>
                       </tr>
@@ -800,7 +803,7 @@ export function NewsletterEmail(props: NewsletterEmailProps) {
 
   return (
     <Layout
-      subject={escapeHtml(subject)}
+      subject={subject}
       preheaderText={preheaderText}
       brandColor={brandColor}
       warmBorder={warmBorder}
