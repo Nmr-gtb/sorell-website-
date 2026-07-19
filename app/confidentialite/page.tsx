@@ -57,6 +57,7 @@ export default function PrivacyPage() {
             <li><strong>Données de paiement</strong> : traitées directement par Stripe (nous ne stockons pas les numéros de carte)</li>
             <li><strong>Données d'utilisation</strong> : statistiques d'ouverture et de clic des newsletters (via pixel de tracking et redirection de liens), pages visitées</li>
             <li><strong>Données de connexion</strong> : adresse IP, type de navigateur (via les logs serveur)</li>
+            <li><strong>Données de provenance</strong> : site référent, page d'arrivée et paramètres de campagne (UTM) lors de la première visite précédant l'inscription, stockés localement dans votre navigateur puis associés à votre compte à l'inscription (intérêt légitime : comprendre l'origine de nos utilisateurs, aucune transmission à des tiers)</li>
           </ul>
         </Section>
 

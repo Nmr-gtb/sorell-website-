@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
+import AttributionTracker from "@/components/AttributionTracker";
 import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
@@ -192,6 +193,7 @@ export default function RootLayout({
               </div>
               <ChatWidgetWrapper />
               <CookieBanner />
+              <AttributionTracker />
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>

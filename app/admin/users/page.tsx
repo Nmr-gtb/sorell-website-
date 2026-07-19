@@ -20,7 +20,21 @@ interface User {
   newsletters_sent: number;
   last_newsletter_at: string | null;
   recipient_count: number;
+  acquisition: {
+    source?: string;
+    referrer?: string;
+    landing?: string;
+    utm?: Record<string, string>;
+  } | null;
 }
+
+const SOURCE_LABELS: Record<string, string> = {
+  seo: "SEO",
+  ia: "IA",
+  social: "Social",
+  direct: "Direct",
+  interne: "Interne",
+};
 
 const PLAN_LABELS: Record<string, string> = {
   free: "Free",
@@ -190,6 +204,27 @@ export default function AdminUsersPage() {
                   : "\u2014"}
               </span>
             ),
+          },
+          {
+            key: "source",
+            header: "Source",
+            render: (user: User) => {
+              const src = user.acquisition?.source;
+              if (!src) return <span className="text-xs text-[var(--text-secondary)]">{"—"}</span>;
+              const label = SOURCE_LABELS[src] || src;
+              // Détail au survol : referrer + page d'atterrissage
+              const detail = [user.acquisition?.referrer, user.acquisition?.landing]
+                .filter(Boolean)
+                .join(" → ");
+              return (
+                <span title={detail || undefined}>
+                  <StatusBadge
+                    label={label}
+                    variant={src === "seo" ? "green" : src === "ia" ? "teal" : "gray"}
+                  />
+                </span>
+              );
+            },
           },
           {
             key: "created",

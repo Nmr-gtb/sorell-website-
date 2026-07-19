@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { suggestEmailCorrection, isDisposableEmail } from "@/lib/utils";
+import { getStoredAttribution } from "@/lib/attribution";
 
 type Mode = "login" | "signup" | "reset";
 
@@ -117,11 +118,14 @@ export default function LoginPage() {
       ? `${window.location.origin}/auth/callback?ref=${encodeURIComponent(refCode)}`
       : `${window.location.origin}/auth/callback`;
 
+    // L'attribution first-touch (referrer, landing, UTM) part dans les
+    // métadonnées : le trigger handle_new_user la copie dans profiles.acquisition.
+    const acquisition = getStoredAttribution();
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: name },
+        data: acquisition ? { full_name: name, acquisition } : { full_name: name },
         emailRedirectTo: redirectUrl,
       },
     });
