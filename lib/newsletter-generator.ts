@@ -138,7 +138,7 @@ Date du jour : ${dateString}
 INSTRUCTIONS :
 1. Utilise la recherche web pour trouver ${count} actualités RÉELLES et RÉCENTES (moins de 30 jours idéalement, maximum 90 jours) correspondant aux thématiques demandées.
 2. Pour chaque actualité trouvée, rédige un article de newsletter professionnel.
-3. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL.
+3. Chaque article DOIT être basé sur un vrai article publié avec une vraie URL. L'URL doit pointer vers la PAGE EXACTE de l'article (celle ouverte pendant ta recherche) — JAMAIS une page d'accueil, une page rubrique ou une page de catégorie (exemples REFUSÉS : site.fr/economie/, site.fr/budget/, site.fr/landing/x). Si tu n'as pas l'URL précise de l'article, écarte-le et cherches-en un autre.
 4. Chaque article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD. Utilise la date affichée sur la page source. Ne devine pas, ne hallucine pas : si tu ne trouves pas la date précise, écarte l'article.
 
 GÉNÈRE un JSON avec cette structure exacte :
@@ -155,7 +155,7 @@ GÉNÈRE un JSON avec cette structure exacte :
       "hook": "une phrase d'accroche (max 120 chars)",
       "content": "2-3 phrases de contenu factuel basé sur le vrai article. Chiffres, noms, faits concrets.",
       "source": "nom du média (ex: Les Echos, TechCrunch, Reuters...)",
-      "url": "URL COMPLÈTE de l'article original (https://...)",
+      "url": "URL COMPLÈTE et EXACTE de l'article lui-même (https://... — jamais une page rubrique ou d'accueil)",
       "published_at": "YYYY-MM-DD (date de publication lue sur la page source)",
       "featured": true
     }
@@ -165,7 +165,7 @@ GÉNÈRE un JSON avec cette structure exacte :
 CONSIGNES :
 - OPTIMISATION : Effectue MAXIMUM ${Math.min(8, count + 1)} recherches web ciblées. Fais des recherches précises et spécifiques plutôt que des recherches larges. Par exemple, cherche '${topics} actualités ${searchDateHint}' plutôt que de faire une recherche par article. Regroupe les informations de chaque recherche pour couvrir les ${count} articles.
 - Cherche sur TOUT le web, pas seulement les sources listées. Les sources préférées sont indicatives, pas restrictives. L'objectif est de trouver les actualités les plus pertinentes peu importe d'où elles viennent.
-- TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la source.
+- TOUS les articles doivent avoir une URL réelle et fonctionnelle vers la PAGE EXACTE de l'article (pas la page d'accueil du média ni une rubrique).
 - FRAÎCHEUR OBLIGATOIRE : ne retiens QUE les articles publiés dans les 90 derniers jours maximum. Écarte sans exception les articles plus anciens, même s'ils semblent pertinents.
 - Si tu ne trouves pas ${count} articles récents pertinents, réduis à ce que tu trouves (minimum 3). Mieux vaut quelques articles frais que des articles périmés.
 - key_figures : 2-3 chiffres trouvés dans les articles. Si pas de chiffres pertinents, tableau vide [].
@@ -382,7 +382,7 @@ Date du jour : ${dateString}
 
 INSTRUCTIONS :
 1. Utilise la recherche web (MAXIMUM 3 recherches ciblées, ex: '${topics} actualités ${searchDateHint}') pour trouver UNE actualité RÉELLE et RÉCENTE (moins de 30 jours idéalement, maximum 90 jours).
-2. L'article DOIT être basé sur un vrai article publié avec une vraie URL.
+2. L'article DOIT être basé sur un vrai article publié avec une vraie URL. L'URL doit pointer vers la PAGE EXACTE de l'article (celle ouverte pendant ta recherche) — JAMAIS une page d'accueil, une page rubrique ou une page de catégorie. Si tu n'as pas l'URL précise, écarte l'article et cherches-en un autre.
 3. L'article DOIT indiquer sa date de publication exacte (published_at) au format YYYY-MM-DD, lue sur la page source. Si tu ne trouves pas la date précise, écarte l'article et cherches-en un autre.
 4. FRAÎCHEUR OBLIGATOIRE : uniquement un article publié dans les 90 derniers jours.
 ${excludeBlock}
@@ -394,7 +394,7 @@ GÉNÈRE un JSON avec cette structure exacte (un seul objet, pas de tableau) :
   "hook": "une phrase d'accroche (max 120 chars)",
   "content": "2-3 phrases de contenu factuel basé sur le vrai article. Chiffres, noms, faits concrets.",
   "source": "nom du média (ex: Les Echos, TechCrunch, Reuters...)",
-  "url": "URL COMPLÈTE de l'article original (https://...)",
+  "url": "URL COMPLÈTE et EXACTE de l'article lui-même (https://... — jamais une page rubrique ou d'accueil)",
   "published_at": "YYYY-MM-DD"
 }
 

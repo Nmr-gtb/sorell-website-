@@ -339,6 +339,20 @@ describe("GET /api/cron", () => {
     });
   }
 
+  it("le prompt exige l'URL exacte de l'article (jamais une page rubrique)", async () => {
+    const config = makeConfigForNow();
+    setupHappyPath(config);
+
+    const request = new Request("http://localhost/api/cron", {
+      headers: { authorization: `Bearer test-cron-secret` },
+    });
+    await GET(request);
+
+    const prompt = (mockCreate.mock.calls[0][0] as { messages: Array<{ content: string }> }).messages[0].content;
+    expect(prompt).toContain("PAGE EXACTE");
+    expect(prompt).toContain("jamais une page rubrique ou d'accueil");
+  });
+
   it("catches up a user whose send hour was missed 2 hours ago", async () => {
     const config = makeConfigForNow();
     config.send_hour = (config.send_hour as number) - 2;

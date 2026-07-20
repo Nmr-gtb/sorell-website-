@@ -216,6 +216,8 @@ describe("POST /api/generate/article", () => {
     expect(prompt).toContain("Article Un");
     expect(prompt).toContain("Article Trois");
     expect(prompt).not.toContain("Article Deux");
+    // Précision des liens : le prompt exige l'URL exacte de l'article
+    expect(prompt).toContain("PAGE EXACTE");
   });
 
   it("refreshes the subject when the featured article is regenerated", async () => {
