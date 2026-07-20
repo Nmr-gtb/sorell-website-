@@ -6,6 +6,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
 import { logPlanChange, logPaymentFailed, logReferralConverted } from "@/lib/activity-log";
+import { escapeHtml } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -115,6 +116,43 @@ export async function POST(request: Request) {
 
         if (subscriberProfile) {
           void logPlanChange(userId, subscriberProfile.email || "", "free", plan);
+
+          // Notifier Noé par email (même modèle que la notif d'inscription).
+          // L'échec de la notif ne doit jamais faire échouer le webhook.
+          try {
+            const now = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
+            const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+            const trialEnd = subscription.trial_end
+              ? new Date(subscription.trial_end * 1000).toLocaleDateString("fr-FR")
+              : null;
+            const safeName = escapeHtml(subscriberProfile.full_name || "Non renseigné");
+            const safeEmail = escapeHtml(subscriberProfile.email || "");
+            await resend.emails.send({
+              from: "Sorell <noreply@sorell.fr>",
+              to: "noe@sorell.fr",
+              replyTo: "noe@sorell.fr",
+              subject: `Nouvel abonnement ${planLabel} - ${subscriberProfile.email}`,
+              html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family:'Segoe UI',Roboto,Arial,sans-serif;background:#F3F4F6;margin:0;padding:0;">
+  <div style="max-width:480px;margin:40px auto;background:white;border-radius:10px;padding:28px;border:1px solid #E5E7EB;">
+    <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 16px;">Nouvel abonnement payant sur Sorell</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;color:#374151;">
+      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${safeName}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${safeEmail}</td></tr>
+      <tr><td style="padding:8px 0;font-weight:600;">Plan</td><td style="padding:8px 0;">${planLabel}</td></tr>
+      ${trialEnd ? `<tr><td style="padding:8px 0;font-weight:600;">Fin du trial</td><td style="padding:8px 0;">${trialEnd}</td></tr>` : ""}
+      <tr><td style="padding:8px 0;font-weight:600;">Date</td><td style="padding:8px 0;">${now}</td></tr>
+    </table>
+  </div>
+</body>
+</html>`,
+              text: `Nouvel abonnement ${planLabel} sur Sorell\n\nNom : ${subscriberProfile.full_name || "Non renseigné"}\nEmail : ${subscriberProfile.email || ""}\nPlan : ${planLabel}${trialEnd ? `\nFin du trial : ${trialEnd}` : ""}\nDate : ${now}`,
+            });
+          } catch {
+            // silencieux : la notif est best-effort
+          }
         }
 
         // Traiter le parrainage si présent

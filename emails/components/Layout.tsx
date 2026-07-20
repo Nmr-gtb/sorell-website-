@@ -166,6 +166,11 @@ export function Layout({
             >
               {"G\u00e9n\u00e9r\u00e9 par Sorell \u00b7 Votre veille sectorielle par IA"}
               <br />
+              {/* Anti-spam : l'ajout aux contacts est le signal n\u00b01 pour sortir
+                  des ind\u00e9sirables \u2014 surtout pour les destinataires qui n'ont
+                  jamais re\u00e7u l'email de bienvenue (listes Business). */}
+              {"Pour nous recevoir dans votre bo\u00eete principale, ajoutez newsletters@sorell.fr \u00e0 vos contacts."}
+              <br />
               {"Sorell \u00b7 France"}
               <br />
               <Link href={unsubscribeUrl} style={{ color: secondaryText }}>

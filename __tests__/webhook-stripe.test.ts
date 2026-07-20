@@ -306,6 +306,49 @@ describe("POST /api/webhooks/stripe", () => {
     }
   });
 
+  it("envoie une notif email à Noé lors d'un nouvel abonnement payant", async () => {
+    const trialEnd = Math.floor(Date.now() / 1000) + 15 * 24 * 60 * 60;
+    mockSelectEqSingle.mockResolvedValue({
+      data: { id: "user-123", full_name: "Camille Test", email: "abonne@test.com" },
+      error: null,
+    });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_notif",
+      type: "checkout.session.completed",
+      data: {
+        object: {
+          metadata: { userId: "user-123" },
+          subscription: "sub_123",
+          customer: "cus_123",
+        },
+      },
+    });
+    mockRetrieveSubscription.mockResolvedValue({
+      items: { data: [{ price: { id: "price_pro_monthly" } }] },
+      trial_end: trialEnd,
+      status: "trialing",
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    // La notif part vers noe@sorell.fr avec le plan et l'email de l'abonné
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "noe@sorell.fr",
+        subject: expect.stringContaining("Nouvel abonnement Pro"),
+      })
+    );
+    const sent = mockSendEmail.mock.calls[0][0] as { subject: string; text: string };
+    expect(sent.subject).toContain("abonne@test.com");
+    expect(sent.text).toContain("Camille Test");
+  });
+
   it("réserve l'event.id avant traitement (idempotence)", async () => {
     mockConstructEvent.mockReturnValue({
       id: "evt_abc",
