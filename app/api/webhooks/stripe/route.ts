@@ -6,7 +6,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { PaymentFailedEmail } from "@/emails/PaymentFailedEmail";
 import { logPlanChange, logPaymentFailed, logReferralConverted } from "@/lib/activity-log";
-import { escapeHtml } from "@/lib/utils";
+import { notifyAdmin } from "@/lib/admin-notify";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -118,41 +118,21 @@ export async function POST(request: Request) {
           void logPlanChange(userId, subscriberProfile.email || "", "free", plan);
 
           // Notifier Noé par email (même modèle que la notif d'inscription).
-          // L'échec de la notif ne doit jamais faire échouer le webhook.
-          try {
-            const now = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" });
-            const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
-            const trialEnd = subscription.trial_end
-              ? new Date(subscription.trial_end * 1000).toLocaleDateString("fr-FR")
-              : null;
-            const safeName = escapeHtml(subscriberProfile.full_name || "Non renseigné");
-            const safeEmail = escapeHtml(subscriberProfile.email || "");
-            await resend.emails.send({
-              from: "Sorell <noreply@sorell.fr>",
-              to: "noe@sorell.fr",
-              replyTo: "noe@sorell.fr",
-              subject: `Nouvel abonnement ${planLabel} - ${subscriberProfile.email}`,
-              html: `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="font-family:'Segoe UI',Roboto,Arial,sans-serif;background:#F3F4F6;margin:0;padding:0;">
-  <div style="max-width:480px;margin:40px auto;background:white;border-radius:10px;padding:28px;border:1px solid #E5E7EB;">
-    <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 16px;">Nouvel abonnement payant sur Sorell</h2>
-    <table style="width:100%;border-collapse:collapse;font-size:14px;color:#374151;">
-      <tr><td style="padding:8px 0;font-weight:600;width:120px;">Nom</td><td style="padding:8px 0;">${safeName}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;">Email</td><td style="padding:8px 0;">${safeEmail}</td></tr>
-      <tr><td style="padding:8px 0;font-weight:600;">Plan</td><td style="padding:8px 0;">${planLabel}</td></tr>
-      ${trialEnd ? `<tr><td style="padding:8px 0;font-weight:600;">Fin du trial</td><td style="padding:8px 0;">${trialEnd}</td></tr>` : ""}
-      <tr><td style="padding:8px 0;font-weight:600;">Date</td><td style="padding:8px 0;">${now}</td></tr>
-    </table>
-  </div>
-</body>
-</html>`,
-              text: `Nouvel abonnement ${planLabel} sur Sorell\n\nNom : ${subscriberProfile.full_name || "Non renseigné"}\nEmail : ${subscriberProfile.email || ""}\nPlan : ${planLabel}${trialEnd ? `\nFin du trial : ${trialEnd}` : ""}\nDate : ${now}`,
-            });
-          } catch {
-            // silencieux : la notif est best-effort
-          }
+          // notifyAdmin est best-effort et ne throw jamais.
+          const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+          const trialEnd = subscription.trial_end
+            ? new Date(subscription.trial_end * 1000).toLocaleDateString("fr-FR")
+            : null;
+          await notifyAdmin({
+            subject: `Nouvel abonnement ${planLabel} - ${subscriberProfile.email}`,
+            title: "Nouvel abonnement payant sur Sorell",
+            rows: [
+              ["Nom", subscriberProfile.full_name || "Non renseigné"],
+              ["Email", subscriberProfile.email || ""],
+              ["Plan", planLabel],
+              ...(trialEnd ? [["Fin du trial", trialEnd] as [string, string]] : []),
+            ],
+          });
         }
 
         // Traiter le parrainage si présent
@@ -199,7 +179,7 @@ export async function POST(request: Request) {
 
       const { data: profile } = await supabaseAdmin
         .from("profiles")
-        .select("id")
+        .select("id, email, plan")
         .eq("stripe_customer_id", customerId)
         .maybeSingle();
 
@@ -213,6 +193,40 @@ export async function POST(request: Request) {
           })
           .eq("id", profile.id);
         if (updErr) throw new Error("profiles update failed (subscription.updated)");
+
+        // Notifier Noé quand une résiliation est programmée ou annulée depuis
+        // le portail Stripe (bascule de cancel_at_period_end). On ne notifie
+        // que sur la TRANSITION (présence du champ dans previous_attributes),
+        // pas à chaque subscription.updated (renouvellements, etc.).
+        const prev = event.data.previous_attributes;
+        if (prev && "cancel_at_period_end" in prev) {
+          const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+          if (subscription.cancel_at_period_end) {
+            const endTimestamp =
+              subscription.cancel_at || subscription.items.data[0]?.current_period_end;
+            const accessEnd = endTimestamp
+              ? new Date(endTimestamp * 1000).toLocaleDateString("fr-FR")
+              : "inconnue";
+            await notifyAdmin({
+              subject: `Résiliation programmée - ${profile.email}`,
+              title: "Un abonné a programmé sa résiliation",
+              rows: [
+                ["Email", profile.email || ""],
+                ["Plan", planLabel],
+                ["Fin d'accès", accessEnd],
+              ],
+            });
+          } else {
+            await notifyAdmin({
+              subject: `Résiliation annulée - ${profile.email}`,
+              title: "Un abonné a annulé sa résiliation",
+              rows: [
+                ["Email", profile.email || ""],
+                ["Plan", planLabel],
+              ],
+            });
+          }
+        }
       }
     }
 
@@ -256,7 +270,7 @@ export async function POST(request: Request) {
 
       const { data: profile } = await supabaseAdmin
         .from("profiles")
-        .select("id")
+        .select("id, email, plan")
         .eq("stripe_customer_id", customerId)
         .maybeSingle();
 
@@ -266,6 +280,21 @@ export async function POST(request: Request) {
           .update({ plan: "free", stripe_subscription_id: null, stripe_subscription_status: "canceled", updated_at: new Date().toISOString() })
           .eq("id", profile.id);
         if (updErr) throw new Error("profiles update failed (subscription.deleted)");
+
+        // Notifier Noé : l'abonnement est terminé (fin de période après
+        // résiliation, impayé définitif, ou annulation immédiate).
+        const previousPlan = profile.plan
+          ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)
+          : "Inconnu";
+        await notifyAdmin({
+          subject: `Abonnement terminé - ${profile.email}`,
+          title: "Un abonnement payant est terminé",
+          rows: [
+            ["Email", profile.email || ""],
+            ["Ancien plan", previousPlan],
+            ["Nouveau plan", "Free"],
+          ],
+        });
       }
     }
   } catch {

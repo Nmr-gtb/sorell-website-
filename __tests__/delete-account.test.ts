@@ -15,6 +15,12 @@ vi.mock("@/lib/stripe", () => ({
   },
 }));
 
+// Mock notif admin (évite tout appel Resend réel)
+const mockNotifyAdmin = vi.fn().mockResolvedValue(undefined);
+vi.mock("@/lib/admin-notify", () => ({
+  notifyAdmin: (...args: unknown[]) => mockNotifyAdmin(...args),
+}));
+
 // Mock Supabase admin
 vi.mock("@/lib/supabase-admin", () => ({
   supabaseAdmin: {
@@ -89,5 +95,44 @@ describe("POST /api/delete-account", () => {
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.success).toBe(true);
+  });
+
+  it("notifie Noé après la suppression du compte", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+
+    const request = new Request("http://localhost/api/delete-account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer token",
+      },
+      body: JSON.stringify({ userId: "user-123" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockNotifyAdmin).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: expect.stringContaining("Compte supprimé"),
+      })
+    );
+    const call = mockNotifyAdmin.mock.calls[0][0] as { subject: string };
+    expect(call.subject).toContain("test@example.com");
+  });
+
+  it("ne notifie pas quand la suppression est refusée (403)", async () => {
+    mockGetAuthenticatedUser.mockResolvedValue({ id: "user-123", email: "test@example.com" });
+
+    const request = new Request("http://localhost/api/delete-account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer token",
+      },
+      body: JSON.stringify({ userId: "user-456" }),
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(403);
+    expect(mockNotifyAdmin).not.toHaveBeenCalled();
   });
 });

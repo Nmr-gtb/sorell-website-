@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 import { logAccountDeleted } from "@/lib/activity-log";
+import { notifyAdmin } from "@/lib/admin-notify";
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     // Récupérer le profil pour annuler Stripe si nécessaire
     const { data: profile } = await supabase
       .from("profiles")
-      .select("stripe_subscription_id")
+      .select("stripe_subscription_id, plan, full_name")
       .eq("id", userId)
       .maybeSingle();
 
@@ -64,6 +65,21 @@ export async function POST(request: Request) {
     } catch {
       // Fallback silencieux si l'utilisateur Auth est déjà supprimé
     }
+
+    // Notifier Noé (best-effort, après suppression effective)
+    const deletedPlan = profile?.plan
+      ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)
+      : "Free";
+    await notifyAdmin({
+      subject: `Compte supprimé - ${authUser.email || userId}`,
+      title: "Un utilisateur a supprimé son compte Sorell",
+      rows: [
+        ["Nom", profile?.full_name || "Non renseigné"],
+        ["Email", authUser.email || ""],
+        ["Plan", deletedPlan],
+        ["Abonnement Stripe", profile?.stripe_subscription_id ? "Annulé automatiquement" : "Aucun"],
+      ],
+    });
 
     return NextResponse.json({ success: true });
   } catch {

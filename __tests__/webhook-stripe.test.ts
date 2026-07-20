@@ -94,6 +94,8 @@ describe("POST /api/webhooks/stripe", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
+    // Requis par notifyAdmin (garde anti-appel réseau quand la clé est absente)
+    process.env.RESEND_API_KEY = "re_test_key";
     mockSelectEqSingle.mockResolvedValue({ data: { id: "user-123" }, error: null });
     mockInsert.mockResolvedValue({ error: null });
     mockUpdateEq.mockResolvedValue({ error: null });
@@ -347,6 +349,141 @@ describe("POST /api/webhooks/stripe", () => {
     const sent = mockSendEmail.mock.calls[0][0] as { subject: string; text: string };
     expect(sent.subject).toContain("abonne@test.com");
     expect(sent.text).toContain("Camille Test");
+  });
+
+  it("notifie Noé quand une résiliation est programmée depuis le portail", async () => {
+    mockSelectEqSingle.mockResolvedValue({
+      data: { id: "user-123", email: "abonne@test.com", plan: "pro" },
+      error: null,
+    });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_cancel_sched",
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "trialing",
+          cancel_at_period_end: true,
+          cancel_at: 1785000000,
+          items: { data: [{ price: { id: "price_pro_monthly" }, current_period_end: 1785000000 }] },
+        },
+        previous_attributes: { cancel_at_period_end: false },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "noe@sorell.fr",
+        subject: expect.stringContaining("Résiliation programmée"),
+      })
+    );
+    const sent = mockSendEmail.mock.calls[0][0] as { subject: string; text: string };
+    expect(sent.subject).toContain("abonne@test.com");
+    expect(sent.text).toContain("Fin d'accès");
+  });
+
+  it("notifie Noé quand une résiliation est annulée (réactivation)", async () => {
+    mockSelectEqSingle.mockResolvedValue({
+      data: { id: "user-123", email: "abonne@test.com", plan: "pro" },
+      error: null,
+    });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_cancel_undo",
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "active",
+          cancel_at_period_end: false,
+          items: { data: [{ price: { id: "price_pro_monthly" } }] },
+        },
+        previous_attributes: { cancel_at_period_end: true },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "noe@sorell.fr",
+        subject: expect.stringContaining("Résiliation annulée"),
+      })
+    );
+  });
+
+  it("ne notifie PAS sur un subscription.updated ordinaire (renouvellement)", async () => {
+    mockConstructEvent.mockReturnValue({
+      id: "evt_ordinary_update",
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "active",
+          cancel_at_period_end: false,
+          items: { data: [{ price: { id: "price_pro_monthly" } }] },
+        },
+        previous_attributes: { current_period_start: 1784000000 },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  it("notifie Noé quand un abonnement se termine (subscription.deleted)", async () => {
+    mockSelectEqSingle.mockResolvedValue({
+      data: { id: "user-123", email: "abonne@test.com", plan: "business" },
+      error: null,
+    });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_sub_ended",
+      type: "customer.subscription.deleted",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "canceled",
+          items: { data: [{ price: { id: "price_business_monthly" } }] },
+        },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "noe@sorell.fr",
+        subject: expect.stringContaining("Abonnement terminé"),
+      })
+    );
+    const sent = mockSendEmail.mock.calls[0][0] as { text: string };
+    expect(sent.text).toContain("Business");
   });
 
   it("réserve l'event.id avant traitement (idempotence)", async () => {
