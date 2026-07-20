@@ -32,6 +32,7 @@ export default function ProfilePage() {
   const searchParams = useSearchParams();
   const { t, lang } = useLanguage();
   const [plan, setPlan] = useState<string | null>(null);
+  const [hasStripeCustomer, setHasStripeCustomer] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -109,6 +110,10 @@ export default function ProfilePage() {
     if (!user) return;
     getProfile(user.id).then(({ data }) => {
       if (data?.plan) setPlan(data.plan);
+      // Le portail Stripe n'a de sens que si un abonnement Stripe existe :
+      // un plan posé manuellement (sans customer) n'a rien à gérer, et
+      // afficher le bouton mènerait à une erreur trompeuse.
+      setHasStripeCustomer(Boolean(data?.stripe_customer_id));
       setLoadingProfile(false);
     });
   }, [user]);
@@ -382,32 +387,37 @@ export default function ProfilePage() {
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           {plan && plan !== "free" ? (
-            <>
-              <button
-                onClick={handlePortal}
-                disabled={portalLoading}
-                className="btn-ghost"
-                style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
-              >
-                {portalLoading ? t("common.loading") : t("profile.manage_subscription")}
-              </button>
-              <button
-                onClick={handlePortal}
-                disabled={portalLoading}
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                  cursor: portalLoading ? "not-allowed" : "pointer",
-                  padding: "4px 8px",
-                  textDecoration: "underline",
-                  opacity: 0.6,
-                }}
-              >
-                {t("profile.cancel_subscription")}
-              </button>
-            </>
+            // Portail Stripe uniquement si un abonnement Stripe existe. Un plan
+            // accordé manuellement (sans customer) n'a rien à gérer : aucun
+            // bouton plutôt qu'une erreur "No subscription found".
+            hasStripeCustomer ? (
+              <>
+                <button
+                  onClick={handlePortal}
+                  disabled={portalLoading}
+                  className="btn-ghost"
+                  style={{ fontSize: 14, padding: "7px 14px", opacity: portalLoading ? 0.7 : 1, cursor: portalLoading ? "wait" : "pointer" }}
+                >
+                  {portalLoading ? t("common.loading") : t("profile.manage_subscription")}
+                </button>
+                <button
+                  onClick={handlePortal}
+                  disabled={portalLoading}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: 12,
+                    color: "var(--text-muted)",
+                    cursor: portalLoading ? "not-allowed" : "pointer",
+                    padding: "4px 8px",
+                    textDecoration: "underline",
+                    opacity: 0.6,
+                  }}
+                >
+                  {t("profile.cancel_subscription")}
+                </button>
+              </>
+            ) : null
           ) : (
             <Link href="/tarifs" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
               {t("profile.change_plan")}
