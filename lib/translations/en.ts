@@ -784,6 +784,8 @@ const en: Record<string, string> = {
   "profile.email_label": "Email address",
   "profile.save": "Save",
   "profile.cancel": "Cancel",
+  "profile.managed_plan_contact": "Manually managed plan — to change or cancel it, contact us",
+  "profile.managed_plan_mail_subject": "Change / cancel my Sorell subscription",
   "profile.delete_account": "Delete my account",
   "profile.delete_warning": "This action is irreversible. All your data, newsletters and configurations will be permanently deleted.",
   "profile.delete_confirm": "Type <strong>DELETE</strong> to confirm",

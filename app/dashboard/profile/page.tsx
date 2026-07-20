@@ -387,9 +387,10 @@ export default function ProfilePage() {
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           {plan && plan !== "free" ? (
-            // Portail Stripe uniquement si un abonnement Stripe existe. Un plan
-            // accordé manuellement (sans customer) n'a rien à gérer : aucun
-            // bouton plutôt qu'une erreur "No subscription found".
+            // Portail Stripe si un abonnement Stripe existe. Un plan accordé
+            // manuellement (sans customer) n'a pas de portail, mais on affiche
+            // TOUJOURS un chemin de résiliation (obligation légale : un compte
+            // payant ne doit jamais être sans issue visible).
             hasStripeCustomer ? (
               <>
                 <button
@@ -417,7 +418,14 @@ export default function ProfilePage() {
                   {t("profile.cancel_subscription")}
                 </button>
               </>
-            ) : null
+            ) : (
+              <a
+                href={`mailto:noe@sorell.fr?subject=${encodeURIComponent(t("profile.managed_plan_mail_subject"))}`}
+                style={{ fontSize: 13, color: "var(--text-secondary)", textDecoration: "underline" }}
+              >
+                {t("profile.managed_plan_contact")}
+              </a>
+            )
           ) : (
             <Link href="/tarifs" className="btn-ghost" style={{ fontSize: 14, padding: "7px 14px" }}>
               {t("profile.change_plan")}
