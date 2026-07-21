@@ -1540,7 +1540,9 @@ export default function DashboardPage() {
                 }} />
                 {lastNewsletter.status === "sent" ? t("dashboard.nl_sent") : t("dashboard.nl_draft")}
               </span>
-              {lastOpenRate !== null && (
+              {/* lastOpenRate porte sur le dernier ENVOI : ne l'afficher que
+                  si la newsletter montrée est bien celle-là (pas un brouillon) */}
+              {lastNewsletter.status === "sent" && lastOpenRate !== null && (
                 <>
                   <span style={{ fontSize: 13, color: "var(--text-muted)" }}>·</span>
                   <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)" }}>
