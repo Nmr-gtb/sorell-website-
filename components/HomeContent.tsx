@@ -126,6 +126,13 @@ export default function HomeContent() {
     { value: t("home.stat4_value"), label: t("home.stat4_label"), detail: t("home.stat4_detail") },
   ];
 
+  const vsRows = [
+    { label: t("home.vs_row1_label"), chatgpt: t("home.vs_row1_chatgpt"), sorell: t("home.vs_row1_sorell") },
+    { label: t("home.vs_row2_label"), chatgpt: t("home.vs_row2_chatgpt"), sorell: t("home.vs_row2_sorell") },
+    { label: t("home.vs_row3_label"), chatgpt: t("home.vs_row3_chatgpt"), sorell: t("home.vs_row3_sorell") },
+    { label: t("home.vs_row4_label"), chatgpt: t("home.vs_row4_chatgpt"), sorell: t("home.vs_row4_sorell") },
+  ];
+
   return (
     <main style={{ background: "var(--bg)" }}>
       <Navbar />
@@ -769,6 +776,148 @@ export default function HomeContent() {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ─── POURQUOI PAS JUSTE CHATGPT ───────────────────────── */}
+      <section className="section-vs" style={{ background: "var(--surface-alt)", padding: "120px 1.5rem" }}>
+        <div style={{ maxWidth: 840, margin: "0 auto" }}>
+          <AnimateOnScroll>
+            <div style={{ textAlign: "center", marginBottom: 56 }}>
+              <h2
+                style={{
+                  fontFamily: "var(--font-inter, 'Inter', sans-serif)",
+                  fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
+                  color: "var(--text)",
+                  marginBottom: 16,
+                }}
+              >
+                {t("home.vs_title")}
+              </h2>
+              <p style={{ fontSize: "1rem", color: "var(--text-secondary)", lineHeight: 1.65 }}>
+                {t("home.vs_intro")}
+              </p>
+            </div>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll delay={80}>
+            <div className="vs-table">
+              <div className="vs-row vs-row-head" aria-hidden={true}>
+                <div className="vs-cell-label" />
+                <div className="vs-cell">{t("home.vs_col_chatgpt")}</div>
+                <div className="vs-cell vs-cell-sorell">{t("home.vs_col_sorell")}</div>
+              </div>
+              {vsRows.map((row) => (
+                <div className="vs-row" key={row.label}>
+                  <div className="vs-cell-label">{row.label}</div>
+                  <div className="vs-cell">{row.chatgpt}</div>
+                  <div className="vs-cell vs-cell-sorell">{row.sorell}</div>
+                </div>
+              ))}
+            </div>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll delay={160}>
+            <p
+              style={{
+                textAlign: "center",
+                marginTop: 40,
+                fontSize: "1.0625rem",
+                fontWeight: 600,
+                color: "var(--text)",
+                letterSpacing: "-0.01em",
+                lineHeight: 1.5,
+              }}
+            >
+              {t("home.vs_punchline")}
+            </p>
+          </AnimateOnScroll>
+
+          <style>{`
+            .vs-table {
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              overflow: hidden;
+            }
+            .vs-row {
+              display: grid;
+              grid-template-columns: 0.7fr 1fr 1fr;
+            }
+            .vs-row + .vs-row {
+              border-top: 1px solid var(--border);
+            }
+            .vs-row-head .vs-cell {
+              padding-top: 14px;
+              padding-bottom: 14px;
+              font-size: 0.8125rem;
+              font-weight: 600;
+              letter-spacing: 0.02em;
+              color: var(--text-muted);
+            }
+            .vs-row-head .vs-cell-sorell {
+              color: #005058;
+            }
+            .vs-cell-label {
+              padding: 20px;
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: var(--text);
+              line-height: 1.5;
+            }
+            .vs-cell {
+              padding: 20px;
+              font-size: 0.875rem;
+              color: var(--text-secondary);
+              line-height: 1.6;
+            }
+            .vs-cell-sorell {
+              background: rgba(0, 80, 88, 0.045);
+              color: var(--text);
+            }
+            [data-theme="dark"] .vs-cell-sorell {
+              background: rgba(20, 184, 166, 0.07);
+            }
+            [data-theme="dark"] .vs-row-head .vs-cell-sorell {
+              color: #14B8A6;
+            }
+            @media (max-width: 720px) {
+              .section-vs {
+                padding: 80px 1rem !important;
+              }
+              .vs-row {
+                grid-template-columns: 1fr;
+              }
+              .vs-row-head {
+                display: none;
+              }
+              .vs-cell-label {
+                padding: 16px 16px 0;
+              }
+              .vs-cell {
+                padding: 10px 16px 16px;
+              }
+              .vs-cell::before {
+                content: "ChatGPT";
+                display: block;
+                font-size: 0.6875rem;
+                font-weight: 600;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+              }
+              .vs-cell-sorell::before {
+                content: "Sorell";
+                color: #005058;
+              }
+              [data-theme="dark"] .vs-cell-sorell::before {
+                color: #14B8A6;
+              }
+            }
+          `}</style>
         </div>
       </section>
 
