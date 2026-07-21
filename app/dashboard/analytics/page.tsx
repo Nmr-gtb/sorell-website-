@@ -9,25 +9,34 @@ import { getPlanLimits } from "@/lib/plans";
 import CrownBadge from "@/components/CrownBadge";
 import { authFetch } from "@/lib/api";
 import { useLanguage } from "@/lib/LanguageContext";
+import Skeleton from "@/components/Skeleton";
 
 type AnalyticsData = {
-  openRate: number;
-  clickRate: number;
+  openRate: number | null;
+  clickRate: number | null;
   totalSent: number;
   totalOpens: number;
   totalClicks: number;
   activeRecipients: number;
   newsletters: Array<{
     id: string;
-    date: string;
-    subject: string;
-    recipients: number;
-    openRate: number;
-    clickRate: number;
+    date: string | null;
+    subject: string | null;
+    recipients: number | null;
+    openRate: number | null;
+    clickRate: number | null;
   }>;
   topArticles: Array<{ title: string; clicks: number }>;
-  weeklyData: Array<{ label: string; value: number }>;
+  trend: Array<{ date: string | null; value: number }>;
 };
+
+type Period = "30" | "90" | "all";
+
+// Un taux inconnu (dénominateur historique absent) s'affiche « — », jamais un
+// pourcentage inventé.
+function formatRate(value: number | null): string {
+  return value === null ? "—" : `${value}%`;
+}
 
 function IconChart() {
   return (
@@ -51,28 +60,48 @@ export default function AnalyticsPage() {
   const { t, lang } = useLanguage();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [period, setPeriod] = useState<Period>("all");
+  const [retryTick, setRetryTick] = useState(0);
   const [planLoaded, setPlanLoaded] = useState(false);
   const [realPlan, setRealPlan] = useState<string>("free");
+
+  useEffect(() => {
+    if (!user) return;
+    getProfile(user.id).then((profileResult) => {
+      setRealPlan(profileResult.data?.plan || "free");
+      setPlanLoaded(true);
+    });
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
 
-    async function loadAll() {
-      const profileResult = await getProfile(user!.id);
-      const userPlan = profileResult.data?.plan || "free";
-      setRealPlan(userPlan);
-      setPlanLoaded(true);
+    let cancelled = false;
+    setLoading(true);
+    setError(false);
 
-      authFetch(`/api/analytics?userId=${user!.id}`)
-        .then((res) => res.json())
-        .then((json) => {
+    authFetch(`/api/analytics?userId=${user.id}&period=${period}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("analytics fetch failed");
+        const json = await res.json();
+        if (json?.error) throw new Error("analytics returned error");
+        if (!cancelled) {
           setData(json);
           setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
 
-    loadAll();
-  }, [user]);
+    return () => {
+      cancelled = true;
+    };
+  }, [user, period, retryTick]);
 
   const plan = realPlan;
   const limits = getPlanLimits(plan);
@@ -289,20 +318,82 @@ export default function AnalyticsPage() {
     );
   }
 
-  if (loading) {
+  // Skeleton pleine page UNIQUEMENT au premier chargement : lors d'un
+  // changement de période, la page (et le sélecteur qu'on vient de cliquer)
+  // reste montée, le contenu s'estompe le temps du refetch.
+  if (loading && !data) {
     return (
-      <div style={{ padding: 32, maxWidth: 900 }}>
+      <div style={{ padding: 32, maxWidth: 900 }} className="analytics-page-container">
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
             Analytics
           </h1>
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("analytics.subtitle")}</p>
+        </div>
+        {/* Skeleton qui reproduit le layout réel : 4 cartes, un graphe, un tableau */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }} className="analytics-metrics-grid">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 20 }}>
+              <Skeleton width={64} height={26} style={{ marginBottom: 10 }} />
+              <Skeleton width="80%" height={13} />
+            </div>
+          ))}
+        </div>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, marginBottom: 24 }}>
+          <Skeleton width={220} height={13} style={{ marginBottom: 24 }} />
+          <Skeleton height={120} radius={8} />
+        </div>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 24 }}>
+          <Skeleton width={140} height={13} style={{ marginBottom: 16 }} />
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} height={40} style={{ marginBottom: i < 2 ? 10 : 0 }} />
+          ))}
         </div>
       </div>
     );
   }
 
-  const isEmpty = !data || data.totalSent === 0;
+  if (error) {
+    return (
+      <div style={{ padding: 32, maxWidth: 900 }} className="analytics-page-container">
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 6 }}>
+            Analytics
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("analytics.subtitle")}</p>
+        </div>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 48, textAlign: "center" }}>
+          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>
+            {t("analytics.load_error")}
+          </p>
+          <button
+            onClick={() => setRetryTick((tick) => tick + 1)}
+            style={{
+              marginTop: 8,
+              background: "var(--accent)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 500,
+              padding: "10px 20px",
+              borderRadius: 8,
+              border: "none",
+              cursor: "pointer",
+              transition: "opacity 0.2s ease",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.9"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+          >
+            {t("analytics.retry")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // L'empty state global ne vaut que pour « aucun envoi, jamais » : sur une
+  // période filtrée sans envoi, on garde la page (sélecteur visible) avec les
+  // sous-états vides de chaque bloc.
+  const isEmpty = !data || (data.totalSent === 0 && period === "all");
 
   if (isEmpty) {
     return (
@@ -351,46 +442,98 @@ export default function AnalyticsPage() {
     );
   }
 
-  const maxBar = data.weeklyData.length > 0 ? Math.max(...data.weeklyData.map((d) => d.value), 1) : 1;
+  const maxBar = data.trend.length > 0 ? Math.max(...data.trend.map((d) => d.value), 1) : 1;
   const maxClicks = data.topArticles.length > 0 ? Math.max(...data.topArticles.map((a) => a.clicks), 1) : 1;
+  const refreshing = loading && data !== null;
+
+  const periodOptions: Array<{ value: Period; label: string }> = [
+    { value: "30", label: t("analytics.period_30") },
+    { value: "90", label: t("analytics.period_90") },
+    { value: "all", label: t("analytics.period_all") },
+  ];
+  const scopeLabel =
+    period === "30"
+      ? t("analytics.scope_30")
+      : period === "90"
+      ? t("analytics.scope_90")
+      : t("analytics.scope_all");
 
   return (
     <div style={{ padding: 32, maxWidth: 900 }} className="analytics-page-container">
-      {/* Page header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1
+      {/* Page header + sélecteur de période */}
+      <div style={{ marginBottom: 32, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <h1
+            style={{
+              fontSize: 24,
+              fontWeight: 600,
+              color: "var(--text)",
+              letterSpacing: "-0.02em",
+              marginBottom: 6,
+            }}
+          >
+            Analytics
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+            {t("analytics.subtitle")}
+          </p>
+        </div>
+        <div
+          role="group"
+          aria-label={t("analytics.period_label")}
           style={{
-            fontSize: 24,
-            fontWeight: 600,
-            color: "var(--text)",
-            letterSpacing: "-0.02em",
-            marginBottom: 6,
+            display: "inline-flex",
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 10,
+            padding: 3,
+            gap: 2,
           }}
         >
-          Analytics
-        </h1>
-        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          {t("analytics.subtitle")}
-        </p>
+          {periodOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setPeriod(option.value)}
+              aria-pressed={period === option.value}
+              style={{
+                border: "none",
+                borderRadius: 8,
+                padding: "6px 14px",
+                fontSize: 13,
+                fontWeight: period === option.value ? 600 : 500,
+                cursor: "pointer",
+                background: period === option.value ? "var(--accent)" : "transparent",
+                color: period === option.value ? "#fff" : "var(--text-secondary)",
+                transition: "background 0.2s ease, color 0.2s ease",
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
 
+      <div
+        aria-busy={refreshing}
+        style={{ opacity: refreshing ? 0.55 : 1, transition: "opacity 0.2s ease", pointerEvents: refreshing ? "none" : undefined }}
+      >
       {/* Metric cards */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: 16,
-          marginBottom: 24,
+          marginBottom: 8,
         }}
         className="analytics-metrics-grid"
       >
         {[
           {
             label: t("analytics.open_rate"),
-            value: `${data.openRate}%`,
-            color: data.openRate > 50 ? "var(--success)" : "var(--text)",
+            value: formatRate(data.openRate),
+            color: data.openRate !== null && data.openRate > 50 ? "var(--success)" : "var(--text)",
           },
-          { label: t("analytics.click_rate"), value: `${data.clickRate}%`, color: "var(--text)" },
+          { label: t("analytics.click_rate"), value: formatRate(data.clickRate), color: "var(--text)" },
           { label: t("analytics.sent"), value: String(data.totalSent), color: "var(--text)" },
           { label: t("analytics.recipients"), value: String(data.activeRecipients), color: "var(--text)" },
         ].map((m) => (
@@ -418,6 +561,11 @@ export default function AnalyticsPage() {
           </div>
         ))}
       </div>
+
+      {/* Portée des chiffres — répond à « 72 % ... depuis quand ? » */}
+      <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "0 0 24px" }}>
+        {t("analytics.scope_prefix")} {scopeLabel.toLowerCase()}
+      </p>
 
       {/* Chart section */}
       <div
@@ -487,15 +635,15 @@ export default function AnalyticsPage() {
               <CrownBadge tooltip={t("analytics.unlock_open_evolution")} />
             </div>
           </div>
-        ) : data.weeklyData.length === 0 ? (
+        ) : data.trend.length === 0 ? (
           <p style={{ fontSize: 14, color: "var(--text-muted)", textAlign: "center", padding: "24px 0" }}>
             {t("analytics.no_data")}
           </p>
         ) : (
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 120 }}>
-            {data.weeklyData.map((d) => (
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 130 }}>
+            {data.trend.map((d, i) => (
               <div
-                key={d.label}
+                key={d.date ?? i}
                 style={{
                   flex: 1,
                   display: "flex",
@@ -519,7 +667,12 @@ export default function AnalyticsPage() {
                     minHeight: 8,
                   }}
                 />
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{d.label}</span>
+                {/* Vraie date de l'envoi (un point = une newsletter, pas une semaine) */}
+                <span style={{ fontSize: 11, color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                  {d.date
+                    ? new Date(d.date).toLocaleDateString(lang === "en" ? "en-US" : "fr-FR", { day: "numeric", month: "short" })
+                    : "—"}
+                </span>
               </div>
             ))}
           </div>
@@ -718,18 +871,18 @@ export default function AnalyticsPage() {
                       textAlign: "center",
                     }}
                   >
-                    {row.recipients}
+                    {row.recipients ?? "—"}
                   </td>
                   <td
                     style={{
                       padding: "12px",
-                      color: "var(--success)",
+                      color: row.openRate !== null ? "var(--success)" : "var(--text-muted)",
                       fontWeight: 600,
                       borderBottom: i < data.newsletters.length - 1 ? "1px solid var(--border)" : "none",
                       textAlign: "center",
                     }}
                   >
-                    {row.openRate}%
+                    {formatRate(row.openRate)}
                   </td>
                   <td
                     style={{
@@ -739,13 +892,14 @@ export default function AnalyticsPage() {
                       textAlign: "center",
                     }}
                   >
-                    {row.clickRate}%
+                    {formatRate(row.clickRate)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
+      </div>
       </div>
 
       <style>{`

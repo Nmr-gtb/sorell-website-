@@ -1,118 +1,75 @@
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { computeAnalytics } from "@/lib/analytics-stats";
 
 export async function GET(request: Request) {
   try {
-  const authUser = await getAuthenticatedUser(request);
-  if (!authUser) {
-    return NextResponse.json({ error: "Non autorise" }, { status: 401 });
-  }
+    const authUser = await getAuthenticatedUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 401 });
+    }
 
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get("userId");
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+    const rawPeriod = searchParams.get("period");
+    // Validation stricte : un lookup d'objet laisserait passer les clés du
+    // prototype (?period=constructor → RangeError sur toISOString → 500).
+    const periodDays = rawPeriod === "30" ? 30 : rawPeriod === "90" ? 90 : null;
+    const period = periodDays ? rawPeriod : "all";
 
-  if (!userId || userId !== authUser.id) {
-    return NextResponse.json({ error: "Non autorise" }, { status: 403 });
-  }
+    if (!userId || userId !== authUser.id) {
+      return NextResponse.json({ error: "Non autorise" }, { status: 403 });
+    }
 
-  // Get all newsletters for this user
-  const { data: newsletters } = await supabase
-    .from("newsletters")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("status", "sent")
-    .order("sent_at", { ascending: false });
+    let newslettersQuery = supabase
+      .from("newsletters")
+      .select("id, subject, sent_at, recipient_count, content")
+      .eq("user_id", userId)
+      .eq("status", "sent")
+      .order("sent_at", { ascending: false });
 
-  if (!newsletters?.length) {
-    return NextResponse.json({
-      openRate: 0,
-      clickRate: 0,
-      totalSent: 0,
-      totalOpens: 0,
-      totalClicks: 0,
-      activeRecipients: 0,
-      newsletters: [],
-      topArticles: [],
-      weeklyData: [],
-    });
-  }
+    if (periodDays) {
+      const cutoff = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
+      newslettersQuery = newslettersQuery.gte("sent_at", cutoff);
+    }
 
-  // Get recipients count
-  const { data: recipients } = await supabase
-    .from("recipients")
-    .select("id")
-    .eq("user_id", userId);
+    const [newslettersResult, recipientsResult] = await Promise.all([
+      newslettersQuery,
+      supabase.from("recipients").select("id").eq("user_id", userId),
+    ]);
+    if (newslettersResult.error) throw new Error("newsletters query failed");
+    if (recipientsResult.error) throw new Error("recipients query failed");
 
-  const recipientCount = recipients?.length || 1;
+    const newsletters = newslettersResult.data;
+    // Le compte de destinataires est réel même sans envoi sur la période
+    // (un « 0 » en dur mentirait à un compte actif filtré sur 30 j).
+    const activeRecipients = recipientsResult.data?.length || 0;
 
-  // Get all events for these newsletters
-  const newsletterIds = newsletters.map((n) => n.id);
-  const { data: events } = await supabase
-    .from("newsletter_events")
-    .select("*")
-    .in("newsletter_id", newsletterIds);
+    if (!newsletters?.length) {
+      return NextResponse.json({
+        openRate: null,
+        clickRate: null,
+        totalSent: 0,
+        totalOpens: 0,
+        totalClicks: 0,
+        activeRecipients,
+        newsletters: [],
+        topArticles: [],
+        trend: [],
+        period,
+      });
+    }
 
-  const allEvents = events || [];
-  const opens = allEvents.filter((e) => e.event_type === "open");
-  const clicks = allEvents.filter((e) => e.event_type === "click");
+    const eventsResult = await supabase
+      .from("newsletter_events")
+      .select("newsletter_id, recipient_email, event_type, metadata")
+      .in("newsletter_id", newsletters.map((n) => n.id));
+    if (eventsResult.error) throw new Error("events query failed");
 
-  // Calculate rates
-  const totalSent = newsletters.reduce((sum, nl) => sum + (nl.recipient_count || recipientCount), 0);
-  const totalOpens = opens.length;
-  const totalClicks = clicks.length;
-  const openRate = totalSent > 0 ? Math.round((totalOpens / totalSent) * 100) : 0;
-  const clickRate = totalSent > 0 ? Math.round((totalClicks / totalSent) * 100) : 0;
+    const stats = computeAnalytics(newsletters, eventsResult.data || [], activeRecipients);
 
-  // Top articles by clicks
-  const articleClicks: Record<string, number> = {};
-  for (const click of clicks) {
-    const article = click.metadata?.article || "Unknown";
-    articleClicks[article] = (articleClicks[article] || 0) + 1;
-  }
-  const topArticles = Object.entries(articleClicks)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([title, count]) => ({ title, clicks: count }));
-
-  // Weekly data (last 8 newsletters)
-  const weeklyData = newsletters
-    .slice(0, 8)
-    .reverse()
-    .map((nl, i) => {
-      const nlOpens = opens.filter((e) => e.newsletter_id === nl.id).length;
-      const nlRecipients = nl.recipient_count || recipientCount;
-      const rate = nlRecipients > 0 ? Math.round((nlOpens / nlRecipients) * 100) : 0;
-      return { label: `S${i + 1}`, value: rate };
-    });
-
-  // Newsletter history
-  const newsletterHistory = newsletters.slice(0, 10).map((nl) => {
-    const nlOpens = opens.filter((e) => e.newsletter_id === nl.id).length;
-    const nlClicks = clicks.filter((e) => e.newsletter_id === nl.id).length;
-    const nlRecipients = nl.recipient_count || recipientCount;
-    return {
-      id: nl.id,
-      date: nl.sent_at,
-      subject: nl.subject,
-      recipients: nlRecipients,
-      openRate: nlRecipients > 0 ? Math.round((nlOpens / nlRecipients) * 100) : 0,
-      clickRate: nlRecipients > 0 ? Math.round((nlClicks / nlRecipients) * 100) : 0,
-      articleCount: Array.isArray(nl.content) ? nl.content.length : 0,
-    };
-  });
-
-  return NextResponse.json({
-    openRate,
-    clickRate,
-    totalSent: newsletters.length,
-    totalOpens,
-    totalClicks,
-    activeRecipients: recipientCount,
-    newsletters: newsletterHistory,
-    topArticles,
-    weeklyData,
-  });
+    return NextResponse.json({ ...stats, period });
   } catch {
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }

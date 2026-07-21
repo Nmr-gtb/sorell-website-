@@ -72,15 +72,16 @@ describe("GET /api/analytics", () => {
     const response = await GET(request);
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.openRate).toBe(0);
-    expect(data.clickRate).toBe(0);
+    // Aucun envoi -> taux INCONNUS (null), pas 0 % (qui serait un mensonge)
+    expect(data.openRate).toBeNull();
+    expect(data.clickRate).toBeNull();
     expect(data.totalSent).toBe(0);
     expect(data.totalOpens).toBe(0);
     expect(data.totalClicks).toBe(0);
     expect(data.activeRecipients).toBe(0);
     expect(data.newsletters).toEqual([]);
     expect(data.topArticles).toEqual([]);
-    expect(data.weeklyData).toEqual([]);
+    expect(data.trend).toEqual([]);
   });
 
   it("retourne 200 avec des analytics valides si des newsletters existent", async () => {
@@ -99,9 +100,11 @@ describe("GET /api/analytics", () => {
     const recipients = [{ id: "r-1" }, { id: "r-2" }, { id: "r-3" }];
 
     const events = [
-      { event_type: "open", newsletter_id: "nl-1", metadata: {} },
-      { event_type: "open", newsletter_id: "nl-1", metadata: {} },
-      { event_type: "click", newsletter_id: "nl-1", metadata: { article: "Article 1" } },
+      { event_type: "open", newsletter_id: "nl-1", recipient_email: "a@x.fr", metadata: {} },
+      { event_type: "open", newsletter_id: "nl-1", recipient_email: "b@x.fr", metadata: {} },
+      { event_type: "click", newsletter_id: "nl-1", recipient_email: "a@x.fr", metadata: { article: "Article 1" } },
+      // Doublon du même cliqueur : compté en volume, PAS dans le taux
+      { event_type: "click", newsletter_id: "nl-1", recipient_email: "a@x.fr", metadata: { article: "Article 1" } },
     ];
 
     // Chain for newsletters: from("newsletters").select("*").eq("user_id", ...).eq("status", "sent").order(...)
@@ -155,13 +158,14 @@ describe("GET /api/analytics", () => {
 
     expect(data.totalSent).toBe(1);
     expect(data.totalOpens).toBe(2);
-    expect(data.totalClicks).toBe(1);
+    expect(data.totalClicks).toBe(2); // volume brut (doublon inclus)
     expect(data.activeRecipients).toBe(3);
-    expect(data.openRate).toBe(67); // 2/3 rounded
-    expect(data.clickRate).toBe(33); // 1/3 rounded
-    expect(data.topArticles).toEqual([{ title: "Article 1", clicks: 1 }]);
+    expect(data.openRate).toBe(67); // 2 ouvreurs uniques / 3
+    expect(data.clickRate).toBe(33); // 1 cliqueur UNIQUE / 3 (doublon dédupliqué)
+    expect(data.topArticles).toEqual([{ title: "Article 1", clicks: 2 }]);
     expect(data.newsletters).toHaveLength(1);
     expect(data.newsletters[0].subject).toBe("Newsletter 1");
+    expect(data.trend).toEqual([{ date: "2026-03-01T10:00:00Z", value: 67 }]);
   });
 
   it("retourne 500 en cas d'erreur serveur", async () => {

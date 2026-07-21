@@ -75,3 +75,9 @@ main,
 @utility animate-border-beam {
   animation: border-beam calc(var(--duration) * 1s) infinite linear;
 }
+
+/* Skeleton loaders (components/Skeleton.tsx) — animation opacité uniquement */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}

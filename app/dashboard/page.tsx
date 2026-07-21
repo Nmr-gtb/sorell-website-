@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
-import { getRecipients, getNewsletterConfig, upsertNewsletterConfig } from "@/lib/database";
+import { getRecipients, upsertNewsletterConfig } from "@/lib/database";
+import Skeleton from "@/components/Skeleton";
 import { supabase } from "@/lib/supabase";
 import { authFetch } from "@/lib/api";
 import { DEFAULT_TOPICS } from "@/lib/topics";
@@ -75,68 +76,53 @@ function IconArrow() {
   );
 }
 
-const DAYS: Record<string, string[]> = {
-  fr: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
-  en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-};
-const MONTHS: Record<string, string[]> = {
-  fr: ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"],
-  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-};
-
 const DAY_INDEX: Record<string, number> = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
   thursday: 4, friday: 5, saturday: 6,
 };
 
-function getNextDate(frequency: string, sendDay: string, sendHour: number, lang: string = "fr"): { date: string; time: string } {
+// Retourne aussi dateObj (à l'heure d'envoi) : les comparaisons de dates se
+// font sur l'objet Date, jamais sur la chaîne localisée (non parsable en FR).
+function getNextDate(frequency: string, sendDay: string, sendHour: number, lang: string = "fr"): { date: string; time: string; dateObj: Date } {
   const now = new Date();
-  const today = now.getDay();
-  const timeStr = lang === "en" ? `${sendHour > 12 ? sendHour - 12 : sendHour}:00 ${sendHour >= 12 ? "PM" : "AM"}` : `${sendHour}h00`;
-  const months = MONTHS[lang] || MONTHS["fr"];
-  const days = DAYS[lang] || DAYS["fr"];
+  const locale = lang === "en" ? "en-US" : "fr-FR";
+  const timeStr = lang === "en"
+    ? `${sendHour > 12 ? sendHour - 12 : sendHour}:00 ${sendHour >= 12 ? "PM" : "AM"}`
+    : `${sendHour}h00`;
+
+  function capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  let next: Date;
+  let dateStr: string;
 
   if (frequency === "monthly") {
     const targetDate = sendDay === "1st" ? 1 : 15;
-    const next = new Date(now.getFullYear(), now.getMonth(), targetDate);
+    next = new Date(now.getFullYear(), now.getMonth(), targetDate);
     if (next <= now) next.setMonth(next.getMonth() + 1);
-    return {
-      date: lang === "en"
-        ? `${months[next.getMonth()]} ${next.getDate()}, ${next.getFullYear()}`
-        : `${next.getDate()} ${months[next.getMonth()]} ${next.getFullYear()}`,
-      time: timeStr,
-    };
-  }
-
-  // bimonthly : le 1er et le 15 de chaque mois (aligné sur le cron).
-  if (frequency === "bimonthly") {
+    dateStr = next.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+  } else if (frequency === "bimonthly") {
+    // bimonthly : le 1er et le 15 de chaque mois (aligné sur le cron).
     const candidates = [
       new Date(now.getFullYear(), now.getMonth(), 1),
       new Date(now.getFullYear(), now.getMonth(), 15),
       new Date(now.getFullYear(), now.getMonth() + 1, 1),
     ];
-    const next = candidates.find((d) => d > now) || candidates[2];
-    return {
-      date: lang === "en"
-        ? `${months[next.getMonth()]} ${next.getDate()}, ${next.getFullYear()}`
-        : `${next.getDate()} ${months[next.getMonth()]} ${next.getFullYear()}`,
-      time: timeStr,
-    };
+    next = candidates.find((d) => d > now) || candidates[2];
+    dateStr = next.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+  } else {
+    // weekly
+    const targetDay = DAY_INDEX[sendDay] ?? 1;
+    let diff = (targetDay - now.getDay() + 7) % 7;
+    if (diff === 0) diff = 7;
+    next = new Date(now);
+    next.setDate(now.getDate() + diff);
+    dateStr = capitalize(next.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" }));
   }
 
-  // weekly
-  const targetDay = DAY_INDEX[sendDay] ?? 1;
-  let diff = (targetDay - today + 7) % 7;
-  if (diff === 0) diff = 7;
-  const next = new Date(now);
-  next.setDate(now.getDate() + diff);
-  const day = days[next.getDay()];
-  return {
-    date: lang === "en"
-      ? `${day} ${months[next.getMonth()]} ${next.getDate()}`
-      : `${day.charAt(0).toUpperCase() + day.slice(1)} ${next.getDate()} ${months[next.getMonth()]}`,
-    time: timeStr,
-  };
+  next.setHours(sendHour, 0, 0, 0);
+  return { date: dateStr, time: timeStr, dateObj: next };
 }
 
 type Newsletter = {
@@ -173,10 +159,17 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { t, lang } = useLanguage();
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
-  const [nextNewsletter, setNextNewsletter] = useState<{ date: string; time: string } | null>(null);
+  // On stocke la planification BRUTE et on formate au rendu (useMemo) : un
+  // changement de langue reformate sans re-télécharger quoi que ce soit.
+  const [schedule, setSchedule] = useState<{ frequency: string; sendDay: string; sendHour: number } | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [lastNewsletter, setLastNewsletter] = useState<Newsletter | null>(null);
+  // Dernier ENVOI réel — la métrique « Taux d'ouverture » se calcule dessus,
+  // jamais sur un brouillon (recipient_count 0 → « — » mensonger).
+  const [lastSentNewsletter, setLastSentNewsletter] = useState<Newsletter | null>(null);
   const [loadingNewsletter, setLoadingNewsletter] = useState(true);
+  // Incrémenté à la fin de l'onboarding pour recharger des données fraîches
+  const [reloadTick, setReloadTick] = useState(0);
   const [config, setConfig] = useState<{ custom_brief?: string; edit_mode?: string; pending_draft_id?: string | null } | null>(null);
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
 
@@ -238,25 +231,38 @@ export default function DashboardPage() {
     }
   }, [emailVerifiedParam]);
 
-  // Check if new user (no topics configured), and skip plan step if returning from checkout or already on paid plan
+  // Un seul chargement PARALLÈLE pour tout le dashboard. Avant : 3 effets en
+  // cascade (config → puis recipients + config re-téléchargée → puis dernière
+  // newsletter), re-déclenchés à chaque changement de langue. Désormais : un
+  // aller-retour, colonnes explicites (sans original_content), et le
+  // formatage de la date se fait au rendu.
   useEffect(() => {
     if (!user) return;
 
     const fromCheckout = searchParams.get("onboarding") === "true";
+    const NEWSLETTER_COLUMNS =
+      "id, subject, sent_at, generated_at, status, open_count, click_count, recipient_count, content";
 
     Promise.all([
+      supabase.from("newsletter_config").select("*").eq("user_id", user.id).maybeSingle(),
+      supabase.from("profiles").select("plan, email_verified").eq("id", user.id).single(),
+      getRecipients(user.id),
       supabase
-        .from("newsletter_config")
-        .select("topics, custom_brief")
+        .from("newsletters")
+        .select(NEWSLETTER_COLUMNS)
         .eq("user_id", user.id)
-        .single(),
+        .order("generated_at", { ascending: false })
+        .limit(1),
       supabase
-        .from("profiles")
-        .select("plan, email_verified")
-        .eq("id", user.id)
-        .single(),
-    ]).then(([configResult, profileResult]) => {
-      const hasTopics = !!(configResult.data?.topics && configResult.data.topics.length > 0);
+        .from("newsletters")
+        .select(NEWSLETTER_COLUMNS)
+        .eq("user_id", user.id)
+        .eq("status", "sent")
+        .order("sent_at", { ascending: false })
+        .limit(1),
+    ]).then(([configResult, profileResult, recipientsResult, lastNlResult, lastSentResult]) => {
+      const configData = configResult.data;
+      const hasTopics = !!(configData?.topics && configData.topics.length > 0);
       const plan = profileResult.data?.plan || "free";
       setEmailVerified(profileResult.data?.email_verified ?? false);
       const hasPaidPlan = plan === "pro" || plan === "business" || plan === "enterprise";
@@ -270,48 +276,25 @@ export default function DashboardPage() {
           setOnboardingStep(2);
         }
       }
-    });
-  }, [user, searchParams]);
 
-  useEffect(() => {
-    if (!user || isNewUser !== false) return;
-
-    async function loadData() {
-      const [recipientsResult, configResult] = await Promise.all([
-        getRecipients(user!.id),
-        getNewsletterConfig(user!.id),
-      ]);
-
-      setRecipientCount(recipientsResult.data.length);
-      setConfig(configResult.data);
-
-      const freq = configResult.data?.frequency ?? "weekly";
-      const day = configResult.data?.send_day ?? "monday";
-      const hour = configResult.data?.send_hour ?? 9;
-      setNextNewsletter(getNextDate(freq, day, hour, lang));
-
-      setLoadingData(false);
-    }
-
-    loadData();
-  }, [user, isNewUser, lang]);
-
-  useEffect(() => {
-    if (!user || isNewUser !== false) return;
-
-    supabase
-      .from("newsletters")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("generated_at", { ascending: false })
-      .limit(1)
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          setLastNewsletter(data[0] as Newsletter);
-        }
-        setLoadingNewsletter(false);
+      setConfig(configData);
+      setSchedule({
+        frequency: configData?.frequency ?? "weekly",
+        sendDay: configData?.send_day ?? "monday",
+        sendHour: configData?.send_hour ?? 9,
       });
-  }, [user, isNewUser]);
+      setRecipientCount(recipientsResult.data.length);
+      setLastNewsletter((lastNlResult.data?.[0] as Newsletter) ?? null);
+      setLastSentNewsletter((lastSentResult.data?.[0] as Newsletter) ?? null);
+      setLoadingData(false);
+      setLoadingNewsletter(false);
+    });
+  }, [user, searchParams, reloadTick]);
+
+  const nextNewsletter = useMemo(
+    () => (schedule ? getNextDate(schedule.frequency, schedule.sendDay, schedule.sendHour, lang) : null),
+    [schedule, lang]
+  );
 
   function toggleTopic(id: string) {
     setSelectedTopics((prev) =>
@@ -442,9 +425,11 @@ export default function DashboardPage() {
     user?.email?.split("@")[0] ||
     "vous";
 
+  // Taux d'ouverture du dernier ENVOI (jamais d'un brouillon), plafonné à
+  // 100 % par sécurité si le compteur dépasse le nombre de destinataires.
   const lastOpenRate =
-    lastNewsletter && lastNewsletter.recipient_count > 0
-      ? Math.round((lastNewsletter.open_count / lastNewsletter.recipient_count) * 100)
+    lastSentNewsletter && lastSentNewsletter.recipient_count > 0
+      ? Math.min(100, Math.round((lastSentNewsletter.open_count / lastSentNewsletter.recipient_count) * 100))
       : null;
 
   const lastArticleCount = lastNewsletter ? countArticles(lastNewsletter.content) : null;
@@ -563,7 +548,15 @@ export default function DashboardPage() {
             </p>
           )}
           <button
-            onClick={() => setIsNewUser(false)}
+            onClick={() => {
+              // Recharger les données du dashboard : elles ont été chargées au
+              // montage, quand le compte était vide (config, destinataires et
+              // première newsletter viennent d'être créés par l'onboarding).
+              setLoadingData(true);
+              setLoadingNewsletter(true);
+              setReloadTick((tick) => tick + 1);
+              setIsNewUser(false);
+            }}
             style={{ padding: "12px 32px", background: "var(--accent)", color: "white", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer" }}
           >
             {t("dashboard.onboarding_view_dashboard")}
@@ -1222,9 +1215,8 @@ export default function DashboardPage() {
     if (!recipientsDone) return t("dashboard.ctx_add_recipients");
     if (!newsletterDone) return t("dashboard.ctx_generate_first");
     if (nextNewsletter) {
-      const now = new Date();
-      const nextDate = new Date(nextNewsletter.date);
-      const diffMs = nextDate.getTime() - now.getTime();
+      // Comparaison sur l'objet Date (la chaîne localisée FR n'est pas parsable)
+      const diffMs = nextNewsletter.dateObj.getTime() - Date.now();
       const diffHours = diffMs / (1000 * 60 * 60);
       if (diffHours > 0 && diffHours < 24) return t("dashboard.ctx_sending_soon");
     }
@@ -1394,11 +1386,17 @@ export default function DashboardPage() {
             <IconCalendar />
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
-            <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-              {loadingData ? "..." : (nextNewsletter?.date ?? "—")}
-            </span>
-            {!loadingData && nextNewsletter?.time && (
-              <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{nextNewsletter.time}</span>
+            {loadingData ? (
+              <Skeleton width={150} height={22} />
+            ) : (
+              <>
+                <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+                  {nextNewsletter?.date ?? "—"}
+                </span>
+                {nextNewsletter?.time && (
+                  <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{nextNewsletter.time}</span>
+                )}
+              </>
             )}
           </div>
           <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_next_newsletter")}</div>
@@ -1418,10 +1416,16 @@ export default function DashboardPage() {
               <IconUsers />
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
-              <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-                {loadingData ? "..." : String(recipientCount ?? 0)}
-              </span>
-              <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.metric_collaborators")}</span>
+              {loadingData ? (
+                <Skeleton width={60} height={22} />
+              ) : (
+                <>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+                    {String(recipientCount ?? 0)}
+                  </span>
+                  <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("dashboard.metric_collaborators")}</span>
+                </>
+              )}
             </div>
             <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_recipients")}</div>
             <span style={{ fontSize: 12, color: "var(--accent)", marginTop: 4, display: "block" }}>{t("dashboard.manage")}</span>
@@ -1438,9 +1442,13 @@ export default function DashboardPage() {
           <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex" }}>
             <IconEye />
           </div>
-          <span style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", letterSpacing: "-0.02em", display: "block", marginBottom: 4 }}>
-            {loadingNewsletter ? "..." : lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
-          </span>
+          {loadingNewsletter ? (
+            <Skeleton width={60} height={22} style={{ marginBottom: 4 }} />
+          ) : (
+            <span style={{ fontSize: 20, fontWeight: 700, color: "var(--accent)", letterSpacing: "-0.02em", display: "block", marginBottom: 4 }}>
+              {lastOpenRate !== null ? `${lastOpenRate}%` : "—"}
+            </span>
+          )}
           <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{t("dashboard.metric_open_rate")}</div>
         </div>
       </div>
@@ -1463,7 +1471,11 @@ export default function DashboardPage() {
           {t("dashboard.last_newsletter")}
         </h2>
         {loadingNewsletter ? (
-          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("common.loading")}</p>
+          <div>
+            <Skeleton width="70%" height={18} style={{ marginBottom: 10 }} />
+            <Skeleton width={220} height={13} style={{ marginBottom: 14 }} />
+            <Skeleton width={160} height={22} radius={9999} />
+          </div>
         ) : lastNewsletter === null ? (
           <div style={{ textAlign: "center", padding: "20px 0" }}>
             <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
@@ -1554,7 +1566,9 @@ export default function DashboardPage() {
               )}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <Link href="/dashboard/generate" style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>
+              {/* Le détail d'une newsletter se lit dans l'historique — pas sur
+                  le formulaire de génération, qui ne l'affiche jamais. */}
+              <Link href={`/dashboard/historique?id=${lastNewsletter.id}`} style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>
                 {t("dashboard.view_detail")}
               </Link>
               <Link href="/dashboard/historique" style={{ fontSize: 13, fontWeight: 500, color: "var(--text-muted)", textDecoration: "none" }}>
