@@ -390,6 +390,51 @@ describe("POST /api/webhooks/stripe", () => {
     expect(sent.text).toContain("Fin d'accès");
   });
 
+  it("notifie Noé sur une résiliation via cancel_at (portail pendant un trial, cas réel du 13/07)", async () => {
+    mockSelectEqSingle.mockResolvedValue({
+      data: { id: "user-123", email: "abonne@test.com", plan: "pro" },
+      error: null,
+    });
+    mockConstructEvent.mockReturnValue({
+      id: "evt_cancel_at_trial",
+      type: "customer.subscription.updated",
+      data: {
+        object: {
+          customer: "cus_123",
+          status: "trialing",
+          // Forme observée en prod : le portail pose cancel_at (fin du trial),
+          // cancel_at_period_end reste false.
+          cancel_at_period_end: false,
+          cancel_at: 1785000000,
+          cancellation_details: {
+            feedback: "switched_service",
+            comment: "Utilise ChatGPT pour le même résultat",
+          },
+          items: { data: [{ price: { id: "price_pro_monthly" } }] },
+        },
+        previous_attributes: { cancel_at: null },
+      },
+    });
+
+    const request = new Request("http://localhost/api/webhooks/stripe", {
+      method: "POST",
+      headers: { "stripe-signature": "valid-sig" },
+      body: "{}",
+    });
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "noe@sorell.fr",
+        subject: expect.stringContaining("Résiliation programmée"),
+      })
+    );
+    const sent = mockSendEmail.mock.calls[0][0] as { text: string };
+    expect(sent.text).toContain("switched_service");
+    expect(sent.text).toContain("Utilise ChatGPT pour le même résultat");
+  });
+
   it("notifie Noé quand une résiliation est annulée (réactivation)", async () => {
     mockSelectEqSingle.mockResolvedValue({
       data: { id: "user-123", email: "abonne@test.com", plan: "pro" },

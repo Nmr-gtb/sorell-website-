@@ -195,18 +195,28 @@ export async function POST(request: Request) {
         if (updErr) throw new Error("profiles update failed (subscription.updated)");
 
         // Notifier Noé quand une résiliation est programmée ou annulée depuis
-        // le portail Stripe (bascule de cancel_at_period_end). On ne notifie
-        // que sur la TRANSITION (présence du champ dans previous_attributes),
+        // le portail Stripe. Deux formes selon le contexte : bascule du booléen
+        // cancel_at_period_end, OU pose d'une date cancel_at (cas observé en
+        // prod le 13/07/2026 : portail sur un abonnement en TRIAL -> cancel_at
+        // = fin du trial, cancel_at_period_end reste false). On ne notifie que
+        // sur la TRANSITION (présence d'un des champs dans previous_attributes),
         // pas à chaque subscription.updated (renouvellements, etc.).
         const prev = event.data.previous_attributes;
-        if (prev && "cancel_at_period_end" in prev) {
+        if (prev && ("cancel_at_period_end" in prev || "cancel_at" in prev)) {
           const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
-          if (subscription.cancel_at_period_end) {
+          const cancellationScheduled =
+            subscription.cancel_at_period_end || subscription.cancel_at != null;
+          if (cancellationScheduled) {
             const endTimestamp =
               subscription.cancel_at || subscription.items.data[0]?.current_period_end;
             const accessEnd = endTimestamp
               ? new Date(endTimestamp * 1000).toLocaleDateString("fr-FR")
               : "inconnue";
+            // Le motif saisi dans le portail est l'info la plus précieuse
+            const details = subscription.cancellation_details;
+            const motifRows: Array<[string, string]> = [];
+            if (details?.feedback) motifRows.push(["Motif", details.feedback]);
+            if (details?.comment) motifRows.push(["Commentaire", details.comment]);
             await notifyAdmin({
               subject: `Résiliation programmée - ${profile.email}`,
               title: "Un abonné a programmé sa résiliation",
@@ -214,6 +224,7 @@ export async function POST(request: Request) {
                 ["Email", profile.email || ""],
                 ["Plan", planLabel],
                 ["Fin d'accès", accessEnd],
+                ...motifRows,
               ],
             });
           } else {
