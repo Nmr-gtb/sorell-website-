@@ -123,6 +123,7 @@ Refonte 2026-05 : déclencheurs basés sur l'expérience produit vécue (et non 
 15. **Plan Stripe = f(statut, prix), pas f(prix)** : planForSubscriptionStatus (lib/price-ids) — grâce sur active/trialing/past_due, coupure free sur unpaid/canceled/paused. Ne jamais réécrire plan depuis le seul price ID dans un webhook.
 16. **Attribution webhooks Resend par tags** : le webhook lit le tag newsletter_id (objet plat côté webhook, tableau côté API d'envoi). Fallback subject scopé par destinataire, jamais global ; si ambigu, ne rien insérer. Vocabulaire : pixel écrit "open"/"click" (lu par analytics), webhook écrit "opened"/"clicked" (lu par retention) — deux paires cohérentes, NE PAS unifier sans gérer le double comptage.
 17. **Variant dark Tailwind recâblé** : @custom-variant dark sur [data-theme="dark"] dans globals.css — les classes dark: suivent le toggle du site, pas la préférence OS. UI admin : tokens du thème (--success/--error/--accent), pas de teintes Tailwind multi-couleurs.
+18. **Résiliation Stripe = cancel_at_period_end OU cancel_at** : pour un abonnement en TRIAL, le portail pose `cancel_at` (= fin du trial) et laisse `cancel_at_period_end` à false (cas réel du 13/07/2026, 1er abonné payant). Toute logique de détection de résiliation doit tester LES DEUX champs. Le motif est dans `cancellation_details.feedback/comment` — le remonter, c'est l'info rétention la plus utile.
 
 ## Règles de travail
 
