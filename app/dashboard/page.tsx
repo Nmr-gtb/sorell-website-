@@ -185,6 +185,9 @@ export default function DashboardPage() {
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [onboardingError, setOnboardingError] = useState("");
+  // Plan payant (choisi ou en cours de checkout) : les textes d'onboarding
+  // annoncent le rythme réel du cron (1er + 15) au lieu du rythme Free (1er)
+  const [paidOnboarding, setPaidOnboarding] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [resendingEmail, setResendingEmail] = useState(false);
@@ -266,6 +269,7 @@ export default function DashboardPage() {
       const plan = profileResult.data?.plan || "free";
       setEmailVerified(profileResult.data?.email_verified ?? false);
       const hasPaidPlan = plan === "pro" || plan === "business" || plan === "enterprise";
+      setPaidOnboarding(hasPaidPlan || fromCheckout);
 
       if (hasTopics) {
         setIsNewUser(false);
@@ -544,7 +548,7 @@ export default function DashboardPage() {
             </p>
           ) : (
             <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 24, lineHeight: 1.6 }}>
-              {t("dashboard.onboarding_complete_desc")}
+              {t(paidOnboarding ? "dashboard.onboarding_complete_desc_paid" : "dashboard.onboarding_complete_desc")}
             </p>
           )}
           <button
@@ -608,8 +612,8 @@ export default function DashboardPage() {
         {
           key: "pro",
           name: "Pro",
-          price: 19,
-          annualPrice: 190,
+          price: 9.99,
+          annualPrice: 99,
           tagline: t("dashboard.plan_pro_tagline"),
           features: [
             t("dashboard.plan_pro_f1"),
@@ -663,7 +667,7 @@ export default function DashboardPage() {
       return (
         <div style={{ maxWidth: 1000, margin: "0 auto", padding: "60px 20px" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>1/5</div>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "1")}</div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
               {t("dashboard.step1_title")}
             </h1>
@@ -806,7 +810,7 @@ export default function DashboardPage() {
                           {typeof displayPrice === "number"
                             ? Number.isInteger(displayPrice)
                               ? displayPrice
-                              : displayPrice.toFixed(1).replace(".", ",")
+                              : displayPrice.toFixed(2).replace(".", ",")
                             : displayPrice}€
                         </span>
                         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -898,7 +902,7 @@ export default function DashboardPage() {
     if (onboardingStep === 2) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>2/5</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "2")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step2_title")}
           </h1>
@@ -972,7 +976,7 @@ export default function DashboardPage() {
     if (onboardingStep === 3) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>3/5</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "3")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step3_title")}
           </h1>
@@ -1096,7 +1100,7 @@ export default function DashboardPage() {
     if (onboardingStep === 4) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>4/5</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "4")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step4_title")}
           </h1>
@@ -1139,7 +1143,7 @@ export default function DashboardPage() {
     if (onboardingStep === 5) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>5/5</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "5")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step5_title")}
           </h1>
@@ -1171,7 +1175,7 @@ export default function DashboardPage() {
             ))}
           </div>
           <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
-            {t("dashboard.step5_note")}
+            {t(paidOnboarding ? "dashboard.step5_note_paid" : "dashboard.step5_note")}
           </p>
           {onboardingSaving ? (
             <NewsletterLoader active={onboardingSaving} style={{ marginBottom: 12 }} />
