@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { logEmailOpen } from "@/lib/activity-log";
+import { verifyOpenToken } from "@/lib/tracking-token";
 
 // 1x1 transparent GIF
 const PIXEL = Buffer.from(
@@ -12,9 +13,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const nid = searchParams.get("nid");
   const email = searchParams.get("email");
+  const sig = searchParams.get("sig");
 
   try {
-    if (nid && email) {
+    // Ne comptabiliser l'ouverture que si la signature est valide pour ce
+    // (nid, email) : empêche la falsification des statistiques d'ouverture.
+    // Le pixel est toujours renvoyé (ne jamais casser l'affichage de l'email).
+    if (nid && email && verifyOpenToken(nid, email, sig)) {
       // Check if already tracked this open (avoid counting multiple opens)
       const { data: existing } = await supabase
         .from("newsletter_events")

@@ -7,6 +7,7 @@ import {
   Text,
 } from "@react-email/components";
 import { Layout } from "./components/Layout";
+import { generateClickToken, generateOpenToken } from "@/lib/tracking-token";
 
 // ---- Types ----------------------------------------------------------------
 
@@ -88,7 +89,8 @@ function trackClick(
   articleTitle: string,
   url: string
 ): string {
-  return `https://www.sorell.fr/api/track/click?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}&article=${encodeURIComponent(articleTitle)}&url=${encodeURIComponent(url)}`;
+  const sig = generateClickToken(newsletterId, recipientEmail, url);
+  return `https://www.sorell.fr/api/track/click?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}&article=${encodeURIComponent(articleTitle)}&url=${encodeURIComponent(url)}&sig=${sig}`;
 }
 
 // ---- Sub-components --------------------------------------------------------
@@ -799,7 +801,7 @@ export function NewsletterEmail(props: NewsletterEmailProps) {
   const articleCount = otherArticles.length + 1;
   const preheaderText = `${articleCount} actualit\u00e9s cl\u00e9s de votre secteur - ${escapeHtml(subject)}`;
 
-  const trackingPixelUrl = `https://www.sorell.fr/api/track/open?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}`;
+  const trackingPixelUrl = `https://www.sorell.fr/api/track/open?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}&sig=${generateOpenToken(newsletterId, recipientEmail)}`;
 
   return (
     <Layout

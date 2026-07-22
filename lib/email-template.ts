@@ -6,6 +6,7 @@ import React from "react";
 import { render } from "@react-email/components";
 import { NewsletterEmail } from "@/emails/NewsletterEmail";
 import { buildUnsubscribeUrl } from "@/lib/unsubscribe-token";
+import { generateClickToken } from "@/lib/tracking-token";
 
 export interface Article {
   tag: string;
@@ -56,7 +57,8 @@ function truncate(text: string, maxLen: number): string {
 }
 
 function trackClick(newsletterId: string, recipientEmail: string, articleTitle: string, url: string): string {
-  return `https://www.sorell.fr/api/track/click?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}&article=${encodeURIComponent(articleTitle)}&url=${encodeURIComponent(url)}`;
+  const sig = generateClickToken(newsletterId, recipientEmail, url);
+  return `https://www.sorell.fr/api/track/click?nid=${newsletterId}&email=${encodeURIComponent(recipientEmail)}&article=${encodeURIComponent(articleTitle)}&url=${encodeURIComponent(url)}&sig=${sig}`;
 }
 
 export async function buildNewsletterHtml(params: EmailTemplateParams): Promise<string> {

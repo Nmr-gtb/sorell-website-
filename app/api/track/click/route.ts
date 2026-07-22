@@ -1,21 +1,14 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin as supabase } from "@/lib/supabase-admin";
 import { logEmailClick } from "@/lib/activity-log";
+import { verifyClickToken } from "@/lib/tracking-token";
 
-// Whitelist de domaines autorisés pour la redirection
-const ALLOWED_DOMAINS = new Set([
-  "sorell.fr",
-  "www.sorell.fr",
-]);
+const FALLBACK_URL = "https://sorell.fr";
 
-function isUrlSafe(url: string): boolean {
+// N'autoriser que des URL https bien formées (bloque javascript:, data:, etc.).
+function isHttpsUrl(url: string): boolean {
   try {
-    const parsed = new URL(url);
-    // Autoriser uniquement https
-    if (parsed.protocol !== "https:") return false;
-    // Autoriser les domaines whitelistés OU tout domaine externe (articles de presse)
-    // Bloquer les protocoles dangereux (javascript:, data:, etc.) déjà filtré par le check https
-    return true;
+    return new URL(url).protocol === "https:";
   } catch {
     return false;
   }
@@ -27,26 +20,30 @@ export async function GET(request: Request) {
   const email = searchParams.get("email");
   const url = searchParams.get("url");
   const article = searchParams.get("article");
+  const sig = searchParams.get("sig");
 
-  // Valider l'URL avant toute redirection
-  const safeUrl = url && isUrlSafe(url) ? url : "https://sorell.fr";
+  // Redirection uniquement vers une URL https signée pour ce (nid, email).
+  // La signature couvre l'url : impossible de la détourner (open redirect) ni
+  // de forger un clic. Sans signature valide → retour à l'accueil, aucun
+  // enregistrement (protège aussi les analytics contre la falsification).
+  const isTrusted =
+    !!nid && !!email && !!url && isHttpsUrl(url) && verifyClickToken(nid, email, url, sig);
 
-  try {
-    if (nid && email) {
+  const safeUrl = isTrusted ? (url as string) : FALLBACK_URL;
+
+  if (isTrusted) {
+    try {
       await supabase.from("newsletter_events").insert({
         newsletter_id: nid,
         recipient_email: email,
         event_type: "click",
         metadata: { url: safeUrl, article: article || "" },
       });
-
       await supabase.rpc("increment_click_count", { nid });
-
-      // Activity log - userId not available in tracking context
-      void logEmailClick("", email, nid, safeUrl);
+      void logEmailClick("", email as string, nid as string, safeUrl);
+    } catch {
+      // silently ignore tracking errors
     }
-  } catch {
-    // silently ignore tracking errors
   }
 
   return NextResponse.redirect(safeUrl, { status: 302 });
