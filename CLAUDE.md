@@ -59,7 +59,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 - **activity_log** : id, user_id, user_email, action_type, action_label, details, metadata, synced_to_notion, created_at
 - **lifecycle_emails** : id, user_id, email_type, sent_at (UNIQUE user_id+email_type)
 - **admin_sessions** : id, email, ip_address, user_agent, created_at, expires_at
-- **telegram_messages** : OBSOLÈTE (bots Eva/Jade supprimés en juillet 2026) — la table existe encore en base avec l'historique, droppable quand Noé le décide
+- telegram_messages : table SUPPRIMÉE de la base le 22/07/2026 (bots Eva/Jade retirés) — ne pas la recréer
 - **stripe_webhook_events** : id (= Stripe event.id, PK), type, received_at — dédup/idempotence des webhooks Stripe (RLS activée, service_role only, aucune policy)
 - Storage : bucket "logos" (public) pour logos custom Business+
 - RLS activée sur TOUTES les tables — API routes utilisent supabaseAdmin (service_role)
