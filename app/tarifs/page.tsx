@@ -66,6 +66,7 @@ export default function PricingPage() {
     t("pricing.biz_f1"),
     t("pricing.biz_f7"),
     t("pricing.biz_f2"),
+    t("pricing.biz_f8"),
     t("pricing.biz_f3"),
     t("pricing.biz_f4"),
     t("pricing.biz_f5"),

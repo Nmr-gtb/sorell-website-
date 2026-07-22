@@ -636,6 +636,7 @@ export default function DashboardPage() {
           features: [
             t("dashboard.plan_biz_f1"),
             t("dashboard.plan_biz_f2"),
+            t("dashboard.plan_biz_f6"),
             t("dashboard.plan_biz_f3"),
             t("dashboard.plan_biz_f4"),
             t("dashboard.plan_biz_f5"),
