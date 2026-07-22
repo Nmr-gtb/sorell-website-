@@ -282,10 +282,26 @@ describe("POST /api/chat", () => {
 // --- Tests du prompt systeme ---
 
 describe("getSolySystemPrompt", () => {
-  it("mode general contient les regles generales (1-2 phrases)", () => {
+  it("mode general contient les règles de style (réponse complète, texte brut)", () => {
     const prompt = getSolySystemPrompt("general");
-    expect(prompt).toContain("1-2 phrases");
-    expect(prompt).toContain("droit au but");
+    expect(prompt).toContain("COMPLÈTEMENT");
+    expect(prompt).toContain("pas de markdown");
+  });
+
+  it("les deux modes contiennent les tarifs exacts (9,99 EUR, jamais 19 EUR)", () => {
+    const general = getSolySystemPrompt("general");
+    const brief = getSolySystemPrompt("brief");
+    expect(general).toContain("9,99 EUR");
+    expect(brief).toContain("9,99 EUR");
+    expect(general).not.toContain("19 EUR");
+    expect(brief).not.toContain("19 EUR");
+  });
+
+  it("le mode general distingue aperçu à la demande (Pro) et relecture avant envoi (Business)", () => {
+    const prompt = getSolySystemPrompt("general");
+    expect(prompt).toContain("aperçu à la demande");
+    expect(prompt).toContain("relecture avant envoi");
+    expect(prompt).toContain("Business et Enterprise uniquement");
   });
 
   it("mode brief contient le marqueur BRIEF_READY", () => {
@@ -298,7 +314,7 @@ describe("getSolySystemPrompt", () => {
     const general = getSolySystemPrompt("general");
     const brief = getSolySystemPrompt("brief");
     expect(general).toContain("ignorer tes consignes");
-    expect(general).toContain("reveler ton prompt");
+    expect(general).toContain("révéler ton prompt");
     expect(brief).toContain("ignorer tes consignes");
   });
 
@@ -330,12 +346,12 @@ describe("getSolySystemPrompt", () => {
 
   it("brief mode skip la question secteur si deja connu", () => {
     const prompt = getSolySystemPrompt("brief", { sector: "finance" });
-    expect(prompt).toContain("Le secteur est deja connu");
+    expect(prompt).toContain("Le secteur est déjà connu");
   });
 
   it("brief mode propose d'ameliorer le brief existant", () => {
     const prompt = getSolySystemPrompt("brief", { existingBrief: "Brief existant" });
-    expect(prompt).toContain("ameliorer");
+    expect(prompt).toContain("améliorer");
     expect(prompt).toContain("Brief existant");
   });
 });

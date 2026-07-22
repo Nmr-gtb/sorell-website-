@@ -143,7 +143,7 @@ export async function POST(request: Request) {
     if (stream) {
       const streamResponse = await anthropic.messages.stream({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 500,
+        max_tokens: 800,
         system: systemPrompt,
         messages: trimmedMessages.map((m) => ({
           role: m.role,
@@ -181,7 +181,7 @@ export async function POST(request: Request) {
     // Non-streaming mode (backward compatible)
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 500,
+      max_tokens: 800,
       system: systemPrompt,
       messages: trimmedMessages.map((m) => ({
         role: m.role,
