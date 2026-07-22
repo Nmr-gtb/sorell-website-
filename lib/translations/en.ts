@@ -758,6 +758,7 @@ const en: Record<string, string> = {
   "login.sub_reset": "Receive a reset link by email",
   "login.verify_email": "Check your email to confirm your account.",
   "login.disposable_email_error": "Disposable email addresses are not accepted. Please use a permanent email.",
+  "login.pwned_password_error": "This password appears in known data breaches. Please choose a different one to protect your account.",
   "login.reset_sent": "Reset link sent!",
   "login.back_home": "Back to home",
   "login.back_to_login": "← Back to sign in",

@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "@/lib/LanguageContext";
 import { suggestEmailCorrection, isDisposableEmail } from "@/lib/utils";
+import { isPasswordPwned } from "@/lib/password-check";
 import { getStoredAttribution } from "@/lib/attribution";
 
 type Mode = "login" | "signup" | "reset";
@@ -112,6 +113,15 @@ export default function LoginPage() {
     }
 
     setLoading(true);
+
+    // Refuser les mots de passe présents dans des fuites de données connues
+    // (vérification k-anonymity : le mot de passe ne quitte pas le navigateur).
+    if (await isPasswordPwned(password)) {
+      setError(t("login.pwned_password_error"));
+      setLoading(false);
+      return;
+    }
+
     // Passer le code de parrainage dans le redirect URL pour que le callback puisse l'utiliser
     const refCode = typeof window !== "undefined" ? localStorage.getItem("sorell_ref") : null;
     const redirectUrl = refCode
