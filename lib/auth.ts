@@ -1,4 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
+import { createHash, timingSafeEqual } from "crypto";
+
+/**
+ * Comparaison de chaînes à temps constant (anti timing attack).
+ * On compare les empreintes SHA-256 : longueur fixe (timingSafeEqual exige
+ * des buffers de même taille) et aucune fuite de longueur du secret.
+ */
+export function safeEqual(a: string, b: string): boolean {
+  const ha = createHash("sha256").update(a).digest();
+  const hb = createHash("sha256").update(b).digest();
+  return timingSafeEqual(ha, hb);
+}
 
 export async function getAuthenticatedUser(request: Request): Promise<{ id: string; email: string } | null> {
   const authHeader = request.headers.get("authorization");
@@ -27,5 +39,8 @@ export function verifyCronSecret(request: Request): boolean {
   const querySecret = url.searchParams.get("secret");
   const authHeader = request.headers.get("authorization");
   const bearerSecret = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  return querySecret === cronSecret || bearerSecret === cronSecret;
+  return (
+    (querySecret !== null && safeEqual(querySecret, cronSecret)) ||
+    (bearerSecret !== null && safeEqual(bearerSecret, cronSecret))
+  );
 }

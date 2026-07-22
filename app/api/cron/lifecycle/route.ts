@@ -48,11 +48,8 @@ interface Profile {
 }
 
 // ─── Auth CRON ───────────────────────────────────────────────────
-function verifyCron(request: Request): boolean {
-  const authHeader = request.headers.get("authorization");
-  if (!authHeader || !process.env.CRON_SECRET) return false;
-  return authHeader === `Bearer ${process.env.CRON_SECRET}`;
-}
+// Comparaison à temps constant centralisée dans lib/auth (anti timing attack).
+import { verifyCronSecret as verifyCron } from "@/lib/auth";
 
 // ─── Helpers tracking lifecycle ─────────────────────────────────
 async function wasAlreadySent(

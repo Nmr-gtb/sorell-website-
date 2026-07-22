@@ -8,6 +8,7 @@ import {
   buildSubjectLine,
 } from "@/lib/newsletter-generator";
 import { getModelForPlan, resolveServerlessArticleCount, canUseEditor, estimatedGenerationMs } from "@/lib/plans";
+import { verifyCronSecret } from "@/lib/auth";
 
 export const maxDuration = 60;
 
@@ -19,12 +20,10 @@ const DAY_MAP: Record<string, number> = {
 };
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
+  if (!process.env.CRON_SECRET) {
     return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
   }
-  if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
+  if (!verifyCronSecret(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
