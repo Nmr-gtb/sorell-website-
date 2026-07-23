@@ -20,7 +20,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "jsonwebtoken": "^9.0.3",
-    "next": "16.1.6",
+    "next": "^16.2.11",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-email": "^5.2.10",
