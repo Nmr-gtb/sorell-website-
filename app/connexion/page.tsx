@@ -112,6 +112,13 @@ export default function LoginPage() {
       return;
     }
 
+    // Longueur minimale vérifiée aussi en JS (l'attribut minLength du champ
+    // peut être contourné en modifiant le DOM).
+    if (password.length < 8) {
+      setError(t("login.password_too_short"));
+      return;
+    }
+
     setLoading(true);
 
     // Refuser les mots de passe présents dans des fuites de données connues
@@ -408,9 +415,9 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 caractères"
+                  placeholder={t("login.password_placeholder")}
                   required
-                  minLength={6}
+                  minLength={8}
                   style={inputStyle}
                   className="input-field"
                 />

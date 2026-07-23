@@ -759,6 +759,8 @@ const fr: Record<string, string> = {
   "login.verify_email": "Vérifiez votre email pour confirmer votre compte.",
   "login.disposable_email_error": "Les adresses email temporaires ne sont pas acceptées. Utilisez une adresse permanente.",
   "login.pwned_password_error": "Ce mot de passe apparaît dans des fuites de données connues. Choisissez-en un autre pour protéger votre compte.",
+  "login.password_placeholder": "Minimum 8 caractères",
+  "login.password_too_short": "Le mot de passe doit contenir au moins 8 caractères.",
   "login.reset_sent": "Lien de réinitialisation envoyé !",
   "login.back_home": "Retour à l'accueil",
   "login.back_to_login": "← Retour à la connexion",
