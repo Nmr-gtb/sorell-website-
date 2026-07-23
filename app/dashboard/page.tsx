@@ -175,7 +175,11 @@ export default function DashboardPage() {
 
   // Onboarding state
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null); // null = loading
-  const [onboardingStep, setOnboardingStep] = useState(1);
+  // L'onboarding démarre au brief (l'étape "choix du plan" a été retirée :
+  // tout le monde s'inscrit en gratuit, l'upgrade Pro est proposé en fin de
+  // parcours, une fois la première newsletter reçue). Les étapes internes
+  // gardent les numéros 2..5 ; l'affichage montre "1 sur 4" à "4 sur 4".
+  const [onboardingStep, setOnboardingStep] = useState(2);
   const [brief, setBrief] = useState("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [customTopics, setCustomTopics] = useState<{ id: string; label: string }[]>([]);
@@ -188,7 +192,9 @@ export default function DashboardPage() {
   // Plan payant (choisi ou en cours de checkout) : les textes d'onboarding
   // annoncent le rythme réel du cron (1er + 15) au lieu du rythme Free (1er)
   const [paidOnboarding, setPaidOnboarding] = useState(false);
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  // L'upsell post-onboarding propose l'essai Pro mensuel (plus de toggle
+  // mensuel/annuel depuis le retrait de l'étape de choix de plan du tunnel).
+  const billingPeriod: "monthly" | "annual" = "monthly";
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [resendingEmail, setResendingEmail] = useState(false);
   const [resendEmailSuccess, setResendEmailSuccess] = useState(false);
@@ -271,15 +277,10 @@ export default function DashboardPage() {
       const hasPaidPlan = plan === "pro" || plan === "business" || plan === "enterprise";
       setPaidOnboarding(hasPaidPlan || fromCheckout);
 
-      if (hasTopics) {
-        setIsNewUser(false);
-      } else {
-        setIsNewUser(true);
-        // Skip plan step if returning from Stripe checkout or already on a paid plan
-        if (fromCheckout || hasPaidPlan) {
-          setOnboardingStep(2);
-        }
-      }
+      // Onboarding terminé dès que des thématiques existent. Sinon le tunnel
+      // démarre au brief (étape 2, valeur par défaut du state) — plus d'étape
+      // de choix de plan ni de saut conditionnel après retour Stripe.
+      setIsNewUser(!hasTopics);
 
       setConfig(configData);
       setSchedule({
@@ -565,8 +566,45 @@ export default function DashboardPage() {
           >
             {t("dashboard.onboarding_view_dashboard")}
           </button>
+
+          {/* Upsell Pro — proposé APRÈS le "aha" (première newsletter reçue),
+              une fois l'onboarding gratuit terminé. Réutilise le checkout Stripe
+              existant : plus de redirection en plein tunnel. */}
           <div style={{
             marginTop: 32,
+            padding: "20px",
+            background: "rgba(0, 80, 88, 0.05)",
+            border: "1px solid rgba(0, 80, 88, 0.15)",
+            borderRadius: 12,
+            textAlign: "left",
+          }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 6px" }}>
+              {t("dashboard.upsell_title")}
+            </p>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, margin: "0 0 16px" }}>
+              {t("dashboard.upsell_desc")}
+            </p>
+            <button
+              onClick={() => handlePlanCheckout("pro")}
+              disabled={checkoutLoading}
+              style={{
+                padding: "10px 24px",
+                background: "var(--accent)",
+                color: "white",
+                border: "none",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: checkoutLoading ? "wait" : "pointer",
+                opacity: checkoutLoading ? 0.7 : 1,
+              }}
+            >
+              {checkoutLoading ? t("dashboard.generating") : t("dashboard.upsell_cta")}
+            </button>
+          </div>
+
+          <div style={{
+            marginTop: 20,
             padding: "16px 20px",
             background: "rgba(245, 158, 11, 0.06)",
             border: "1px solid rgba(245, 158, 11, 0.15)",
@@ -589,321 +627,11 @@ export default function DashboardPage() {
       );
     }
 
-    // Step 1 – Plan selection
-    if (onboardingStep === 1) {
-      const plans = [
-        {
-          key: "free",
-          name: "Free",
-          price: 0,
-          annualPrice: 0,
-          tagline: t("dashboard.plan_free_tagline"),
-          features: [
-            t("dashboard.plan_free_f1"),
-            t("dashboard.plan_free_f2"),
-            t("dashboard.plan_free_f3"),
-            t("dashboard.plan_free_f4"),
-          ],
-          cta: t("dashboard.plan_free_cta"),
-          free: true,
-          popular: false,
-          enterprise: false,
-        },
-        {
-          key: "pro",
-          name: "Pro",
-          price: 9.99,
-          annualPrice: 99,
-          tagline: t("dashboard.plan_pro_tagline"),
-          features: [
-            t("dashboard.plan_pro_f1"),
-            t("dashboard.plan_pro_f2"),
-            t("dashboard.plan_pro_f3"),
-            t("dashboard.plan_pro_f4"),
-            t("dashboard.plan_pro_f5"),
-          ],
-          cta: t("dashboard.plan_pro_cta"),
-          free: false,
-          popular: true,
-          enterprise: false,
-        },
-        {
-          key: "business",
-          name: "Business",
-          price: 49,
-          annualPrice: 490,
-          tagline: t("dashboard.plan_biz_tagline"),
-          features: [
-            t("dashboard.plan_biz_f1"),
-            t("dashboard.plan_biz_f2"),
-            t("dashboard.plan_biz_f6"),
-            t("dashboard.plan_biz_f3"),
-            t("dashboard.plan_biz_f4"),
-            t("dashboard.plan_biz_f5"),
-          ],
-          cta: t("dashboard.plan_biz_cta"),
-          free: false,
-          popular: false,
-          enterprise: false,
-        },
-        {
-          key: "enterprise",
-          name: "Enterprise",
-          price: null,
-          annualPrice: null,
-          tagline: t("dashboard.plan_ent_tagline"),
-          features: [
-            t("dashboard.plan_ent_f1"),
-            t("dashboard.plan_ent_f2"),
-            t("dashboard.plan_ent_f3"),
-            t("dashboard.plan_ent_f4"),
-          ],
-          cta: t("dashboard.plan_ent_cta"),
-          free: false,
-          popular: false,
-          enterprise: true,
-        },
-      ];
-
-      return (
-        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "60px 20px" }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "1")}</div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
-              {t("dashboard.step1_title")}
-            </h1>
-            <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-              {t("dashboard.step1_desc")}
-            </p>
-          </div>
-
-          {/* Billing toggle */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
-            <div style={{
-              display: "inline-flex",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-              padding: 4,
-              gap: 4,
-            }}>
-              <button
-                onClick={() => setBillingPeriod("monthly")}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: 6,
-                  border: "none",
-                  background: billingPeriod === "monthly" ? "var(--accent)" : "transparent",
-                  color: billingPeriod === "monthly" ? "white" : "var(--text-secondary)",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                {t("pricing.monthly")}
-              </button>
-              <button
-                onClick={() => setBillingPeriod("annual")}
-                style={{
-                  padding: "6px 16px",
-                  borderRadius: 6,
-                  border: "none",
-                  background: billingPeriod === "annual" ? "var(--accent)" : "transparent",
-                  color: billingPeriod === "annual" ? "white" : "var(--text-secondary)",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                {t("pricing.annual")}
-                <span style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  padding: "1px 6px",
-                  borderRadius: 4,
-                  background: billingPeriod === "annual" ? "rgba(255,255,255,0.25)" : "var(--success-bg)",
-                  color: billingPeriod === "annual" ? "white" : "var(--success)",
-                }}>
-                  -20%
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Plan cards */}
-          <div
-            className="onboarding-plan-grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 16,
-            }}
-          >
-            {plans.map((plan) => {
-              const displayPrice =
-                billingPeriod === "annual" && plan.annualPrice !== null
-                  ? plan.annualPrice
-                  : plan.price;
-
-              const isEnterprise = plan.enterprise;
-              const isFree = plan.free || plan.price === 0;
-
-              return (
-                <div
-                  key={plan.key}
-                  style={{
-                    position: "relative",
-                    borderRadius: 12,
-                    padding: "24px 20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 16,
-                    background: "var(--surface)",
-                    border: plan.popular
-                      ? "1.5px solid var(--accent)"
-                      : "1px solid var(--border)",
-                  }}
-                >
-                  {/* Popular badge */}
-                  {plan.popular && (
-                    <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)" }}>
-                      <span style={{
-                        display: "inline-block",
-                        padding: "2px 12px",
-                        borderRadius: 999,
-                        fontSize: "0.6875rem",
-                        fontWeight: 600,
-                        background: "var(--accent)",
-                        color: "white",
-                        whiteSpace: "nowrap",
-                      }}>
-                        {t("pricing.popular")}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Plan name + tagline */}
-                  <div>
-                    <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text)", marginBottom: 4, letterSpacing: "-0.01em" }}>
-                      {plan.name}
-                    </h3>
-                    <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
-                      {plan.tagline}
-                    </p>
-                  </div>
-
-                  {/* Price */}
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                    {isEnterprise ? (
-                      <span style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
-                        {t("pricing.enterprise_price")}
-                      </span>
-                    ) : isFree ? (
-                      <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.03em" }}>
-                        {t("pricing.free_price")}
-                      </span>
-                    ) : (
-                      <>
-                        <span style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text)", lineHeight: 1, letterSpacing: "-0.03em" }}>
-                          {typeof displayPrice === "number"
-                            ? Number.isInteger(displayPrice)
-                              ? displayPrice
-                              : displayPrice.toFixed(2).replace(".", ",")
-                            : displayPrice}€
-                        </span>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-                            {billingPeriod === "annual" ? t("dashboard.per_year") : t("pricing.per_month")}
-                          </span>
-                          {billingPeriod === "annual" && (
-                            <span style={{
-                              fontSize: "0.6875rem",
-                              fontWeight: 600,
-                              padding: "1px 6px",
-                              borderRadius: 4,
-                              background: "var(--success-bg)",
-                              color: "var(--success)",
-                            }}>
-                              -20%
-                            </span>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Features */}
-                  <ul style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, margin: 0, padding: 0, listStyle: "none" }}>
-                    {plan.features.map((feature, i) => (
-                      <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: "0.8125rem" }}>
-                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.popular ? "var(--accent)" : "var(--success)" }}>
-                          <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span style={{ color: "var(--text-secondary)" }}>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Trial or promo note for paid plans */}
-                  {!isFree && !isEnterprise && (
-                    <p style={{ fontSize: 11, color: "var(--success)", fontWeight: 500, textAlign: "center", margin: 0 }}>
-                      {t("dashboard.trial_note")}
-                    </p>
-                  )}
-
-                  {/* CTA */}
-                  {isEnterprise ? (
-                    <a
-                      href="/contact"
-                      className="btn-ghost"
-                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", textDecoration: "none" }}
-                    >
-                      {plan.cta}
-                    </a>
-                  ) : isFree ? (
-                    <button
-                      onClick={() => setOnboardingStep(2)}
-                      className="btn-ghost"
-                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: "pointer" }}
-                    >
-                      {plan.cta}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handlePlanCheckout(plan.key as "pro" | "business")}
-                      disabled={checkoutLoading}
-                      className={plan.popular ? "btn-primary" : "btn-ghost"}
-                      style={{ textAlign: "center", padding: "9px 16px", fontSize: "0.8125rem", justifyContent: "center", width: "100%", cursor: checkoutLoading ? "wait" : "pointer", opacity: checkoutLoading ? 0.7 : 1 }}
-                    >
-                      {checkoutLoading ? t("common.loading") : plan.cta}
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Responsive styles */}
-          <style>{`
-            @media (max-width: 800px) {
-              .onboarding-plan-grid { grid-template-columns: 1fr 1fr !important; }
-            }
-            @media (max-width: 500px) {
-              .onboarding-plan-grid { grid-template-columns: 1fr !important; }
-            }
-          `}</style>
-        </div>
-      );
-    }
-
     // Step 2 – Brief
     if (onboardingStep === 2) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "2")}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "1")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step2_title")}
           </h1>
@@ -977,7 +705,7 @@ export default function DashboardPage() {
     if (onboardingStep === 3) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "3")}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "2")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step3_title")}
           </h1>
@@ -1101,7 +829,7 @@ export default function DashboardPage() {
     if (onboardingStep === 4) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "4")}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "3")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step4_title")}
           </h1>
@@ -1144,7 +872,7 @@ export default function DashboardPage() {
     if (onboardingStep === 5) {
       return (
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "5")}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 12 }}>{t("dashboard.step_of").replace("{n}", "4")}</div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
             {t("dashboard.step5_title")}
           </h1>
