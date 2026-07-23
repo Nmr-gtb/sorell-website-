@@ -15,14 +15,14 @@ import {
 // ---------------------------------------------------------------------------
 
 describe("canUseEditor", () => {
-  it("allows business and enterprise plans", () => {
+  it("allows pro, business and enterprise plans", () => {
+    expect(canUseEditor("pro")).toBe(true);
     expect(canUseEditor("business")).toBe(true);
     expect(canUseEditor("enterprise")).toBe(true);
   });
 
-  it("denies free, pro and legacy solo plans", () => {
+  it("denies free and legacy solo plans", () => {
     expect(canUseEditor("free")).toBe(false);
-    expect(canUseEditor("pro")).toBe(false);
     expect(canUseEditor("solo")).toBe(false);
   });
 

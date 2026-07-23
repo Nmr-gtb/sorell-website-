@@ -97,7 +97,7 @@ const fr: Record<string, string> = {
   "pricing.pro_f2": "Jusqu'à 10 destinataires",
   "pricing.pro_f3": "Thématiques et sources au choix",
   "pricing.pro_f4": "Analytics complets",
-  "pricing.pro_f5": "Historique + aperçu à la demande",
+  "pricing.pro_f5": "Historique, aperçu et relecture avant envoi",
   "pricing.pro_f6": "Fréquence hebdo à mensuelle",
 
   "pricing.biz_f1": "Newsletters illimitées",
@@ -313,7 +313,7 @@ const fr: Record<string, string> = {
   // Éditeur de brouillon (mode relecture avant envoi)
   "editor.title": "Éditeur",
   "editor.subtitle": "Relisez et ajustez votre newsletter avant de l'envoyer à vos destinataires.",
-  "editor.not_available_title": "Réservé aux plans Business et Enterprise",
+  "editor.not_available_title": "Disponible à partir du plan Pro",
   "editor.not_available_desc": "L'éditeur vous permet de relire, modifier et valider chaque newsletter avant son envoi. Passez au plan Business pour l'activer.",
   "editor.empty_title": "Aucun brouillon en attente",
   "editor.empty_desc_editor": "Votre prochaine newsletter sera générée au créneau prévu dans votre configuration. Elle apparaîtra ici pour relecture avant envoi.",
@@ -415,7 +415,7 @@ const fr: Record<string, string> = {
   "dashboard.plan_pro_f1": "Jusqu'à 10 destinataires",
   "dashboard.plan_pro_f2": "Newsletters illimitées",
   "dashboard.plan_pro_f3": "Thématiques et sources au choix",
-  "dashboard.plan_pro_f4": "Historique + aperçu à la demande",
+  "dashboard.plan_pro_f4": "Historique, aperçu et relecture avant envoi",
   "dashboard.plan_pro_f5": "Analytics complets",
   "dashboard.plan_pro_cta": "Essayer 15 jours gratuit",
   "dashboard.plan_biz_tagline": "Pour les organisations exigeantes",
@@ -496,7 +496,7 @@ const fr: Record<string, string> = {
   "config.edit_mode_auto_desc": "La newsletter est générée et envoyée à vos destinataires sans intervention. Vous n'avez rien à faire.",
   "config.edit_mode_editor": "Relecture avant envoi",
   "config.edit_mode_editor_desc": "La newsletter est générée en brouillon. Vous la relisez, la modifiez si besoin, puis vous validez l'envoi depuis l'éditeur.",
-  "config.edit_mode_locked": "La relecture avant envoi est disponible avec les plans Business et Enterprise.",
+  "config.edit_mode_locked": "La relecture avant envoi est disponible à partir du plan Pro.",
 
   // Longueur de la newsletter
   "config.article_count_title": "Longueur de la newsletter",
@@ -798,7 +798,7 @@ const fr: Record<string, string> = {
   "faq.q5": "Combien de temps faut-il pour configurer Sorell ?",
   "faq.a5": "5 minutes. Vous décrivez votre activité en quelques lignes, vous choisissez vos thématiques, et c'est tout. Votre première newsletter peut être générée immédiatement.",
   "faq.q6": "Pourquoi payer 9,99€/mois alors que le plan gratuit existe ?",
-  "faq.a6": "Le plan gratuit est limité à 1 destinataire et 1 newsletter par mois avec des thématiques prédéfinies. Le plan Pro offre des newsletters illimitées, jusqu'à 10 destinataires, des thématiques et sources au choix, l'historique, l'aperçu à la demande et les analytics complets. La relecture avant envoi est incluse dans le plan Business.",
+  "faq.a6": "Le plan gratuit est limité à 1 destinataire et 1 newsletter par mois avec des thématiques prédéfinies. Le plan Pro offre des newsletters illimitées, jusqu'à 10 destinataires, des thématiques et sources au choix, l'historique, l'aperçu et la relecture avant envoi, et les analytics complets. Le plan Business ajoute jusqu'à 50 destinataires, la fréquence quotidienne, le logo personnalisé et le support prioritaire.",
   "faq.q7": "Mon stagiaire peut faire la même chose, non ?",
   "faq.a7": "Un stagiaire passe en moyenne 2 à 4 heures par semaine pour compiler une veille sectorielle. Sorell le fait en 12 secondes, chaque semaine, sans oubli, sans absence, sans formation. Et le coût est de 9,99€/mois contre un salaire de stagiaire.",
   "faq.q8": "Puis-je annuler à tout moment ?",

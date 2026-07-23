@@ -48,7 +48,7 @@ ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPA
 - **newsletter_config** : user_id, topics, custom_brief, sources, recipients, frequency, send_day, send_hour, custom_topics, edit_mode (auto/editor), pending_draft_id, article_count (3-12, NULL = défaut du plan)
 - **newsletters** : id, user_id, content, subject, status, generated_at, created_at, sent_at, recipient_count, original_content, original_subject (instantané pour le Réinitialiser de l'éditeur)
 
-### Mode Éditeur (relecture avant envoi — Business/Enterprise)
+### Mode Éditeur (relecture avant envoi — Pro/Business/Enterprise depuis le 23/07/2026)
 - edit_mode="editor" : le cron génère un brouillon (pending_draft_id), n'envoie rien, attend la validation dans /dashboard/editor
 - /api/send libère pending_draft_id ; /api/generate/article régénère un bloc ; /api/newsletters/draft sauvegarde/reset
 - Script de secours : node scripts/trigger-editor-draft.js <user_id> [--force] (contourne le timeout Vercel 60s)

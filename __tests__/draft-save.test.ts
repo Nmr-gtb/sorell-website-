@@ -105,11 +105,17 @@ describe("POST /api/newsletters/draft", () => {
     expect(response.status).toBe(401);
   });
 
-  it("returns 403 for plans without editor access (free/pro)", async () => {
-    mockProfileData = { plan: "pro" };
+  it("returns 403 for plans without editor access (free)", async () => {
+    mockProfileData = { plan: "free" };
     const response = await POST(makeRequest({ newsletterId: "nl-123", content: validContent() }));
     expect(response.status).toBe(403);
     expect(mockNlUpdate).not.toHaveBeenCalled();
+  });
+
+  it("allows the pro plan (editor access opened to Pro)", async () => {
+    mockProfileData = { plan: "pro" };
+    const response = await POST(makeRequest({ newsletterId: "nl-123", content: validContent() }));
+    expect(response.status).toBe(200);
   });
 
   it("returns 400 without newsletterId", async () => {

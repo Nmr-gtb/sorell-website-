@@ -161,8 +161,8 @@ describe("POST /api/generate/article", () => {
     expect(response.status).toBe(401);
   });
 
-  it("returns 403 for plans without editor access (free/pro)", async () => {
-    mockProfileData = { plan: "pro" };
+  it("returns 403 for plans without editor access (free)", async () => {
+    mockProfileData = { plan: "free" };
     const response = await POST(makeRequest({ newsletterId: "nl-123", target: "article", articleIndex: 1 }));
     expect(response.status).toBe(403);
     expect(mockCreate).not.toHaveBeenCalled();

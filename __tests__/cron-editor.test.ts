@@ -341,15 +341,15 @@ describe("GET /api/cron - mode éditeur", () => {
     expect(mockBatchSend).not.toHaveBeenCalled();
   });
 
-  it("falls back to auto mode (generate + send) when the plan is not eligible", async () => {
+  it("falls back to auto mode (generate + send) when the plan is not eligible (free)", async () => {
     const config = makeConfigForNow();
-    config.user_id = "user-pro";
+    config.user_id = "user-free";
     mockConfigsSelect.mockResolvedValue({ data: [config], error: null });
     mockProfilesSelect.mockResolvedValue({
-      data: [{ id: "user-pro", plan: "pro", email_verified: true }],
+      data: [{ id: "user-free", plan: "free", email_verified: true }],
     });
     mockNewslettersInsert.mockResolvedValue({
-      data: { id: "nl-456", user_id: "user-pro", subject: "Test", content: {}, status: "draft" },
+      data: { id: "nl-456", user_id: "user-free", subject: "Test", content: {}, status: "draft" },
       error: null,
     });
     mockCreate.mockResolvedValue({ content: [{ type: "text", text: makeClaudeResponse() }] });

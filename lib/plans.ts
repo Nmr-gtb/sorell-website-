@@ -110,10 +110,12 @@ export function getArticlesForPlan(plan: string): number {
 
 // ---------------------------------------------------------------------------
 // Mode Éditeur : le cron génère un brouillon qui attend la validation manuelle
-// au lieu d'envoyer directement. Réservé aux plans Business et Enterprise.
+// au lieu d'envoyer directement. Disponible à partir du plan Pro.
+// (Pro utilise Sonnet, non plafonné par resolveServerlessArticleCount : le
+// brouillon Pro est généré à sa longueur complète, sans le plafond Opus.)
 // ---------------------------------------------------------------------------
 export function canUseEditor(plan: string): boolean {
-  return plan === "business" || plan === "enterprise";
+  return plan === "pro" || plan === "business" || plan === "enterprise";
 }
 
 // ---------------------------------------------------------------------------

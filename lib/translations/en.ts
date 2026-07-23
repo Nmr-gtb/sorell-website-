@@ -97,7 +97,7 @@ const en: Record<string, string> = {
   "pricing.pro_f2": "Up to 10 recipients",
   "pricing.pro_f3": "Custom topics and sources",
   "pricing.pro_f4": "Full analytics",
-  "pricing.pro_f5": "History + on-demand preview",
+  "pricing.pro_f5": "History, preview and review before sending",
   "pricing.pro_f6": "Weekly to monthly frequency",
 
   "pricing.biz_f1": "Unlimited newsletters",
@@ -313,7 +313,7 @@ const en: Record<string, string> = {
   // Draft editor (review before sending mode)
   "editor.title": "Editor",
   "editor.subtitle": "Review and adjust your newsletter before sending it to your recipients.",
-  "editor.not_available_title": "Available with Business and Enterprise plans",
+  "editor.not_available_title": "Available from the Pro plan",
   "editor.not_available_desc": "The editor lets you review, edit and approve every newsletter before it goes out. Upgrade to Business to enable it.",
   "editor.empty_title": "No draft waiting",
   "editor.empty_desc_editor": "Your next newsletter will be generated at the time set in your configuration. It will appear here for review before sending.",
@@ -415,7 +415,7 @@ const en: Record<string, string> = {
   "dashboard.plan_pro_f1": "Up to 10 recipients",
   "dashboard.plan_pro_f2": "Unlimited newsletters",
   "dashboard.plan_pro_f3": "Custom topics & sources",
-  "dashboard.plan_pro_f4": "History + on-demand preview",
+  "dashboard.plan_pro_f4": "History, preview and review before sending",
   "dashboard.plan_pro_f5": "Full analytics",
   "dashboard.plan_pro_cta": "Try 15 days free",
   "dashboard.plan_biz_tagline": "For demanding organizations",
@@ -497,7 +497,7 @@ const en: Record<string, string> = {
   "config.edit_mode_auto_desc": "The newsletter is generated and sent to your recipients without any intervention. Nothing to do on your side.",
   "config.edit_mode_editor": "Review before sending",
   "config.edit_mode_editor_desc": "The newsletter is generated as a draft. You review it, edit it if needed, then approve the sending from the editor.",
-  "config.edit_mode_locked": "Review before sending is available with the Business and Enterprise plans.",
+  "config.edit_mode_locked": "Review before sending is available from the Pro plan.",
 
   // Newsletter length
   "config.article_count_title": "Newsletter length",
@@ -798,7 +798,7 @@ const en: Record<string, string> = {
   "faq.q5": "How long does it take to set up Sorell?",
   "faq.a5": "5 minutes. Describe your business in a few lines, choose your topics, and that's it. Your first newsletter can be generated immediately.",
   "faq.q6": "Why pay 9.99€/month when the free plan exists?",
-  "faq.a6": "The free plan is limited to 1 recipient and 1 newsletter per month with predefined topics. The Pro plan offers unlimited newsletters, up to 10 recipients, custom topics and sources, history, on-demand preview, and full analytics. Review before sending is included in the Business plan.",
+  "faq.a6": "The free plan is limited to 1 recipient and 1 newsletter per month with predefined topics. The Pro plan offers unlimited newsletters, up to 10 recipients, custom topics and sources, history, preview and review before sending, and full analytics. The Business plan adds up to 50 recipients, daily frequency, custom logo and priority support.",
   "faq.q7": "My intern can do the same thing, right?",
   "faq.a7": "An intern spends on average 2 to 4 hours per week compiling industry news. Sorell does it in 12 seconds, every week, without forgetting, without absences, without training. And the cost is 9.99€/month versus an intern's salary.",
   "faq.q8": "Can I cancel anytime?",
