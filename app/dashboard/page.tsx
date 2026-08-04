@@ -14,16 +14,9 @@ import { openSolyBrief } from "@/components/ChatWidget";
 import NewsletterLoader from "@/components/NewsletterLoader";
 import { PRICE_IDS as STRIPE_PRICE_IDS } from "@/lib/price-ids";
 
-const PRICE_IDS: Record<string, Record<string, string>> = {
-  pro: {
-    monthly: STRIPE_PRICE_IDS.pro_monthly,
-    annual: STRIPE_PRICE_IDS.pro_annual,
-  },
-  business: {
-    monthly: STRIPE_PRICE_IDS.business_monthly,
-    annual: STRIPE_PRICE_IDS.business_annual,
-  },
-};
+// Depuis le retrait de l'étape « choix du plan » du tunnel, le seul paiement
+// déclenché ici est l'essai Pro mensuel proposé sur l'écran de fin.
+const PRO_TRIAL_PRICE_ID = STRIPE_PRICE_IDS.pro_monthly;
 
 function IconCalendar() {
   return (
@@ -192,10 +185,10 @@ export default function DashboardPage() {
   // Plan payant (choisi ou en cours de checkout) : les textes d'onboarding
   // annoncent le rythme réel du cron (1er + 15) au lieu du rythme Free (1er)
   const [paidOnboarding, setPaidOnboarding] = useState(false);
-  // L'upsell post-onboarding propose l'essai Pro mensuel (plus de toggle
-  // mensuel/annuel depuis le retrait de l'étape de choix de plan du tunnel).
-  const billingPeriod: "monthly" | "annual" = "monthly";
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  // Erreur du checkout de l'upsell, distincte de onboardingError : un échec de
+  // paiement ne doit pas remplacer la confirmation d'envoi de la newsletter.
+  const [upsellError, setUpsellError] = useState("");
   const [resendingEmail, setResendingEmail] = useState(false);
   const [resendEmailSuccess, setResendEmailSuccess] = useState(false);
   const [resendEmailError, setResendEmailError] = useState("");
@@ -322,15 +315,15 @@ export default function DashboardPage() {
     setSelectedTopics((prev) => prev.filter((t) => t !== id));
   }
 
-  async function handlePlanCheckout(planKey: "pro" | "business") {
+  async function handleProTrialCheckout() {
     if (!user) return;
-    const priceId = PRICE_IDS[planKey][billingPeriod];
     setCheckoutLoading(true);
+    setUpsellError("");
     try {
       const res = await authFetch("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
-          priceId,
+          priceId: PRO_TRIAL_PRICE_ID,
           fromOnboarding: true,
         }),
       });
@@ -340,10 +333,15 @@ export default function DashboardPage() {
       } else if (data.alreadySubscribed) {
         window.location.href = "/dashboard/profile?upgraded=true";
       } else {
+        // Réponse sans URL de paiement : signaler l'échec au lieu de rendre
+        // le bouton inerte sans explication.
+        setUpsellError(t("dashboard.checkout_error"));
         setCheckoutLoading(false);
       }
     } catch {
-      setOnboardingError(t("dashboard.checkout_error"));
+      // Erreur propre à l'upsell : ne pas écraser le message de succès de
+      // l'onboarding, qui annonce que la première newsletter est partie.
+      setUpsellError(t("dashboard.checkout_error"));
       setCheckoutLoading(false);
     }
   }
@@ -585,7 +583,7 @@ export default function DashboardPage() {
               {t("dashboard.upsell_desc")}
             </p>
             <button
-              onClick={() => handlePlanCheckout("pro")}
+              onClick={handleProTrialCheckout}
               disabled={checkoutLoading}
               style={{
                 padding: "10px 24px",
@@ -601,6 +599,11 @@ export default function DashboardPage() {
             >
               {checkoutLoading ? t("dashboard.generating") : t("dashboard.upsell_cta")}
             </button>
+            {upsellError && (
+              <p role="alert" style={{ fontSize: 13, color: "#EF4444", lineHeight: 1.5, margin: "12px 0 0" }}>
+                {upsellError}
+              </p>
+            )}
           </div>
 
           <div style={{
