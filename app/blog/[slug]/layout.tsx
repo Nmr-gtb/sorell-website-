@@ -98,6 +98,28 @@ export default async function BlogSlugLayout({ children, params }: BlogSlugLayou
           }}
         />
       )}
+
+      {/* FAQPage : c'est le bloc que les moteurs génératifs reprennent le plus
+          directement. Publié séparément de l'Article pour rester valide. */}
+      {article?.faq && article.faq.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: article.faq.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: item.answer,
+                },
+              })),
+            }),
+          }}
+        />
+      )}
       {children}
     </>
   );

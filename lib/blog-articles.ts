@@ -6,6 +6,14 @@ export interface BlogArticle {
   readTime: string;
   tags: string[];
   content: string;
+  /**
+   * Questions fréquentes affichées en fin d'article et publiées en données
+   * structurées FAQPage. C'est le format que les moteurs génératifs
+   * reprennent le plus littéralement : une question, une réponse autoportante.
+   * Chaque réponse doit se suffire à elle-même, sans référence au reste
+   * de l'article, sinon elle devient incompréhensible une fois extraite.
+   */
+  faq?: { question: string; answer: string }[];
 }
 
 export const BLOG_ARTICLES: BlogArticle[] = [
@@ -33,6 +41,22 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>C'est une catégorie d'outils relativement nouvelle, rendue possible par les modèles de langage capables de lire, comprendre et résumer de gros volumes de texte en temps réel.</p>
 
       <h2>Les 6 critères qui comptent vraiment en 2026</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Critère</th><th>La question à poser</th><th>Signal d'alerte</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Fraîcheur</th><td>De quand datent les articles livrés ?</td><td>Aucune date affichée</td></tr>
+            <tr><th>Sources</th><td>Peut-on remonter à l'article d'origine ?</td><td>Pas de lien cliquable</td></tr>
+            <tr><th>Personnalisation</th><td>Puis-je décrire mon activité avec mes mots ?</td><td>Seulement des thèmes prédéfinis</td></tr>
+            <tr><th>Livraison</th><td>Arrive-t-elle sans que j'aie à y penser ?</td><td>Il faut se connecter pour la lire</td></tr>
+            <tr><th>Diffusion</th><td>Combien de personnes peuvent la recevoir ?</td><td>Un seul destinataire</td></tr>
+            <tr><th>Mise en route</th><td>Combien de temps avant la première ?</td><td>Une démo commerciale obligatoire</td></tr>
+          </tbody>
+        </table>
+      </div>
       <p>Sur le marché actuel, on trouve de tout : des outils brillants à des coquilles vides qui recrachent du contenu générique. Voici les critères non négociables.</p>
 
       <h2>1. La fraîcheur des sources</h2>
@@ -90,7 +114,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <p>- <strong>Gratuit</strong> : souvent 1 à 2 newsletters par mois, 1 destinataire. Suffisant pour tester.<br/>
       - <strong>Plan Pro (environ 20€/mois)</strong> : newsletters illimitées, 5 à 10 destinataires, analytics, sources personnalisées.<br/>
-      - <strong>Plan Business (environ 50€/mois)</strong> : jusqu'à 25-50 destinataires, branding personnalisé, support prioritaire.<br/>
+      - <strong>Plan Business (environ 50€/mois)</strong> : jusqu'à 50 destinataires, branding personnalisé, support prioritaire.<br/>
       - <strong>Enterprise (sur devis)</strong> : SSO, API, multi-newsletters, intégration CRM.</p>
 
       <p>Pour une PME, un plan Pro couvre 95% des besoins. Comparez au coût d'un consultant en veille (500 à 2 000€/mois) ou au temps dirigeant passé à faire sa veille manuellement (2 à 4 heures par semaine).</p>
@@ -119,7 +143,29 @@ export const BLOG_ARTICLES: BlogArticle[] = [
         <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA pour entreprises en 2026</a></li>
         <li><a href="/blog/soly-assistant-ia-newsletter">Soly, ton assistant IA pour créer la newsletter parfaite</a></li>
       </ul>
-    `
+    `,
+    faq: [
+      {
+        question: "Comment choisir une newsletter automatisée ?",
+        answer:
+          "Six critères départagent les solutions : la fraîcheur des articles livrés, la possibilité de remonter à la source d'origine, la finesse de la personnalisation sectorielle, le fait que la newsletter arrive sans qu'on ait à y penser, le nombre de destinataires possibles, et le temps de mise en route. Un outil qui échoue sur le quatrième point sera abandonné, même s'il excelle sur les autres.",
+      },
+      {
+        question: "Une newsletter générée par IA invente-t-elle des informations ?",
+        answer:
+          "Cela dépend entièrement de la conception de l'outil. Une solution fiable s'appuie sur une recherche web en temps réel et cite systématiquement la source de chaque actualité, avec un lien vers l'article d'origine. Sans ce lien vérifiable, il est impossible de distinguer une information réelle d'une formulation plausible mais inventée. C'est le premier point à tester avant de s'engager.",
+      },
+      {
+        question: "Faut-il des compétences techniques pour mettre en place une newsletter automatisée ?",
+        answer:
+          "Non pour les solutions modernes. La configuration consiste à décrire son activité en quelques phrases, choisir ses thématiques et fixer un jour d'envoi. Chez Sorell, cela prend environ cinq minutes et la première newsletter peut être générée dans la foulée. Méfiez-vous des outils qui imposent une démo commerciale avant tout essai.",
+      },
+      {
+        question: "Peut-on relire la newsletter avant qu'elle parte à son équipe ?",
+        answer:
+          "C'est possible chez Sorell dès le plan Pro : la newsletter arrive en brouillon, vous la relisez, vous modifiez ce que vous voulez, puis vous validez l'envoi. Rien ne part en votre nom sans votre accord. C'est un point à vérifier systématiquement quand la newsletter est diffusée à une équipe ou à des clients.",
+      },
+    ],
   },
   {
     slug: "soly-assistant-ia-newsletter",
@@ -203,11 +249,67 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <p>Nous avons testé et comparé les principales solutions du marché pour vous aider à faire le bon choix.</p>
 
+      <h2>Comparatif en un coup d'oeil</h2>
+      <p>La question qui départage réellement ces outils n'est pas leur prix, mais celle-ci : <strong>qui lit et trie l'information, vous ou l'outil ?</strong> C'est ce que résume ce tableau.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Outil</th>
+              <th>Ce qu'il fait</th>
+              <th>Qui lit et trie</th>
+              <th>Adapté à</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Sorell</th>
+              <td>Cherche, sélectionne, rédige et envoie le briefing par email</td>
+              <td>L'outil</td>
+              <td>Dirigeants et équipes B2B sans service veille</td>
+            </tr>
+            <tr>
+              <th>Feedly, Inoreader</th>
+              <td>Agrègent des flux RSS dans une interface à consulter</td>
+              <td>Vous</td>
+              <td>Ceux qui aiment lire beaucoup et trier eux-mêmes</td>
+            </tr>
+            <tr>
+              <th>Sindup, Meltwater, Digimind</th>
+              <td>Plateformes de veille et d'analyse média complètes</td>
+              <td>Un veilleur dédié</td>
+              <td>Grands comptes avec une équipe et un budget dédiés</td>
+            </tr>
+            <tr>
+              <th>Google Alerts</th>
+              <td>Envoie des alertes brutes par mot-clé, sans tri ni synthèse</td>
+              <td>Vous</td>
+              <td>Surveiller un nom précis, gratuitement</td>
+            </tr>
+            <tr>
+              <th>ChatGPT</th>
+              <td>Répond quand vous lui demandez, à chaque fois</td>
+              <td>Vous devez y penser</td>
+              <td>Recherches ponctuelles</td>
+            </tr>
+            <tr>
+              <th>Substack, Beehiiv, Mailchimp</th>
+              <td>Permettent d'écrire et d'envoyer votre propre newsletter</td>
+              <td>Vous écrivez tout</td>
+              <td>Créateurs et marketeurs qui produisent du contenu</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Cette distinction explique la plupart des déceptions : beaucoup d'outils présentés comme des solutions de veille sont en réalité des outils de lecture ou d'envoi. Ils déplacent le travail, ils ne le suppriment pas.</p>
+
       <h2>1. Sorell - La newsletter sectorielle 100% automatique</h2>
-      <p><strong>Prix :</strong> Gratuit (1 newsletter/mois) | Pro à 19€/mois | Business à 49€/mois</p>
+      <p><strong>Prix :</strong> Gratuit (1 newsletter/mois) | Pro à 9,99€/mois | Business à 49€/mois</p>
       <p><strong>Idéal pour :</strong> Dirigeants PME, managers, équipes B2B qui veulent recevoir une veille sectorielle personnalisée sans effort.</p>
       <p>Sorell se distingue par son approche entièrement automatique. Vous décrivez votre activité en quelques lignes (votre secteur, vos concurrents, les sujets qui vous intéressent), et Sorell génère et envoie automatiquement une newsletter chaque semaine. L'outil analyse plus de 147 sources (Les Echos, Bloomberg, Reuters, McKinsey...) et sélectionne les actualités les plus pertinentes pour votre secteur. La génération prend 12 secondes. Aucune action n'est requise après la configuration initiale de 5 minutes.</p>
-      <p><strong>Points forts :</strong> Entièrement automatique, brief personnalisé, multi-destinataires (jusqu'à 25 avec le plan Business), analytics de lecture, personnalisation visuelle (couleurs, logo), 15 jours d'essai gratuit.</p>
+      <p><strong>Points forts :</strong> Entièrement automatique, brief personnalisé, multi-destinataires (jusqu'à 50 avec le plan Business), analytics de lecture, personnalisation visuelle (couleurs, logo), 15 jours d'essai gratuit.</p>
       <p><strong>Site :</strong> <a href="https://sorell.fr">sorell.fr</a></p>
 
       <h2>2. Mailchimp - L'email marketing classique</h2>
@@ -257,7 +359,29 @@ export const BLOG_ARTICLES: BlogArticle[] = [
         <li><a href="/blog/sorell-vs-chatgpt-veille-sectorielle">Sorell vs ChatGPT pour la veille sectorielle</a></li>
         <li><a href="/blog/newsletter-ia-pme-guide-complet">Newsletter IA pour PME : le guide complet</a></li>
       </ul>
-    `
+    `,
+    faq: [
+      {
+        question: "Quel est le meilleur outil pour recevoir une veille sectorielle automatique ?",
+        answer:
+          "Cela dépend de qui doit faire le tri. Les agrégateurs comme Feedly ou Inoreader rassemblent des flux que vous devez lire vous-même. Les plateformes comme Sindup, Meltwater ou Digimind sont conçues pour des équipes de veille dédiées. Sorell se situe à part : l'outil cherche, sélectionne, rédige et envoie le briefing par email, sans intervention. C'est le choix adapté à un dirigeant ou une équipe B2B qui n'a pas de service veille.",
+      },
+      {
+        question: "Quelle est la différence entre un agrégateur RSS et un outil de veille automatique ?",
+        answer:
+          "Un agrégateur RSS comme Feedly ou Inoreader collecte des articles et les affiche dans une interface : le tri, la lecture et la synthèse restent à votre charge. Un outil de veille automatique comme Sorell fait ce travail à votre place et vous livre directement un briefing rédigé par email. L'agrégateur déplace le travail, il ne le supprime pas.",
+      },
+      {
+        question: "Combien coûte un outil de newsletter de veille automatisée ?",
+        answer:
+          "Les tarifs vont de la gratuité à plusieurs centaines d'euros par mois selon le positionnement. Sorell propose un plan gratuit avec une newsletter par mois, un plan Pro à 9,99 euros par mois avec des newsletters illimitées et jusqu'à 10 destinataires, et un plan Business à 49 euros par mois avec jusqu'à 50 destinataires. Les plateformes de veille destinées aux grands comptes se situent sur des budgets nettement supérieurs.",
+      },
+      {
+        question: "Peut-on faire sa veille avec ChatGPT au lieu d'un outil dédié ?",
+        answer:
+          "Oui, techniquement. Vous pouvez demander à ChatGPT de résumer l'actualité de votre secteur et le résultat sera correct. La limite n'est pas la qualité de la réponse mais la régularité : il faut y penser chaque semaine, reformuler la demande et recommencer. Un outil qu'il faut penser à utiliser finit par ne plus être utilisé. Un outil de veille automatique envoie le briefing à heure fixe, que vous y pensiez ou non.",
+      },
+    ],
   },
   {
     slug: "newsletter-automatique-vs-manuelle",
@@ -275,7 +399,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <h2>La newsletter automatique par IA : le processus Sorell</h2>
       <p>Avec un outil comme Sorell, la veille est entièrement automatisée. L'IA analyse plus de 147 sources en temps réel, sélectionne les actualités pertinentes pour votre secteur et génère un briefing éditorial complet en 12 secondes. La newsletter est envoyée automatiquement à votre équipe au jour et à l'heure de votre choix.</p>
-      <p><strong>Coût réel :</strong> 19€/mois pour le plan Pro, soit 228€/an. Économie : 6 972€/an par rapport à un manager, ou 6 972€/an par rapport à un stagiaire.</p>
+      <p><strong>Coût réel :</strong> 9,99€/mois pour le plan Pro, soit environ 120€/an. À comparer aux 7 200€/an d'un stagiaire rémunéré au minimum légal pour faire la même veille.</p>
 
       <h2>Comparaison point par point</h2>
       <p><strong>Temps de préparation :</strong> Manuel = 3-4h/semaine | Automatique = 5 minutes de configuration unique</p>
@@ -330,7 +454,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>C'est tout. Vous n'avez plus rien à faire. Sorell enverra automatiquement votre newsletter au créneau choisi. Vous pouvez modifier votre configuration à tout moment - les changements sont pris en compte dès la prochaine newsletter.</p>
 
       <p><strong>Avec le plan gratuit :</strong> 1 newsletter par mois, 1 destinataire, thématiques prédéfinies.</p>
-      <p><strong>Avec le plan Pro (19€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique + aperçu, analytics.</p>
+      <p><strong>Avec le plan Pro (9,99€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique, aperçu et relecture avant envoi, analytics.</p>
       <p><strong>Avec le plan Business (49€/mois) :</strong> Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle.</p>
 
       <p><a href="https://sorell.fr">Commencez maintenant</a> - 15 jours d'essai Pro gratuit.</p>
@@ -364,7 +488,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>Sorell est conçu spécifiquement pour la veille sectorielle automatique. Vous configurez votre newsletter une fois en 5 minutes, et l'outil fait tout le reste :</p>
       <p><strong>100% automatique :</strong> Après la configuration, Sorell génère et envoie la newsletter au jour et à l'heure de votre choix. Aucune action requise.</p>
       <p><strong>Vraies sources web :</strong> Sorell utilise une technologie de recherche web intégrée qui analyse 147+ sources en temps réel. Chaque article contient un lien cliquable vers la source originale.</p>
-      <p><strong>Envoi à l'équipe :</strong> La newsletter est envoyée directement par email à vos collaborateurs (jusqu'à 25 avec le plan Business).</p>
+      <p><strong>Envoi à l'équipe :</strong> La newsletter est envoyée directement par email à vos collaborateurs (jusqu'à 50 avec le plan Business).</p>
       <p><strong>Analytics :</strong> Vous savez qui ouvre la newsletter et quels articles génèrent le plus de clics.</p>
 
       <h2>Comparaison directe</h2>
@@ -374,7 +498,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p><strong>Distribution :</strong> ChatGPT = Copier-coller | Sorell = Envoi automatique à 50 personnes</p>
       <p><strong>Analytics :</strong> ChatGPT = Aucun | Sorell = Taux d'ouverture, clics, articles populaires</p>
       <p><strong>Personnalisation visuelle :</strong> ChatGPT = Non | Sorell = Couleurs, logo personnalisé</p>
-      <p><strong>Prix :</strong> ChatGPT Plus = 20$/mois | Sorell Pro = 19€/mois (avec 15 jours d'essai gratuit)</p>
+      <p><strong>Prix :</strong> ChatGPT Plus = 20$/mois | Sorell Pro = 9,99€/mois (avec 15 jours d'essai gratuit)</p>
 
       <h2>Quand utiliser ChatGPT ?</h2>
       <p>ChatGPT reste un excellent outil pour des recherches ponctuelles, des analyses approfondies sur un sujet précis, ou de la rédaction de contenu. Pour la veille, il peut compléter Sorell en vous permettant d'approfondir un sujet mentionné dans votre newsletter.</p>
@@ -411,7 +535,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <h2>Pourquoi une PME devrait s'y intéresser ?</h2>
       <p><strong>Gain de temps :</strong> Une veille manuelle prend 2-4 heures par semaine. Une newsletter IA prend 5 minutes de configuration unique.</p>
-      <p><strong>Coût réduit :</strong> Un stagiaire chargé de la veille coûte 600€/mois minimum. Un outil comme Sorell coûte 19€/mois.</p>
+      <p><strong>Coût réduit :</strong> Un stagiaire chargé de la veille coûte 600€/mois minimum. Un outil comme Sorell coûte 9,99€/mois.</p>
       <p><strong>Régularité :</strong> Pas d'oubli, pas d'absence, pas de vacances. La newsletter arrive chaque semaine au même jour et à la même heure.</p>
       <p><strong>Couverture :</strong> L'IA analyse 147+ sources simultanément. Un humain en parcourt 5-10 au maximum.</p>
       <p><strong>Distribution :</strong> Toute l'équipe reçoit le même briefing. Fini les emails forwarded avec "FYI" en objet.</p>
@@ -419,7 +543,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <h2>Combien ça coûte ?</h2>
       <p>Les prix varient selon les outils, mais pour Sorell, la grille est simple :</p>
       <p><strong>Gratuit :</strong> 1 newsletter par mois, 1 destinataire, thématiques prédéfinies. Parfait pour tester.</p>
-      <p><strong>Pro (19€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique + aperçu, analytics. Idéal pour un dirigeant ou un indépendant.</p>
+      <p><strong>Pro (9,99€/mois) :</strong> Newsletters illimitées, 10 destinataires, thématiques et sources au choix, historique, aperçu et relecture avant envoi, analytics. Idéal pour un dirigeant ou un indépendant.</p>
       <p><strong>Business (49€/mois) :</strong> Newsletters illimitées, 50 destinataires, logo personnalisé, fréquence quotidienne à mensuelle. Conçu pour les équipes.</p>
       <p>Tous les plans payants incluent 15 jours d'essai gratuit.</p>
 
@@ -645,6 +769,20 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <p>Les entreprises qui pratiquent une veille sectorielle régulière identifient les opportunités commerciales plus tôt, anticipent les changements réglementaires, adaptent leur offre aux nouvelles attentes du marché et détectent les menaces concurrentielles avant qu'elles ne deviennent critiques.</p>
 
       <h2>Les 4 types de veille sectorielle</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Type de veille</th><th>Ce que vous surveillez</th><th>Secteurs où elle est critique</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Technologique</th><td>Innovations, brevets, R&D</td><td>Industrie, santé, tech</td></tr>
+            <tr><th>Concurrentielle</th><td>Produits, prix, recrutements, partenariats</td><td>Tous les secteurs</td></tr>
+            <tr><th>Réglementaire</th><td>Lois, normes, obligations à venir</td><td>Finance, santé, agroalimentaire</td></tr>
+            <tr><th>Commerciale</th><td>Marché, clients, appels d'offres</td><td>B2B, services, conseil</td></tr>
+          </tbody>
+        </table>
+      </div>
       <p><strong>Veille technologique :</strong> surveiller les innovations, brevets, nouvelles technologies et R&D dans votre secteur. Essentielle dans l'industrie, la santé et la tech.</p>
 
       <p><strong>Veille concurrentielle :</strong> suivre les mouvements de vos concurrents. Produits, prix, recrutements, partenariats, communication. Indispensable dans tous les secteurs.</p>
@@ -668,6 +806,20 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       <h2>Veille sectorielle manuelle vs automatisée</h2>
       <p>La veille manuelle offre un contrôle total mais demande 2 à 5 heures par semaine. Peu de dirigeants maintiennent ce rythme au-delà de quelques mois.</p>
 
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>Veille manuelle</th><th>Veille automatisée</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Temps par semaine</th><td>2 à 5 heures</td><td>Quelques minutes de lecture</td></tr>
+            <tr><th>Ce que vous faites</th><td>Chercher, lire, trier, résumer</td><td>Lire le briefing et décider</td></tr>
+            <tr><th>Risque principal</th><td>L'abandon au bout de quelques mois</td><td>Dépendre de la qualité des sources</td></tr>
+            <tr><th>Contrôle éditorial</th><td>Total</td><td>Cadré par votre brief, modifiable à tout moment</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <p>La veille automatisée par IA réduit ce temps à quelques minutes : vous recevez directement les informations pertinentes, triées et résumées. Vous gardez le temps d'analyse et de décision, l'IA se charge de la collecte.</p>
 
       <p>Sorell combine les deux approches : l'IA collecte et structure l'information, vous définissez les sujets et la fréquence. Votre veille sectorielle arrive dans votre boîte mail sans que vous ayez à lever le petit doigt.</p>
@@ -683,7 +835,29 @@ export const BLOG_ARTICLES: BlogArticle[] = [
         <li><a href="/blog/newsletter-automatique-vs-manuelle">Newsletter automatique vs manuelle</a></li>
         <li><a href="/blog/veille-strategique-b2b-meilleures-sources">Les 10 meilleures sources pour une veille stratégique B2B</a></li>
       </ul>
-    `
+    `,
+    faq: [
+      {
+        question: "Combien de temps faut-il consacrer à sa veille sectorielle ?",
+        answer:
+          "Une veille manuelle sérieuse demande 2 à 5 heures par semaine : chercher les sources, lire, trier, résumer. C'est le principal motif d'abandon, car peu de dirigeants tiennent ce rythme au-delà de quelques mois. Une veille automatisée ramène ce temps à quelques minutes de lecture, l'outil se chargeant de la collecte et de la synthèse.",
+      },
+      {
+        question: "Comment faire sa veille sectorielle quand on n'a pas le temps ?",
+        answer:
+          "La seule approche qui tient dans la durée est celle qui ne repose pas sur votre discipline. Concrètement : décrire une fois votre activité et les sujets à suivre, puis recevoir automatiquement un briefing à date fixe. Tout système qui vous demande de penser à le consulter finit par être abandonné, quelle que soit sa qualité.",
+      },
+      {
+        question: "Quelles sont les meilleures sources pour une veille sectorielle ?",
+        answer:
+          "Les sources de référence dépendent du secteur, mais un socle revient souvent : Les Echos, Bloomberg, Reuters pour l'économie et les marchés, la presse spécialisée de votre métier, et les publications réglementaires officielles quand votre activité y est soumise. Le critère qui compte davantage que la liste elle-même : pouvoir remonter à l'article d'origine pour vérifier l'information.",
+      },
+      {
+        question: "Peut-on automatiser complètement sa veille sectorielle ?",
+        answer:
+          "La collecte, le tri et la synthèse s'automatisent aujourd'hui de bout en bout. L'analyse et la décision, non : c'est votre connaissance du terrain qui donne du sens à l'information. Une veille automatisée bien réglée vous rend le temps de la réflexion en supprimant celui de la recherche.",
+      },
+    ],
   },
   {
     slug: "veille-strategique-b2b-meilleures-sources",

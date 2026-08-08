@@ -81,3 +81,58 @@ main,
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
+
+/* ============================================================
+   CONTENU DES ARTICLES DE BLOG (.blog-prose)
+   Le contenu vient de lib/blog-articles.ts en HTML brut. Les tableaux
+   comparatifs sont le format que les moteurs génératifs extraient le mieux :
+   ils doivent donc être lisibles, et surtout défiler DANS leur conteneur pour
+   que la page ne parte jamais en scroll horizontal sur mobile.
+   ============================================================ */
+.blog-prose .table-wrap {
+  overflow-x: auto;
+  margin: 24px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 520px;
+}
+
+.blog-prose thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.blog-prose tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.blog-prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.blog-prose tbody th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.blog-prose tbody tr:last-child th {
+  border-bottom: none;
+}

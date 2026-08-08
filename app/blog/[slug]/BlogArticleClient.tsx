@@ -72,6 +72,7 @@ export default function BlogArticleClient() {
         </div>
 
         <div
+          className="blog-prose"
           style={{
             fontSize: 15,
             color: "var(--text-secondary)",
@@ -80,6 +81,26 @@ export default function BlogArticleClient() {
           }}
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
+
+        {article.faq && article.faq.length > 0 && (
+          <section style={{ marginTop: 40 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>
+              Questions fréquentes
+            </h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {article.faq.map((item) => (
+                <div key={item.question}>
+                  <h3 style={{ fontSize: 15.5, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>
+                    {item.question}
+                  </h3>
+                  <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+                    {item.answer}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="blog-article-cta" style={{
           marginTop: 40,
