@@ -104,7 +104,7 @@ export default function RootLayout({
                     "postalCode": "13090",
                     "addressCountry": "FR"
                   },
-                  "sameAs": []
+                  "sameAs": ["https://www.linkedin.com/company/sorell-app"]
                 },
                 {
                   "@type": "SoftwareApplication",
