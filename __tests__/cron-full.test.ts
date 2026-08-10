@@ -18,7 +18,7 @@ vi.mock("@/lib/supabase-admin", () => ({
       if (table === "newsletter_config") {
         return {
           select: () => ({
-            not: () => mockConfigsSelect(),
+            not: () => ({ order: () => mockConfigsSelect() }),
           }),
           update: (...args: unknown[]) => mockConfigUpdate(...args),
         };
@@ -368,9 +368,9 @@ describe("GET /api/cron", () => {
     expect(data.results[0].status).toBe("sent");
   });
 
-  it("does not catch up beyond the 3-hour window", async () => {
+  it("does not catch up beyond the 12-hour window", async () => {
     const config = makeConfigForNow();
-    config.send_hour = (config.send_hour as number) - 4;
+    config.send_hour = (config.send_hour as number) - 13;
     setupHappyPath(config);
 
     const request = new Request("http://localhost/api/cron", {

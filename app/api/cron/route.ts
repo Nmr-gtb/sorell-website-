@@ -33,10 +33,16 @@ export async function GET(request: Request) {
   const currentDay = franceTime.getDay();
   const currentDate = franceTime.getDate();
 
+  // Ordre d'équité : servir d'abord ceux qui attendent depuis le plus longtemps
+  // (last_sent_at le plus ancien, les jamais-servis en tête). Sans ce tri,
+  // l'ordre était fixe : les mêmes configs en fin de liste étaient
+  // systématiquement sautées les jours de pointe (budget 55s par invocation),
+  // et ne recevaient jamais leur newsletter.
   const { data: configs, error } = await supabaseAdmin
     .from("newsletter_config")
     .select("*")
-    .not("topics", "eq", "[]");
+    .not("topics", "eq", "[]")
+    .order("last_sent_at", { ascending: true, nullsFirst: true });
 
   if (error || !configs?.length) {
     if (error) console.error("[cron] load configs", error);
@@ -91,7 +97,13 @@ export async function GET(request: Request) {
   // accepte les CATCHUP_HOURS heures suivantes : les garde-fous existants
   // (last_sent_at du jour, pending_draft_id, limite mensuelle) empêchent tout
   // double envoi pour ceux déjà servis.
-  const CATCHUP_HOURS = 3;
+  //
+  // Fenêtre large (12h) : une génération réelle (recherche web incluse) tient
+  // rarement plus d'un envoi dans le budget de 55s d'une invocation. Un jour de
+  // pointe (1er/15, tous les bimensuels à la même heure), 3h ne laissaient pas
+  // assez d'invocations pour vider la file et des utilisateurs étaient sautés
+  // jusqu'à l'échéance suivante. 12h couvre la journée sans envoi nocturne.
+  const CATCHUP_HOURS = 12;
 
   // Budget temps : ne démarrer une nouvelle génération que si elle a le temps
   // de finir avant le timeout Vercel (60s). Les utilisateurs différés seront

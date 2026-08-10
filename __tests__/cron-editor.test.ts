@@ -25,7 +25,7 @@ vi.mock("@/lib/supabase-admin", () => ({
       if (table === "newsletter_config") {
         return {
           select: () => ({
-            not: () => mockConfigsSelect(),
+            not: () => ({ order: () => mockConfigsSelect() }),
           }),
           update: (...args: unknown[]) => mockConfigUpdate(...args),
         };

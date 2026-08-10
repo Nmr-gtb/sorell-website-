@@ -16,7 +16,7 @@ vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: () => ({
       select: () => ({
-        not: vi.fn().mockResolvedValue({ data: [], error: null }),
+        not: () => ({ order: vi.fn().mockResolvedValue({ data: [], error: null }) }),
         in: vi.fn().mockResolvedValue({ data: [] }),
       }),
     }),
