@@ -7,6 +7,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import ChatWidgetWrapper from "@/components/ChatWidgetWrapper";
 import CookieBanner from "@/components/CookieBanner";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -193,6 +194,7 @@ export default function RootLayout({
               </div>
               <ChatWidgetWrapper />
               <CookieBanner />
+              <GoogleAnalytics />
               <AttributionTracker />
             </LanguageProvider>
           </AuthProvider>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { CONSENT_EVENT } from "@/components/GoogleAnalytics";
 
 type ConsentChoice = "accepted" | "refused";
 
@@ -27,6 +28,13 @@ export default function CookieBanner() {
       localStorage.setItem(STORAGE_KEY, choice);
     } catch {
       // localStorage indisponible
+    }
+    // Prévient GoogleAnalytics du choix pour démarrer/arrêter la mesure sans
+    // recharger la page.
+    try {
+      window.dispatchEvent(new Event(CONSENT_EVENT));
+    } catch {
+      // window indisponible (SSR)
     }
     setVisible(false);
   };
