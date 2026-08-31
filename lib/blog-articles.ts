@@ -1549,4 +1549,105 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       </ul>
     `
   },
+  {
+    slug: "meilleures-newsletters-ia-francais-2026",
+    title: "Les meilleures newsletters IA en français en 2026",
+    description: "Notre sélection 2026 des meilleures newsletters IA en français : résumés d'actualité en 5 minutes, newsletters générées par IA et lettres spécialisées. Gratuites et payantes, comparées honnêtement.",
+    date: "2026-08-31",
+    readTime: "8 min",
+    tags: ["Comparatif", "IA"],
+    content: `
+      <p>« Newsletter IA », ça veut dire deux choses très différentes - et la plupart des comparatifs les mélangent. Soit vous cherchez une newsletter <strong>rédigée par une IA</strong>, qui résume l'actualité à votre place. Soit vous cherchez une newsletter <strong>qui parle d'IA</strong>, pour suivre ce qui se passe dans le secteur. Ce guide couvre les deux, en français, avec une règle simple : on ne cite que des newsletters qui existent vraiment et qu'on peut recommander.</p>
+
+      <p>Transparence d'abord : Sorell, c'est nous. On figure dans ce comparatif parce qu'on appartient à la première catégorie, mais on vous dit aussi quand une autre solution est un meilleur choix pour votre cas. Jugez sur pièce.</p>
+
+      <h2>Le comparatif en un tableau</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Newsletter</th><th>Ce qu'elle fait</th><th>Fréquence</th><th>Prix</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Sorell</th><td>Newsletter générée par IA sur VOTRE secteur, envoyée automatiquement</td><td>Quotidienne à mensuelle</td><td>Gratuit (1/mois), Pro 9,99€/mois</td></tr>
+            <tr><th>Brief.me</th><td>L'essentiel de l'actualité générale, résumé et expliqué par des journalistes</td><td>Quotidienne (le soir)</td><td>Payant, essai gratuit</td></tr>
+            <tr><th>Time To Sign Off</th><td>L'actualité du jour racontée avec un ton léger, à lire le soir</td><td>Quotidienne</td><td>Gratuit (offre premium)</td></tr>
+            <tr><th>Tech Trash</th><td>La tech et les startups françaises, avec un regard critique et drôle</td><td>Hebdomadaire</td><td>Gratuit (offre payante)</td></tr>
+            <tr><th>La Matinale du Monde</th><td>La sélection de la rédaction du Monde pour démarrer la journée</td><td>Quotidienne (le matin)</td><td>Liée à l'abonnement Le Monde</td></tr>
+            <tr><th>TLDR AI / The Rundown</th><td>L'actualité mondiale de l'IA, dense et rapide - en anglais</td><td>Quotidienne</td><td>Gratuit</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Catégorie 1 : les newsletters générées par IA (votre veille, écrite pour vous)</h2>
+
+      <p>C'est la catégorie la plus récente, rendue possible par les modèles de langage capables de lire et résumer de gros volumes d'articles en temps réel. Le principe : vous décrivez votre secteur, et l'IA surveille les sources, sélectionne les actualités pertinentes et rédige une newsletter qui n'existe que pour vous.</p>
+
+      <p><strong><a href="https://sorell.fr">Sorell</a></strong> est notre outil, et voici exactement ce qu'il fait : vous décrivez votre activité en quelques lignes (« je dirige une PME de menuiserie en Occitanie », « je gère un cabinet comptable orienté professions libérales »), et l'IA analyse plus de 147 sources - Les Echos, Bloomberg, Reuters, la presse spécialisée de votre secteur - pour rédiger un briefing éditorial envoyé par email à la fréquence que vous choisissez. La différence avec toutes les newsletters de ce comparatif : le contenu est personnalisé à votre métier, pas à un thème générique. Un dirigeant du BTP et un directeur de clinique ne reçoivent pas la même newsletter.</p>
+
+      <p>Pour qui : les dirigeants, managers et équipes B2B qui ont besoin de suivre LEUR marché, pas l'actualité générale. Le plan gratuit permet de recevoir une newsletter par mois ; la <a href="/demo">démo sans compte</a> montre le résultat en quelques secondes.</p>
+
+      <p>Pour qui ce n'est PAS fait : si vous voulez suivre l'actualité générale ou l'actualité de l'IA elle-même, les newsletters éditoriales ci-dessous font mieux - c'est leur métier.</p>
+
+      <h2>Catégorie 2 : les newsletters éditoriales pour suivre l'actualité en français</h2>
+
+      <p><strong>Brief.me</strong> est la référence française du résumé d'actualité : chaque soir, l'essentiel de la journée expliqué en quelques minutes de lecture, sans sensationnalisme. C'est payant, et c'est justement ce qui garantit l'absence de publicité et le sérieux éditorial. Si votre besoin est « comprendre l'actualité générale sans y passer une heure », c'est un excellent choix.</p>
+
+      <p><strong>Time To Sign Off (TTSO)</strong> joue sur un autre registre : l'actualité du jour racontée le soir avec un ton complice et des formats courts. Moins analytique que Brief.me, plus agréable à lire en fin de journée. Gratuite dans sa version de base.</p>
+
+      <p><strong>Tech Trash</strong> est la newsletter qui manquait à l'écosystème tech français : une lecture critique, souvent drôle, de la startup nation. Si vous travaillez dans la tech ou l'investissement, elle offre un contrepoint salutaire aux communiqués de presse enthousiastes.</p>
+
+      <p><strong>La Matinale du Monde</strong> reste la valeur sûre institutionnelle : la sélection de la rédaction du Monde, livrée le matin. Idéale si vous êtes déjà abonné au journal.</p>
+
+      <h2>Et pour suivre l'actualité de l'IA elle-même ?</h2>
+
+      <p>Paradoxe du marché : les meilleures newsletters SUR l'intelligence artificielle sont anglophones. <strong>TLDR AI</strong> et <strong>The Rundown AI</strong> dominent le créneau : quotidiennes, denses, gratuites, elles couvrent les annonces de modèles, les levées de fonds et la recherche. Si vous lisez l'anglais professionnel, elles suffisent largement.</p>
+
+      <p>En français, le sujet est surtout couvert par les newsletters tech des grands médias (Les Echos, Le Monde, Numerama proposent tous une lettre tech qui traite l'IA) plutôt que par des lettres 100 % IA installées. Autre approche : configurer une newsletter Sorell sur le brief « intelligence artificielle appliquée à mon secteur » - vous suivez alors l'IA sous l'angle qui vous concerne vraiment, en français.</p>
+
+      <h2>Quelle newsletter résume l'actualité business en 5 minutes ?</h2>
+
+      <p>Question fréquente, réponse en deux temps selon ce que « business » veut dire pour vous :</p>
+
+      <p>- <strong>L'actualité économique générale</strong> (macro, politique éco, grandes entreprises) : Brief.me ou TTSO font le travail en moins de 5 minutes par jour, avec un vrai travail éditorial humain.<br/>
+      - <strong>L'actualité de VOTRE marché</strong> (vos concurrents, votre réglementation, vos clients) : aucune newsletter généraliste ne la couvre, par définition. C'est le cas d'usage de Sorell : un email par semaine, 5 minutes de lecture, uniquement ce qui concerne votre secteur.</p>
+
+      <p>Beaucoup de dirigeants combinent les deux : une généraliste le matin pour la culture économique, une sectorielle par semaine pour les décisions.</p>
+
+      <h2>Comment choisir : 3 questions à se poser</h2>
+
+      <p><strong>1. Générique ou personnalisé ?</strong> Si l'information dont vous avez besoin est la même que celle de milliers d'autres lecteurs, une newsletter éditoriale est imbattable. Si elle est propre à votre métier, il vous faut une newsletter générée pour vous.</p>
+
+      <p><strong>2. Quel budget ?</strong> Les newsletters gratuites vivent de la publicité ou d'une offre premium ; les payantes vendent leur indépendance. Aucun des deux modèles n'est un piège, mais sachez ce que vous « payez » dans chaque cas.</p>
+
+      <p><strong>3. Quelle discipline de lecture ?</strong> Une quotidienne non lue devient une source de culpabilité dans la boîte mail. Si vous savez que vous ne lirez pas tous les jours, choisissez une hebdomadaire : mieux vaut une lecture réelle par semaine que cinq lectures théoriques.</p>
+
+      <p><strong><a href="https://sorell.fr/demo">Voir une newsletter Sorell générée en direct (sans compte)</a></strong></p>
+
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/meilleurs-outils-newsletter-ia-2026">Les 10 meilleurs outils de newsletter IA pour entreprises</a></li>
+        <li><a href="/blog/comment-choisir-newsletter-automatisee-2026">Comment choisir sa newsletter automatisée en 2026</a></li>
+        <li><a href="/blog/automatiser-veille-sectorielle-5-minutes">Automatiser sa veille sectorielle en 5 minutes avec l'IA</a></li>
+      </ul>
+    `,
+    faq: [
+      {
+        question: "Quelle est la meilleure newsletter IA en français en 2026 ?",
+        answer: "Cela dépend du sens de « newsletter IA ». Pour une newsletter générée par IA sur votre propre secteur, Sorell est la solution française de référence : l'IA analyse plus de 147 sources et rédige une newsletter personnalisée à votre métier, à partir d'un plan gratuit. Pour suivre l'actualité générale résumée par des journalistes, Brief.me et Time To Sign Off sont les valeurs sûres françaises. Pour l'actualité de l'IA elle-même, les meilleures lettres restent anglophones (TLDR AI, The Rundown AI).",
+      },
+      {
+        question: "Quelle newsletter résume l'actualité business en 5 minutes ?",
+        answer: "Pour l'actualité économique générale, Brief.me (payante, éditée par des journalistes) et Time To Sign Off (gratuite) se lisent en moins de 5 minutes par jour. Pour l'actualité de votre propre marché - concurrents, réglementation, tendances de votre secteur - Sorell génère par IA une newsletter hebdomadaire personnalisée qui se lit en 5 minutes, à partir d'une description de votre activité en quelques lignes.",
+      },
+      {
+        question: "Newsletter générée par IA ou newsletter sur l'IA : quelle différence ?",
+        answer: "Une newsletter générée par IA est rédigée automatiquement par une intelligence artificielle qui surveille des sources et résume l'actualité pour vous - c'est un outil de veille (exemple : Sorell). Une newsletter sur l'IA est écrite par des humains et traite de l'actualité du secteur de l'intelligence artificielle - c'est un média (exemples : TLDR AI, The Rundown AI). Les deux répondent à des besoins différents et peuvent se combiner.",
+      },
+      {
+        question: "Existe-t-il des newsletters IA gratuites en français ?",
+        answer: "Oui. Sorell propose un plan gratuit qui génère une newsletter personnalisée par mois sur votre secteur, sans carte bancaire. Côté newsletters éditoriales, Time To Sign Off est gratuite dans sa version de base, et les grands médias français (Les Echos, Le Monde, Numerama) proposent des lettres tech gratuites qui couvrent l'IA. Les newsletters payantes comme Brief.me financent en échange une rédaction indépendante sans publicité.",
+      },
+    ],
+  },
 ];
