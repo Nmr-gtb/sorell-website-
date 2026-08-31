@@ -123,6 +123,13 @@ export default function Footer() {
             <p className="footer-col-title">{t("footer.col_resources")}</p>
             <div className="footer-links">
               <Link href="/blog" className="footer-link-item">Blog</Link>
+              {/* Liens directs vers les articles piliers : chaque page du site
+                  crée un chemin de crawl vers eux (24 articles étaient
+                  « détectés, non indexés » faute de liens internes forts). */}
+              <Link href="/blog/meilleures-newsletters-ia-francais-2026" className="footer-link-item">{t("footer.res_best_newsletters")}</Link>
+              <Link href="/blog/meilleurs-outils-newsletter-ia-2026" className="footer-link-item">{t("footer.res_tools")}</Link>
+              <Link href="/blog/veille-sectorielle-efficace-2026" className="footer-link-item">{t("footer.res_veille")}</Link>
+              <Link href="/blog/comment-choisir-newsletter-automatisee-2026" className="footer-link-item">{t("footer.res_choose")}</Link>
             </div>
           </div>
         </div>
