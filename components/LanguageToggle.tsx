@@ -22,6 +22,12 @@ export default function LanguageToggle() {
         fontSize: 12,
         fontWeight: 600,
         height: 28,
+        // Indispensable : `overflow: hidden` met la taille minimale automatique
+        // d'un élément flex à zéro. Sans flexShrink, la barre de navigation
+        // comprimait ce bouton sous la largeur de son contenu et « EN »
+        // débordait du cadre arrondi.
+        flexShrink: 0,
+        whiteSpace: "nowrap",
       }}
     >
       <span

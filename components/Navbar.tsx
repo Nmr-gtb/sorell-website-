@@ -126,7 +126,7 @@ export default function Navbar() {
         .nav-desktop { display: none !important; }
         .nav-mobile-controls { display: flex !important; }
         .nav-mobile-drawer, .nav-mobile-overlay { display: block; }
-        @media (min-width: 900px) {
+        @media (min-width: 1100px) {
           .nav-desktop { display: flex !important; }
           .nav-mobile-controls { display: none !important; }
           .nav-mobile-drawer, .nav-mobile-overlay { display: none !important; }
@@ -178,7 +178,7 @@ export default function Navbar() {
           }}
         >
           {/* Logo */}
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: "1 0 auto" }}>
             <SorellLogo />
           </div>
 
@@ -196,6 +196,7 @@ export default function Navbar() {
                   color: isActive(href) ? "var(--text)" : "var(--text-secondary)",
                   transition: "color 0.15s ease",
                   textDecoration: "none",
+                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.color = "var(--text)";
@@ -212,7 +213,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop right */}
-          <div style={{ flex: 1, alignItems: "center", gap: 18, justifyContent: "flex-end", marginLeft: 28 }} className="nav-desktop">
+          <div style={{ flex: "1 0 auto", alignItems: "center", gap: 18, justifyContent: "flex-end", marginLeft: 28 }} className="nav-desktop">
             <LanguageToggle />
             <ThemeToggle />
             <Link
@@ -225,6 +226,8 @@ export default function Navbar() {
                 color: "var(--text-secondary)",
                 textDecoration: "none",
                 transition: "color 0.15s ease",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = "var(--text)";
@@ -238,7 +241,7 @@ export default function Navbar() {
             <Link
               href="/connexion"
               className="btn-primary nav-cta-btn"
-              style={{ padding: "7px 18px", fontSize: "0.875rem" }}
+              style={{ padding: "7px 18px", fontSize: "0.875rem", whiteSpace: "nowrap", flexShrink: 0 }}
             >
               {t("nav.start")}
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
