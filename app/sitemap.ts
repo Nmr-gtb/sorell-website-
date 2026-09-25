@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { BLOG_ARTICLES } from "@/lib/blog-articles";
+import { getPublishedArticles } from "@/lib/blog-articles";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -21,8 +21,17 @@ const LAST_MODIFIED: Record<string, string> = {
   "/confidentialite": "2026-07-19",
 };
 
+/**
+ * Régénération horaire : le sitemap doit inclure l'article du jour dès sa
+ * date de publication, sans redéploiement. Sans ça, Google ne découvrirait
+ * les nouveaux articles qu'au prochain deploy.
+ */
+export const revalidate = 3600;
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const blogEntries: MetadataRoute.Sitemap = BLOG_ARTICLES.map((article) => ({
+  const publishedArticles = getPublishedArticles();
+
+  const blogEntries: MetadataRoute.Sitemap = publishedArticles.map((article) => ({
     url: `${SITE_URL}/blog/${article.slug}`,
     lastModified: new Date(article.date),
     changeFrequency: "monthly",
@@ -31,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // L'index du blog date du dernier article publié : la valeur se met à jour
   // toute seule à chaque nouvel article.
-  const lastArticleDate = BLOG_ARTICLES.reduce((latest, article) => {
+  const lastArticleDate = publishedArticles.reduce((latest, article) => {
     const date = new Date(article.date);
     return date > latest ? date : latest;
   }, new Date(0));

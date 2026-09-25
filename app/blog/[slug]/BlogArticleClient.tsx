@@ -1,28 +1,22 @@
 "use client";
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BLOG_ARTICLES } from "@/lib/blog-articles";
+import type { BlogArticle } from "@/lib/blog-articles";
 
-export default function BlogArticleClient() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const article = BLOG_ARTICLES.find((a) => a.slug === slug);
-
-  if (!article) {
-    return (
-      <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
-        <Navbar />
-        <div style={{ maxWidth: 700, margin: "0 auto", padding: "120px 1.5rem 60px", textAlign: "center" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text)" }}>Article introuvable</h1>
-          <Link href="/blog" style={{ color: "var(--accent)", marginTop: 16, display: "inline-block" }}>&#8592; Retour au blog</Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
+/**
+ * L'article arrive en props depuis le Server Component parent, qui a déjà
+ * vérifié qu'il est publié (sinon il renvoie un 404). On n'importe plus
+ * BLOG_ARTICLES ici : la recherche par slug côté client court-circuitait le
+ * filtre de date et exposait les articles programmés.
+ */
+export default function BlogArticleClient({
+  article,
+  related,
+}: {
+  article: BlogArticle;
+  related: BlogArticle[];
+}) {
   return (
     <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
       <Navbar />
@@ -97,6 +91,40 @@ export default function BlogArticleClient() {
                     {item.answer}
                   </p>
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Articles liés : donne à Google un chemin de crawl entre les
+            articles. Sans ces liens, un article sorti de la première page
+            de /blog n'est plus atteignable en un clic depuis le site. */}
+        {related.length > 0 && (
+          <section style={{ marginTop: 40 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>
+              À lire aussi
+            </h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {related.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/blog/${item.slug}`}
+                  style={{
+                    textDecoration: "none",
+                    padding: 16,
+                    borderRadius: 10,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    display: "block",
+                  }}
+                >
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", margin: "0 0 4px", lineHeight: 1.4 }}>
+                    {item.title}
+                  </h3>
+                  <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.55 }}>
+                    {item.description}
+                  </p>
+                </Link>
               ))}
             </div>
           </section>

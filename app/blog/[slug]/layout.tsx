@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BLOG_ARTICLES } from "@/lib/blog-articles";
+import { getPublishedArticle } from "@/lib/blog-articles";
 
 interface BlogSlugLayoutProps {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = BLOG_ARTICLES.find((a) => a.slug === slug);
+  const article = getPublishedArticle(slug);
 
   if (!article) {
     return {
@@ -58,7 +58,7 @@ export async function generateMetadata({
 
 export default async function BlogSlugLayout({ children, params }: BlogSlugLayoutProps) {
   const { slug } = await params;
-  const article = BLOG_ARTICLES.find((a) => a.slug === slug);
+  const article = getPublishedArticle(slug);
 
   return (
     <>
