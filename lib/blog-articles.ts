@@ -1654,7 +1654,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-cabinet-conseil",
     title: "Veille sectorielle cabinet de conseil : sources et sujets 2026",
     description: "Veille sectorielle pour un cabinet de conseil : les quatre terrains à couvrir, les sources réelles par secteur et le rythme à tenir sans y passer ses journées.",
-    date: "2026-09-26",
+    date: "2026-09-25",
     readTime: "7 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -1739,7 +1739,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-expert-comptable",
     title: "Veille sectorielle expert-comptable : les sources qui comptent",
     description: "Veille sectorielle expert-comptable : les sources réglementaires et professionnelles à suivre, et comment organiser la diffusion dans un cabinet.",
-    date: "2026-09-27",
+    date: "2026-09-26",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -1825,7 +1825,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-juridique-cabinet-avocats",
     title: "Veille juridique en cabinet d'avocats : sources et organisation",
     description: "Veille juridique en cabinet d'avocats : les sources gratuites et payantes qui comptent, la veille déontologique, et comment la faire circuler en interne.",
-    date: "2026-09-28",
+    date: "2026-09-27",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -1910,7 +1910,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-cabinet-audit",
     title: "Veille sectorielle cabinet d'audit : normes, sources et méthode",
     description: "Veille sectorielle pour un cabinet d'audit : H2A, CNCC, durabilité, secteurs de mandats. Les sources à suivre et comment diffuser l'information en équipe.",
-    date: "2026-09-29",
+    date: "2026-09-28",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -1987,7 +1987,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-rh-recrutement",
     title: "Veille sectorielle RH et recrutement : les sources à suivre",
     description: "Veille sectorielle RH et recrutement : droit social, marché de l'emploi, rémunérations. Les sources fiables et le bon rythme de diffusion aux managers.",
-    date: "2026-09-30",
+    date: "2026-09-29",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2071,7 +2071,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-assurance",
     title: "Veille sectorielle assurance : les sources à suivre en 2026",
     description: "Veille sectorielle assurance : ACPR, EIOPA, ORIAS, presse professionnelle. Les sources à suivre et la méthode pour diffuser l'information à votre équipe.",
-    date: "2026-10-01",
+    date: "2026-09-30",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2155,7 +2155,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-energie",
     title: "Veille sectorielle énergie : les sources à suivre en 2026",
     description: "Veille sectorielle énergie : les sources qui comptent vraiment en 2026, de la CRE aux indices RTE, et comment les suivre sans y passer vos matinées.",
-    date: "2026-10-02",
+    date: "2026-10-01",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2250,7 +2250,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-agroalimentaire",
     title: "Veille sectorielle agroalimentaire : les sources à suivre",
     description: "Veille sectorielle agroalimentaire : les sources réglementaires, sanitaires et commerciales à suivre en 2026, et comment les recevoir sans effort.",
-    date: "2026-10-03",
+    date: "2026-10-02",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2350,7 +2350,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-transport-logistique",
     title: "Veille transport et logistique : les sources à suivre en 2026",
     description: "Veille sectorielle transport logistique : indices CNR, textes sociaux, ZFE, entrepôts ICPE. Les sources qui comptent et comment les suivre sans effort.",
-    date: "2026-10-04",
+    date: "2026-10-03",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2447,7 +2447,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-tourisme-hotellerie",
     title: "Veille tourisme et hôtellerie : les sources à suivre en 2026",
     description: "Veille sectorielle tourisme hôtellerie : classement Atout France, taxe de séjour, meublés, RE2020. Les sources utiles et comment les recevoir chaque semaine.",
-    date: "2026-10-05",
+    date: "2026-10-04",
     readTime: "7 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2547,7 +2547,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-btp-construction",
     title: "Veille sectorielle BTP : les sources à suivre en 2026",
     description: "Veille sectorielle BTP et construction : RE2020, DPE, MaPrimeRénov, REP PMCB, index BT01. Les sources qui comptent et comment les suivre chaque semaine.",
-    date: "2026-10-06",
+    date: "2026-10-05",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2645,7 +2645,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-automobile",
     title: "Veille sectorielle automobile : sources et sujets en 2026",
     description: "Veille sectorielle automobile : fiscalité, normes européennes, ZFE, marché VN et VO. Les sources réelles à suivre, à quelle fréquence, et ce que ça change.",
-    date: "2026-10-07",
+    date: "2026-10-06",
     readTime: "7 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2733,7 +2733,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-tech-saas",
     title: "Veille sectorielle tech et SaaS : les sources à suivre en 2026",
     description: "Veille sectorielle tech et SaaS : conformité, concurrence produit, sécurité et marché. Les sources françaises et les échéances 2026 à ne pas rater.",
-    date: "2026-10-08",
+    date: "2026-10-07",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2822,7 +2822,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-marketing-communication",
     title: "Veille marketing et communication : les sources à suivre",
     description: "Veille sectorielle marketing et communication : régulation publicitaire, CNIL, plateformes et marché. Les sources françaises utiles et le rythme à tenir.",
-    date: "2026-10-09",
+    date: "2026-10-08",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2905,7 +2905,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-education-formation",
     title: "Veille sectorielle formation : les sources à suivre en 2026",
     description: "Veille sectorielle éducation et formation : Qualiopi, CPF, apprentissage, RNCP. Les sources réelles du secteur et les échéances 2026 à mettre au calendrier.",
-    date: "2026-10-10",
+    date: "2026-10-09",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -2991,7 +2991,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-rse-environnement",
     title: "Veille RSE et environnement : les sources à suivre en 2026",
     description: "Veille sectorielle RSE et environnement : CSRD après Omnibus, obligations françaises, questionnaires clients et aides. Les sources utiles à une PME.",
-    date: "2026-10-11",
+    date: "2026-10-10",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -3073,7 +3073,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-retail-commerce",
     title: "Veille sectorielle retail et commerce : les sources en 2026",
     description: "Veille sectorielle retail et commerce : les sources officielles, les fédérations et les sujets réglementaires à suivre en 2026, sans y passer vos soirées.",
-    date: "2026-10-12",
+    date: "2026-10-11",
     readTime: "7 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -3152,7 +3152,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-metallurgie",
     title: "Veille sectorielle métallurgie : les sources à suivre en 2026",
     description: "Veille sectorielle métallurgie : sauvegarde acier, MACF, convention collective IDCC 3248. Les sources réelles et la méthode pour les suivre en 2026.",
-    date: "2026-10-13",
+    date: "2026-10-12",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -3226,7 +3226,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-textile-mode",
     title: "Veille sectorielle textile et mode : les sources en 2026",
     description: "Veille sectorielle textile et mode : loi du 8 juillet 2026, REP Refashion, affichage environnemental, ESPR. Les sources à suivre et la méthode pour s'organiser.",
-    date: "2026-10-14",
+    date: "2026-10-13",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -3300,7 +3300,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-notaires",
     title: "Veille sectorielle notaires : les sources à suivre en 2026",
     description: "Veille sectorielle notaires : droit, fiscalité, conformité LCB-FT et marché immobilier. Les sources qui comptent et comment en faire un actif pour l'office.",
-    date: "2026-10-15",
+    date: "2026-10-14",
     readTime: "6 min",
     tags: ["Veille", "Secteur"],
     content: `
@@ -3374,7 +3374,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-agence-revue-presse",
     title: "Sorell vs agence de revue de presse : laquelle choisir ?",
     description: "Sorell vs agence de revue de presse : deux métiers différents. Les cas où l'agence reste indispensable, ceux où la veille sectorielle automatisée suffit.",
-    date: "2026-10-16",
+    date: "2026-10-15",
     readTime: "6 min",
     tags: ["Newsletter", "Comparatif"],
     content: `
@@ -3452,7 +3452,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-talkwalker",
     title: "Sorell vs Talkwalker : lequel pour votre veille sectorielle ?",
     description: "Sorell vs Talkwalker : l'un écoute ce qui se dit sur votre marque, l'autre vous envoie un briefing sectoriel rédigé. Le comparatif honnête pour choisir.",
-    date: "2026-10-17",
+    date: "2026-10-16",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -3535,7 +3535,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-meltwater",
     title: "Sorell vs Meltwater : lequel pour votre veille sectorielle ?",
     description: "Sorell vs Meltwater : media intelligence sur devis contre briefing sectoriel par email. Ce que chacun fait vraiment et comment trancher sans se tromper.",
-    date: "2026-10-18",
+    date: "2026-10-17",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -3619,7 +3619,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-netvibes",
     title: "Sorell vs Netvibes : que faire depuis la fermeture ?",
     description: "Netvibes grand public a fermé le 2 juin 2025. Sorell vs Netvibes : ce qu'est devenu l'outil, par quoi le remplacer et comment ne plus tout perdre.",
-    date: "2026-10-19",
+    date: "2026-10-18",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -3694,7 +3694,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-inoreader",
     title: "Sorell vs Inoreader : lequel pour votre veille sectorielle ?",
     description: "Sorell vs Inoreader : un lecteur de flux très complet face à un briefing rédigé reçu par email. Le vrai critère de choix est le temps dont vous disposez.",
-    date: "2026-10-20",
+    date: "2026-10-19",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -3782,7 +3782,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-perplexity-veille",
     title: "Sorell vs Perplexity : quelle solution pour votre veille ?",
     description: "Sorell vs Perplexity pour la veille sectorielle : ce que fait réellement chaque outil, les limites de Perplexity en suivi récurrent et comment choisir.",
-    date: "2026-10-21",
+    date: "2026-10-20",
     readTime: "7 min",
     tags: ["Comparatif", "IA"],
     content: `
@@ -3865,7 +3865,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-google-news",
     title: "Sorell vs Google News pour votre veille sectorielle",
     description: "Sorell vs Google News : trois limites précises de l'agrégateur pour une veille professionnelle, et les cas où il reste largement suffisant et gratuit.",
-    date: "2026-10-22",
+    date: "2026-10-21",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -3954,7 +3954,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-substack-veille",
     title: "Sorell vs Substack : publier ou recevoir sa veille ?",
     description: "Sorell vs Substack pour votre veille : l'un sert à publier une newsletter, l'autre à en recevoir une. Fonctions réelles, prix vérifiés et cas d'usage.",
-    date: "2026-10-23",
+    date: "2026-10-22",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4066,7 +4066,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-slack-rss-veille",
     title: "Sorell vs Slack + RSS pour la veille sectorielle",
     description: "Sorell vs Slack et RSS pour la veille : ce que fait vraiment l'app RSS de Slack, ses angles morts, et quand un briefing par e-mail est plus efficace.",
-    date: "2026-10-24",
+    date: "2026-10-23",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4174,7 +4174,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-notion-veille",
     title: "Sorell vs Notion : où faire vivre sa veille interne ?",
     description: "Sorell vs Notion pour la veille : ce que Notion sait faire (et pas), pourquoi les bases de veille meurent, et comment combiner réception et archivage.",
-    date: "2026-10-25",
+    date: "2026-10-24",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4284,7 +4284,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-alerte-linkedin",
     title: "Sorell vs une alerte LinkedIn : que couvre chacun ?",
     description: "Sorell vs alerte LinkedIn : ce que LinkedIn permet vraiment en veille, ses trois angles morts, et les cas où le réseau reste le meilleur choix.",
-    date: "2026-10-26",
+    date: "2026-10-25",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4393,7 +4393,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-brandwatch",
     title: "Sorell vs Brandwatch : mesurer ou être informé ?",
     description: "Sorell vs Brandwatch : social listening d'un côté, briefing sectoriel de l'autre. Fonctions réelles, modèle tarifaire et critère de choix pour une PME.",
-    date: "2026-10-27",
+    date: "2026-10-26",
     readTime: "6 min",
     tags: ["Comparatif"],
     content: `
@@ -4500,7 +4500,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-zapier-rss",
     title: "Sorell vs Zapier + RSS : quelle solution pour votre veille ?",
     description: "Sorell vs Zapier + RSS : ce que le bricolage no-code permet vraiment pour une veille sectorielle, ses limites réelles et les cas où il reste le bon choix.",
-    date: "2026-10-28",
+    date: "2026-10-27",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4596,7 +4596,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-stagiaire-veille",
     title: "Sorell vs un stagiaire dédié à la veille : le vrai calcul",
     description: "Sorell vs un stagiaire en veille : le coût complet, la courbe d'apprentissage, la continuité, et la répartition des rôles qui fonctionne le mieux.",
-    date: "2026-10-29",
+    date: "2026-10-28",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4696,7 +4696,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-vs-abonnement-presse-specialisee",
     title: "Sorell vs un abonnement presse spécialisée : que choisir ?",
     description: "Sorell vs un abonnement presse spécialisée : ce que chacun couvre réellement, la question du droit de copie et la combinaison qui fonctionne le mieux.",
-    date: "2026-10-30",
+    date: "2026-10-29",
     readTime: "7 min",
     tags: ["Comparatif"],
     content: `
@@ -4794,7 +4794,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "lire-newsletter-veille-rapidement",
     title: "Lire une newsletter de veille en 5 minutes : la méthode",
     description: "Lire sa newsletter de veille rapidement : la méthode en trois passes, les quatre décisions possibles et le créneau à bloquer pour ne plus jamais la reporter.",
-    date: "2026-10-31",
+    date: "2026-10-30",
     readTime: "7 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -4886,7 +4886,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "brief-newsletter-cabinet-conseil",
     title: "Brief de newsletter pour un cabinet de conseil : l'exemple",
     description: "Brief de newsletter pour un cabinet de conseil : les cinq blocs à écrire, un exemple complet rédigé et les erreurs qui rendent la veille générique.",
-    date: "2026-11-01",
+    date: "2026-10-31",
     readTime: "7 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -4982,7 +4982,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "deleguer-veille-sectorielle",
     title: "Déléguer sa veille sectorielle sans perdre en pertinence",
     description: "Déléguer sa veille sectorielle sans recevoir du hors sujet : le mandat en une page, le choix du délégataire et la recette en trois livraisons.",
-    date: "2026-11-02",
+    date: "2026-11-01",
     readTime: "8 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5072,7 +5072,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "segmenter-veille-business-unit",
     title: "Segmenter sa veille par filiale ou business unit",
     description: "Segmenter sa veille par business unit sans multiplier les flux morts : le test en trois questions, les architectures possibles et le pilote de six semaines.",
-    date: "2026-11-03",
+    date: "2026-11-02",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5152,7 +5152,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-startup",
     title: "Veille sectorielle pour startup : par où commencer",
     description: "Veille sectorielle pour startup : les quatre objets à surveiller, les sources publiques françaises et la mise en place en une heure, avec un usage réel.",
-    date: "2026-11-04",
+    date: "2026-11-03",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5241,7 +5241,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-freelance",
     title: "Veille sectorielle freelance : utile ou pas, et comment la tenir",
     description: "Veille sectorielle pour freelance : le test en trois critères, les usages qui rapportent, le calcul de coût avec votre TJM et le format qui survit au rush.",
-    date: "2026-11-05",
+    date: "2026-11-04",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5323,7 +5323,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "suivre-secteur-10-minutes",
     title: "Suivre son secteur en 10 minutes par semaine : la méthode",
     description: "Suivre son secteur en 10 minutes par semaine : la répartition du temps, les quatre filtres qui trient à votre place et la règle des trois sorties.",
-    date: "2026-11-06",
+    date: "2026-11-05",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5409,7 +5409,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sources-veille-gratuites-payantes",
     title: "Sources de veille gratuites ou payantes : comment arbitrer",
     description: "Sources de veille gratuites ou payantes : la méthode pour arbitrer source par source, le socle public à connaître et le calcul de votre coût réel.",
-    date: "2026-11-07",
+    date: "2026-11-06",
     readTime: "8 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5528,7 +5528,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-appels-offres-publics",
     title: "Veille appels d'offres publics : comment vous organiser",
     description: "Veille sur les appels d'offres publics : où les avis sont publiés, les seuils 2026, le sourcing amont en open data et une grille go / no-go à copier.",
-    date: "2026-11-08",
+    date: "2026-11-07",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5643,7 +5643,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-concurrentielle-prix",
     title: "Veille concurrentielle sur les prix : la méthode complète",
     description: "Veille concurrentielle sur les prix : panier de référence, fiche de relevé à copier, fréquences de collecte utiles et limites juridiques à connaître.",
-    date: "2026-11-09",
+    date: "2026-11-08",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5767,7 +5767,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "analyser-tendances-marche",
     title: "Analyser les tendances de son marché en continu",
     description: "Analyser les tendances de son marché sans étude coûteuse : test des trois occurrences, sources qui donnent de l'avance et carnet de tendances à tenir.",
-    date: "2026-11-10",
+    date: "2026-11-09",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -5888,7 +5888,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "newsletter-vs-slack-diffusion-veille",
     title: "Newsletter ou canal Slack pour diffuser votre veille ?",
     description: "Newsletter ou Slack pour diffuser votre veille : le test des quatre questions, le tableau de décision et l'architecture mixte qui tient dans la durée.",
-    date: "2026-11-11",
+    date: "2026-11-10",
     readTime: "6 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -6009,7 +6009,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-sources-anglaises",
     title: "Veille sectorielle : quelles sources anglaises suivre",
     description: "Veille sectorielle et sources anglaises : les registres, régulateurs et médias à suivre, comment trier vite et restituer l'essentiel en français.",
-    date: "2026-11-12",
+    date: "2026-11-11",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6105,7 +6105,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "kpi-veille-sectorielle",
     title: "KPI de veille sectorielle : quoi mesurer en comité",
     description: "Quels KPI de veille sectorielle présenter en comité de direction : délai de détection, lecteurs actifs, coût réel et registre des décisions.",
-    date: "2026-11-13",
+    date: "2026-11-12",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6199,7 +6199,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "newsletter-interne-cabinet",
     title: "Newsletter interne de cabinet : la structure qui tient",
     description: "Newsletter interne de cabinet : les cinq rubriques, le modèle de bloc en quatre lignes, les sources officielles par métier et le bon rythme d'envoi.",
-    date: "2026-11-14",
+    date: "2026-11-13",
     readTime: "6 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -6296,7 +6296,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "relancer-veille-sectorielle",
     title: "Relancer une veille sectorielle que plus personne ne lit",
     description: "Relancer sa veille sectorielle : le diagnostic en cinq questions, les quatre causes d'abandon et un protocole de redémarrage sur six semaines.",
-    date: "2026-11-15",
+    date: "2026-11-14",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6393,7 +6393,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "temps-perdu-veille-manuelle",
     title: "Temps perdu en veille manuelle : le calcul pour un dirigeant",
     description: "Temps perdu en veille manuelle : les cinq postes que vous ne comptez pas, la méthode pour le mesurer en une semaine et le calcul de coût à refaire soi-même.",
-    date: "2026-11-16",
+    date: "2026-11-15",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6474,7 +6474,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "erreurs-veille-sectorielle-opportunite",
     title: "Les erreurs de veille qui coûtent une opportunité",
     description: "Erreurs de veille sectorielle qui font perdre une opportunité : mauvais périmètre, sources primaires ignorées, détection tardive, information bloquée.",
-    date: "2026-11-17",
+    date: "2026-11-16",
     readTime: "6 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6560,7 +6560,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-contenu-linkedin",
     title: "Transformer sa veille sectorielle en contenu LinkedIn",
     description: "Veille sectorielle et contenu LinkedIn : la méthode pour passer d'un article lu à un post publié, avec les filtres de tri, cinq formats et un rythme tenable.",
-    date: "2026-11-18",
+    date: "2026-11-17",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6657,7 +6657,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "revue-presse-hebdomadaire-equipe",
     title: "Créer une revue de presse hebdomadaire pour son équipe",
     description: "Revue de presse hebdomadaire pour votre équipe : le format qui tient dans la durée, le sourcing, le choix du canal, le jour d'envoi et comment mesurer l'usage.",
-    date: "2026-11-19",
+    date: "2026-11-18",
     readTime: "7 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -6763,7 +6763,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-intelligence-economique",
     title: "Veille sectorielle et intelligence économique : la différence",
     description: "Veille sectorielle et intelligence économique : les trois volets de l'IE, ce dont une PME a vraiment besoin d'abord, et à qui s'adresser en France.",
-    date: "2026-11-20",
+    date: "2026-11-19",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6877,7 +6877,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-levees-fonds-secteur",
     title: "Veille des levées de fonds de son secteur : la méthode",
     description: "Veille des levées de fonds de votre secteur : où l'information sort, comment repérer une opération avant l'annonce et quoi faire dans les 48 heures qui suivent.",
-    date: "2026-11-21",
+    date: "2026-11-20",
     readTime: "7 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -6979,7 +6979,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "cout-veille-sectorielle-interne-externe",
     title: "Coût d'une veille sectorielle : interne ou externalisée ?",
     description: "Coût d'une veille sectorielle interne ou externe : la méthode de calcul, les coûts cachés, cinq options comparées et le seuil où externaliser devient rentable.",
-    date: "2026-11-22",
+    date: "2026-11-21",
     readTime: "8 min",
     tags: ["Guide", "Veille"],
     content: `
@@ -7084,7 +7084,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "onboarder-equipe-newsletter-veille",
     title: "Onboarder son équipe sur une newsletter de veille : la méthode",
     description: "Onboarder son équipe sur une newsletter de veille : qui inclure, comment l'annoncer, le rituel des six premières semaines et les erreurs qui font décrocher.",
-    date: "2026-11-23",
+    date: "2026-11-22",
     readTime: "8 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -7171,7 +7171,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "meilleur-horaire-envoi-newsletter-b2b",
     title: "Meilleur horaire d'envoi d'une newsletter B2B : comment trancher",
     description: "Meilleur horaire d'envoi pour une newsletter B2B : pourquoi les classements publiés ne valent rien, trois créneaux défendables et comment les tester.",
-    date: "2026-11-24",
+    date: "2026-11-23",
     readTime: "7 min",
     tags: ["Newsletter", "Guide"],
     content: `
@@ -7250,7 +7250,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "ia-generative-veille-sectorielle",
     title: "IA générative et veille sectorielle : ce qui change vraiment",
     description: "IA générative et veille sectorielle : ce qui devient bon marché, les quatre limites réelles des modèles, et ce qui reste du travail humain dans une PME.",
-    date: "2026-11-25",
+    date: "2026-11-24",
     readTime: "7 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7320,7 +7320,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "limites-chatgpt-veille-fiable",
     title: "Les limites de ChatGPT pour une veille fiable et sourcée",
     description: "Les limites de ChatGPT pour une veille fiable : assurance dans l'erreur, variabilité, absence de mémoire, et les trois usages où l'outil reste excellent.",
-    date: "2026-11-26",
+    date: "2026-11-25",
     readTime: "7 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7406,7 +7406,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "hallucinations-ia-newsletter-verifier",
     title: "Hallucinations IA : vérifier une newsletter générée par une IA",
     description: "Hallucinations IA : comment vérifier une newsletter de veille générée par une IA en quelques minutes, avec la méthode en quatre étapes et les signaux d'alerte.",
-    date: "2026-11-27",
+    date: "2026-11-26",
     readTime: "7 min",
     tags: ["Newsletter", "IA"],
     content: `
@@ -7485,7 +7485,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sources-verifiees-veille-ia-fiable",
     title: "Sources vérifiées : rendre fiable une veille par IA",
     description: "Sources vérifiées et veille IA fiable : comment reconnaître une source solide, repérer une erreur de l'IA et vérifier une information en trente secondes.",
-    date: "2026-11-28",
+    date: "2026-11-27",
     readTime: "7 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7571,7 +7571,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "prompt-engineering-veille",
     title: "Prompt engineering pour la veille : les bonnes questions",
     description: "Prompt engineering pour la veille : les quatre éléments d'une question qui donne des résultats exploitables, et ce qu'aucune formulation ne corrigera.",
-    date: "2026-11-29",
+    date: "2026-11-28",
     readTime: "6 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7650,7 +7650,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "technologie-newsletter-ia-rag",
     title: "Comment fonctionne une newsletter générée par IA",
     description: "Technologie des newsletters IA et RAG expliquée simplement : les cinq étapes, ce qui casse quand le briefing déçoit, et les questions à poser à un éditeur.",
-    date: "2026-11-30",
+    date: "2026-11-29",
     readTime: "6 min",
     tags: ["Newsletter", "IA"],
     content: `
@@ -7734,7 +7734,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "ia-rgpd-veille-automatisee",
     title: "IA et RGPD : les règles pour une veille automatisée",
     description: "IA, RGPD et veille automatisée : les données réellement traitées, le rôle de sous-traitant de l'éditeur et ce que le règlement européen sur l'IA exige.",
-    date: "2026-12-01",
+    date: "2026-11-30",
     readTime: "7 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7817,7 +7817,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "newsletter-ia-confiance-fiabilite",
     title: "Newsletter générée par IA : peut-on lui faire confiance ?",
     description: "Newsletter IA, confiance et fiabilité : les quatre erreurs types d'une IA en veille, comment les repérer et quel niveau de relecture selon l'usage.",
-    date: "2026-12-02",
+    date: "2026-12-01",
     readTime: "6 min",
     tags: ["Newsletter", "IA"],
     content: `
@@ -7895,7 +7895,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "agents-ia-entreprise-2026",
     title: "Agents IA en entreprise : où en est-on vraiment en 2026",
     description: "Agents IA en entreprise en 2026 : ce qui fonctionne, les quatre limites qui restent, et les tâches d'une PME qu'on peut leur confier sans risque.",
-    date: "2026-12-03",
+    date: "2026-12-02",
     readTime: "7 min",
     tags: ["IA", "Guide"],
     content: `
@@ -7977,7 +7977,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "technologies-ia-veille-automatisee-2026",
     title: "Veille automatisée : les technologies IA disponibles en 2026",
     description: "Panorama des technologies IA pour la veille automatisée en 2026 : collecte, tri sémantique, RAG, ce que chaque brique résout et ce qu'elle ne résout pas.",
-    date: "2026-12-04",
+    date: "2026-12-03",
     readTime: "6 min",
     tags: ["IA", "Guide"],
     content: `
@@ -8053,7 +8053,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-reglementaire-obligations-pme",
     title: "Veille réglementaire : les obligations d'un dirigeant de PME",
     description: "Veille réglementaire et obligations des PME : les sources officielles, les échéances annuelles, les chantiers en cours et une routine qui tient sur la durée.",
-    date: "2026-12-05",
+    date: "2026-12-04",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8137,7 +8137,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "rgpd-newsletter-b2b",
     title: "RGPD et newsletter B2B : les règles à respecter en France",
     description: "RGPD et newsletter B2B : base légale, mentions obligatoires, durée de conservation et sous-traitants. Les règles réelles, sources officielles à l'appui.",
-    date: "2026-12-06",
+    date: "2026-12-05",
     readTime: "6 min",
     tags: ["Newsletter", "Veille"],
     content: `
@@ -8219,7 +8219,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-juridique-avocats-methode",
     title: "Veille juridique pour avocats : méthode et sources fiables",
     description: "Méthode de veille juridique pour les cabinets d'avocats : les sources primaires gratuites, le bon rythme, la diffusion interne et la rediffusion aux clients.",
-    date: "2026-12-07",
+    date: "2026-12-06",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8303,7 +8303,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sociale-droit-travail",
     title: "Veille sociale : suivre les évolutions du droit du travail",
     description: "Veille sociale et droit du travail : les sources officielles à suivre, la routine à tenir et la méthode pour prévenir vos clients avant qu'ils ne demandent.",
-    date: "2026-12-08",
+    date: "2026-12-07",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8383,7 +8383,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-fiscale-expert-comptable",
     title: "Veille fiscale expert-comptable : sources et fréquence",
     description: "Veille fiscale pour un expert-comptable : BOFiP, Legifrance, jurisprudence et sources professionnelles, avec le rythme de consultation utile pour chacune.",
-    date: "2026-12-09",
+    date: "2026-12-08",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8468,7 +8468,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "compliance-veille-reglementaire-pme",
     title: "Compliance : la veille réglementaire PME sans service dédié",
     description: "Compliance et veille réglementaire en PME : cartographier votre périmètre, identifier les sources officielles et tenir un registre en trente minutes par mois.",
-    date: "2026-12-10",
+    date: "2026-12-09",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8550,7 +8550,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-cybersecurite-nis2-pme",
     title: "NIS2 et PME : organiser sa veille cybersécurité en 2026",
     description: "Veille cybersécurité et NIS2 pour les PME : ce que dit la directive, où en est la transposition française et les sources officielles à suivre chaque mois.",
-    date: "2026-12-11",
+    date: "2026-12-10",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8630,7 +8630,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "roi-veille-sectorielle-calcul",
     title: "ROI d'une veille sectorielle : la méthode de calcul honnête",
     description: "Calcul du ROI d'une veille sectorielle : chiffrer votre coût réel, situer le bénéfice et trouver votre seuil de rentabilité avec vos propres chiffres.",
-    date: "2026-12-12",
+    date: "2026-12-11",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8713,7 +8713,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-prise-decision",
     title: "Veille sectorielle et prise de décision : comment les relier",
     description: "Veille sectorielle et prise de décision : la méthode pour partir de vos décisions ouvertes, repérer les bons signaux et installer un rituel qui tient sur un an.",
-    date: "2026-12-13",
+    date: "2026-12-12",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8797,7 +8797,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-avantage-concurrentiel-pme",
     title: "Veille sectorielle : l'avantage concurrentiel d'une PME",
     description: "Veille sectorielle et avantage concurrentiel PME : pourquoi l'enjeu n'est pas de savoir plus mais de savoir plus tôt, et comment chiffrer ce délai.",
-    date: "2026-12-14",
+    date: "2026-12-13",
     readTime: "8 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8869,7 +8869,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-developpement-commercial",
     title: "Veille sectorielle et développement commercial : la méthode",
     description: "Veille sectorielle et développement commercial : quels signaux surveiller, comment les transformer en rendez-vous et comment mesurer ce que ça rapporte.",
-    date: "2026-12-15",
+    date: "2026-12-14",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -8941,7 +8941,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "cout-veille-sectorielle-budget-pme",
     title: "Coût d'une veille sectorielle : le budget d'une PME",
     description: "Coût d'une veille sectorielle et budget PME : les quatre postes à chiffrer, la méthode de calcul avec vos propres nombres et l'arbitrage interne ou externe.",
-    date: "2026-12-16",
+    date: "2026-12-15",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9016,7 +9016,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-gestion-risques",
     title: "Veille sectorielle et gestion des risques en PME",
     description: "Veille sectorielle et gestion des risques : quels signaux sont réellement observables, dans quelles sources officielles, et quelle action déclencher.",
-    date: "2026-12-17",
+    date: "2026-12-16",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9082,7 +9082,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-anticiper-crise",
     title: "Veille sectorielle : anticiper une crise, vraiment ?",
     description: "Veille sectorielle et anticipation de crise : ce que le mot anticiper cache, les délais réellement gagnés et le kit minimal à mettre en place en PME.",
-    date: "2026-12-18",
+    date: "2026-12-17",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9151,7 +9151,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-signaux-faibles-innovation",
     title: "Veille sectorielle : repérer les signaux faibles d'innovation",
     description: "Veille sectorielle et signaux faibles d'innovation : où les repérer, comment les trier du bruit et les transformer en décision concrète pour votre PME.",
-    date: "2026-12-19",
+    date: "2026-12-18",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9232,7 +9232,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "newsletter-veille-personnalisee-fidelisation-client",
     title: "Newsletter de veille personnalisée : fidéliser ses clients",
     description: "Une newsletter de veille personnalisée entretient la relation client entre deux missions. Segments, contenu, fréquence et cadre légal : la méthode complète.",
-    date: "2026-12-20",
+    date: "2026-12-19",
     readTime: "7 min",
     tags: ["Newsletter", "Veille"],
     content: `
@@ -9311,7 +9311,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "convaincre-direction-investir-veille-sectorielle",
     title: "Convaincre sa direction d'investir dans la veille sectorielle",
     description: "Convaincre sa direction d'investir dans la veille sectorielle : documenter les retards, chiffrer l'existant, proposer trois options et un pilote de 60 jours.",
-    date: "2026-12-21",
+    date: "2026-12-20",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9388,7 +9388,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-cabinet-revendre-veille-clients",
     title: "Sorell pour les cabinets : revendre la veille à vos clients",
     description: "Revendre la veille à ses clients quand on est un cabinet : trois modèles économiques, le cadre RGPD et déontologique, et un pilote de six semaines à lancer.",
-    date: "2026-12-22",
+    date: "2026-12-21",
     readTime: "7 min",
     tags: ["Guide", "Newsletter"],
     content: `
@@ -9467,7 +9467,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "personnaliser-sources-newsletter-sorell",
     title: "Personnaliser les sources de sa newsletter Sorell",
     description: "Personnaliser les sources de sa newsletter Sorell : écrire une description qui cible juste, choisir ses familles de sources et ajuster après trois éditions.",
-    date: "2026-12-23",
+    date: "2026-12-22",
     readTime: "6 min",
     tags: ["Guide", "Newsletter"],
     content: `
@@ -9548,7 +9548,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-business-veille-quotidienne-equipe",
     title: "Sorell Business : la veille quotidienne pour votre équipe",
     description: "Sorell Business et la veille quotidienne en équipe : quand le rythme quotidien se justifie, ce que couvrent les 50 destinataires et comment déployer sans échec.",
-    date: "2026-12-24",
+    date: "2026-12-23",
     readTime: "6 min",
     tags: ["Guide", "Newsletter"],
     content: `
@@ -9629,7 +9629,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "essai-gratuit-sorell-15-jours",
     title: "Essai gratuit Sorell : que tester vraiment en 15 jours",
     description: "Essai gratuit Sorell de 15 jours : le plan de test jour par jour pour savoir si une newsletter de veille automatisée vaut votre budget, ou non.",
-    date: "2026-12-25",
+    date: "2026-12-24",
     readTime: "7 min",
     tags: ["Guide", "Newsletter"],
     content: `
@@ -9705,7 +9705,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "sorell-sources-verifiees",
     title: "Sorell : ce que veut dire une source vérifiée",
     description: "Sorell et ses sources vérifiées : les critères de sélection, les familles de sources couvertes et ce qui est volontairement exclu de la veille.",
-    date: "2026-12-26",
+    date: "2026-12-25",
     readTime: "6 min",
     tags: ["Guide", "Newsletter"],
     content: `
@@ -9782,7 +9782,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "check-list-veille-sectorielle-demarrer",
     title: "Check-list pour démarrer une veille sectorielle qui tient",
     description: "La check-list en 9 points pour démarrer une veille sectorielle qui tient : périmètre, sources, rythme, destinataires et indicateur de résultat.",
-    date: "2026-12-27",
+    date: "2026-12-26",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9865,7 +9865,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "frequence-ideale-veille-secteur",
     title: "Fréquence idéale de veille : comment la caler sur son secteur",
     description: "Quelle est la fréquence idéale de veille pour votre secteur ? La méthode de la fenêtre d'action, des repères par métier et les signaux d'ajustement.",
-    date: "2026-12-28",
+    date: "2026-12-27",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -9946,7 +9946,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-multi-pays",
     title: "Veille sectorielle multi-pays : suivre plusieurs marchés",
     description: "Veille sectorielle multi-pays : hiérarchiser ses marchés, trouver les sources locales, éviter le piège de la traduction et tenir le dispositif.",
-    date: "2026-12-29",
+    date: "2026-12-28",
     readTime: "6 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -10020,7 +10020,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "digest-hebdomadaire-vs-alerte-temps-reel",
     title: "Digest hebdomadaire ou alerte temps réel : comment choisir",
     description: "Digest hebdomadaire vs alerte temps réel : le test en une question pour savoir quel format mérite votre attention, et comment combiner les deux sans se noyer.",
-    date: "2026-12-30",
+    date: "2026-12-29",
     readTime: "8 min",
     tags: ["Newsletter", "Veille"],
     content: `
@@ -10117,7 +10117,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-transformation-digitale-pme",
     title: "Veille sectorielle et transformation digitale d'une PME",
     description: "Veille sectorielle et transformation digitale en PME : les quatre familles d'information à suivre pour ne pas acheter au mauvais moment ni rater une aide.",
-    date: "2026-12-31",
+    date: "2026-12-30",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -10204,7 +10204,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "cas-usage-veille-sectorielle-pme-industrielle",
     title: "Veille sectorielle en PME industrielle : un cas d'usage concret",
     description: "Cas d'usage de veille sectorielle en PME industrielle : les cinq rubriques, les sources réelles et les dix minutes du lundi matin qui servent vraiment.",
-    date: "2027-01-01",
+    date: "2026-12-31",
     readTime: "7 min",
     tags: ["Veille", "Guide"],
     content: `
@@ -10300,7 +10300,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "taux-lecture-newsletter-equipe",
     title: "Taux de lecture d'une newsletter d'équipe : bien le mesurer",
     description: "Taux de lecture d'une newsletter d'équipe : ce que les ouvertures et les clics disent vraiment, et comment établir son propre point de référence en six envois.",
-    date: "2027-01-02",
+    date: "2027-01-01",
     readTime: "7 min",
     tags: ["Newsletter", "Veille"],
     content: `
@@ -10401,7 +10401,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     slug: "veille-sectorielle-association-federation",
     title: "Veille sectorielle : le guide des associations et fédérations",
     description: "Veille sectorielle pour une association ou une fédération professionnelle : financements, appels à projets, réglementation du champ et sources officielles.",
-    date: "2027-01-03",
+    date: "2027-01-02",
     readTime: "8 min",
     tags: ["Veille", "Guide"],
     content: `
