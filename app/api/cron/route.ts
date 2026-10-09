@@ -10,7 +10,7 @@ import {
 import { getModelForPlan, resolveServerlessArticleCount, canUseEditor, estimatedGenerationMs } from "@/lib/plans";
 import { verifyCronSecret } from "@/lib/auth";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
   // Budget temps : ne démarrer une nouvelle génération que si elle a le temps
   // de finir avant le timeout Vercel (60s). Les utilisateurs différés seront
   // servis par les invocations suivantes grâce à la fenêtre de rattrapage.
-  const INVOCATION_BUDGET_MS = 55_000;
+  const INVOCATION_BUDGET_MS = 110_000;
   const invocationStart = Date.now();
 
   for (const config of configs) {

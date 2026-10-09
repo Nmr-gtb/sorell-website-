@@ -4,7 +4,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
 import { logNewsletterGenerated } from "@/lib/activity-log";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 import {
   extractPreviousTitles,
   generateFreshNewsletter,

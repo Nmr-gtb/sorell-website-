@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { apiRateLimit } from "@/lib/ratelimit";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 import {
   extractPreviousTitles,

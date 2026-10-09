@@ -8,7 +8,7 @@ function cleanCiteTags(text: string): string {
   return text.replace(/<cite[^>]*>/g, "").replace(/<\/cite>/g, "").trim();
 }
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
