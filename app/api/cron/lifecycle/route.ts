@@ -18,7 +18,7 @@ export const maxDuration = 60;
 // tous les envois (sans toucher au cron-job.org).
 // L'email de bienvenue (WelcomeEmail) n'est PAS concerne, il est envoye via
 // /api/welcome-email, hors de ce cron.
-const LIFECYCLE_EMAILS_PAUSED = true;
+const LIFECYCLE_EMAILS_PAUSED = false;
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -319,7 +319,11 @@ export async function GET(request: Request) {
     // ═══════════════════════════════════════════════════════════════
 
     // 3.1 conversion_limit_reached
-    // Free (limit=1) et Pro (limit=4) qui ont atteint leur quota mensuel.
+    // Seul le plan Free est plafonné (1/mois) : Pro est illimité. On ne
+    // relance que les Free dont la fréquence configurée demande plus d'une
+    // newsletter par mois (ex. « 1er et 15 ») : eux voient réellement un
+    // envoi sauté et doivent savoir pourquoi. Un Free réglé en mensuel
+    // reçoit exactement ce qu'il a demandé, le relancer serait du spam.
     // Cle mensuelle pour autoriser une relance par mois si le user reste
     // dans le meme plan.
     try {
@@ -329,13 +333,25 @@ export async function GET(request: Request) {
         1
       ).toISOString();
 
-      const { data: limitCandidates } = await supabaseAdmin
+      const { data: freeProfiles } = await supabaseAdmin
         .from("profiles")
         .select("id, email, full_name, plan")
-        .in("plan", ["free", "pro"]);
+        .eq("plan", "free");
 
-      if (limitCandidates && limitCandidates.length > 0) {
-        const planLimits: Record<string, number> = { free: 1, pro: 4 };
+      const { data: overLimitConfigs } = await supabaseAdmin
+        .from("newsletter_config")
+        .select("user_id")
+        .neq("frequency", "monthly");
+
+      const wantsMoreThanMonthly = new Set(
+        (overLimitConfigs || []).map((c: { user_id: string }) => c.user_id)
+      );
+      const limitCandidates = (freeProfiles || []).filter(
+        (p: { id: string }) => wantsMoreThanMonthly.has(p.id)
+      );
+
+      if (limitCandidates.length > 0) {
+        const planLimits: Record<string, number> = { free: 1 };
 
         // Batch : compter les newsletters envoyees ce mois-ci pour TOUS
         // les candidats free/pro en UNE requete (evite le N+1 : 1 count
@@ -649,7 +665,10 @@ export async function GET(request: Request) {
             .from("newsletter_events")
             .select("newsletter_id, recipient_email")
             .in("newsletter_id", allNlIds)
-            .eq("event_type", "opened");
+            // Ouverture = pixel ("open") OU webhook Resend ("opened") :
+            // on teste seulement l'existence d'une ouverture, donc les
+            // compter ensemble ne crée aucun double comptage.
+            .in("event_type", ["open", "opened"]);
 
           for (const ev of openEvents || []) {
             const openers =

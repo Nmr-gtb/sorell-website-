@@ -15,8 +15,8 @@ export function LimitReachedEmail({
 }: LimitReachedEmailProps) {
   const isFree = plan === "Free";
   const nextPlan = isFree ? "Pro" : "Business";
-  const nextMonthlyPrice = isFree ? "19" : "49";
-  const nextYearlyPrice = isFree ? "190" : "490";
+  const nextMonthlyPrice = isFree ? "9,99" : "49";
+  const nextYearlyPrice = isFree ? "99" : "490";
   const nextBenefits = isFree
     ? "newsletters illimitées, jusqu'à 10 destinataires, thématiques et sources personnalisées, analytics d'engagement"
     : "50 destinataires, fréquence quotidienne, logo personnalisé, support prioritaire";
