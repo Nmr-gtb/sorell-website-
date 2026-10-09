@@ -11,7 +11,7 @@
 
 - **Frontend** : Next.js App Router + TypeScript + Tailwind CSS
 - **Backend** : Supabase (auth email/password, PostgreSQL, RLS, storage)
-- **IA** : Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) avec web search — ~0.10$/newsletter
+- **IA** : Free & Pro = Claude Sonnet 5.5 (`claude-sonnet-5-5`, 5 articles max en serverless, ~40s), Business/Enterprise = Opus 4.8 — `lib/plans.ts` MODEL_BY_PLAN. Fonctions de génération : maxDuration 120s, budget cron 110s
 - **Email** : Resend — newsletters@sorell.fr (newsletters), noreply@sorell.fr (transactionnel), noe@sorell.fr (support/replyTo)
 - **Paiement** : Stripe production — **Cold email** : sorell-group.fr via Emelia
 - **Hébergement** : Vercel (gratuit) — **CRON** : cron-job.org (chaque heure → /api/cron)
