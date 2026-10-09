@@ -429,7 +429,7 @@ describe("GET /api/cron", () => {
 
     const today = new Date().toISOString().substring(0, 10);
     mockCreate.mockImplementation(() => {
-      fakeNow += 50_000;
+      fakeNow += 80_000;
       return Promise.resolve({
         content: [{
           type: "text",
