@@ -91,6 +91,7 @@ describe("plafond serverless (anti-timeout Vercel 60s)", () => {
   it("does not cap faster models (Sonnet, Haiku, unknown)", () => {
     expect(serverlessArticleCap("claude-sonnet-4-6")).toBe(MAX_CUSTOM_ARTICLES);
     expect(serverlessArticleCap("claude-haiku-4-5-20251001")).toBe(MAX_CUSTOM_ARTICLES);
+    expect(serverlessArticleCap("claude-sonnet-5-5")).toBe(5);
     expect(serverlessArticleCap("some-future-model")).toBe(MAX_CUSTOM_ARTICLES);
   });
 

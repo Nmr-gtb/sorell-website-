@@ -74,13 +74,13 @@ export function getPlanLimits(plan: string) {
 
 // ---------------------------------------------------------------------------
 // Modèle IA par plan — plus le plan est élevé, meilleur (et plus coûteux) le modèle.
-// Free → Haiku (rapide, économique) ; Pro → Sonnet ; Business & Enterprise → Opus.
+// Free & Pro → Sonnet 5.5 ; Business & Enterprise → Opus.
 // ---------------------------------------------------------------------------
 export const DEFAULT_NEWSLETTER_MODEL = "claude-haiku-4-5-20251001";
 
 export const MODEL_BY_PLAN: Record<PlanType, string> = {
-  free: "claude-haiku-4-5-20251001",
-  pro: "claude-sonnet-4-6",
+  free: "claude-sonnet-5-5",
+  pro: "claude-sonnet-5-5",
   business: "claude-opus-4-8",
   enterprise: "claude-opus-4-8",
 };
@@ -166,7 +166,10 @@ const SERVERLESS_ARTICLE_CAP: Record<string, number> = {
   "claude-opus-4-8": 4,
   "claude-opus-4-7": 4,
   "claude-opus-4-6": 4,
-  // Sonnet et Haiku génèrent assez vite pour ne pas nécessiter de plafond.
+  // Mesuré le 09/10/2026 : Sonnet 5.5 + web search, 5 articles = 40,4s
+  // (~8s/article). Au-delà de 5, risque de dépasser les 60s Vercel.
+  "claude-sonnet-5-5": 5,
+  // Sonnet 4.x et Haiku génèrent assez vite pour ne pas nécessiter de plafond.
 };
 
 /** Nombre d'articles max qu'une génération serverless peut produire sous ~50s. */
@@ -182,6 +185,7 @@ export function serverlessArticleCap(model: string): number {
  */
 export function estimatedGenerationMs(model: string): number {
   if (model.includes("opus")) return 45_000;
+  if (model === "claude-sonnet-5-5") return 42_000;
   if (model.includes("sonnet")) return 30_000;
   return 20_000; // Haiku et défaut
 }
