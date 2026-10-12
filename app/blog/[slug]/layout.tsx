@@ -24,6 +24,7 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.description,
+    keywords: article.keywords ?? article.tags,
     openGraph: {
       type: "article",
       locale: "fr_FR",
@@ -32,7 +33,7 @@ export async function generateMetadata({
       title: article.title,
       description: article.description,
       publishedTime: article.date,
-      modifiedTime: article.date,
+      modifiedTime: article.updated ?? article.date,
       authors: ["Sorell"],
       tags: article.tags,
       images: [
@@ -72,7 +73,7 @@ export default async function BlogSlugLayout({ children, params }: BlogSlugLayou
               headline: article.title,
               description: article.description,
               datePublished: article.date,
-              dateModified: article.date,
+              dateModified: article.updated ?? article.date,
               author: {
                 "@type": "Organization",
                 name: "Sorell",
@@ -91,7 +92,7 @@ export default async function BlogSlugLayout({ children, params }: BlogSlugLayou
                 "@type": "WebPage",
                 "@id": `https://sorell.fr/blog/${article.slug}`,
               },
-              keywords: article.tags.join(", "),
+              keywords: (article.keywords ?? article.tags).join(", "),
               wordCount: article.content.split(/\s+/).length,
               articleSection: article.tags[0] || "Blog",
             }),

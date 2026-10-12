@@ -89,6 +89,27 @@ main,
    ils doivent donc être lisibles, et surtout défiler DANS leur conteneur pour
    que la page ne parte jamais en scroll horizontal sur mobile.
    ============================================================ */
+.blog-prose blockquote {
+  margin: 16px 0 20px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--accent, #005058);
+  background: var(--surface);
+  border-radius: 0 10px 10px 0;
+  color: var(--text);
+}
+.blog-prose blockquote p {
+  margin: 0 0 10px;
+}
+.blog-prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+.blog-prose h3 {
+  margin: 28px 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
 .blog-prose .table-wrap {
   overflow-x: auto;
   margin: 24px 0;

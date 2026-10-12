@@ -14,6 +14,10 @@ export interface BlogArticle {
    * de l'article, sinon elle devient incompréhensible une fois extraite.
    */
   faq?: { question: string; answer: string }[];
+  /** Date de dernière mise à jour réelle (AAAA-MM-JJ), si l'article a été retravaillé après publication. */
+  updated?: string;
+  /** Mots-clés propres à l'article (meta keywords + JSON-LD). À défaut : les tags. */
+  keywords?: string[];
 }
 
 export const BLOG_ARTICLES: BlogArticle[] = [
@@ -753,10 +757,12 @@ export const BLOG_ARTICLES: BlogArticle[] = [
   },
   {
     slug: "veille-sectorielle-efficace-2026",
-    title: "Comment faire une veille sectorielle efficace en 2026",
-    description: "La veille sectorielle est devenue indispensable pour les dirigeants. Méthodes, outils, fréquence : tout ce qu'il faut savoir pour une veille sectorielle qui produit des résultats.",
+    title: "Veille sectorielle : définition, méthode et exemples par métier (2026)",
+    description: "Ce qu'est une veille sectorielle, comment la mettre en place et des exemples concrets pour cabinets comptables, gestion locative, collectivités et MedTech.",
     date: "2026-04-05",
-    readTime: "7 min",
+    updated: "2026-10-12",
+    keywords: ["veille sectorielle", "définition veille sectorielle", "méthode de veille", "exemples de veille sectorielle", "types de veille", "veille réglementaire", "veille concurrentielle", "veille automatisée"],
+    readTime: "11 min",
     tags: ["Veille", "Guide"],
     content: `
       <p>La <strong>veille sectorielle</strong> consiste à surveiller en continu les évolutions de votre secteur d'activité : tendances de marché, innovations, réglementations, mouvements de concurrents, nouvelles technologies. C'est le radar qui vous permet d'anticiper au lieu de subir.</p>
@@ -803,8 +809,54 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
       <p><strong>Étape 5 : Automatiser ce qui peut l'être</strong><br/>La collecte d'informations est la partie la plus chronophage de la veille sectorielle. C'est aussi celle qui se prête le mieux à l'automatisation. Les outils d'IA comme Sorell peuvent scanner des centaines de sources et vous livrer un résumé structuré sans effort de votre part.</p>
 
+      <h2 id="exemples-par-metier">Exemples de veille sectorielle par métier</h2>
+      <p>Une veille sectorielle utile ne ressemble jamais à celle du voisin. Ce qu'il faut suivre dépend de ce qui peut vous coûter de l'argent ou vous en faire gagner. Voici quatre exemples concrets.</p>
+
+      <h3>Cabinet d'expertise-comptable</h3>
+      <p><strong>Ce qu'il faut suivre :</strong> évolutions fiscales et sociales, lois de finances, réforme de la facturation électronique, obligations déclaratives des clients, décisions de l'administration fiscale, actualité de la profession.</p>
+      <p><strong>Pourquoi c'est critique :</strong> chaque changement fiscal est une question que vos clients vous poseront. Le cabinet qui l'a vu venir peut les prévenir avant qu'ils ne demandent. La veille devient un service, pas seulement une contrainte.</p>
+      <p><strong>Exemple de brief :</strong></p>
+      <blockquote>Cabinet d'expertise-comptable, clientèle de TPE et d'artisans. Suivre les changements fiscaux et sociaux qui touchent les petites entreprises, la facturation électronique et les nouvelles obligations déclaratives. Pour chaque info : ce qui change, la date, qui est concerné. Sources officielles en priorité.</blockquote>
+
+      <h3>Gestion locative et conciergerie</h3>
+      <p><strong>Ce qu'il faut suivre :</strong> réglementation des meublés de tourisme, fiscalité LMNP, DPE et diagnostics, taxe de séjour, décisions des communes sur le changement d'usage, règles imposées par les plateformes de réservation.</p>
+      <p><strong>Pourquoi c'est critique :</strong> une nouvelle règle municipale ou fiscale peut changer la rentabilité de tout un parc de logements. Être prévenu plusieurs mois avant permet de conseiller les propriétaires au lieu de subir.</p>
+      <p><strong>Exemple de brief :</strong></p>
+      <blockquote>Société de gestion de locations courte durée. Suivre la fiscalité LMNP, la réglementation des meublés de tourisme, le DPE, la taxe de séjour et les décisions locales dans nos communes. Préciser pour chaque mesure si elle est adoptée, annoncée ou en discussion.</blockquote>
+      <p><strong>Extrait d'un vrai briefing Sorell (envoyé le 1er octobre 2026) :</strong></p>
+      <blockquote>
+        <p><strong>Plateformes &amp; commissions.</strong> Airbnb passe le 13 octobre 2026 à une commission unique de 15,5 % prélevée sur le loueur, pour une partie des hôtes. Les recettes déclarées augmentent mécaniquement, avec un risque de franchir les seuils du micro-BIC. <em>Source : cabinet Kohen Avocats, 19 septembre 2026.</em></p>
+        <p><strong>Conformité &amp; enregistrement.</strong> Depuis le 20 mai 2026, tout meublé de tourisme doit obtenir un numéro d'enregistrement national avant la publication de la moindre annonce. <em>Source : Captain Legal.</em></p>
+      </blockquote>
+
+      <h3>Collectivité et développement touristique</h3>
+      <p><strong>Ce qu'il faut suivre :</strong> appels à projets et financements (européens, nationaux, régionaux), politiques publiques du tourisme, labels, études de fréquentation, initiatives d'autres collectivités transposables.</p>
+      <p><strong>Pourquoi c'est critique :</strong> un appel à projets se joue souvent en quelques semaines. La collectivité qui l'apprend tard n'a plus le temps de monter son dossier.</p>
+      <p><strong>Exemple de brief :</strong></p>
+      <blockquote>Chargée de mission tourisme dans une commune rurale. Suivre le tourisme durable, l'itinérance, la valorisation du patrimoine, les financements disponibles et les projets innovants d'autres territoires. Sources institutionnelles en priorité.</blockquote>
+      <p><strong>Extrait d'un vrai briefing Sorell (envoyé le 1er octobre 2026) :</strong></p>
+      <blockquote>
+        <p><strong>Financements &amp; subventions.</strong> La DGE publie le 14 septembre 2026 un guide des financements européens pour le tourisme : il recense les programmes mobilisables pour des projets liés à la transition écologique et numérique. <em>Source : ministère de l'Économie.</em></p>
+        <p><strong>Tourisme expérientiel.</strong> Le 4e Observatoire national de l'hébergement insolite se tiendra le 8 décembre 2026 dans l'Ain. Inscriptions avant le 23 novembre, places limitées. <em>Source : Cabinet Alliances.</em></p>
+      </blockquote>
+
+      <h3>Conseil en santé et MedTech</h3>
+      <p><strong>Ce qu'il faut suivre :</strong> réglementation des dispositifs médicaux, levées de fonds des start-up du secteur, appels à projets publics, lancements de produits, sujets data et IA en santé.</p>
+      <p><strong>Pourquoi c'est critique :</strong> pour un cabinet de conseil, chaque levée de fonds ou nouvelle obligation réglementaire est un signal commercial. La veille alimente directement la prospection.</p>
+      <p><strong>Exemple de brief :</strong></p>
+      <blockquote>Équipe de conseil spécialisée MedTech. Priorité France. Suivre la réglementation des dispositifs médicaux, les levées de fonds, les appels à projets, les nouveaux produits et les débats sur les données de santé. Ton condensé, lecture avant un point d'équipe.</blockquote>
+      <p><strong>Extrait d'un vrai briefing Sorell (envoyé le 1er octobre 2026) :</strong></p>
+      <blockquote>
+        <p><strong>Levées &amp; business.</strong> HighLife lève près de 80 M€ pour sa valve mitrale posée par cathéter. La medtech parisienne, marquée CE en janvier, va accélérer son déploiement commercial en Europe et son programme clinique aux États-Unis. <em>Source : Maddyness, 22 septembre 2026.</em></p>
+        <p><strong>Financement.</strong> Sofinnova clôture un fonds de 82 M€ destiné à lancer 6 à 8 nouvelles medtech en cinq ans. <em>Source : MedTech Dive.</em></p>
+      </blockquote>
+
+      <p><strong>Le point commun :</strong> dans les quatre cas, le brief tient en quelques lignes et décrit un métier, pas une liste de mots-clés. C'est ce qui permet à une veille automatisée de trier ce qui compte vraiment.</p>
+
+      <p><strong><a href="/connexion">Décrivez votre métier et recevez votre première veille sectorielle →</a></strong></p>
+
       <h2>Veille sectorielle manuelle vs automatisée</h2>
-      <p>La veille manuelle offre un contrôle total mais demande 2 à 5 heures par semaine. Peu de dirigeants maintiennent ce rythme au-delà de quelques mois.</p>
+      <p>La veille manuelle offre un contrôle total mais demande plusieurs heures par semaine. Peu de dirigeants maintiennent ce rythme au-delà de quelques mois.</p>
 
       <div class="table-wrap">
         <table>
@@ -812,7 +864,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
             <tr><th></th><th>Veille manuelle</th><th>Veille automatisée</th></tr>
           </thead>
           <tbody>
-            <tr><th>Temps par semaine</th><td>2 à 5 heures</td><td>Quelques minutes de lecture</td></tr>
+            <tr><th>Temps par semaine</th><td>Plusieurs heures</td><td>Quelques minutes de lecture</td></tr>
             <tr><th>Ce que vous faites</th><td>Chercher, lire, trier, résumer</td><td>Lire le briefing et décider</td></tr>
             <tr><th>Risque principal</th><td>L'abandon au bout de quelques mois</td><td>Dépendre de la qualité des sources</td></tr>
             <tr><th>Contrôle éditorial</th><td>Total</td><td>Cadré par votre brief, modifiable à tout moment</td></tr>
@@ -838,9 +890,14 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     `,
     faq: [
       {
+        question: "Quels sont les différents types de veille ?",
+        answer:
+          "On distingue généralement quatre grands types de veille en entreprise : technologique, concurrentielle, réglementaire et commerciale. Certaines approches en ajoutent d'autres, comme la veille sociétale ou la veille d'image. La veille sectorielle les combine : elle couvre tout ce qui se passe dans un secteur donné, quel que soit le type d'information.",
+      },
+      {
         question: "Combien de temps faut-il consacrer à sa veille sectorielle ?",
         answer:
-          "Une veille manuelle sérieuse demande 2 à 5 heures par semaine : chercher les sources, lire, trier, résumer. C'est le principal motif d'abandon, car peu de dirigeants tiennent ce rythme au-delà de quelques mois. Une veille automatisée ramène ce temps à quelques minutes de lecture, l'outil se chargeant de la collecte et de la synthèse.",
+          "Une veille manuelle sérieuse demande plusieurs heures par semaine : chercher les sources, lire, trier, résumer. C'est le principal motif d'abandon, car peu de dirigeants tiennent ce rythme au-delà de quelques mois. Une veille automatisée ramène ce temps à quelques minutes de lecture, l'outil se chargeant de la collecte et de la synthèse.",
       },
       {
         question: "Comment faire sa veille sectorielle quand on n'a pas le temps ?",

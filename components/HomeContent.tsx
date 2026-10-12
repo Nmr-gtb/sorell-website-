@@ -407,6 +407,13 @@ export default function HomeContent() {
               <p style={{ fontSize: "1rem", color: "var(--text-secondary)", maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>
                 {t("home.features_subtitle")}
               </p>
+              <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", maxWidth: 480, margin: "12px auto 0", lineHeight: 1.7 }}>
+                {t("home.guide_before")}
+                <Link href="/blog/veille-sectorielle-efficace-2026" style={{ color: "var(--text)", textDecoration: "underline", textUnderlineOffset: 3 }}>
+                  {t("home.guide_link")}
+                </Link>
+                {t("home.guide_after")}
+              </p>
             </div>
           </AnimateOnScroll>
 

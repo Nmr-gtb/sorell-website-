@@ -63,6 +63,12 @@ export default function BlogArticleClient({
           <span>{new Date(article.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
           <span>&middot;</span>
           <span>{article.readTime} de lecture</span>
+          {article.updated && (
+            <>
+              <span>&middot;</span>
+              <span>Mis à jour le {new Date(article.updated).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>
+            </>
+          )}
         </div>
 
         <div

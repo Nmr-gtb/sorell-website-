@@ -683,7 +683,11 @@ export default function CommentCaMarchePage() {
                 marginBottom: "2.5rem",
               }}
             >
-              {t("hiw.vs_subtitle")}
+              {t("hiw.vs_subtitle_before")}
+              <Link href="/blog/veille-sectorielle-efficace-2026" style={{ color: "var(--text)", textDecoration: "underline", textUnderlineOffset: 3 }}>
+                {t("hiw.vs_subtitle_link")}
+              </Link>
+              {t("hiw.vs_subtitle_after")}
             </p>
             <div className="hiw-comparison-table-wrapper" style={{ overflowX: "auto" }}>
               <table
